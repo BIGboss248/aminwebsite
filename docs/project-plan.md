@@ -35,10 +35,9 @@ This website is a portfolio website of a web designer and developer
 ├── /about (Story & Experience)
 ├── /resume (Digital CV / Qualifications)
 ├── /lab (Interactive Tools & Mini Apps)
-├── /blog (Articles & SEO Insights)
-│   └── /blog/[slug] (Article Detail)
+│   ├── IP Info Lookup (/lab/ipinfo)
+│   └── DNS over HTTPS (DoH) Tester (/lab/doh)
 ├── /contact (Lead Capture & Booking)
-├── /uses (Tech Stack & Setup - Optional)
 ├── [404] /not-found (Custom Not Found Page)
 └── [Error] /error (Global & Route Error Boundaries)
 ```
@@ -93,18 +92,13 @@ This website is a portfolio website of a web designer and developer
 
 ---
 
-#### Growth & Utility Pages (Phase 3)
+#### Interactive Tools & Utilities (Phase 3)
 
 - **Tools / Lab (`/lab`)**
   - Interactive tools, networking utilities, and experimental UI playgrounds.
-  - Live demonstrations of frontend/backend engineering capabilities.
-
-- **Blog / Insights (`/blog` & `/blog/[slug]`)**
-  - Technical tutorials, design engineering write-ups, and SEO-driven content.
-  - Newsletter signup and RSS feed.
-
-- **Uses / Stack (`/uses`)**
-  - Hardware setup, software tools, IDE configuration, and favorite libraries.
+  - **IP Info Lookup (`/lab/ipinfo`):** Real-time IP address details, ISP / ASN information, geolocation map, and connection protocol checks.
+  - **DNS over HTTPS (DoH) Tester (`/lab/doh`):** Secure DNS query tool supporting standard record types (A, AAAA, CNAME, MX, TXT, NS) across multiple DoH providers (Cloudflare, Google, Quad9) with latency & response benchmarking.
+  - Live demonstrations of frontend, backend, and networking engineering capabilities.
 
 ---
 
@@ -126,7 +120,7 @@ This website is a portfolio website of a web designer and developer
 
 1. **Phase 1 (Launch-ready MVP):** `Home`, `Projects`, `Project Detail`, `Resume`, `Contact`, `404 Not Found`, `Error Boundary`.
 2. **Phase 2 (Freelance & Story):** `Services`, `About`.
-3. **Phase 3 (Authority & Traffic Engine):** `Lab / Tools`, `Blog`, `Uses`.
+3. **Phase 3 (Interactive Tools & Value Engine):** `Lab / Tools` (IP Info Lookup, DoH Tester).
 
 ## Decent designs
 
@@ -145,7 +139,6 @@ Showing an awsome landscape where the heading will appear when the user scrolls 
 https://www.playmagicreef.com/
 
 In this design the heading has a transparent design and when user scrolls out of hero section the heading will get a background color
-
 
 #### Sections and flow
 
@@ -221,4 +214,3 @@ Since big footers are like the trend in Iran we go for it
 interesting footer desgin where we have the brand logo and socials
 
 One thing to note is that interactive animations can be fun in footer for example brand will show itself around mouse hover
-

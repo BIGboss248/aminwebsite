@@ -1,0 +1,58 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Setup Husky & Commitlint",
+      "type": "shell",
+      "windows": {
+        "command": "bun install --save-dev husky @commitlint/config-conventional @commitlint/cli; bunx husky init; Remove-Item -Path .husky/pre-commit -Force -ErrorAction SilentlyContinue; Set-Content -Path .husky/commit-msg -Value 'bunx --no -- commitlint --edit $1'; Set-Content -Path .husky/pre-push -Value 'bun run test:int && bun run build'; @{extends = @('@commitlint/config-conventional')} | ConvertTo-Json | Set-Content -Path .commitlintrc.json"
+      },
+      "linux": {
+        "command": "bun install --save-dev husky @commitlint/config-conventional @commitlint/cli && bunx husky init && rm -f .husky/pre-commit && echo 'bunx --no -- commitlint --edit $1' > .husky/commit-msg && echo 'bun run test:int && bun run build' > .husky/pre-push && echo '{\"extends\": [\"@commitlint/config-conventional\"]}' > .commitlintrc.json"
+      },
+      "osx": {
+        "command": "bun install --save-dev husky @commitlint/config-conventional @commitlint/cli && bunx husky init && rm -f .husky/pre-commit && echo 'bunx --no -- commitlint --edit $1' > .husky/commit-msg && echo 'bun run test:int && bun run build' > .husky/pre-push && echo '{\"extends\": [\"@commitlint/config-conventional\"]}' > .commitlintrc.json"
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "git-commit",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "Configure Semantic Release",
+      "type": "shell",
+      "windows": {
+        "command": "bun install --save-dev semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github; bun -e \"const fs = require('fs'); const p = JSON.parse(fs.readFileSync('package.json', 'utf8')); p.scripts.release = 'semantic-release'; fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\\n', 'utf8'); fs.writeFileSync('.releaserc.json', JSON.stringify({ branches: ['main'], plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/changelog', '@semantic-release/github', ['@semantic-release/git', { assets: ['package.json', 'CHANGELOG.md'], message: 'chore(release): ' + '$' + '{nextRelease.version} [skip ci]' }]] }, null, 2) + '\\n', 'utf8');\""
+      },
+      "linux": {
+        "command": "bun install --save-dev semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github && bun -e \"const fs = require('fs'); const p = JSON.parse(fs.readFileSync('package.json', 'utf8')); p.scripts.release = 'semantic-release'; fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\\n', 'utf8'); fs.writeFileSync('.releaserc.json', JSON.stringify({ branches: ['main'], plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/changelog', '@semantic-release/github', ['@semantic-release/git', { assets: ['package.json', 'CHANGELOG.md'], message: 'chore(release): ' + '$' + '{nextRelease.version} [skip ci]' }]] }, null, 2) + '\\n', 'utf8');\""
+      },
+      "osx": {
+        "command": "bun install --save-dev semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github && bun -e \"const fs = require('fs'); const p = JSON.parse(fs.readFileSync('package.json', 'utf8')); p.scripts.release = 'semantic-release'; fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\\n', 'utf8'); fs.writeFileSync('.releaserc.json', JSON.stringify({ branches: ['main'], plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/changelog', '@semantic-release/github', ['@semantic-release/git', { assets: ['package.json', 'CHANGELOG.md'], message: 'chore(release): ' + '$' + '{nextRelease.version} [skip ci]' }]] }, null, 2) + '\\n', 'utf8');\""
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "tag",
+        "color": "terminal.ansiMagenta"
+      }
+    },
+    {
+      "label": "Initialize Full Environment (All-in-One)",
+      "dependsOn": [
+        "Create Project Layout",
+        "Setup Husky & Commitlint",
+        "Configure Semantic Release"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build"
+      },
+      "icon": {
+        "id": "rocket",
+        "color": "terminal.ansiCyan"
+      }
+    }
+  ]
+}

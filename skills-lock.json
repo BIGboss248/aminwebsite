@@ -67,6 +67,18 @@
       "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
       "computedHash": "016f12709bff30a27419e8add978a9be70f5ca1fb6738b3be6793038e0aba631"
     },
+    "nextjs-create-component": {
+      "source": "BIGboss248/Obsidian",
+      "sourceType": "github",
+      "skillPath": "skills/nextjs-create-component/SKILL.md",
+      "computedHash": "20f74f8e3fbdbdde7099065f7cc77d3d990ba3a6b8bf92e6464c6f38edc93026"
+    },
+    "prompt-contracts": {
+      "source": "BIGboss248/Obsidian",
+      "sourceType": "github",
+      "skillPath": "skills/prompt-contracts/SKILL.md",
+      "computedHash": "95279b2f066fcccdf80ea2d414b6f8bdb728e284dcbac96ae499288ba3972583"
+    },
     "prototype": {
       "source": "mattpocock/skills",
       "sourceType": "github",
@@ -85,11 +97,23 @@
       "skillPath": "skills/engineering/resolving-merge-conflicts/SKILL.md",
       "computedHash": "436698459190d8e9f03dc32ada08401b56e352fb6a19bf71a2227fad8b80d98f"
     },
+    "self-repair": {
+      "source": "BIGboss248/Obsidian",
+      "sourceType": "github",
+      "skillPath": "skills/self-repair/SKILL.md",
+      "computedHash": "95a5843156bd8f9af4672bf1e61ce9b77590ffae96957cd7949ca944ab044033"
+    },
     "setup-matt-pocock-skills": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
       "computedHash": "a45163cba56f72f5f224c46557c047d51547147a29e383e5a769ec39eecd1188"
+    },
+    "subagent-verification-loops": {
+      "source": "BIGboss248/Obsidian",
+      "sourceType": "github",
+      "skillPath": "skills/subagent-verification-loops/SKILL.md",
+      "computedHash": "505d57ca923219765a21190534015749dd4297d21241e39f60eac1b9130b8fe0"
     },
     "tdd": {
       "source": "mattpocock/skills",

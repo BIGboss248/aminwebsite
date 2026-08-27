@@ -13,4 +13,3 @@ Canonical triage roles mapped to repository labels. See `docs/agents/triage-labe
 ### Domain docs
 
 Single-context layout (`CONTEXT.md` and `docs/adr/`). See `docs/agents/domain.md`.
-

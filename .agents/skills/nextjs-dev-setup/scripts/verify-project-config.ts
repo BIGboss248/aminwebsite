@@ -22,7 +22,8 @@ export interface ProjectContextAndMetadata {
   new_component_dir: string;
   style_file_dir: string;
   component_library: string;
-  animation_library: string;
+  animation_library: string[];
+  testing_library: string[];
   supported_languages: LocaleMetadata[];
   dictionaries_dir: string;
   dictionary_file_pattern: string;
@@ -130,7 +131,6 @@ export function verifyProjectConfig(filePath: string): ValidationResult {
     { key: "new_component_dir", label: "New Component Directory (new_component_dir)" },
     { key: "style_file_dir", label: "Style File Directory (style_file_dir)" },
     { key: "component_library", label: "Component Library (component_library)" },
-    { key: "animation_library", label: "Animation Library (animation_library)" },
     { key: "dictionaries_dir", label: "Dictionaries Directory (dictionaries_dir)" },
     { key: "dictionary_file_pattern", label: "Dictionary File Pattern (dictionary_file_pattern)" },
   ];
@@ -146,7 +146,30 @@ export function verifyProjectConfig(filePath: string): ValidationResult {
     }
   }
 
-  // 4. Validate package_manager specific values
+  // 4. String Array properties validation (animation_library & testing_library)
+  const requiredArrayProps: Array<{ key: keyof ProjectContextAndMetadata; label: string }> = [
+    { key: "animation_library", label: "Animation Library (animation_library)" },
+    { key: "testing_library", label: "Testing Library (testing_library)" },
+  ];
+
+  for (const { key, label } of requiredArrayProps) {
+    const value = meta[key];
+    if (value === undefined || value === null) {
+      result.errors.push(`Missing property: '${key}' (${label})`);
+    } else if (!Array.isArray(value)) {
+      result.errors.push(`Property '${key}' must be an array of strings, received ${typeof value}`);
+    } else if (value.length === 0) {
+      result.errors.push(`Property '${key}' must contain at least one entry`);
+    } else {
+      value.forEach((item: unknown, idx: number) => {
+        if (typeof item !== "string" || item.trim() === "") {
+          result.errors.push(`Property '${key}[${idx}]' must be a non-empty string`);
+        }
+      });
+    }
+  }
+
+  // 5. Validate package_manager specific values
   if (typeof meta.package_manager === "string" && meta.package_manager.trim() !== "") {
     const validPackageManagers = ["pnpm", "npm", "yarn", "bun"];
     if (!validPackageManagers.includes(meta.package_manager.toLowerCase())) {
@@ -156,7 +179,7 @@ export function verifyProjectConfig(filePath: string): ValidationResult {
     }
   }
 
-  // 5. Validate supported_languages array
+  // 6. Validate supported_languages array
   const languages = meta.supported_languages;
   if (languages === undefined || languages === null) {
     result.errors.push("Missing property: 'supported_languages'");
@@ -222,6 +245,8 @@ function printReport(result: ValidationResult, jsonOutput: boolean): void {
       if (k === "supported_languages" && Array.isArray(v)) {
         const langs = v.map((l) => (l && typeof l === "object" ? (l as Record<string, string>).language_code : "?")).join(", ");
         console.log(`  - ${cyan}${k}${reset}: [${langs}] (${v.length} locale(s))`);
+      } else if ((k === "animation_library" || k === "testing_library") && Array.isArray(v)) {
+        console.log(`  - ${cyan}${k}${reset}: [${v.map((item) => `"${item}"`).join(", ")}]`);
       } else {
         console.log(`  - ${cyan}${k}${reset}: ${JSON.stringify(v)}`);
       }

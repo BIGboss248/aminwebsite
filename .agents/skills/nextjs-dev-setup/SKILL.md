@@ -115,6 +115,7 @@ Each entry in the `supported_languages` array contains:
      - Component libraries: `radix-ui`, `shadcn`, `@headlessui/react`, etc.
      - Animation libraries: `gsap`, `@gsap/react`, `framer-motion`, `motion`, `tailwind-animate` (stored as an array of strings in `animation_library`).
      - Testing libraries: `@playwright/test`, `playwright`, `@testing-library/react`, `@testing-library/jest-dom`, `jest`, `vitest` (stored as an array of strings in `testing_library`).
+     - Git hooks & automation: `husky`, `lint-staged`.
 
 ---
 
@@ -151,6 +152,7 @@ _(If all properties were successfully discovered during Step 1, proceed directly
    - Animation libraries: configured entries in `animation_library` (e.g. `["gsap", "@gsap/react"]`)
    - SEO / Structured data: `schema-dts`
    - Testing libraries: configured entries in `testing_library` (e.g. `["playwright", "@testing-library/react"]`)
+   - Git hook tooling: `husky`
 2. **Install Any Missing Required Packages:**
    - Run the detected package manager (e.g. `pnpm add ...` or `bun add ...`) for any missing dependencies.
 3. **Verify Script Setup:**
@@ -184,7 +186,31 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 
 ---
 
-### Step 6: Verify Project Configuration & Sanity Check
+### Step 6: Setup Git Hooks with Husky (Pre-Push Test Runner)
+
+1. **Install Husky:**
+   - Install `husky` as a dev dependency using the detected package manager:
+     ```bash
+     pnpm add -D husky
+     ```
+
+2. **Initialize Husky Once:**
+   - Initialize Husky once to generate the `.husky/` directory:
+     ```bash
+     pnpm exec husky init
+     ```
+
+3. **Configure `pre-push` Hook to Run Tests:**
+   - Create or update `.husky/pre-push` to run the project tests prior to pushing code to git remotes:
+     ```bash
+     echo "pnpm test" > .husky/pre-push
+     ```
+     _(or specify the exact test script such as `pnpm test` / `pnpm exec playwright test`)_
+   - Ensure the hook is configured to block pushes if any test fails.
+
+---
+
+### Step 7: Verify Project Configuration & Sanity Check
 
 1. Run the project configuration verification script:
    ```bash

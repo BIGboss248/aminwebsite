@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools"],
+      "type": "stdio"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"],
+      "type": "stdio"
+    }
+  },
+  "inputs": []
+}
+}

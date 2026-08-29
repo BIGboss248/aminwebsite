@@ -1,0 +1,15 @@
+{
+  "common": {
+    "site_title": "Amin Jamali — Portfolio & Lab",
+    "nav": {
+      "home": "Home",
+      "projects": "Projects",
+      "services": "Services",
+      "about": "About",
+      "resume": "Resume",
+      "lab": "Lab",
+      "contact": "Contact"
+    }
+  }
+}
+

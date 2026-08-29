@@ -321,7 +321,6 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
     try {
       const launchRaw = fs.readFileSync(vscodeLaunchPath, "utf-8");
       const cleanedJson = launchRaw.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
-      const cleanedJson = launchRaw.replace(/\\"|"(?:[^"\\]|\\.)*"|(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, (m, g) => (g ? "" : m));
       const launchConfig = JSON.parse(cleanedJson);
       const configs = Array.isArray(launchConfig.configurations) ? launchConfig.configurations : [];
 
@@ -387,7 +386,6 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
     try {
       const rawMcp = fs.readFileSync(foundMcpConfig, "utf-8");
       const cleanedMcpJson = rawMcp.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
-      const cleanedMcpJson = rawMcp.replace(/\\"|"(?:[^"\\]|\\.)*"|(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, (m, g) => (g ? "" : m));
       const parsedMcp = JSON.parse(cleanedMcpJson);
       const servers = (parsedMcp.mcpServers || parsedMcp.servers || {}) as Record<string, unknown>;
 
@@ -602,7 +600,6 @@ function printReport(result: ValidationResult, jsonOutput: boolean): void {
   }
 
   const { bold, cyan, green, red, yellow, magenta, reset, dim } = ANSI_COLORS;
-  const { bold, cyan, green, red, yellow, magenta, reset } = ANSI_COLORS;
 
   console.log(`\n${bold}${cyan}=== Next.js Dev Setup & project.json Verification ===${reset}\n`);
   console.log(`${bold}Configuration File:${reset} ${result.filePath}`);

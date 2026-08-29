@@ -24,7 +24,8 @@ The `docs/project.json` file is the mandatory single source of truth for compone
 | `new_component_dir`       | `string`              | Target directory where components, skeletons, and unit tests are created.   | Auto-discovered from `app/` or `src/` (e.g. `"app/components"` or `"src/components"`).              |
 | `style_file_dir`          | `string`              | Relative path to the global CSS / theme stylesheet.                         | Auto-discovered from stylesheet path (e.g. `"app/globals.css"` or `"src/app/globals.css"`).         |
 | `component_library`       | `string`              | UI component library or design system adopted in the project.               | Discovered from `package.json` dependencies / `docs/` (e.g. `"shadcn/ui"`, `"radix-ui"`, `"none"`). |
-| `animation_library`       | `string`              | Motion and animation library used for complex animations.                   | Discovered from `package.json` / `docs/adr/` (e.g. `"gsap"`, `"framer-motion"`, `"none"`).          |
+| `animation_library`       | `Array<string>`       | Motion and animation libraries used for complex animations.                 | Discovered from `package.json` / `docs/adr/` (e.g. `["gsap"]`, `["framer-motion"]`, `["none"]`).    |
+| `testing_library`         | `Array<string>`       | Testing frameworks and libraries configured in the project.                 | Discovered from `package.json` / config files (e.g. `["playwright", "@testing-library/react"]`).    |
 | `supported_languages`     | `Array<LocaleObject>` | List of supported locales with direction, currency, and calendar metadata.  | Discovered from `docs/adr/`, `docs/project-plan.md`, or `CONTEXT.md`.                               |
 | `dictionaries_dir`        | `string`              | Target directory storing i18n translation dictionary JSON files.            | Auto-discovered or standard path (e.g. `"app/dictionaries"` or `"src/dictionaries"`).               |
 | `dictionary_file_pattern` | `string`              | Naming convention template for translation files.                           | Standard template: `"[locale].json"` (resolves to e.g. `en.json`, `fa.json`).                       |
@@ -51,7 +52,8 @@ Each entry in the `supported_languages` array contains:
     "new_component_dir": "app/components",
     "style_file_dir": "app/globals.css",
     "component_library": "shadcn/ui",
-    "animation_library": "gsap",
+    "animation_library": ["gsap"],
+    "testing_library": ["playwright", "@testing-library/react"],
     "supported_languages": [
       {
         "language_code": "en",
@@ -91,6 +93,7 @@ Each entry in the `supported_languages` array contains:
    - Extract architectural choices:
      - **Languages & Directionality:** Check `docs/adr/0001-bilingual-i18n-and-directionality.md`, `docs/project-plan.md`, or `CONTEXT.md` for language list (e.g. `en` and `fa`, LTR and RTL).
      - **Animation & UI Stack:** Check `docs/adr/0002-local-mdx-and-gsap-interaction-stack.md` or `docs/project-plan.md` (e.g. GSAP, Tailwind CSS, shadcn/ui).
+     - **Testing Frameworks:** Check `package.json` dependencies / config files (e.g. `playwright.config.ts`, `@playwright/test`, `@testing-library/react`).
 
 2. **Scan Package Manager (Automated Detection):**
    - Inspect `package.json` for `"packageManager"` field (e.g., `"packageManager": "pnpm@11.22.0"` -> `"pnpm"`).
@@ -110,7 +113,8 @@ Each entry in the `supported_languages` array contains:
 4. **Scan Installed Dependencies (`package.json`):**
    - Check `dependencies` and `devDependencies`:
      - Component libraries: `radix-ui`, `shadcn`, `@headlessui/react`, etc.
-     - Animation libraries: `gsap`, `@gsap/react`, `framer-motion`, `motion`, `tailwind-animate`.
+     - Animation libraries: `gsap`, `@gsap/react`, `framer-motion`, `motion`, `tailwind-animate` (stored as an array of strings in `animation_library`).
+     - Testing libraries: `@playwright/test`, `playwright`, `@testing-library/react`, `@testing-library/jest-dom`, `jest`, `vitest` (stored as an array of strings in `testing_library`).
 
 ---
 
@@ -144,9 +148,9 @@ _(If all properties were successfully discovered during Step 1, proceed directly
    - React & Next.js versions (e.g. Next.js 15+ / 16+, React 19)
    - Styling tools: Tailwind CSS, `clsx`, `tailwind-merge`
    - Route transition progress: `@vercel/react-transition-progress`
-   - Animation library: `gsap`, `@gsap/react` (if selected in `docs/project.json`)
+   - Animation libraries: configured entries in `animation_library` (e.g. `["gsap", "@gsap/react"]`)
    - SEO / Structured data: `schema-dts`
-   - Test framework: `@testing-library/react`, `@testing-library/jest-dom`, test runner
+   - Testing libraries: configured entries in `testing_library` (e.g. `["playwright", "@testing-library/react"]`)
 2. **Install Any Missing Required Packages:**
    - Run the detected package manager (e.g. `pnpm add ...` or `bun add ...`) for any missing dependencies.
 3. **Verify Script Setup:**
@@ -154,7 +158,33 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 
 ---
 
-### Step 5: Verify Project Configuration & Sanity Check
+### Step 5: Setup Testing (Playwright E2E & Browser Automation)
+
+1. **Initialize Playwright (Option 1 - Project Initialization):**
+   - Run the initialization command with the detected package manager (e.g., `pnpm`):
+     ```bash
+     pnpm create playwright
+     ```
+   - This sets up:
+     - `@playwright/test` dev dependency.
+     - `playwright.config.ts` configuration file.
+     - Target browser engines (**Chromium**, **Firefox**, and **WebKit**).
+     - Default test directories and sample end-to-end tests.
+     - Test execution scripts in `package.json` (e.g. `"test:e2e": "playwright test"`).
+
+2. **Verify Playwright Browser Binaries & Execution:**
+   - Ensure all target browser binaries (Chromium, Firefox, WebKit) are ready:
+     ```bash
+     pnpm exec playwright install chromium firefox webkit
+     ```
+   - Verify the test runner:
+     ```bash
+     pnpm exec playwright test
+     ```
+
+---
+
+### Step 6: Verify Project Configuration & Sanity Check
 
 1. Run the project configuration verification script:
    ```bash
@@ -163,6 +193,6 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 2. The verification script will:
    - Verify `docs/project.json` exists.
    - Verify valid JSON structure.
-   - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `supported_languages`, `dictionaries_dir`, `dictionary_file_pattern`) are present and non-empty.
+   - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`, `dictionaries_dir`, `dictionary_file_pattern`) are present and non-empty.
    - Validate each locale object in `supported_languages` array.
 3. If the script reports any errors, fix the configuration in `docs/project.json` and re-run until all checks pass.

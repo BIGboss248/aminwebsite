@@ -1,9 +1,9 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project or configure project settings. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, or setup git hooks and commitlint. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json.
 metadata:
   author: BIGboss248
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Next.js Development Setup & Project Configuration Skill (`nextjs-dev-setup`)
@@ -115,7 +115,7 @@ Each entry in the `supported_languages` array contains:
      - Component libraries: `radix-ui`, `shadcn`, `@headlessui/react`, etc.
      - Animation libraries: `gsap`, `@gsap/react`, `framer-motion`, `motion`, `tailwind-animate` (stored as an array of strings in `animation_library`).
      - Testing libraries: `@playwright/test`, `playwright`, `@testing-library/react`, `@testing-library/jest-dom`, `jest`, `vitest` (stored as an array of strings in `testing_library`).
-     - Git hooks & automation: `husky`, `lint-staged`.
+     - Git hooks & commit standards: `husky`, `@commitlint/cli`, `@commitlint/config-conventional`, `lint-staged`.
 
 ---
 
@@ -152,7 +152,7 @@ _(If all properties were successfully discovered during Step 1, proceed directly
    - Animation libraries: configured entries in `animation_library` (e.g. `["gsap", "@gsap/react"]`)
    - SEO / Structured data: `schema-dts`
    - Testing libraries: configured entries in `testing_library` (e.g. `["playwright", "@testing-library/react"]`)
-   - Git hook tooling: `husky`
+   - Git hook & commit tooling: `husky`, `@commitlint/cli`, `@commitlint/config-conventional`
 2. **Install Any Missing Required Packages:**
    - Run the detected package manager (e.g. `pnpm add ...` or `bun add ...`) for any missing dependencies.
 3. **Verify Script Setup:**
@@ -186,27 +186,53 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 
 ---
 
-### Step 6: Setup Git Hooks with Husky (Pre-Push Test Runner)
+### Step 6: Setup Git Hooks with Husky & Commitlint (Commit Linting & Pre-Push Tests)
 
-1. **Install Husky:**
-   - Install `husky` as a dev dependency using the detected package manager:
+1. **Install Husky & Commitlint:**
+   - Install `husky`, `@commitlint/cli`, and `@commitlint/config-conventional` as dev dependencies using the detected package manager:
      ```bash
-     pnpm add -D husky
+     pnpm add -D husky @commitlint/cli @commitlint/config-conventional
      ```
 
-2. **Initialize Husky Once:**
-   - Initialize Husky once to generate the `.husky/` directory:
+2. **Configure Commitlint:**
+   - Create `commitlint.config.mjs` at the repository root to enforce Conventional Commits:
+     ```javascript
+     export default {
+       extends: ["@commitlint/config-conventional"],
+     };
+     ```
+
+3. **Initialize Husky Once:**
+   - Initialize Husky to generate the `.husky/` directory and configure the `"prepare": "husky"` script in `package.json`:
      ```bash
      pnpm exec husky init
      ```
 
-3. **Configure `pre-push` Hook to Run Tests:**
+4. **Configure `commit-msg` Hook for Conventional Commits:**
+   - Create or update `.husky/commit-msg` to validate commit messages before commits are created:
+     ```bash
+     echo "pnpm exec commitlint --edit \$1" > .husky/commit-msg
+     ```
+     _(Note: ensure `$1` is passed so commitlint checks the temporary commit message file)._
+
+5. **Configure `pre-push` Hook to Run Tests:**
    - Create or update `.husky/pre-push` to run the project tests prior to pushing code to git remotes:
      ```bash
      echo "pnpm test" > .husky/pre-push
      ```
      _(or specify the exact test script such as `pnpm test` / `pnpm exec playwright test`)_
    - Ensure the hook is configured to block pushes if any test fails.
+
+6. **Verify Commitlint & Hook Functionality:**
+   - Test that commitlint rejects non-conforming messages and accepts valid conventional messages:
+
+     ```bash
+     # Should fail with lint errors:
+     echo "bad message" | pnpm exec commitlint
+
+     # Should pass cleanly:
+     echo "feat: add commitlint setup" | pnpm exec commitlint
+     ```
 
 ---
 

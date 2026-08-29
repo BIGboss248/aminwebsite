@@ -18,16 +18,16 @@ The `docs/project.json` file is the mandatory single source of truth for compone
 
 ### Complete Properties Specification (`project_context_and_metadata`)
 
-| Property Name | Type | Description | Discovery / Example |
-| :--- | :--- | :--- | :--- |
-| `package_manager` | `string` | Package manager used in the project (`"pnpm"`, `"npm"`, `"yarn"`, `"bun"`). | Auto-discovered from lockfiles or `package.json` `"packageManager"`. |
-| `new_component_dir` | `string` | Target directory where components, skeletons, and unit tests are created. | Auto-discovered from `app/` or `src/` (e.g. `"app/components"` or `"src/components"`). |
-| `style_file_dir` | `string` | Relative path to the global CSS / theme stylesheet. | Auto-discovered from stylesheet path (e.g. `"app/globals.css"` or `"src/app/globals.css"`). |
-| `component_library` | `string` | UI component library or design system adopted in the project. | Discovered from `package.json` dependencies / `docs/` (e.g. `"shadcn/ui"`, `"radix-ui"`, `"none"`). |
-| `animation_library` | `string` | Motion and animation library used for complex animations. | Discovered from `package.json` / `docs/adr/` (e.g. `"gsap"`, `"framer-motion"`, `"none"`). |
-| `supported_languages` | `Array<LocaleObject>` | List of supported locales with direction, currency, and calendar metadata. | Discovered from `docs/adr/`, `docs/project-plan.md`, or `CONTEXT.md`. |
-| `dictionaries_dir` | `string` | Target directory storing i18n translation dictionary JSON files. | Auto-discovered or standard path (e.g. `"app/dictionaries"` or `"src/dictionaries"`). |
-| `dictionary_file_pattern` | `string` | Naming convention template for translation files. | Standard template: `"[locale].json"` (resolves to e.g. `en.json`, `fa.json`). |
+| Property Name             | Type                  | Description                                                                 | Discovery / Example                                                                                 |
+| :------------------------ | :-------------------- | :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `package_manager`         | `string`              | Package manager used in the project (`"pnpm"`, `"npm"`, `"yarn"`, `"bun"`). | Auto-discovered from lockfiles or `package.json` `"packageManager"`.                                |
+| `new_component_dir`       | `string`              | Target directory where components, skeletons, and unit tests are created.   | Auto-discovered from `app/` or `src/` (e.g. `"app/components"` or `"src/components"`).              |
+| `style_file_dir`          | `string`              | Relative path to the global CSS / theme stylesheet.                         | Auto-discovered from stylesheet path (e.g. `"app/globals.css"` or `"src/app/globals.css"`).         |
+| `component_library`       | `string`              | UI component library or design system adopted in the project.               | Discovered from `package.json` dependencies / `docs/` (e.g. `"shadcn/ui"`, `"radix-ui"`, `"none"`). |
+| `animation_library`       | `string`              | Motion and animation library used for complex animations.                   | Discovered from `package.json` / `docs/adr/` (e.g. `"gsap"`, `"framer-motion"`, `"none"`).          |
+| `supported_languages`     | `Array<LocaleObject>` | List of supported locales with direction, currency, and calendar metadata.  | Discovered from `docs/adr/`, `docs/project-plan.md`, or `CONTEXT.md`.                               |
+| `dictionaries_dir`        | `string`              | Target directory storing i18n translation dictionary JSON files.            | Auto-discovered or standard path (e.g. `"app/dictionaries"` or `"src/dictionaries"`).               |
+| `dictionary_file_pattern` | `string`              | Naming convention template for translation files.                           | Standard template: `"[locale].json"` (resolves to e.g. `en.json`, `fa.json`).                       |
 
 #### Locale Object Schema (`supported_languages[...]`)
 
@@ -126,7 +126,7 @@ The following properties could not be automatically determined from docs/ or rep
 [List only the undetermined properties]
 ```
 
-*(If all properties were successfully discovered during Step 1, proceed directly to Step 3 without asking questions.)*
+_(If all properties were successfully discovered during Step 1, proceed directly to Step 3 without asking questions.)_
 
 ---
 
@@ -154,10 +154,15 @@ The following properties could not be automatically determined from docs/ or rep
 
 ---
 
-### Step 5: Final Sanity Check
+### Step 5: Verify Project Configuration & Sanity Check
 
-1. Run verification script:
+1. Run the project configuration verification script:
    ```bash
-   npx tsx .agents/skills/nextjs-create-component/scripts/verify-component-files.ts
+   npx tsx .agents/skills/nextjs-dev-setup/scripts/verify-project-config.ts
    ```
-2. Confirm `docs/project.json` is valid JSON and all schema properties are satisfied.
+2. The verification script will:
+   - Verify `docs/project.json` exists.
+   - Verify valid JSON structure.
+   - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `supported_languages`, `dictionaries_dir`, `dictionary_file_pattern`) are present and non-empty.
+   - Validate each locale object in `supported_languages` array.
+3. If the script reports any errors, fix the configuration in `docs/project.json` and re-run until all checks pass.

@@ -1,9 +1,9 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup VS Code launch options, or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json or .vscode/launch.json.
 metadata:
   author: BIGboss248
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Next.js Development Setup & Project Configuration Skill (`nextjs-dev-setup`)
@@ -242,6 +242,7 @@ Release Please automatically tracks Conventional Commits, opens/updates a candid
 
 1. **Create the GitHub Actions Workflow (`.github/workflows/release-please.yml`):**
    - Ensure the `.github/workflows/` directory exists and create `release-please.yml`:
+
      ```yaml
      name: Release Please
 
@@ -277,7 +278,62 @@ Release Please automatically tracks Conventional Commits, opens/updates a candid
 
 ---
 
-### Step 8: Verify Project Configuration & Sanity Check
+### Step 8: Setup VS Code Launch Configurations (`.vscode/launch.json`)
+
+To enable seamless one-click local development and debugging workflows from VS Code, configure `.vscode/launch.json` with dedicated launch options for both the embedded VS Code Simple Browser and Chrome in Incognito mode on port 3000.
+
+1. **Create or Update `.vscode/launch.json`:**
+   - Detect the configured package manager command (`pnpm dev`, `npm run dev`, `yarn dev`, or `bun run dev`).
+   - Create `.vscode/launch.json` using the detected command:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: Dev (VS Code Browser)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev",
+      "serverReadyAction": {
+        "pattern": "Local:\\s+(https?://.+)|started server on .+, url: (https?://.+)|(https?://localhost:3000)",
+        "uriFormat": "http://localhost:3000",
+        "action": "runCommand",
+        "command": "simpleBrowser.show"
+      }
+    },
+    {
+      "name": "Next.js: Dev (Chrome Incognito)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev",
+      "serverReadyAction": {
+        "pattern": "Local:\\s+(https?://.+)|started server on .+, url: (https?://.+)|(https?://localhost:3000)",
+        "uriFormat": "http://localhost:3000",
+        "action": "startDebugging",
+        "name": "Next.js: Chrome (Incognito)"
+      }
+    },
+    {
+      "name": "Next.js: Chrome (Incognito)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "runtimeArgs": ["--incognito"],
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}
+```
+
+2. **Launch Options Overview:**
+   - **`Next.js: Dev (VS Code Browser)`**: Spawns the dev server in a debug terminal and automatically opens the application on `http://localhost:3000` inside the embedded VS Code Simple Browser tab once the dev server is ready.
+   - **`Next.js: Dev (Chrome Incognito)`**: Spawns the dev server in a debug terminal, waits for the server to be listening on port 3000, and triggers the `Next.js: Chrome (Incognito)` launch target which opens Google Chrome with the `--incognito` flag and debugger attached.
+   - **`Next.js: Chrome (Incognito)`**: Direct Chrome launch target configured with `url: "http://localhost:3000"` and `runtimeArgs: ["--incognito"]`.
+
+---
+
+### Step 9: Verify Project Configuration & Sanity Check
 
 1. Run the project configuration verification script:
    ```bash
@@ -288,4 +344,5 @@ Release Please automatically tracks Conventional Commits, opens/updates a candid
    - Verify valid JSON structure.
    - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`, `dictionaries_dir`, `dictionary_file_pattern`) are present and non-empty.
    - Validate each locale object in `supported_languages` array.
-3. If the script reports any errors, fix the configuration in `docs/project.json` and re-run until all checks pass.
+   - Audit `.vscode/launch.json` for VS Code Simple Browser and Chrome Incognito launch targets.
+3. If the script reports any errors, fix the configuration in `docs/project.json` or `.vscode/launch.json` and re-run until all checks pass.

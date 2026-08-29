@@ -40,20 +40,28 @@ const ANSI_COLORS = {
 };
 
 /**
- * Resolves default target directory from PROJECT.JSON if available.
+ * Resolves default target directory from docs/project.json if available.
  */
 function getDefaultTargetDir(): string {
-  const projectJsonPath = path.resolve(process.cwd(), ".agents/PROJECT.JSON");
-  if (fs.existsSync(projectJsonPath)) {
-    try {
-      const content = fs.readFileSync(projectJsonPath, "utf-8");
-      const data = JSON.parse(content);
-      const newCompDir = data?.project_context_and_metadata?.new_component_dir;
-      if (newCompDir && fs.existsSync(path.resolve(process.cwd(), newCompDir))) {
-        return path.resolve(process.cwd(), newCompDir);
+  const candidatePaths = [
+    path.resolve(process.cwd(), "docs/project.json"),
+    path.resolve(process.cwd(), "docs/PROJECT.JSON"),
+    path.resolve(process.cwd(), ".agents/PROJECT.JSON"),
+    path.resolve(process.cwd(), ".agents/project.json"),
+  ];
+
+  for (const projectJsonPath of candidatePaths) {
+    if (fs.existsSync(projectJsonPath)) {
+      try {
+        const content = fs.readFileSync(projectJsonPath, "utf-8");
+        const data = JSON.parse(content);
+        const newCompDir = data?.project_context_and_metadata?.new_component_dir;
+        if (newCompDir && fs.existsSync(path.resolve(process.cwd(), newCompDir))) {
+          return path.resolve(process.cwd(), newCompDir);
+        }
+      } catch {
+        // Continue searching other candidate paths
       }
-    } catch {
-      // Fallback to process.cwd()
     }
   }
   return process.cwd();
@@ -309,24 +317,21 @@ function printReport(summary: VerificationSummary, jsonOutput: boolean): void {
     console.log(`${statusTag} ${bold}${res.componentName}${reset} ${dim}(${res.componentPath})${reset}`);
 
     console.log(
-      `   1. Component File: ${
-        res.hasComponentFile
-          ? `${green}✓ Exists${reset} (${res.componentFilePath})`
-          : `${red}✗ Missing${reset}`
+      `   1. Component File: ${res.hasComponentFile
+        ? `${green}✓ Exists${reset} (${res.componentFilePath})`
+        : `${red}✗ Missing${reset}`
       }`
     );
     console.log(
-      `   2. Skeleton File:  ${
-        res.hasSkeletonFile
-          ? `${green}✓ Exists${reset} (${res.skeletonFilePath})`
-          : `${red}✗ Missing${reset}`
+      `   2. Skeleton File:  ${res.hasSkeletonFile
+        ? `${green}✓ Exists${reset} (${res.skeletonFilePath})`
+        : `${red}✗ Missing${reset}`
       }`
     );
     console.log(
-      `   3. Test File:      ${
-        res.hasTestFile
-          ? `${green}✓ Exists${reset} (${res.testFilePath})`
-          : `${red}✗ Missing${reset}`
+      `   3. Test File:      ${res.hasTestFile
+        ? `${green}✓ Exists${reset} (${res.testFilePath})`
+        : `${red}✗ Missing${reset}`
       }`
     );
 

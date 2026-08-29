@@ -55,21 +55,25 @@ Before and during step execution, you MUST follow these core architectural rules
 ### 1. Project Configuration & Path Resolution (Single Source of Truth)
 
 > [!IMPORTANT]
-> **MANDATORY FIRST ACTION:** Before executing any component creation, design, or test steps, you MUST read `.agents/PROJECT.JSON` at the root of the workspace using `view_file` to parse `project_context_and_metadata`. The `.agents/PROJECT.JSON` file is the single source of truth for component target directories, style files, and project settings.
+> **MANDATORY FIRST ACTION:** Before executing any component creation, design, or test steps, you MUST read `docs/project.json` (or `docs/PROJECT.JSON`) at the workspace root using `view_file` to parse `project_context_and_metadata`. The `docs/project.json` file is the single source of truth for component target directories, style files, package manager, and project settings.
 
-Resolve workspace parameters directly from the JSON properties in `.agents/PROJECT.JSON`:
-- `components_dir`: `project_context_and_metadata.new_component_dir` (e.g. `src/components`)
-- `style_file`: `project_context_and_metadata.style_file_dir` (e.g. `src/app/globals.css`)
+Resolve workspace parameters directly from the JSON properties in `docs/project.json`:
+
+- `package_manager`: `project_context_and_metadata.package_manager` (e.g. `pnpm`, `npm`, `yarn`, `bun`)
+- `components_dir`: `project_context_and_metadata.new_component_dir` (e.g. `src/components` or `app/components`)
+- `style_file`: `project_context_and_metadata.style_file_dir` (e.g. `src/app/globals.css` or `app/globals.css`)
 - `component_library`: `project_context_and_metadata.component_library` (e.g. `shadcn/ui`)
 - `animation_library`: `project_context_and_metadata.animation_library` (e.g. `gsap`)
 - `supported_languages`: `project_context_and_metadata.supported_languages` (array of locale metadata objects: `language_code`, `country_code`, `currency_code`, `direction`, `native_name`, `calendar_type`)
-- `dictionaries_dir`: `project_context_and_metadata.dictionaries_dir` (e.g. `src/dictionaries`)
+- `dictionaries_dir`: `project_context_and_metadata.dictionaries_dir` (e.g. `src/dictionaries` or `app/dictionaries`)
 - `dictionary_file_pattern`: `project_context_and_metadata.dictionary_file_pattern` (e.g. `[locale].json`, resolving to `dictionaries_dir/[language code].json` such as `src/dictionaries/en.json`, `src/dictionaries/fa.json`)
 
-**Do NOT guess or hardcode target paths.** Always read `new_component_dir` from `.agents/PROJECT.JSON` to determine where new components and test files must be created.
+**Do NOT guess or hardcode target paths.** Always read `new_component_dir` from `docs/project.json` to determine where new components and test files must be created.
 
 ### 2. Architectural Placement & RSC Boundaries
-*(Reference: [Server & Client Components](../../../node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md) and [`'use client'`](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-client.md))*
+
+_(Reference: [Server & Client Components](../../../node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md) and [`'use client'`](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-client.md))_
+
 1. **Default to React Server Components (RSC):**
    - Make components cacheable Server Components by default. Fetch data, resolve metadata, and render layout on the server.
 2. **Isolate Client Components ("use client"):**
@@ -83,7 +87,9 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
    - Implement responsive adaptations for mobile, tablet, and desktop viewports directly within a single component using Tailwind CSS breakpoint classes (e.g., `sm:`, `md:`, `lg:`).
 
 ### 3. Next.js Optimized Components & Styling Rules
-*(Reference: [Linking & Navigating](../../../node_modules/next/dist/docs/01-app/01-getting-started/04-linking-and-navigating.md), [`<Link>` API](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/link.md), [Image Optimization](../../../node_modules/next/dist/docs/01-app/01-getting-started/12-images.md), and [`<Image>` API](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/image.md))*
+
+_(Reference: [Linking & Navigating](../../../node_modules/next/dist/docs/01-app/01-getting-started/04-linking-and-navigating.md), [`<Link>` API](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/link.md), [Image Optimization](../../../node_modules/next/dist/docs/01-app/01-getting-started/12-images.md), and [`<Image>` API](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/image.md))_
+
 1. **Framework Components & Navigation Links:**
    - **Progress-Aware Links (`@vercel/react-transition-progress`):** Use `<Link>` from `@vercel/react-transition-progress` for primary navigation menus, header links, hero CTAs, and interactive cards where immediate visual feedback during server data fetching and route streaming is critical for UX.
    - **Standard Links (`next/link`):** Use standard `<Link>` from `next/link` for static footer links, utility links, or simple inline text links where top progress bar tracking is unnecessary.
@@ -102,7 +108,9 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
    - Complex timelines/scroll triggers: GSAP wrapped in `@gsap/react` `useGSAP()` hook with scoped DOM refs.
 
 ### 4. Loading States & Route Transitions
-*(Reference: [Streaming & Suspense](../../../node_modules/next/dist/docs/01-app/02-guides/streaming.md) and [Instant Navigation](../../../node_modules/next/dist/docs/01-app/02-guides/instant-navigation.md))*
+
+_(Reference: [Streaming & Suspense](../../../node_modules/next/dist/docs/01-app/02-guides/streaming.md) and [Instant Navigation](../../../node_modules/next/dist/docs/01-app/02-guides/instant-navigation.md))_
+
 1. **Suspense & Skeleton Fallbacks:**
    - Wrap slow data-fetching components in React `<Suspense>` boundaries.
    - Provide accurate `<Skeleton>` fallbacks matching the exact dimensions of loaded content to eliminate Cumulative Layout Shift (CLS).
@@ -112,7 +120,9 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
    - Ensure the top progress bar is fixed (`fixed top-0 left-0 right-0 z-[9999] h-1 pointer-events-none`) with theme primary colors.
 
 ### 5. i18n & SEO Integration Rules
-*(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/02-guides/internationalization.md), [JSON-LD](../../../node_modules/next/dist/docs/01-app/02-guides/json-ld.md), and [Metadata & OG Images](../../../node_modules/next/dist/docs/01-app/01-getting-started/14-metadata-and-og-images.md))*
+
+_(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/02-guides/internationalization.md), [JSON-LD](../../../node_modules/next/dist/docs/01-app/02-guides/json-ld.md), and [Metadata & OG Images](../../../node_modules/next/dist/docs/01-app/01-getting-started/14-metadata-and-og-images.md))_
+
 1. **Internationalization (i18n):**
    - Extract UI text into dictionary files formatted as `dictionaries_dir/[language code].json` (e.g., `src/dictionaries/en.json`, `src/dictionaries/fa.json`) for each locale in `supported_languages`.
    - Wrap internal links with `localizePath(href, locale)`.
@@ -126,6 +136,7 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
      - Mark schema script with `<!-- TODO: Validate on https://validator.schema.org/ -->`.
 
 ### 6. TSDoc & Module Mapping Rules
+
 1. **Strict English TSDoc (MANDATORY):**
    - All exported functions, props, generics, and components MUST be annotated in **English** using strict TSDoc syntax.
    - Include `@typeParam` for generics, `@param` for every input, `@defaultValue` for optionals, `@returns` for outputs, and `@throws` for errors. Focus on the "Why".
@@ -135,31 +146,31 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
 
 ### 7. Common Edge Cases & Pitfalls
 
-| Edge Case / Anti-Pattern | Correct Pattern |
-| :--- | :--- |
-| Direct import of RSC inside `"use client"` file | Pass RSC as `children` or React props into Client wrapper |
-| Hardcoded colors (e.g., `text-gray-600`) | Use semantic design tokens (`text-muted-foreground`) |
-| Physical directional margins (`ml-4`, `pr-2`) | Use logical properties (`ms-4`, `pe-2`) |
-| Standard `<img>` tag | Use Next.js `<Image src="..." width={...} height={...} alt="..." />` |
-| Writing component code before unit tests | Follow TDD: Write unit tests first ([ComponentName].test.tsx), establish contract, and code until tests pass |
-| Guessing unspecific or vague requirements | Interview user (suggest /grill-me) to clarify props, layout & behavior before writing tests |
-| Keeping JSON plan transient in chat memory only | Save plan to `.agents/history/plan-[component-name].json` and update subtask statuses to `"completed"` as work finishes |
+| Edge Case / Anti-Pattern                               | Correct Pattern                                                                                                                                                                 |
+| :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Direct import of RSC inside `"use client"` file        | Pass RSC as `children` or React props into Client wrapper                                                                                                                       |
+| Hardcoded colors (e.g., `text-gray-600`)               | Use semantic design tokens (`text-muted-foreground`)                                                                                                                            |
+| Physical directional margins (`ml-4`, `pr-2`)          | Use logical properties (`ms-4`, `pe-2`)                                                                                                                                         |
+| Standard `<img>` tag                                   | Use Next.js `<Image src="..." width={...} height={...} alt="..." />`                                                                                                            |
+| Writing component code before unit tests               | Follow TDD: Write unit tests first ([ComponentName].test.tsx), establish contract, and code until tests pass                                                                    |
+| Guessing unspecific or vague requirements              | Interview user (suggest /grill-me) to clarify props, layout & behavior before writing tests                                                                                     |
+| Keeping JSON plan transient in chat memory only        | Save plan to `.agents/history/plan-[component-name].json` and update subtask statuses to `"completed"` as work finishes                                                         |
 | Using standard `next/link` everywhere indiscriminately | Use `@vercel/react-transition-progress` `Link` for primary menus, headers, hero CTAs, and interactive cards; reserve `next/link` for static footers and minor inline text links |
-| Naked internal links (`<Link href="/about">`) | Use localized paths (`<Link href={localizePath("/about", locale)}>`) |
-| Manual date/currency formatting strings | Use native `Intl.DateTimeFormat` or `Intl.NumberFormat` |
-| Skipping `@param` tags or writing non-English TSDoc | Write strict English TSDoc for every single prop & parameter |
+| Naked internal links (`<Link href="/about">`)          | Use localized paths (`<Link href={localizePath("/about", locale)}>`)                                                                                                            |
+| Manual date/currency formatting strings                | Use native `Intl.DateTimeFormat` or `Intl.NumberFormat`                                                                                                                         |
+| Skipping `@param` tags or writing non-English TSDoc    | Write strict English TSDoc for every single prop & parameter                                                                                                                    |
 
 ---
 
 ## Step-by-Step Implementation Workflow
 
 - [ ] **Step 0: Load Project Configuration (Mandatory First Action)**
-  - Read `.agents/PROJECT.JSON` at the workspace root using `view_file`.
-  - Parse `project_context_and_metadata.new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, and `supported_languages`.
+  - Read `docs/project.json` (or `docs/PROJECT.JSON`) at the workspace root using `view_file`.
+  - Parse `project_context_and_metadata.package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, and `supported_languages`.
   - Use `new_component_dir` as the target directory for all component, skeleton, test, and documentation files created in subsequent steps.
 
 - [ ] **Step 1: Mandatory Component Reuse Check**
-  - Search `new_component_dir` (read from `.agents/PROJECT.JSON`) and `component_library` for existing components. If a component exists, reuse, adapt or extend it.
+  - Search `new_component_dir` (read from `docs/project.json`) and `component_library` for existing components. If a component exists, reuse, adapt or extend it.
   - Creating a new component is strictly forbidden if an existing component can fulfill the capability or be extended (e.g. by adding optional props, parameters, or CSS classes) without breaking existing consumers.
 
 - [ ] **Step 2: Requirement Alignment & User Interview (Mandatory for Vague Prompts)**
@@ -168,11 +179,10 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
   - **Prohibition:** Guessing or assuming missing requirements for unspecific prompts is strictly forbidden. Align on specifications first, then begin Test-Driven Development (TDD).
 
 - [ ] **Step 3: Mandatory Pre-Flight JSON Plan & History Persistence**
-  Before executing any task, you MUST generate your own tailored JSON plan for the component and persist it into `.agents/history/` directory.
+      Before executing any task, you MUST generate your own tailored JSON plan for the component and persist it into `.agents/history/` directory.
 
   > [!IMPORTANT]
   > **EXAMPLE FORMAT SCHEMA ONLY:** The JSON structure below is an **example layout**. You MUST generate a comprehensive plan tailored to your specific task that includes subtasks for all steps (including TDD tests in Step 4, component creation in Step 5, self-reflection in Step 6, and **executing unit tests via `run_command` in Step 7**).
-
   1. **History Directory:** Ensure `.agents/history/` directory exists (create it if missing).
   2. **File Saving:** Save the initial JSON plan to `.agents/history/plan-[component-name].json`.
   3. **Sequential Task Execution & Crossing Off:** As each subtask is executed and completed:
@@ -223,13 +233,15 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
         "status": "pending"
       }
     ],
-    "eval_metrics": ["Zero CLS, full RTL support, 100% English TSDoc, clean build, unit tests pass"],
+    "eval_metrics": [
+      "Zero CLS, full RTL support, 100% English TSDoc, clean build, unit tests pass"
+    ],
     "risk_factors": ["Hydration mismatch, layout shift during data streaming"]
   }
   ```
 
 - [ ] **Step 4: Test-Driven Development (TDD) - Write Unit Tests First**
-  1. **Write Unit Tests First:** Based on the clarified specification, write the complete unit test file (`[ComponentName].test.tsx`) in `new_component_dir` (read from `.agents/PROJECT.JSON`) BEFORE writing any component code. Ensure tests verify responsive layouts across desktop, tablet, and mobile breakpoints.
+  1. **Write Unit Tests First:** Based on the clarified specification, write the complete unit test file (`[ComponentName].test.tsx`) in `new_component_dir` (read from `docs/project.json`) BEFORE writing any component code. Ensure tests verify responsive layouts across desktop, tablet, and mobile breakpoints.
   2. **Comprehensive Test Scope:**
      - Props & Default Values (`@defaultValue`)
      - Interactive Client Callbacks & Event Handlers
@@ -241,10 +253,10 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
      - Implement component and skeleton fallbacks (Green) until all unit tests pass cleanly (`bun test` or project runner).
 
 - [ ] **Step 5: Component & Responsive Development**
-  Develop the component (`[ComponentName].tsx`) and its skeleton fallback `[ComponentName]Skeleton.tsx` using Tailwind CSS responsive classes (e.g. `sm:`, `md:`, `lg:`) to handle mobile, tablet, and desktop layouts within a single file according to architectural guidelines and test requirements.
+      Develop the component (`[ComponentName].tsx`) and its skeleton fallback `[ComponentName]Skeleton.tsx` using Tailwind CSS responsive classes (e.g. `sm:`, `md:`, `lg:`) to handle mobile, tablet, and desktop layouts within a single file according to architectural guidelines and test requirements.
 
 - [ ] **Step 6: Self-Reflection & Quality Audit (MANDATORY)**
-  Before completing work, execute a **Self-Reflection Pass** and output the following critique block:
+      Before completing work, execute a **Self-Reflection Pass** and output the following critique block:
 
   ```markdown
   ### Self-Reflection & Quality Audit
@@ -265,9 +277,9 @@ Resolve workspace parameters directly from the JSON properties in `.agents/PROJE
   ```
 
 - [ ] **Step 7: Unit Test Execution & Constraint Verification (MANDATORY SHELL EXECUTION)**
+
   > [!CRITICAL]
   > You MUST physically execute unit tests and constraint verification using the `run_command` tool before declaring completion or proceeding to Step 8. Do NOT skip this step, omit it from your plan, or present final handoff without calling `run_command`.
-
   1. **Run Constraint Verification Script:**
      - Run `npx tsx .agents/skills/nextjs-create-component/scripts/verify-component-files.ts [target_component_dir]` to verify component file, skeleton file, and test file exist.
   2. **Run Unit Tests (MUST use `run_command` tool):**
@@ -305,8 +317,12 @@ describe("FeatureCard (TDD)", () => {
 
   it("renders card title and description correctly", () => {
     render(<FeatureCard {...mockProps} />);
-    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Awesome Next.js Feature");
-    expect(screen.getByText("Build robust server components effortlessly.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
+      "Awesome Next.js Feature",
+    );
+    expect(
+      screen.getByText("Build robust server components effortlessly."),
+    ).toBeInTheDocument();
   });
 
   it("renders localized link attribute", () => {
@@ -373,9 +389,9 @@ export function FeatureCard({
       {
         "@type": "WebPage",
         "@id": `${localizedUrl}#webpage`,
-        "url": localizedUrl,
-        "name": title,
-        "description": description,
+        url: localizedUrl,
+        name: title,
+        description: description,
       },
     ],
   };
@@ -390,7 +406,7 @@ export function FeatureCard({
       <article
         className={cn(
           "flex flex-col gap-4 p-6 rounded-lg border border-border bg-card text-card-foreground shadow-sm ms-0 pe-0 transition-all hover:shadow-md",
-          className
+          className,
         )}
       >
         <div className="relative w-full h-48 overflow-hidden rounded-md">
@@ -402,8 +418,12 @@ export function FeatureCard({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
-        <h2 className="text-xl font-bold tracking-tight text-foreground">{title}</h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+        <h2 className="text-xl font-bold tracking-tight text-foreground">
+          {title}
+        </h2>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {description}
+        </p>
         <Link
           href={localizedUrl}
           className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline ms-auto"

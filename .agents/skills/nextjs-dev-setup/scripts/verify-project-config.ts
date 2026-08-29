@@ -33,6 +33,21 @@ export interface ProjectConfig {
   project_context_and_metadata: ProjectContextAndMetadata;
 }
 
+export interface PathCheckResult {
+  property: string;
+  expectedPath: string;
+  exists: boolean;
+  type: "file" | "directory";
+  isOptional?: boolean;
+}
+
+export interface DevAutomationCheckResult {
+  name: string;
+  category: "git_hooks" | "commitlint" | "release_automation" | "testing";
+  status: "configured" | "missing" | "warning";
+  details: string;
+}
+
 export interface ValidationResult {
   filePath: string;
   exists: boolean;
@@ -41,6 +56,8 @@ export interface ValidationResult {
   warnings: string[];
   passed: boolean;
   metadata?: Partial<ProjectContextAndMetadata>;
+  pathChecks: PathCheckResult[];
+  automationChecks: DevAutomationCheckResult[];
 }
 
 const ANSI_COLORS = {
@@ -49,6 +66,7 @@ const ANSI_COLORS = {
   green: "\x1b[32m",
   yellow: "\x1b[33m",
   cyan: "\x1b[36m",
+  magenta: "\x1b[35m",
   bold: "\x1b[1m",
   dim: "\x1b[2m",
 };
@@ -79,6 +97,228 @@ export function resolveConfigFilePath(customPath?: string): string {
 }
 
 /**
+ * Checks file and directory existence referenced in project configuration.
+ */
+function auditFileSystemPaths(
+  meta: Partial<ProjectContextAndMetadata>,
+  warnings: string[]
+): PathCheckResult[] {
+  const checks: PathCheckResult[] = [];
+  const rootDir = process.cwd();
+
+  // 1. Style file check
+  if (meta.style_file_dir) {
+    const styleAbs = path.resolve(rootDir, meta.style_file_dir);
+    const exists = fs.existsSync(styleAbs) && fs.statSync(styleAbs).isFile();
+    checks.push({
+      property: "style_file_dir",
+      expectedPath: meta.style_file_dir,
+      exists,
+      type: "file",
+    });
+    if (!exists) {
+      warnings.push(`Global stylesheet '${meta.style_file_dir}' does not exist on disk.`);
+    }
+  }
+
+  // 2. Component directory check
+  if (meta.new_component_dir) {
+    const compAbs = path.resolve(rootDir, meta.new_component_dir);
+    const exists = fs.existsSync(compAbs) && fs.statSync(compAbs).isDirectory();
+    checks.push({
+      property: "new_component_dir",
+      expectedPath: meta.new_component_dir,
+      exists,
+      type: "directory",
+    });
+    if (!exists) {
+      warnings.push(`Component directory '${meta.new_component_dir}' does not exist yet.`);
+    }
+  }
+
+  // 3. Dictionaries directory check
+  if (meta.dictionaries_dir) {
+    const dictAbs = path.resolve(rootDir, meta.dictionaries_dir);
+    const exists = fs.existsSync(dictAbs) && fs.statSync(dictAbs).isDirectory();
+    checks.push({
+      property: "dictionaries_dir",
+      expectedPath: meta.dictionaries_dir,
+      exists,
+      type: "directory",
+    });
+    if (!exists) {
+      warnings.push(`Dictionaries directory '${meta.dictionaries_dir}' does not exist yet.`);
+    } else if (Array.isArray(meta.supported_languages) && meta.dictionary_file_pattern) {
+      // Check individual dictionary files for each locale
+      for (const loc of meta.supported_languages) {
+        if (loc && typeof loc === "object" && loc.language_code) {
+          const expectedFileName = meta.dictionary_file_pattern.replace(
+            /\[locale\]/gi,
+            loc.language_code
+          );
+          const dictFileRel = path.join(meta.dictionaries_dir, expectedFileName);
+          const dictFileAbs = path.resolve(rootDir, dictFileRel);
+          const fileExists = fs.existsSync(dictFileAbs) && fs.statSync(dictFileAbs).isFile();
+
+          checks.push({
+            property: `dictionary:${loc.language_code}`,
+            expectedPath: dictFileRel,
+            exists: fileExists,
+            type: "file",
+            isOptional: true,
+          });
+
+          if (!fileExists) {
+            warnings.push(
+              `i18n dictionary file '${dictFileRel}' for locale '${loc.language_code}' was not found.`
+            );
+          }
+        }
+      }
+    }
+  }
+
+  return checks;
+}
+
+/**
+ * Audits dev environment automation: Husky, Commitlint, Playwright, and Release Please.
+ */
+function auditDevAutomation(): DevAutomationCheckResult[] {
+  const rootDir = process.cwd();
+  const results: DevAutomationCheckResult[] = [];
+
+  // 1. Commitlint Configuration Check
+  const commitlintConfigs = [
+    "commitlint.config.mjs",
+    "commitlint.config.js",
+    "commitlint.config.cjs",
+    "commitlint.config.ts",
+    ".commitlintrc.json",
+    ".commitlintrc.yaml",
+    ".commitlintrc.yml",
+    ".commitlintrc.js",
+    ".commitlintrc.mjs",
+  ];
+  const foundCommitlintConfig = commitlintConfigs.find((cfg) =>
+    fs.existsSync(path.resolve(rootDir, cfg))
+  );
+
+  if (foundCommitlintConfig) {
+    results.push({
+      name: "Commitlint Configuration",
+      category: "commitlint",
+      status: "configured",
+      details: `Found '${foundCommitlintConfig}' enforcing Conventional Commits.`,
+    });
+  } else {
+    results.push({
+      name: "Commitlint Configuration",
+      category: "commitlint",
+      status: "missing",
+      details: "Missing commitlint.config.mjs. Required for Conventional Commit enforcement.",
+    });
+  }
+
+  // 2. Husky & Git Hooks Check
+  const huskyDir = path.resolve(rootDir, ".husky");
+  const hasHuskyDir = fs.existsSync(huskyDir) && fs.statSync(huskyDir).isDirectory();
+  const hasCommitMsgHook =
+    hasHuskyDir && fs.existsSync(path.resolve(huskyDir, "commit-msg"));
+  const hasPrePushHook =
+    hasHuskyDir && fs.existsSync(path.resolve(huskyDir, "pre-push"));
+
+  if (hasHuskyDir) {
+    if (hasCommitMsgHook && hasPrePushHook) {
+      results.push({
+        name: "Husky Git Hooks",
+        category: "git_hooks",
+        status: "configured",
+        details: "Configured with .husky/commit-msg and .husky/pre-push hooks.",
+      });
+    } else {
+      const missingHooks: string[] = [];
+      if (!hasCommitMsgHook) missingHooks.push(".husky/commit-msg");
+      if (!hasPrePushHook) missingHooks.push(".husky/pre-push");
+      results.push({
+        name: "Husky Git Hooks",
+        category: "git_hooks",
+        status: "warning",
+        details: `Husky initialized, but missing hook(s): ${missingHooks.join(", ")}`,
+      });
+    }
+  } else {
+    results.push({
+      name: "Husky Git Hooks",
+      category: "git_hooks",
+      status: "missing",
+      details: "Missing .husky/ directory. Run 'pnpm exec husky init'.",
+    });
+  }
+
+  // 3. Release Please & Release Automation Check
+  const releasePleaseWorkflows = [
+    ".github/workflows/release-please.yml",
+    ".github/workflows/release-please.yaml",
+    ".github/workflows/release.yml",
+    ".github/workflows/release.yaml",
+  ];
+  const foundReleaseWorkflow = releasePleaseWorkflows.find((wf) =>
+    fs.existsSync(path.resolve(rootDir, wf))
+  );
+
+  const hasReleaseDoc =
+    fs.existsSync(path.resolve(rootDir, "docs/release-automation.md")) ||
+    fs.existsSync(path.resolve(rootDir, "docs/release-please.md"));
+
+  if (foundReleaseWorkflow) {
+    results.push({
+      name: "Release Please CI/CD",
+      category: "release_automation",
+      status: "configured",
+      details: `Found GitHub Actions workflow '${foundReleaseWorkflow}'.`,
+    });
+  } else {
+    results.push({
+      name: "Release Please CI/CD",
+      category: "release_automation",
+      status: "warning",
+      details: hasReleaseDoc
+        ? "Release doc exists, but .github/workflows/release-please.yml workflow is not yet created."
+        : "Missing .github/workflows/release-please.yml for automated semver releases and changelog.",
+    });
+  }
+
+  // 4. Testing Framework Check (Playwright)
+  const playwrightConfigs = [
+    "playwright.config.ts",
+    "playwright.config.js",
+    "playwright.config.mjs",
+  ];
+  const foundPlaywrightConfig = playwrightConfigs.find((cfg) =>
+    fs.existsSync(path.resolve(rootDir, cfg))
+  );
+
+  if (foundPlaywrightConfig) {
+    results.push({
+      name: "Playwright Test Runner",
+      category: "testing",
+      status: "configured",
+      details: `Found '${foundPlaywrightConfig}' with E2E test configuration.`,
+    });
+  } else {
+    results.push({
+      name: "Playwright Test Runner",
+      category: "testing",
+      status: "warning",
+      details: "Missing playwright.config.ts for automated browser and UI testing.",
+    });
+  }
+
+  return results;
+}
+
+/**
  * Verifies existence and completeness of project configuration.
  */
 export function verifyProjectConfig(filePath: string): ValidationResult {
@@ -89,6 +329,8 @@ export function verifyProjectConfig(filePath: string): ValidationResult {
     errors: [],
     warnings: [],
     passed: false,
+    pathChecks: [],
+    automationChecks: auditDevAutomation(),
   };
 
   // 1. Existence check
@@ -219,6 +461,9 @@ export function verifyProjectConfig(filePath: string): ValidationResult {
     });
   }
 
+  // 7. Audit filesystem paths referenced in metadata
+  result.pathChecks = auditFileSystemPaths(result.metadata, result.warnings);
+
   result.passed = result.errors.length === 0;
   return result;
 }
@@ -232,18 +477,21 @@ function printReport(result: ValidationResult, jsonOutput: boolean): void {
     return;
   }
 
-  const { bold, cyan, green, red, yellow, reset, dim } = ANSI_COLORS;
+  const { bold, cyan, green, red, yellow, magenta, reset, dim } = ANSI_COLORS;
 
-  console.log(`\n${bold}${cyan}=== Next.js project.json Configuration Verification ===${reset}\n`);
+  console.log(`\n${bold}${cyan}=== Next.js Dev Setup & project.json Verification ===${reset}\n`);
   console.log(`${bold}Configuration File:${reset} ${result.filePath}`);
   console.log(`${bold}File Exists:${reset} ${result.exists ? `${green}Yes${reset}` : `${red}No${reset}`}`);
   console.log(`${bold}Valid JSON:${reset} ${result.isValidJson ? `${green}Yes${reset}` : `${red}No${reset}`}\n`);
 
+  // Section 1: project.json Metadata
   if (result.metadata && Object.keys(result.metadata).length > 0) {
-    console.log(`${bold}Configured Properties:${reset}`);
+    console.log(`${bold}${magenta}▶ Project Metadata & Schema Properties:${reset}`);
     for (const [k, v] of Object.entries(result.metadata)) {
       if (k === "supported_languages" && Array.isArray(v)) {
-        const langs = v.map((l) => (l && typeof l === "object" ? (l as Record<string, string>).language_code : "?")).join(", ");
+        const langs = v
+          .map((l) => (l && typeof l === "object" ? (l as Record<string, string>).language_code : "?"))
+          .join(", ");
         console.log(`  - ${cyan}${k}${reset}: [${langs}] (${v.length} locale(s))`);
       } else if ((k === "animation_library" || k === "testing_library") && Array.isArray(v)) {
         console.log(`  - ${cyan}${k}${reset}: [${v.map((item) => `"${item}"`).join(", ")}]`);
@@ -254,16 +502,44 @@ function printReport(result: ValidationResult, jsonOutput: boolean): void {
     console.log("");
   }
 
+  // Section 2: Filesystem & Path Consistency
+  if (result.pathChecks.length > 0) {
+    console.log(`${bold}${magenta}▶ Filesystem Structure & i18n Paths:${reset}`);
+    for (const check of result.pathChecks) {
+      const statusIcon = check.exists ? `${green}✓${reset}` : `${yellow}✗${reset}`;
+      const statusLabel = check.exists ? `${green}Exists${reset}` : `${yellow}Missing${reset}`;
+      console.log(`  ${statusIcon} ${cyan}${check.property}${reset}: ${check.expectedPath} (${statusLabel})`);
+    }
+    console.log("");
+  }
+
+  // Section 3: Dev Environment Automation Audit
+  if (result.automationChecks.length > 0) {
+    console.log(`${bold}${magenta}▶ Git Hooks, Commit Standards & Release Automation:${reset}`);
+    for (const check of result.automationChecks) {
+      let statusTag = `${green}[OK]${reset}`;
+      if (check.status === "warning") {
+        statusTag = `${yellow}[WARN]${reset}`;
+      } else if (check.status === "missing") {
+        statusTag = `${red}[MISSING]${reset}`;
+      }
+      console.log(`  ${statusTag} ${bold}${check.name}:${reset} ${check.details}`);
+    }
+    console.log("");
+  }
+
+  // Warnings
   if (result.warnings.length > 0) {
-    console.log(`${yellow}Warnings:${reset}`);
+    console.log(`${yellow}${bold}Warnings & Recommendations:${reset}`);
     for (const warn of result.warnings) {
       console.log(`  ⚠️  ${warn}`);
     }
     console.log("");
   }
 
+  // Errors / Violations
   if (result.errors.length > 0) {
-    console.log(`${red}Errors / Violations:${reset}`);
+    console.log(`${red}${bold}Errors / Violations:${reset}`);
     for (const err of result.errors) {
       console.log(`  ✗ ${err}`);
     }
@@ -293,4 +569,3 @@ if (require.main === module) {
     process.exit(0);
   }
 }
-

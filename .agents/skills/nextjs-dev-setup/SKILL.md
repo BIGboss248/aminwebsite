@@ -1,9 +1,9 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, or setup git hooks and commitlint. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json.
 metadata:
   author: BIGboss248
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Next.js Development Setup & Project Configuration Skill (`nextjs-dev-setup`)
@@ -236,7 +236,48 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 
 ---
 
-### Step 7: Verify Project Configuration & Sanity Check
+### Step 7: Setup Automatic Semantic Versioning & Changelog (Release Please)
+
+Release Please automatically tracks Conventional Commits, opens/updates a candidate Release PR with bumped versions and changelogs, and creates GitHub Releases with Git tags upon merge.
+
+1. **Create the GitHub Actions Workflow (`.github/workflows/release-please.yml`):**
+   - Ensure the `.github/workflows/` directory exists and create `release-please.yml`:
+     ```yaml
+     name: Release Please
+
+     on:
+       push:
+         branches:
+           - main
+
+     permissions:
+       contents: write
+       pull-requests: write
+
+     jobs:
+       release-please:
+         runs-on: ubuntu-latest
+         outputs:
+           release_created: ${{ steps.release.outputs.release_created }}
+           tag_name: ${{ steps.release.outputs.tag_name }}
+           version: ${{ steps.release.outputs.version }}
+         steps:
+           - uses: googleapis/release-please-action@v4
+             id: release
+             with:
+               release-type: node
+               package-name: aminwebsite
+     ```
+
+2. **Chaining Docker Builds & Deployments (Optional / Production):**
+   - When deploying via Docker, downstream jobs consume `needs.release-please.outputs.release_created == 'true'` to build and push tagged Docker images (e.g. `:v1.2.0` and `:latest`) only when a release is actually cut.
+
+3. **Verify Documentation:**
+   - Reference `docs/release-automation.md` for team workflow conventions, commit message types, and Release PR management.
+
+---
+
+### Step 8: Verify Project Configuration & Sanity Check
 
 1. Run the project configuration verification script:
    ```bash

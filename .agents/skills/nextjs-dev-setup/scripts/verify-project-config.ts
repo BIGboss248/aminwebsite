@@ -373,6 +373,70 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
     });
   }
 
+  // 6. MCP Server Configuration Check (mcp.json / .vscode/mcp.json)
+  const mcpCandidatePaths = [
+    path.resolve(rootDir, "mcp.json"),
+    path.resolve(rootDir, ".vscode/mcp.json"),
+    path.resolve(rootDir, ".agents/mcp.json"),
+    path.resolve(rootDir, ".cursor/mcp.json"),
+  ];
+  const foundMcpConfig = mcpCandidatePaths.find((p) => fs.existsSync(p));
+
+  if (foundMcpConfig) {
+    try {
+      const rawMcp = fs.readFileSync(foundMcpConfig, "utf-8");
+      const cleanedMcpJson = rawMcp.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+      const parsedMcp = JSON.parse(cleanedMcpJson);
+      const servers = (parsedMcp.mcpServers || parsedMcp.servers || {}) as Record<string, unknown>;
+
+      const hasNextDevTools = Object.keys(servers).some(
+        (k) =>
+          k.toLowerCase().includes("next") ||
+          JSON.stringify(servers[k]).includes("next-devtools") ||
+          JSON.stringify(servers[k]).includes("server-nextjs")
+      );
+
+      const hasPlaywrightMcp = Object.keys(servers).some(
+        (k) =>
+          k.toLowerCase().includes("playwright") ||
+          JSON.stringify(servers[k]).includes("playwright")
+      );
+
+      if (hasNextDevTools && hasPlaywrightMcp) {
+        results.push({
+          name: "MCP Server Integration",
+          category: "dev_tools",
+          status: "configured",
+          details: `Found '${path.relative(rootDir, foundMcpConfig)}' configured with Next.js Dev Server (next-devtools) and Playwright MCP.`,
+        });
+      } else {
+        const missing: string[] = [];
+        if (!hasNextDevTools) missing.push("Next.js Dev Server MCP (next-devtools)");
+        if (!hasPlaywrightMcp) missing.push("Playwright MCP (playwright)");
+        results.push({
+          name: "MCP Server Integration",
+          category: "dev_tools",
+          status: "warning",
+          details: `'${path.relative(rootDir, foundMcpConfig)}' exists, but missing server(s): ${missing.join(", ")}`,
+        });
+      }
+    } catch (e) {
+      results.push({
+        name: "MCP Server Integration",
+        category: "dev_tools",
+        status: "warning",
+        details: `Failed to parse '${path.relative(rootDir, foundMcpConfig)}': ${(e as Error).message}`,
+      });
+    }
+  } else {
+    results.push({
+      name: "MCP Server Integration",
+      category: "dev_tools",
+      status: "warning",
+      details: "Missing mcp.json / .vscode/mcp.json. Configure Next.js Dev Server (next-devtools) and Playwright MCP servers for agent telemetry.",
+    });
+  }
+
   return results;
 }
 

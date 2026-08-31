@@ -18,17 +18,15 @@ The `docs/project.json` file is the mandatory single source of truth for compone
 
 ### Complete Properties Specification (`project_context_and_metadata`)
 
-| Property Name             | Type                  | Description                                                                 | Discovery / Example                                                                                 |
-| :------------------------ | :-------------------- | :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `package_manager`         | `string`              | Package manager used in the project (`"pnpm"`, `"npm"`, `"yarn"`, `"bun"`). | Auto-discovered from lockfiles or `package.json` `"packageManager"`.                                |
-| `new_component_dir`       | `string`              | Target directory where components, skeletons, and unit tests are created.   | Auto-discovered from `app/` or `src/` (e.g. `"app/components"` or `"src/components"`).              |
-| `style_file_dir`          | `string`              | Relative path to the global CSS / theme stylesheet.                         | Auto-discovered from stylesheet path (e.g. `"app/globals.css"` or `"src/app/globals.css"`).         |
-| `component_library`       | `string`              | UI component library or design system adopted in the project.               | Discovered from `package.json` dependencies / `docs/` (e.g. `"shadcn/ui"`, `"radix-ui"`, `"none"`). |
-| `animation_library`       | `Array<string>`       | Motion and animation libraries used for complex animations.                 | Discovered from `package.json` / `docs/adr/` (e.g. `["gsap"]`, `["framer-motion"]`, `["none"]`).    |
-| `testing_library`         | `Array<string>`       | Testing frameworks and libraries configured in the project.                 | Discovered from `package.json` / config files (e.g. `["playwright", "@testing-library/react"]`).    |
-| `supported_languages`     | `Array<LocaleObject>` | List of supported locales with direction, currency, and calendar metadata.  | Discovered from `docs/adr/`, `docs/project-plan.md`, or `CONTEXT.md`.                               |
-| `dictionaries_dir`        | `string`              | Target directory storing i18n translation dictionary JSON files.            | Auto-discovered or standard path (e.g. `"app/dictionaries"` or `"src/dictionaries"`).               |
-| `dictionary_file_pattern` | `string`              | Naming convention template for translation files.                           | Standard template: `"[locale].json"` (resolves to e.g. `en.json`, `fa.json`).                       |
+| Property Name         | Type                  | Description                                                                 | Discovery / Example                                                                                 |
+| :-------------------- | :-------------------- | :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `package_manager`     | `string`              | Package manager used in the project (`"pnpm"`, `"npm"`, `"yarn"`, `"bun"`). | Auto-discovered from lockfiles or `package.json` `"packageManager"`.                                |
+| `new_component_dir`   | `string`              | Target directory where components, skeletons, and unit tests are created.   | Auto-discovered from `app/` or `src/` (e.g. `"app/components"` or `"src/components"`).              |
+| `style_file_dir`      | `string`              | Relative path to the global CSS / theme stylesheet.                         | Auto-discovered from stylesheet path (e.g. `"app/globals.css"` or `"src/app/globals.css"`).         |
+| `component_library`   | `string`              | UI component library or design system adopted in the project.               | Discovered from `package.json` dependencies / `docs/` (e.g. `"shadcn/ui"`, `"radix-ui"`, `"none"`). |
+| `animation_library`   | `Array<string>`       | Motion and animation libraries used for complex animations.                 | Discovered from `package.json` / `docs/adr/` (e.g. `["gsap"]`, `["framer-motion"]`, `["none"]`).    |
+| `testing_library`     | `Array<string>`       | Testing frameworks and libraries configured in the project.                 | Discovered from `package.json` / config files (e.g. `["playwright", "@testing-library/react"]`).    |
+| `supported_languages` | `Array<LocaleObject>` | List of supported locales with direction, currency, and calendar metadata.  | Discovered from `docs/adr/`, `docs/project-plan.md`, or `CONTEXT.md`.                               |
 
 #### Locale Object Schema (`supported_languages[...]`)
 
@@ -71,9 +69,7 @@ Each entry in the `supported_languages` array contains:
         "native_name": "فارسی",
         "calendar_type": "persian"
       }
-    ],
-    "dictionaries_dir": "app/dictionaries",
-    "dictionary_file_pattern": "[locale].json"
+    ]
   }
 }
 ```
@@ -105,8 +101,8 @@ Each entry in the `supported_languages` array contains:
 
 3. **Scan Project Layout & Stylesheet Paths:**
    - Check whether the repository uses `src/app/` or `app/`:
-     - If `app/` exists at root -> set `new_component_dir` to `"app/components"` and `dictionaries_dir` to `"app/dictionaries"`.
-     - If `src/app/` exists -> set `new_component_dir` to `"src/components"` and `dictionaries_dir` to `"src/dictionaries"`.
+     - If `app/` exists at root -> set `new_component_dir` to `"app/components"`.
+     - If `src/app/` exists -> set `new_component_dir` to `"src/components"`.
    - Locate global stylesheet:
      - Check `app/globals.css`, `src/app/globals.css`, `app/global.css`, `src/styles/globals.css` -> set `style_file_dir`.
 
@@ -139,7 +135,7 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 
 1. Ensure the `docs/` directory exists.
 2. Write or update `docs/project.json` with the complete `project_context_and_metadata` JSON object.
-3. Validate that target directories (`new_component_dir`, `dictionaries_dir`) and `style_file_dir` exist or create placeholder directories/files as needed.
+3. Validate that target directory (`new_component_dir`) and `style_file_dir` exist or create placeholder directories/files as needed.
 
 ---
 
@@ -319,7 +315,7 @@ Model Context Protocol (MCP) servers equip AI coding agents with direct runtime 
 2. The verification script will:
    - Verify `docs/project.json` exists.
    - Verify valid JSON structure.
-   - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`, `dictionaries_dir`, `dictionary_file_pattern`) are present and non-empty.
+   - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`) are present and non-empty.
    - Validate each locale object in `supported_languages` array.
    - Audit `mcp.json` / `.vscode/mcp.json` for `next-devtools` and `playwright` MCP servers.
 3. If the script reports any errors, fix the configuration in `docs/project.json` or `mcp.json` and re-run until all checks pass.

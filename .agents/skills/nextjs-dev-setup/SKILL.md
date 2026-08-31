@@ -263,13 +263,26 @@ Release Please automatically tracks Conventional Commits, opens/updates a candid
              id: release
              with:
                release-type: node
-               package-name: aminwebsite
      ```
 
-2. **Chaining Docker Builds & Deployments (Optional / Production):**
+   > [!NOTE]
+   > In `googleapis/release-please-action@v4`, `package-name` is no longer a valid input parameter (the action automatically infers package metadata from root `package.json`).
+
+2. **Required GitHub Repository Access Permissions:**
+
+   > [!IMPORTANT]
+   > For Release Please to open and maintain Release Pull Requests, GitHub repository permissions must be configured:
+   >
+   > 1. Go to repository **Settings** → **Actions** → **General**.
+   > 2. Under **Workflow permissions**:
+   >    - Select **"Read and write permissions"**.
+   >    - Check **"Allow GitHub Actions to create and approve pull requests"** (required for `GITHUB_TOKEN` to create PRs).
+   > 3. Click **Save**.
+
+3. **Chaining Docker Builds & Deployments (Optional / Production):**
    - When deploying via Docker, downstream jobs consume `needs.release-please.outputs.release_created == 'true'` to build and push tagged Docker images (e.g. `:v1.2.0` and `:latest`) only when a release is actually cut.
 
-3. **Verify Documentation:**
+4. **Verify Documentation:**
    - Reference `docs/release-automation.md` for team workflow conventions, commit message types, and Release PR management.
 
 ---

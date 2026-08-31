@@ -70,7 +70,6 @@ jobs:
         id: release
         with:
           release-type: node
-          package-name: aminwebsite
 
   docker-build-and-deploy:
     needs: release-please
@@ -87,7 +86,20 @@ jobs:
 
 ---
 
-## 5. Developer Daily Workflow (VS Code & CLI)
+## 5. Required GitHub Repository Access Permissions
+
+> [!IMPORTANT]
+> To allow Release Please to open and update the automated Release Pull Request, GitHub Actions permissions must be enabled on the repository:
+>
+> 1. Navigate to **Settings** → **Actions** → **General** in your repository.
+> 2. Under **Workflow permissions**:
+>    - Check **"Read and write permissions"**.
+>    - Check **"Allow GitHub Actions to create and approve pull requests"**.
+> 3. Click **Save**.
+
+---
+
+## 6. Developer Daily Workflow (VS Code & CLI)
 
 1. **Create Branch:** `git checkout -b feat/my-feature`
 2. **Commit:** `git commit -m "feat: add animated hero section"`

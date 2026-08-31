@@ -1,6 +1,6 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup VS Code launch options, setup Next.js and Playwright MCP servers, or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json, .vscode/launch.json, or mcp.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Next.js and Playwright MCP servers, or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json or mcp.json.
 metadata:
   author: BIGboss248
   version: "1.5"
@@ -278,62 +278,7 @@ Release Please automatically tracks Conventional Commits, opens/updates a candid
 
 ---
 
-### Step 8: Setup VS Code Launch Configurations (`.vscode/launch.json`)
-
-To enable seamless one-click local development and debugging workflows from VS Code, configure `.vscode/launch.json` with dedicated launch options for both the embedded VS Code Simple Browser and Chrome in Incognito mode on port 3000.
-
-1. **Create or Update `.vscode/launch.json`:**
-   - Detect the configured package manager command (`pnpm dev`, `npm run dev`, `yarn dev`, or `bun run dev`).
-   - Create `.vscode/launch.json` using the detected command:
-
-```json
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Next.js: Dev (VS Code Browser)",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "pnpm dev",
-      "serverReadyAction": {
-        "pattern": "Local:\\s+(https?://.+)|started server on .+, url: (https?://.+)|(https?://localhost:3000)",
-        "uriFormat": "http://localhost:3000",
-        "action": "runCommand",
-        "command": "simpleBrowser.show"
-      }
-    },
-    {
-      "name": "Next.js: Dev (Chrome Incognito)",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "pnpm dev",
-      "serverReadyAction": {
-        "pattern": "Local:\\s+(https?://.+)|started server on .+, url: (https?://.+)|(https?://localhost:3000)",
-        "uriFormat": "http://localhost:3000",
-        "action": "startDebugging",
-        "name": "Next.js: Chrome (Incognito)"
-      }
-    },
-    {
-      "name": "Next.js: Chrome (Incognito)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:3000",
-      "runtimeArgs": ["--incognito"],
-      "webRoot": "${workspaceFolder}"
-    }
-  ]
-}
-```
-
-2. **Launch Options Overview:**
-   - **`Next.js: Dev (VS Code Browser)`**: Spawns the dev server in a debug terminal and automatically opens the application on `http://localhost:3000` inside the embedded VS Code Simple Browser tab once the dev server is ready.
-   - **`Next.js: Dev (Chrome Incognito)`**: Spawns the dev server in a debug terminal, waits for the server to be listening on port 3000, and triggers the `Next.js: Chrome (Incognito)` launch target which opens Google Chrome with the `--incognito` flag and debugger attached.
-   - **`Next.js: Chrome (Incognito)`**: Direct Chrome launch target configured with `url: "http://localhost:3000"` and `runtimeArgs: ["--incognito"]`.
-
----
-
-### Step 9: Setup Agent MCP Servers (Next.js Dev Server & Playwright MCP)
+### Step 8: Setup Agent MCP Servers (Next.js Dev Server & Playwright MCP)
 
 Model Context Protocol (MCP) servers equip AI coding agents with direct runtime inspection, dev server telemetry, and automated browser testing capabilities.
 
@@ -365,7 +310,7 @@ Model Context Protocol (MCP) servers equip AI coding agents with direct runtime 
 
 ---
 
-### Step 10: Verify Project Configuration & Sanity Check
+### Step 9: Verify Project Configuration & Sanity Check
 
 1. Run the project configuration verification script:
    ```bash
@@ -376,13 +321,12 @@ Model Context Protocol (MCP) servers equip AI coding agents with direct runtime 
    - Verify valid JSON structure.
    - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`, `dictionaries_dir`, `dictionary_file_pattern`) are present and non-empty.
    - Validate each locale object in `supported_languages` array.
-   - Audit `.vscode/launch.json` for VS Code Simple Browser and Chrome Incognito launch targets.
    - Audit `mcp.json` / `.vscode/mcp.json` for `next-devtools` and `playwright` MCP servers.
-3. If the script reports any errors, fix the configuration in `docs/project.json`, `.vscode/launch.json`, or `mcp.json` and re-run until all checks pass.
+3. If the script reports any errors, fix the configuration in `docs/project.json` or `mcp.json` and re-run until all checks pass.
 
 ---
 
-### Step 11: Generate Dev Setup Execution Report
+### Step 10: Generate Dev Setup Execution Report
 
 Upon completing the verification, the agent MUST output a clear and concise execution report summarizing the status of every step and artifact, explicitly distinguishing between what was freshly implemented vs. what was already configured (and left untouched).
 
@@ -391,22 +335,20 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 ```markdown
 ## 🛠️ Next.js Dev Setup Execution Report
 
-| Step / Component | Target File(s) / Resource | Status | Notes / Details |
-| :--- | :--- | :--- | :--- |
-| **1. Project Metadata** | `docs/project.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata. |
-| **2. Core Dependencies** | `package.json`, Lockfile | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries. |
-| **3. Playwright E2E Testing** | `playwright.config.ts`, `tests/` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit). |
-| **4. Husky Git Hooks** | `.husky/commit-msg`, `.husky/pre-push` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces pre-push test suite and conventional commit validation. |
-| **5. Commitlint Config** | `commitlint.config.mjs` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`. |
-| **6. Release Automation** | `.github/workflows/release-please.yml` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Automated semver releases, tags, and changelog generation. |
-| **7. VS Code Launch Options** | `.vscode/launch.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured VS Code Simple Browser and Chrome Incognito (port 3000). |
-| **8. MCP Server Integration** | `mcp.json` / `.vscode/mcp.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP. |
-| **9. Environment Verification** | `scripts/verify-project-config.ts` | `[PASSED]` | Sanity check passed with zero errors. |
+| Step / Component                | Target File(s) / Resource              | Status                          | Notes / Details                                                      |
+| :------------------------------ | :------------------------------------- | :------------------------------ | :------------------------------------------------------------------- |
+| **1. Project Metadata**         | `docs/project.json`                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.  |
+| **2. Core Dependencies**        | `package.json`, Lockfile               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.              |
+| **3. Playwright E2E Testing**   | `playwright.config.ts`, `tests/`       | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit). |
+| **4. Husky Git Hooks**          | `.husky/commit-msg`, `.husky/pre-push` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces pre-push test suite and conventional commit validation.     |
+| **5. Commitlint Config**        | `commitlint.config.mjs`                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                        |
+| **6. Release Automation**       | `.github/workflows/release-please.yml` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Automated semver releases, tags, and changelog generation.           |
+| **7. MCP Server Integration**   | `mcp.json` / `.vscode/mcp.json`        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP.  |
+| **8. Environment Verification** | `scripts/verify-project-config.ts`     | `[PASSED]`                      | Sanity check passed with zero errors.                                |
 
 #### Status Definitions:
+
 - **`[IMPLEMENTED]`**: Freshly created, installed, or modified during this setup run.
 - **`[UNTOUCHED]`**: Already properly configured prior to running the skill; preserved as-is.
 - **`[SKIPPED]`**: Intentionally omitted (e.g. optional tooling or user preference).
 ```
-
-

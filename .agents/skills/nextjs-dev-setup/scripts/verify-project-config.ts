@@ -320,7 +320,7 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
   if (fs.existsSync(vscodeLaunchPath)) {
     try {
       const launchRaw = fs.readFileSync(vscodeLaunchPath, "utf-8");
-      const cleanedJson = launchRaw.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+      const cleanedJson = launchRaw.replace(/(?<!:)\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
       const launchConfig = JSON.parse(cleanedJson);
       const configs = Array.isArray(launchConfig.configurations) ? launchConfig.configurations : [];
 
@@ -385,7 +385,7 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
   if (foundMcpConfig) {
     try {
       const rawMcp = fs.readFileSync(foundMcpConfig, "utf-8");
-      const cleanedMcpJson = rawMcp.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+      const cleanedMcpJson = rawMcp.replace(/(?<!:)\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
       const parsedMcp = JSON.parse(cleanedMcpJson);
       const servers = (parsedMcp.mcpServers || parsedMcp.servers || {}) as Record<string, unknown>;
 

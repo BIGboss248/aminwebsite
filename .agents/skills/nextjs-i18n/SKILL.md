@@ -3,12 +3,12 @@ name: nextjs-i18n
 description: End-to-end workflow, architectural guidelines, and engineering standards for setting up, configuring, and verifying next-intl App Router internationalization (i18n) on an existing Next.js project. Triggers on "/nextjs-i18n", "setup i18n", "configure next-intl", "add internationalization", "setup locale routing", "add multilingual support", or when configuring bilingual/multilingual routing and translations.
 metadata:
   author: BIGboss248
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Next.js App Router i18n Skill (`nextjs-i18n`)
 
-This skill provides step-by-step instructions, architectural rules, code templates, and automated verification for integrating **`next-intl`** into an **existing Next.js App Router project**. It guides the full migration to locale-based routing (`/[locale]/...`), type-safe translations, BiDi (LTR/RTL) directionality, and static rendering optimization with zero regressions to existing features.
+This skill provides step-by-step instructions, architectural rules, code templates, and automated verification for integrating **`next-intl`** into an **existing Next.js App Router project**. It guides the full migration to locale-based routing (`/[locale]/...`), type-safe translations, BiDi (LTR/RTL) directionality, and static rendering optimization with zero regressions to existing features across **Next.js 16+ (`proxy.ts`)** and **Next.js <=15 (`middleware.ts`)**.
 
 ---
 
@@ -27,13 +27,13 @@ This skill provides step-by-step instructions, architectural rules, code templat
 
 ```mermaid
 flowchart TD
-    Req[Incoming User Request] --> MW["Proxy / Middleware (createMiddleware)"]
-    MW --> RouteCheck{"Has Locale in URL?"}
+    Req[Incoming User Request] --> ProxyMW["Request Interceptor (proxy.ts in Next 16+ / middleware.ts in Next <=15)"]
+    ProxyMW --> RouteCheck{"Has Locale in URL?"}
     RouteCheck -- No --> Redir["Negotiate & Redirect to /[locale]/..."]
     RouteCheck -- Yes --> RSC["Server Component (App Router [locale])"]
 
     RSC --> ReqConfig["i18n/request.ts (getRequestConfig)"]
-    ReqConfig --> LoadDict["Load messages/[locale].json"]
+    ReqConfig --> LoadDict["Load messages/[locale].json or dictionaries/[locale].json"]
     LoadDict --> RootLayout["app/[locale]/layout.tsx"]
 
     RootLayout --> StaticOpt["generateStaticParams() + setRequestLocale()"]
@@ -51,7 +51,10 @@ flowchart TD
 3. **Request Configuration (`i18n/request.ts`):** Server hook executed on every request via `getRequestConfig` to load translation JSON dictionaries and request-scoped formatting options.
 4. **Navigation Helpers (`i18n/navigation.ts`):** Locale-aware wrappers around Next.js navigation (`Link`, `redirect`, `usePathname`, `useRouter`, `getPathname`) produced by `createNavigation(routing)`.
 5. **Next.js Bundler Plugin (`next.config.ts`):** Wraps Next.js config with `createNextIntlPlugin()` to automatically link request configuration to React Server Components.
-6. **Proxy / Middleware (`proxy.ts` / `middleware.ts`):** Intercepts requests to negotiate headers, detect preferred locale, and rewrite/redirect paths without affecting static assets or APIs.
+6. **Request Interceptor (`proxy.ts` in Next.js 16+ / `middleware.ts` in Next.js <=15):** 
+   - **Next.js 16+ replaces `middleware.ts` with `proxy.ts` (`src/proxy.ts` or `proxy.ts`).**
+   - **Next.js <=15 uses `src/middleware.ts` (or `middleware.ts`).**
+   - In both cases, `createMiddleware(routing)` is exported with a matcher regex to negotiate headers, detect preferred locale, and rewrite/redirect paths without affecting static assets or APIs.
 7. **Type-Safe Messages (`global.d.ts`):** Augments `AppConfig` so TypeScript validates message namespace and key paths at compile time with autocomplete.
 
 ---
@@ -75,12 +78,12 @@ If `docs/project.json` is missing, auto-detect layout (`src/` vs root `app/`), l
 
 ## 3. Step-by-Step Implementation Workflow
 
-- [ ] **Step 0: Project Layout & Configuration Audit**
+- [ ] **Step 0: Project Layout & Next.js Version Audit**
   - Read `docs/project.json` or inspect repository layout.
   - Determine if the project uses `src/app/` or `app/` (stored as `BASE_DIR`).
   - Detect current Next.js version in `package.json`:
-    - Next.js 16+: Uses `src/proxy.ts` (or `proxy.ts`) and native `next/root-params`.
-    - Next.js 15 and earlier: Uses `src/middleware.ts` (or `middleware.ts`) and `setRequestLocale(locale)`.
+    - **Next.js 16+**: Uses `[BASE_DIR]/proxy.ts` (`src/proxy.ts` or `proxy.ts`). If an existing `middleware.ts` is found, migrate and rename it to `proxy.ts`.
+    - **Next.js 15 and earlier**: Uses `[BASE_DIR]/middleware.ts` (`src/middleware.ts` or `middleware.ts`).
 
 - [ ] **Step 1: Install `next-intl` Package**
   - Run the package manager installation command:
@@ -111,8 +114,10 @@ If `docs/project.json` is missing, auto-detect layout (`src/` vs root `app/`), l
   - Wrap the existing `nextConfig` with `withNextIntl(nextConfig)`.
   - Ensure existing Webpack, Turbopack, or remote image configurations are preserved without changes.
 
-- [ ] **Step 6: Setup Proxy / Middleware (`[BASE_DIR]/proxy.ts` or `[BASE_DIR]/middleware.ts`)**
-  - Create the middleware handler using `createMiddleware(routing)`.
+- [ ] **Step 6: Setup Request Interceptor (`[BASE_DIR]/proxy.ts` for Next.js 16+ or `[BASE_DIR]/middleware.ts` for Next.js <=15)**
+  - For **Next.js 16+**, create `src/proxy.ts` (or `proxy.ts` at root).
+  - For **Next.js <=15**, create `src/middleware.ts` (or `middleware.ts` at root).
+  - Create the interceptor handler using `createMiddleware(routing)`.
   - Configure the route `matcher` regex to exclude Next.js internals (`_next`), Vercel internals (`_vercel`), API routes (`/api`, `/trpc`), and static asset files containing dots (`favicon.ico`, `.svg`, `.png`, `.webp`).
 
 - [ ] **Step 7: Setup Translation Dictionaries (`[dictionaries_dir]/[locale].json`)**
@@ -141,7 +146,7 @@ If `docs/project.json` is missing, auto-detect layout (`src/` vs root `app/`), l
     ```bash
     npx tsx .agents/skills/nextjs-i18n/scripts/verify-i18n-setup.ts
     ```
-  - Verify that all 9 validation checks pass cleanly with 0 errors.
+  - Verify that all validation checks (including Next.js 16 `proxy.ts` check) pass cleanly with 0 errors.
 
 - [ ] **Step 12: Generate Setup Execution Report & Handoff**
   - Output the final execution report detailing configured files, detected locales, directionality mapping, and migration notes.
@@ -235,14 +240,40 @@ export default withNextIntl(nextConfig);
 
 ---
 
-### 5. Proxy / Middleware (`src/proxy.ts` or `src/middleware.ts`)
+### 5. Request Interceptor (`proxy.ts` vs `middleware.ts`)
+
+#### 5A. Next.js 16+ (`src/proxy.ts` or `proxy.ts`)
+
+> In **Next.js 16+**, `middleware.ts` is replaced with `proxy.ts` located at the project root or in `src/`.
 
 ```typescript
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
 /**
- * Next-intl request interceptor for locale negotiation and redirects.
+ * Next.js 16+ proxy interceptor for locale negotiation and redirects.
+ */
+export default createMiddleware(routing);
+
+export const config = {
+  // Match all pathnames except for:
+  // - API routes (/api, /trpc)
+  // - Next.js and Vercel internals (/_next, /_vercel)
+  // - Static files containing a dot (e.g. favicon.ico, logo.svg, images)
+  matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
+};
+```
+
+#### 5B. Next.js <=15 (`src/middleware.ts` or `middleware.ts`)
+
+> In **Next.js 15 and earlier**, request interception is placed in `middleware.ts`.
+
+```typescript
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+
+/**
+ * Next.js <=15 middleware interceptor for locale negotiation and redirects.
  */
 export default createMiddleware(routing);
 
@@ -409,9 +440,12 @@ When building bilingual applications (e.g. English `ltr` and Persian `rtl`):
 
 | Anti-Pattern / Mistake                                          | Root Cause                                                               | Proper Solution                                                                                                                                    |
 | :-------------------------------------------------------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Using `middleware.ts` in Next.js 16+**                        | In Next.js 16+, `middleware.ts` is replaced by `proxy.ts`.               | Rename `middleware.ts` to `src/proxy.ts` (or `proxy.ts`).                                                                                         |
+| **Using `proxy.ts` in Next.js <=15**                            | Next.js 15 and earlier versions do not recognize `proxy.ts`.             | Rename `proxy.ts` to `src/middleware.ts` (or `middleware.ts`).                                                                                    |
+| **Both `proxy.ts` and `middleware.ts` coexisting**              | Lingering legacy `middleware.ts` after migrating to Next.js 16+.         | Remove the redundant `middleware.ts` and keep only `proxy.ts`.                                                                                    |
 | **Hydration mismatch on `<html lang>` / `<html dir>`**          | Layout renders fixed `dir="ltr"` while server is rendering `rtl` locale. | Dynamically assign `dir={isRtl ? "rtl" : "ltr"}` from `params.locale` in `app/[locale]/layout.tsx`.                                                |
 | **Static rendering disabled / De-opt to SSR**                   | Missing `generateStaticParams()` or `setRequestLocale()`.                | Add `generateStaticParams()` returning `[{ locale: 'en' }, { locale: 'fa' }]` and call `setRequestLocale(locale)` at the top of layouts and pages. |
-| **404 loop on static assets (favicon, images, robots.txt)**     | Middleware matcher intercepts static files.                              | Ensure `matcher` in `proxy.ts`/`middleware.ts` excludes `.*\\..*`, `_next`, `_vercel`, and `/api`.                                                 |
+| **404 loop on static assets (favicon, images, robots.txt)**     | Interceptor matcher catches static files.                                | Ensure `matcher` in `proxy.ts`/`middleware.ts` excludes `.*\\..*`, `_next`, `_vercel`, and `/api`.                                                 |
 | **Typo in translation key going unnoticed**                     | Missing TypeScript type augmentation.                                    | Augment `AppConfig.Messages` in `global.d.ts` from `en.json`.                                                                                      |
 | **Broken navigation with raw `<a>` or unlocalized `next/link`** | Using standard `next/link` without locale prefix.                        | Import `Link` from `@/i18n/navigation` which automatically prepends the active locale.                                                             |
 | **Calling `useTranslations` in Server Component**               | Hooks cannot be called in async RSC.                                     | Use `const t = await getTranslations('namespace')` in Server Components.                                                                           |
@@ -426,6 +460,8 @@ Before declaring completion of i18n setup:
    ```bash
    npx tsx .agents/skills/nextjs-i18n/scripts/verify-i18n-setup.ts
    ```
+   *The verification script automatically audits Next.js version in `package.json` and verifies that `proxy.ts` is used on Next.js 16+ or `middleware.ts` on Next.js <=15.*
+
 2. **Execute Project Build / Type Check:**
    ```bash
    pnpm run build # or detected package manager

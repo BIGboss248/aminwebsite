@@ -53,7 +53,7 @@ flowchart TD
 3. **Request Configuration (`i18n/request.ts` with `next/root-params`):** Server hook executed on every request via `getRequestConfig` to load translation JSON dictionaries from `messages/${locale}.json`. It resolves the matched locale from `next/root-params` (`await rootParams.locale()`), eliminating the deprecated `requestLocale` and legacy `setRequestLocale()` boilerplate.
 4. **Navigation Helpers (`i18n/navigation.ts`):** Locale-aware wrappers around Next.js navigation (`Link`, `redirect`, `usePathname`, `useRouter`, `getPathname`) produced by `createNavigation(routing)`.
 5. **Next.js Bundler Plugin (`next.config.ts`):** Wraps Next.js config with `createNextIntlPlugin()` to automatically link request configuration to React Server Components.
-6. **Request Interceptor (`proxy.ts` in Next.js 16+ / `middleware.ts` in Next.js <=15):** 
+6. **Request Interceptor (`proxy.ts` in Next.js 16+ / `middleware.ts` in Next.js <=15):**
    - **Next.js 16+ replaces `middleware.ts` with `proxy.ts` (`src/proxy.ts` or `proxy.ts`).**
    - **Next.js <=15 uses `src/middleware.ts` (or `middleware.ts`).**
    - In both cases, `createMiddleware(routing)` is exported with a matcher regex to negotiate headers, detect preferred locale, and rewrite/redirect paths without affecting static assets or APIs.
@@ -66,12 +66,14 @@ flowchart TD
 > [!IMPORTANT]
 > **MANDATORY PROJECT.JSON CONFIGURATION:**
 > Whenever `nextjs-i18n` runs, it must ensure `docs/project.json` contains:
+>
 > - `"dictionaries_dir": "messages"` (default directory for translation files)
 > - `"dictionary_file_pattern": "[locale].json"`
 
 Before executing setup steps, read `docs/project.json` (or `docs/PROJECT.JSON`) at the workspace root to parse `project_context_and_metadata`.
 
 Extract:
+
 - `package_manager`: e.g. `pnpm`, `npm`, `yarn`, `bun`.
 - `supported_languages`: array of locale objects (`language_code`, `direction`, `native_name`, `country_code`, `currency_code`, `calendar_type`).
 - `dictionaries_dir`: defaults to `"messages"`.
@@ -158,6 +160,9 @@ If `docs/project.json` is missing or missing i18n dictionary fields, create or u
 
 - [ ] **Step 12: Execute Verification & Build**
   - Run `pnpm run build` and `pnpm run lint` to verify clean compilation and zero TypeScript/ESLint errors.
+
+- [ ] **Step 13: Generate i18n Setup Execution Report**
+  - Output the structured execution report summarizing all configured artifacts, file modifications, detected locales, directionality, and verification results.
 
 ---
 
@@ -470,33 +475,49 @@ When building bilingual applications (e.g. English `ltr` and Persian `rtl`):
 
 ## 7. Common Edge Cases & Anti-Patterns
 
-| Anti-Pattern / Mistake                                          | Root Cause                                                               | Proper Solution                                                                                                                                    |
-| :-------------------------------------------------------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Using deprecated `requestLocale` in `getRequestConfig`**      | `requestLocale` is deprecated in `next-intl` in favor of `next/root-params`. | Use `import * as rootParams from 'next/root-params'` and `await rootParams.locale()`.                                                             |
-| **Using legacy `setRequestLocale()` boilerplate**               | `setRequestLocale()` is a legacy stopgap superseded by `next/root-params`. | With `next/root-params` in `i18n/request.ts` and `generateStaticParams()`, `setRequestLocale()` is no longer required.                             |
-| **Using `middleware.ts` in Next.js 16+**                        | In Next.js 16+, `middleware.ts` is replaced by `proxy.ts`.               | Create `proxy.ts` (or `src/proxy.ts`) with named export `export function proxy(...)` and default export.                                           |
-| **Using `proxy.ts` in Next.js <=15**                            | Next.js 15 and earlier versions do not recognize `proxy.ts`.             | Rename `proxy.ts` to `src/middleware.ts` (or `middleware.ts`).                                                                                    |
-| **Both `proxy.ts` and `middleware.ts` coexisting**              | Lingering legacy `middleware.ts` after migrating to Next.js 16+.         | Remove the redundant `middleware.ts` and keep only `proxy.ts`.                                                                                    |
-| **Hydration mismatch on `<html lang>` / `<html dir>`**          | Layout renders fixed `dir="ltr"` while server is rendering `rtl` locale. | Dynamically assign `dir={isRtl ? "rtl" : "ltr"}` from `params.locale` in `app/[locale]/layout.tsx`.                                                |
-| **Static rendering disabled / De-opt to SSR**                   | Missing `generateStaticParams()`.                                        | Add `generateStaticParams()` returning `[{ locale: 'en' }, { locale: 'fa' }]`.                                                                   |
-| **404 loop on static assets (favicon, images, robots.txt)**     | Interceptor matcher catches static files.                                | Ensure `matcher` in `proxy.ts`/`middleware.ts` excludes `.*\\..*`, `_next`, `_vercel`, and `/api`.                                                 |
-| **Typo in translation key going unnoticed**                     | Missing TypeScript type augmentation.                                    | Augment `AppConfig.Messages` in `global.d.ts` from `@/messages/en.json`.                                                                           |
-| **Broken navigation with raw `<a>` or unlocalized `next/link`** | Using standard `next/link` without locale prefix.                        | Import `Link` from `@/i18n/navigation` which automatically prepends the active locale.                                                             |
-| **Calling `useTranslations` in Server Component**               | Hooks cannot be called in async RSC.                                     | Use `const t = await getTranslations('namespace')` in Server Components.                                                                           |
+| Anti-Pattern / Mistake                                          | Root Cause                                                                   | Proper Solution                                                                                                        |
+| :-------------------------------------------------------------- | :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| **Using deprecated `requestLocale` in `getRequestConfig`**      | `requestLocale` is deprecated in `next-intl` in favor of `next/root-params`. | Use `import * as rootParams from 'next/root-params'` and `await rootParams.locale()`.                                  |
+| **Using legacy `setRequestLocale()` boilerplate**               | `setRequestLocale()` is a legacy stopgap superseded by `next/root-params`.   | With `next/root-params` in `i18n/request.ts` and `generateStaticParams()`, `setRequestLocale()` is no longer required. |
+| **Using `middleware.ts` in Next.js 16+**                        | In Next.js 16+, `middleware.ts` is replaced by `proxy.ts`.                   | Create `proxy.ts` (or `src/proxy.ts`) with named export `export function proxy(...)` and default export.               |
+| **Using `proxy.ts` in Next.js <=15**                            | Next.js 15 and earlier versions do not recognize `proxy.ts`.                 | Rename `proxy.ts` to `src/middleware.ts` (or `middleware.ts`).                                                         |
+| **Both `proxy.ts` and `middleware.ts` coexisting**              | Lingering legacy `middleware.ts` after migrating to Next.js 16+.             | Remove the redundant `middleware.ts` and keep only `proxy.ts`.                                                         |
+| **Hydration mismatch on `<html lang>` / `<html dir>`**          | Layout renders fixed `dir="ltr"` while server is rendering `rtl` locale.     | Dynamically assign `dir={isRtl ? "rtl" : "ltr"}` from `params.locale` in `app/[locale]/layout.tsx`.                    |
+| **Static rendering disabled / De-opt to SSR**                   | Missing `generateStaticParams()`.                                            | Add `generateStaticParams()` returning `[{ locale: 'en' }, { locale: 'fa' }]`.                                         |
+| **404 loop on static assets (favicon, images, robots.txt)**     | Interceptor matcher catches static files.                                    | Ensure `matcher` in `proxy.ts`/`middleware.ts` excludes `.*\\..*`, `_next`, `_vercel`, and `/api`.                     |
+| **Typo in translation key going unnoticed**                     | Missing TypeScript type augmentation.                                        | Augment `AppConfig.Messages` in `global.d.ts` from `@/messages/en.json`.                                               |
+| **Broken navigation with raw `<a>` or unlocalized `next/link`** | Using standard `next/link` without locale prefix.                            | Import `Link` from `@/i18n/navigation` which automatically prepends the active locale.                                 |
+| **Calling `useTranslations` in Server Component**               | Hooks cannot be called in async RSC.                                         | Use `const t = await getTranslations('namespace')` in Server Components.                                               |
 
 ---
 
-## 8. Verification & Sanity Check Execution
+## 8. Generate i18n Setup Execution Report
 
-Before declaring completion of i18n setup:
+Upon completing the setup and verification (`pnpm run build`, `pnpm run lint`), the agent MUST output a clear and concise execution report summarizing what was done, explicitly distinguishing between what was freshly implemented vs. what was already configured (and left untouched).
 
-1. **Execute Project Build / Type Check:**
-   ```bash
-   pnpm run build # or detected package manager
-   ```
-2. **Execute Linter:**
-   ```bash
-   pnpm run lint
-   ```
-3. **Output Execution Summary:**
-   Present the final status of all created/modified files, detected locales, directionality mapping, and navigation updates to the user.
+#### Standard Output Report Template
+
+```markdown
+## 🌐 Next.js i18n Setup Execution Report
+
+| Step / Component                   | Target File(s) / Resource                           | Status                          | Notes / Details                                                                         |
+| :--------------------------------- | :-------------------------------------------------- | :------------------------------ | :-------------------------------------------------------------------------------------- |
+| **1. Package Installation**        | `package.json` (`next-intl`)                        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Installed `next-intl` runtime.                                                          |
+| **2. Project Config & Metadata**   | `docs/project.json`                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `dictionaries_dir: "messages"` & `dictionary_file_pattern: "[locale].json"`. |
+| **3. Routing Configuration**       | `i18n/routing.ts` (or `src/i18n/routing.ts`)        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Defined locales (`en`, `fa`), default locale, and `localePrefix`.                       |
+| **4. Request Configuration**       | `i18n/request.ts` (or `src/i18n/request.ts`)        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `getRequestConfig` with `next/root-params` and `messages/` loader.           |
+| **5. Navigation Wrappers**         | `i18n/navigation.ts` (or `src/i18n/navigation.ts`)  | `[IMPLEMENTED]` / `[UNTOUCHED]` | Exported locale-aware `Link`, `redirect`, `usePathname`, `useRouter`.                   |
+| **6. Bundler Plugin**              | `next.config.ts`                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Wrapped Next.js config with `createNextIntlPlugin()`.                                   |
+| **7. Request Interceptor**         | `proxy.ts` (Next 16+) / `middleware.ts` (Next <=15) | `[IMPLEMENTED]` / `[UNTOUCHED]` | Intercepts requests, negotiates locale, matcher filters static assets.                  |
+| **8. Translation Dictionaries**    | `messages/[locale].json`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Created JSON dictionaries for each supported locale.                                    |
+| **9. Localized Layout & Routes**   | `app/[locale]/layout.tsx`, `app/[locale]/...`       | `[IMPLEMENTED]` / `[UNTOUCHED]` | Dynamic `dir` (LTR/RTL), `lang`, `generateStaticParams`, `NextIntlClientProvider`.      |
+| **10. Type Augmentation**          | `global.d.ts` (or `src/types/global.d.ts`)          | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `AppConfig.Messages` from `@/messages/en.json`.                              |
+| **11. Link & Component Migration** | Component tree (`Link`, `useTranslations`)          | `[IMPLEMENTED]` / `[UNTOUCHED]` | Updated internal links to `@/i18n/navigation` and added translation hooks.              |
+| **12. Verification & Build**       | `pnpm run build` / `pnpm run lint`                  | `[PASSED]`                      | Clean build and zero type/lint errors.                                                  |
+
+#### Status Definitions:
+
+- **`[IMPLEMENTED]`**: Freshly created, installed, or modified during this setup run.
+- **`[UNTOUCHED]`**: Already properly configured prior to running the skill; preserved as-is.
+- **`[SKIPPED]`**: Intentionally omitted (e.g. non-localized routes, optional tooling).
+```

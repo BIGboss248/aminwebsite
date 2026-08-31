@@ -43,7 +43,7 @@ export interface PathCheckResult {
 
 export interface DevAutomationCheckResult {
   name: string;
-  category: "git_hooks" | "commitlint" | "release_automation" | "testing" | "vscode" | "dev_tools";
+  category: "git_hooks" | "commitlint" | "release_automation" | "testing" | "dev_tools";
   status: "configured" | "missing" | "warning";
   details: string;
 }
@@ -315,65 +315,7 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
     });
   }
 
-  // 5. VS Code Launch Configuration Check (.vscode/launch.json)
-  const vscodeLaunchPath = path.resolve(rootDir, ".vscode/launch.json");
-  if (fs.existsSync(vscodeLaunchPath)) {
-    try {
-      const launchRaw = fs.readFileSync(vscodeLaunchPath, "utf-8");
-      const cleanedJson = launchRaw.replace(/(?<!:)\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
-      const launchConfig = JSON.parse(cleanedJson);
-      const configs = Array.isArray(launchConfig.configurations) ? launchConfig.configurations : [];
-
-      const hasVscodeBrowser = configs.some(
-        (c: Record<string, unknown>) =>
-          (c.serverReadyAction &&
-            typeof c.serverReadyAction === "object" &&
-            (c.serverReadyAction as Record<string, unknown>).command === "simpleBrowser.show") ||
-          (typeof c.name === "string" && (c.name.toLowerCase().includes("browser") || c.name.toLowerCase().includes("simple browser")))
-      );
-
-      const hasIncognitoChrome = configs.some(
-        (c: Record<string, unknown>) =>
-          (Array.isArray(c.runtimeArgs) && c.runtimeArgs.includes("--incognito")) ||
-          (typeof c.name === "string" && c.name.toLowerCase().includes("incognito"))
-      );
-
-      if (hasVscodeBrowser && hasIncognitoChrome) {
-        results.push({
-          name: "VS Code Launch Configurations",
-          category: "vscode",
-          status: "configured",
-          details: "Configured with VS Code Simple Browser and Chrome Incognito launch targets on port 3000.",
-        });
-      } else {
-        const missing: string[] = [];
-        if (!hasVscodeBrowser) missing.push("VS Code Browser (simpleBrowser.show)");
-        if (!hasIncognitoChrome) missing.push("Chrome Incognito (--incognito)");
-        results.push({
-          name: "VS Code Launch Configurations",
-          category: "vscode",
-          status: "warning",
-          details: `'.vscode/launch.json' exists, but missing launch option(s): ${missing.join(", ")}`,
-        });
-      }
-    } catch (e) {
-      results.push({
-        name: "VS Code Launch Configurations",
-        category: "vscode",
-        status: "warning",
-        details: `Failed to parse '.vscode/launch.json': ${(e as Error).message}`,
-      });
-    }
-  } else {
-    results.push({
-      name: "VS Code Launch Configurations",
-      category: "vscode",
-      status: "warning",
-      details: "Missing .vscode/launch.json. Run dev setup to configure VS Code Simple Browser and Chrome Incognito launch options.",
-    });
-  }
-
-  // 6. MCP Server Configuration Check (mcp.json / .vscode/mcp.json)
+  // 5. MCP Server Configuration Check (mcp.json / .vscode/mcp.json)
   const mcpCandidatePaths = [
     path.resolve(rootDir, "mcp.json"),
     path.resolve(rootDir, ".vscode/mcp.json"),

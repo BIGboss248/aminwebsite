@@ -211,6 +211,12 @@ Next.js provides built-in integration with Jest via the `next/jest` transformer,
      coverageProvider: "v8",
      testEnvironment: "jsdom",
      setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+     testPathIgnorePatterns: [
+       "<rootDir>/node_modules/",
+       "<rootDir>/.next/",
+       "<rootDir>/e2e/",
+       "<rootDir>/tests/",
+     ],
      moduleNameMapper: {
        "^@/(.*)$": "<rootDir>/$1",
      },
@@ -326,19 +332,19 @@ Playwright tests the complete running Next.js application across real browser en
 
 ---
 
-#### 5.3. Unified Test Scripts
+#### 5.3. Unified Test Scripts (Zero-Test Safe)
 
-Configure `package.json` scripts:
+Configure `package.json` scripts with flags so freshly created projects without test files will exit with code 0 instead of breaking git hooks or CI/CD pipelines:
 
 ```json
 {
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:e2e": "playwright test",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch --passWithNoTests",
+    "test:coverage": "jest --coverage --passWithNoTests",
+    "test:e2e": "playwright test --pass-with-no-tests",
     "test:e2e:ui": "playwright test --ui",
-    "test:all": "jest && playwright test"
+    "test:all": "jest --passWithNoTests && playwright test --pass-with-no-tests"
   }
 }
 ```

@@ -1,9 +1,9 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Next.js and Playwright MCP servers, or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json or mcp.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Next.js and Playwright MCP servers, or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", or when configuring/creating docs/project.json or mcp.json.
 metadata:
   author: BIGboss248
-  version: "1.5"
+  version: "1.7"
 ---
 
 # Next.js Development Setup & Project Configuration Skill (`nextjs-dev-setup`)
@@ -14,7 +14,7 @@ This skill establishes, validates, and initializes the Next.js development envir
 
 ## 1. Project Configuration Schema (`docs/project.json`)
 
-The `docs/project.json` file is the mandatory single source of truth for component creation, package manager, styling rules, animation engines, and internationalization across all agent skills (such as `nextjs-create-component`).
+The `docs/project.json` file is the mandatory single source of truth for component creation, package manager, styling rules, animation engines, testing suites, and internationalization across all agent skills (such as `nextjs-create-component`).
 
 ### Complete Properties Specification (`project_context_and_metadata`)
 
@@ -25,7 +25,7 @@ The `docs/project.json` file is the mandatory single source of truth for compone
 | `style_file_dir`      | `string`              | Relative path to the global CSS / theme stylesheet.                         | Auto-discovered from stylesheet path (e.g. `"app/globals.css"` or `"src/app/globals.css"`).         |
 | `component_library`   | `string`              | UI component library or design system adopted in the project.               | Discovered from `package.json` dependencies / `docs/` (e.g. `"shadcn/ui"`, `"radix-ui"`, `"none"`). |
 | `animation_library`   | `Array<string>`       | Motion and animation libraries used for complex animations.                 | Discovered from `package.json` / `docs/adr/` (e.g. `["gsap"]`, `["framer-motion"]`, `["none"]`).    |
-| `testing_library`     | `Array<string>`       | Testing frameworks and libraries configured in the project.                 | Discovered from `package.json` / config files (e.g. `["playwright", "@testing-library/react"]`).    |
+| `testing_library`     | `Array<string>`       | Testing frameworks and libraries configured in the project.                 | Discovered from `package.json` / config files (e.g. `["jest", "playwright", "@testing-library/react"]`). |
 | `supported_languages` | `Array<LocaleObject>` | List of supported locales with direction, currency, and calendar metadata.  | Discovered from `docs/adr/`, `docs/project-plan.md`, or `CONTEXT.md`.                               |
 
 #### Locale Object Schema (`supported_languages[...]`)
@@ -51,7 +51,12 @@ Each entry in the `supported_languages` array contains:
     "style_file_dir": "app/globals.css",
     "component_library": "shadcn/ui",
     "animation_library": ["gsap"],
-    "testing_library": ["playwright", "@testing-library/react"],
+    "testing_library": [
+      "jest",
+      "playwright",
+      "@testing-library/react",
+      "@testing-library/jest-dom"
+    ],
     "supported_languages": [
       {
         "language_code": "en",
@@ -89,7 +94,7 @@ Each entry in the `supported_languages` array contains:
    - Extract architectural choices:
      - **Languages & Directionality:** Check `docs/adr/0001-bilingual-i18n-and-directionality.md`, `docs/project-plan.md`, or `CONTEXT.md` for language list (e.g. `en` and `fa`, LTR and RTL).
      - **Animation & UI Stack:** Check `docs/adr/0002-local-mdx-and-gsap-interaction-stack.md` or `docs/project-plan.md` (e.g. GSAP, Tailwind CSS, shadcn/ui).
-     - **Testing Frameworks:** Check `package.json` dependencies / config files (e.g. `playwright.config.ts`, `@playwright/test`, `@testing-library/react`).
+     - **Testing Frameworks:** Check `package.json` dependencies / config files (e.g. `jest.config.ts`, `playwright.config.ts`, `jest`, `@playwright/test`, `@testing-library/react`).
 
 2. **Scan Package Manager (Automated Detection):**
    - Inspect `package.json` for `"packageManager"` field (e.g., `"packageManager": "pnpm@11.22.0"` -> `"pnpm"`).
@@ -110,7 +115,7 @@ Each entry in the `supported_languages` array contains:
    - Check `dependencies` and `devDependencies`:
      - Component libraries: `radix-ui`, `shadcn`, `@headlessui/react`, etc.
      - Animation libraries: `gsap`, `@gsap/react`, `framer-motion`, `motion`, `tailwind-animate` (stored as an array of strings in `animation_library`).
-     - Testing libraries: `@playwright/test`, `playwright`, `@testing-library/react`, `@testing-library/jest-dom`, `jest`, `vitest` (stored as an array of strings in `testing_library`).
+     - Testing libraries: `jest`, `jest-environment-jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@playwright/test`, `playwright` (stored as an array of strings in `testing_library`).
      - Git hooks & commit standards: `husky`, `@commitlint/cli`, `@commitlint/config-conventional`, `lint-staged`.
 
 ---
@@ -147,7 +152,7 @@ _(If all properties were successfully discovered during Step 1, proceed directly
    - Route transition progress: `@vercel/react-transition-progress`
    - Animation libraries: configured entries in `animation_library` (e.g. `["gsap", "@gsap/react"]`)
    - SEO / Structured data: `schema-dts`
-   - Testing libraries: configured entries in `testing_library` (e.g. `["playwright", "@testing-library/react"]`)
+   - Testing libraries: configured entries in `testing_library` (e.g. `["jest", "playwright", "@testing-library/react", "@testing-library/jest-dom"]`)
    - Git hook & commit tooling: `husky`, `@commitlint/cli`, `@commitlint/config-conventional`
 2. **Install Any Missing Required Packages:**
    - Run the detected package manager (e.g. `pnpm add ...` or `bun add ...`) for any missing dependencies.
@@ -156,33 +161,184 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 
 ---
 
-### Step 5: Setup Testing (Playwright E2E & Browser Automation)
+### Step 5: Setup Testing Suites (Jest Unit/Snapshot Testing & Playwright E2E Testing)
 
-1. **Initialize Playwright (Option 1 - Project Initialization):**
-   - Run the initialization command with the detected package manager (e.g., `pnpm`):
-     ```bash
-     pnpm create playwright
-     ```
-   - This sets up:
-     - `@playwright/test` dev dependency.
-     - `playwright.config.ts` configuration file.
-     - Target browser engines (**Chromium**, **Firefox**, and **WebKit**).
-     - Default test directories and sample end-to-end tests.
-     - Test execution scripts in `package.json` (e.g. `"test:e2e": "playwright test"`).
+> [!IMPORTANT]
+> **NO DUMMY / SAMPLE TEST GENERATION IN PROJECT:**
+> Do NOT create placeholder or dummy test files in the actual user project during setup. The test code examples provided below are strictly for agent reference and developer documentation. Only configure framework configuration files (`jest.config.ts`, `jest.setup.ts`, `playwright.config.ts`, and scripts).
 
-2. **Verify Playwright Browser Binaries & Execution:**
-   - Ensure all target browser binaries (Chromium, Firefox, WebKit) are ready:
-     ```bash
-     pnpm exec playwright install chromium firefox webkit
-     ```
-   - Verify the test runner:
-     ```bash
-     pnpm exec playwright test
-     ```
+#### 5.1. Jest Setup for Unit & Snapshot Testing (`next/jest`)
+
+Next.js provides built-in integration with Jest via the `next/jest` transformer, which automatically configures SWC transforms, mocks CSS modules and fonts, and loads `.env` variables.
+
+> [!NOTE]
+> **Async Server Components Limitation:** Because `async` React Server Components run in Node server environments, Jest (running in `jsdom`) currently does not execute `async` RSCs directly. Use Jest for synchronous Server/Client Components, hooks, and utilities; rely on Playwright E2E tests for `async` Server Components.
+
+1. **Install Jest & React Testing Library:**
+   Install the necessary dev dependencies using the detected package manager:
+
+   ```bash
+   # pnpm:
+   pnpm add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+
+   # npm:
+   npm install -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+
+   # yarn:
+   yarn add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+
+   # bun:
+   bun add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+   ```
+
+2. **Configure `jest.config.ts`:**
+   Create `jest.config.ts` at the project root using `next/jest`:
+
+   ```ts
+   import type { Config } from 'jest'
+   import nextJest from 'next/jest.js'
+
+   const createJestConfig = nextJest({
+     // Provide the path to your Next.js app to load next.config.js and .env files
+     dir: './',
+   })
+
+   const config: Config = {
+     coverageProvider: 'v8',
+     testEnvironment: 'jsdom',
+     setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+     moduleNameMapper: {
+       '^@/(.*)$': '<rootDir>/$1',
+     },
+   }
+
+   // Export createJestConfig to ensure next/jest loads async Next.js config
+   export default createJestConfig(config)
+   ```
+
+3. **Configure `jest.setup.ts`:**
+   Create `jest.setup.ts` to extend Jest with `@testing-library/jest-dom` custom matchers:
+
+   ```ts
+   import '@testing-library/jest-dom'
+   ```
+
+4. **Reference Implementation Example (For Future Test Creation):**
+
+   ```tsx
+   // Reference: Unit and snapshot test pattern (Do NOT generate this file during dev setup)
+   import '@testing-library/jest-dom'
+   import { render, screen } from '@testing-library/react'
+   import Page from '../app/page'
+
+   describe('Page Component', () => {
+     it('renders heading correctly', () => {
+       render(<Page />)
+       const heading = screen.getByRole('heading', { level: 1 })
+       expect(heading).toBeInTheDocument()
+     })
+
+     it('matches snapshot', () => {
+       const { container } = render(<Page />)
+       expect(container).toMatchSnapshot()
+     })
+   })
+   ```
 
 ---
 
-### Step 6: Setup Git Hooks with Husky & Commitlint (Commit Linting & Pre-Push Tests)
+#### 5.2. Playwright Setup for End-to-End (E2E) Testing
+
+Playwright tests the complete running Next.js application across real browser engines (**Chromium**, **Firefox**, and **WebKit**), verifying routing, auth flows, and `async` Server Components.
+
+1. **Install Playwright Dependency:**
+
+   ```bash
+   pnpm add -D @playwright/test
+   ```
+
+2. **Configure `playwright.config.ts`:**
+   Configure `playwright.config.ts` with `baseURL` and `webServer`:
+
+   ```ts
+   import { defineConfig, devices } from '@playwright/test'
+
+   const PORT = process.env.PORT || 3000
+   const BASE_URL = `http://localhost:${PORT}`
+
+   export default defineConfig({
+     testDir: './tests',
+     fullyParallel: true,
+     forbidOnly: !!process.env.CI,
+     retries: process.env.CI ? 2 : 0,
+     workers: process.env.CI ? 1 : undefined,
+     reporter: 'html',
+     use: {
+       baseURL: BASE_URL,
+       trace: 'on-first-retry',
+     },
+     projects: [
+       {
+         name: 'chromium',
+         use: { ...devices['Desktop Chrome'] },
+       },
+       {
+         name: 'firefox',
+         use: { ...devices['Desktop Firefox'] },
+       },
+       {
+         name: 'webkit',
+         use: { ...devices['Desktop Safari'] },
+       },
+     ],
+     webServer: {
+       command: process.env.CI ? 'npm run build && npm run start' : 'npm run dev',
+       url: BASE_URL,
+       timeout: 120 * 1000,
+       reuseExistingServer: !process.env.CI,
+     },
+   })
+   ```
+
+3. **Install Target Browser Binaries:**
+   ```bash
+   pnpm exec playwright install --with-deps chromium firefox webkit
+   ```
+
+4. **Reference Implementation Example (For Future Test Creation):**
+
+   ```ts
+   // Reference: Playwright E2E navigation test pattern (Do NOT generate this file during dev setup)
+   import { test, expect } from '@playwright/test'
+
+   test('should navigate across pages', async ({ page }) => {
+     await page.goto('/')
+     await expect(page.locator('h1')).toBeVisible()
+   })
+   ```
+
+---
+
+#### 5.3. Unified Test Scripts
+
+Configure `package.json` scripts:
+
+```json
+{
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "jest && playwright test"
+  }
+}
+```
+
+---
+
+### Step 6: Setup Git Hooks with Husky & Commitlint (Dual-Suite Pre-Push Enforcement)
 
 1. **Install Husky & Commitlint:**
    - Install `husky`, `@commitlint/cli`, and `@commitlint/config-conventional` as dev dependencies using the detected package manager:
@@ -211,13 +367,12 @@ _(If all properties were successfully discovered during Step 1, proceed directly
      ```
      _(Note: ensure `$1` is passed so commitlint checks the temporary commit message file)._
 
-5. **Configure `pre-push` Hook to Run Tests:**
-   - Create or update `.husky/pre-push` to run the project tests prior to pushing code to git remotes:
+5. **Configure `pre-push` Hook to Run Both Jest & Playwright Tests:**
+   - Create or update `.husky/pre-push` to run both the Jest unit suite and the Playwright E2E suite before pushing code:
      ```bash
-     echo "pnpm test" > .husky/pre-push
+     echo "pnpm run test:all" > .husky/pre-push
      ```
-     _(or specify the exact test script such as `pnpm test` / `pnpm exec playwright test`)_
-   - Ensure the hook is configured to block pushes if any test fails.
+   - Ensure the hook is configured to block git pushes if any unit or E2E test fails.
 
 6. **Verify Commitlint & Hook Functionality:**
    - Test that commitlint rejects non-conforming messages and accepts valid conventional messages:
@@ -232,55 +387,99 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 
 ---
 
-### Step 7: Setup Automatic Semantic Versioning & Changelog (Release Please)
+### Step 7: Setup Credit-Optimized CI/CD & Release Automation (Release Please & Tests)
 
-Release Please automatically tracks Conventional Commits, opens/updates a candidate Release PR with bumped versions and changelogs, and creates GitHub Releases with Git tags upon merge.
+To minimize GitHub Actions minutes and consume as few billing credits as possible while ensuring robust release gating:
 
-1. **Create the GitHub Actions Workflow (`.github/workflows/release-please.yml`):**
-   - Ensure the `.github/workflows/` directory exists and create `release-please.yml`:
+1. **GitHub Credit-Saving Design Patterns:**
+   - **`concurrency.cancel-in-progress: true`**: Automatically cancels redundant in-flight builds when a new commit is pushed to the same branch, preventing wasted runner minutes.
+   - **Fail-Fast Testing Hierarchy**: Runs lightweight, in-memory **Jest unit tests first**. If unit tests fail, the job terminates immediately before spending time or runner resources installing browsers and running Playwright.
+   - **Playwright Binary Caching**: Caches `~/.cache/ms-playwright` using `actions/cache` keyed against lockfile hashes, eliminating repeated multi-hundred-megabyte browser downloads on every run.
+   - **CI Single Browser Targeting / Sequential Execution**: Runs Playwright efficiently against built production output (`npm run build && npm run start`).
 
-     ```yaml
-     name: Release Please
+2. **Create the Credit-Optimized GitHub Actions Workflow (`.github/workflows/release-please.yml`):**
 
-     on:
-       push:
-         branches:
-           - main
+   ```yaml
+   name: Release Please & CI Validation
 
-     permissions:
-       contents: write
-       pull-requests: write
+   on:
+     push:
+       branches:
+         - main
+     pull_request:
+       branches:
+         - main
 
-     jobs:
-       release-please:
-         runs-on: ubuntu-latest
-         outputs:
-           release_created: ${{ steps.release.outputs.release_created }}
-           tag_name: ${{ steps.release.outputs.tag_name }}
-           version: ${{ steps.release.outputs.version }}
-         steps:
-           - uses: googleapis/release-please-action@v4
-             id: release
-             with:
-               release-type: node
-     ```
+   concurrency:
+     group: ${{ github.workflow }}-${{ github.ref }}
+     cancel-in-progress: true
 
-   > [!NOTE]
-   > In `googleapis/release-please-action@v4`, `package-name` is no longer a valid input parameter (the action automatically infers package metadata from root `package.json`).
+   permissions:
+     contents: write
+     pull-requests: write
 
-2. **Required GitHub Repository Access Permissions:**
+   jobs:
+     test:
+       name: Test Suite (Jest & Playwright)
+       runs-on: ubuntu-latest
+       steps:
+         - name: Checkout Repository
+           uses: actions/checkout@v4
+
+         - name: Setup Node.js
+           uses: actions/setup-node@v4
+           with:
+             node-version: 20
+             cache: "pnpm"
+
+         - name: Install Dependencies
+           run: pnpm install --frozen-lockfile
+
+         # 1. Fast fail-early unit & snapshot test execution (takes seconds, saves runner time)
+         - name: Run Jest Unit Tests
+           run: pnpm test
+
+         # 2. Cache Playwright browser binaries to eliminate recurring download time
+         - name: Cache Playwright Browsers
+           uses: actions/cache@v4
+           id: playwright-cache
+           with:
+             path: ~/.cache/ms-playwright
+             key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+         - name: Install Playwright Browsers & OS Dependencies
+           if: steps.playwright-cache.outputs.cache-hit != 'true'
+           run: pnpm exec playwright install --with-deps
+
+         # 3. Execute End-to-End browser tests against built app
+         - name: Run Playwright E2E Tests
+           run: pnpm test:e2e
+
+     release-please:
+       name: Release Please Automation
+       needs: test
+       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+       runs-on: ubuntu-latest
+       outputs:
+         release_created: ${{ steps.release.outputs.release_created }}
+         tag_name: ${{ steps.release.outputs.tag_name }}
+         version: ${{ steps.release.outputs.version }}
+       steps:
+         - uses: googleapis/release-please-action@v4
+           id: release
+           with:
+             release-type: node
+   ```
+
+3. **Required GitHub Repository Access Permissions:**
 
    > [!IMPORTANT]
-   > For Release Please to open and maintain Release Pull Requests, GitHub repository permissions must be configured:
-   >
+   > For Release Please to open and maintain Release Pull Requests:
    > 1. Go to repository **Settings** → **Actions** → **General**.
    > 2. Under **Workflow permissions**:
    >    - Select **"Read and write permissions"**.
-   >    - Check **"Allow GitHub Actions to create and approve pull requests"** (required for `GITHUB_TOKEN` to create PRs).
+   >    - Check **"Allow GitHub Actions to create and approve pull requests"**.
    > 3. Click **Save**.
-
-3. **Chaining Docker Builds & Deployments (Optional / Production):**
-   - When deploying via Docker, downstream jobs consume `needs.release-please.outputs.release_created == 'true'` to build and push tagged Docker images (e.g. `:v1.2.0` and `:latest`) only when a release is actually cut.
 
 4. **Verify Documentation:**
    - Reference `docs/release-automation.md` for team workflow conventions, commit message types, and Release PR management.
@@ -330,6 +529,7 @@ Model Context Protocol (MCP) servers equip AI coding agents with direct runtime 
    - Verify valid JSON structure.
    - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`) are present and non-empty.
    - Validate each locale object in `supported_languages` array.
+   - Verify presence and configuration of testing suites (Jest and Playwright).
    - Audit `mcp.json` / `.vscode/mcp.json` for `next-devtools` and `playwright` MCP servers.
 3. If the script reports any errors, fix the configuration in `docs/project.json` or `mcp.json` and re-run until all checks pass.
 
@@ -348,12 +548,13 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 | :------------------------------ | :------------------------------------- | :------------------------------ | :------------------------------------------------------------------- |
 | **1. Project Metadata**         | `docs/project.json`                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.  |
 | **2. Core Dependencies**        | `package.json`, Lockfile               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.              |
-| **3. Playwright E2E Testing**   | `playwright.config.ts`, `tests/`       | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit). |
-| **4. Husky Git Hooks**          | `.husky/commit-msg`, `.husky/pre-push` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces pre-push test suite and conventional commit validation.     |
-| **5. Commitlint Config**        | `commitlint.config.mjs`                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                        |
-| **6. Release Automation**       | `.github/workflows/release-please.yml` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Automated semver releases, tags, and changelog generation.           |
-| **7. MCP Server Integration**   | `mcp.json` / `.vscode/mcp.json`        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP.  |
-| **8. Environment Verification** | `scripts/verify-project-config.ts`     | `[PASSED]`                      | Sanity check passed with zero errors.                                |
+| **3. Jest Unit Testing**        | `jest.config.ts`, `jest.setup.ts`      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.   |
+| **4. Playwright E2E Testing**   | `playwright.config.ts`                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit). |
+| **5. Husky Git Hooks**          | `.husky/commit-msg`, `.husky/pre-push` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.  |
+| **6. Commitlint Config**        | `commitlint.config.mjs`                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                        |
+| **7. Release Automation**       | `.github/workflows/release-please.yml` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Credit-optimized CI/CD with test gating and semver release PRs.      |
+| **8. MCP Server Integration**   | `mcp.json` / `.vscode/mcp.json`        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP.  |
+| **9. Environment Verification** | `scripts/verify-project-config.ts`     | `[PASSED]`                      | Sanity check passed with zero errors.                                |
 
 #### Status Definitions:
 

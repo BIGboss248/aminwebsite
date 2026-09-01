@@ -289,7 +289,37 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
     });
   }
 
-  // 4. Testing Framework Check (Playwright)
+  // 4. Testing Framework Checks (Jest & Playwright)
+  const jestConfigs = [
+    "jest.config.ts",
+    "jest.config.js",
+    "jest.config.mjs",
+    "jest.config.cjs",
+  ];
+  const foundJestConfig = jestConfigs.find((cfg) =>
+    fs.existsSync(path.resolve(rootDir, cfg))
+  );
+  const hasJestSetup =
+    fs.existsSync(path.resolve(rootDir, "jest.setup.ts")) ||
+    fs.existsSync(path.resolve(rootDir, "jest.setup.js")) ||
+    fs.existsSync(path.resolve(rootDir, "jest.setup.mjs"));
+
+  if (foundJestConfig) {
+    results.push({
+      name: "Jest Test Runner",
+      category: "testing",
+      status: "configured",
+      details: `Found '${foundJestConfig}' (setup: ${hasJestSetup ? "configured" : "none"}) for Unit & Snapshot testing.`,
+    });
+  } else {
+    results.push({
+      name: "Jest Test Runner",
+      category: "testing",
+      status: "warning",
+      details: "Missing jest.config.ts / jest.setup.ts for unit and component snapshot testing.",
+    });
+  }
+
   const playwrightConfigs = [
     "playwright.config.ts",
     "playwright.config.js",

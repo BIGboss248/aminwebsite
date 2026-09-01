@@ -1,5 +1,24 @@
 {
-  "HomePage": {
-    "title": "Hello world!"
+  "common": {
+    "brand": "Amin Jamali",
+    "switch_language": "Language",
+    "theme_toggle": "Toggle Theme"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "lab": "Lab",
+    "contact": "Contact"
+  },
+  "home": {
+    "hero_title": "To get started, edit the <file>page.tsx</file> file.",
+    "hero_description": "Looking for a starting point or more instructions? Head over to <templates>Templates</templates> or the <learning>Learning</learning> center.",
+    "cta_deploy": "Deploy Now",
+    "cta_docs": "Documentation"
+  },
+  "metadata": {
+    "title": "Amin Jamali | Full-Stack Engineer & Architect",
+    "description": "Personal portfolio, interactive engineering lab, and digital credentials platform of Amin Jamali."
   }
 }

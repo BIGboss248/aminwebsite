@@ -1,0 +1,24 @@
+{
+  "common": {
+    "brand": "امین جمالی",
+    "switch_language": "زبان",
+    "theme_toggle": "تغییر پوسته"
+  },
+  "navigation": {
+    "home": "خانه",
+    "about": "درباره من",
+    "projects": "پروژه‌ها",
+    "lab": "آزمایشگاه",
+    "contact": "تماس"
+  },
+  "home": {
+    "hero_title": "برای شروع، فایل <file>page.tsx</file> را ویرایش کنید.",
+    "hero_description": "به دنبال نقطه شروع یا راهنمای بیشتری هستید؟ به بخش <templates>قالب‌ها</templates> یا مرکز <learning>آموزش</learning> مراجعه کنید.",
+    "cta_deploy": "استقرار آنی",
+    "cta_docs": "مستندات"
+  },
+  "metadata": {
+    "title": "امین جمالی | مهندس ارشد فول‌استک و معمار سیستم",
+    "description": "پورتفولیو شخصی، آزمایشگاه تعاملی مهندسی و بستر مدارک دیجیتال امین جمالی."
+  }
+}

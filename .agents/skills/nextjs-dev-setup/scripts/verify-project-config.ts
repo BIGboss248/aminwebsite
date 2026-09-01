@@ -409,6 +409,37 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
     });
   }
 
+  // 6. Docker Containerization Check (Dockerfile, compose.yaml, .dockerignore)
+  const dockerfilePath = path.resolve(rootDir, "Dockerfile");
+  const composePath = fs.existsSync(path.resolve(rootDir, "compose.yaml"))
+    ? path.resolve(rootDir, "compose.yaml")
+    : path.resolve(rootDir, "docker-compose.yml");
+  const dockerignorePath = path.resolve(rootDir, ".dockerignore");
+
+  const hasDockerfile = fs.existsSync(dockerfilePath);
+  const hasCompose = fs.existsSync(composePath);
+  const hasDockerignore = fs.existsSync(dockerignorePath);
+
+  if (hasDockerfile && hasCompose && hasDockerignore) {
+    results.push({
+      name: "Docker Containerization",
+      category: "dev_tools",
+      status: "configured",
+      details: "Configured multi-stage production standalone Dockerfile, compose.yaml, and .dockerignore.",
+    });
+  } else {
+    const missing: string[] = [];
+    if (!hasDockerfile) missing.push("Dockerfile");
+    if (!hasCompose) missing.push("compose.yaml");
+    if (!hasDockerignore) missing.push(".dockerignore");
+    results.push({
+      name: "Docker Containerization",
+      category: "dev_tools",
+      status: "warning",
+      details: `Docker containerization files missing: ${missing.join(", ")}`,
+    });
+  }
+
   return results;
 }
 

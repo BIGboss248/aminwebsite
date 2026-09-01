@@ -576,3 +576,7 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 - **`[UNTOUCHED]`**: Already properly configured prior to running the skill; preserved as-is.
 - **`[SKIPPED]`**: Intentionally omitted (e.g. optional tooling or user preference).
 ```
+
+#### git commit
+
+Gourp files and generate a commit message summarizing the changes made during the setup process. Don't commit anything output the commit commands and leave commiting to the user.

@@ -5,7 +5,12 @@
     "style_file_dir": "app/globals.css",
     "component_library": "shadcn/ui",
     "animation_library": ["gsap", "@gsap/react", "motion"],
-    "testing_library": ["playwright", "@playwright/test"],
+    "testing_library": [
+      "jest",
+      "playwright",
+      "@testing-library/react",
+      "@testing-library/jest-dom"
+    ],
     "supported_languages": [
       {
         "language_code": "en",
@@ -24,7 +29,7 @@
         "calendar_type": "persian"
       }
     ],
-    "dictionaries_dir": "app/dictionaries",
+    "dictionaries_dir": "messages",
     "dictionary_file_pattern": "[locale].json"
   }
 }

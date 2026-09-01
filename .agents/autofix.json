@@ -10,6 +10,23 @@
     "Category": "PROCESS",
     "Instruction": "Always invoke and scan '.agents/skills/self-repair' and load '.agents/autofix.json' at session start and before executing any task - ensure active learned rules and constraints are always enforced.",
     "Why": "user explicit instruction to invoke self-repair every time"
+  },
+  {
+    "Rule_number": 3,
+    "Category": "PROCESS",
+    "Instruction": "In dev setup skills and automation workflows, never create dummy or sample test files in the project workspace; provide sample test code strictly as reference snippets in documentation and skills.",
+    "Why": "user preference: keep project clean of dummy/sample test files during initial setup"
+  },
+  {
+    "Rule_number": 4,
+    "Category": "ARCH",
+    "Instruction": "Configure git pre-push hooks to execute both Jest unit tests and Playwright E2E tests (e.g., 'pnpm run test:all') to guarantee full test suite validation before pushing code.",
+    "Why": "user requirement: verify both unit and E2E test suites before git push"
+  },
+  {
+    "Rule_number": 5,
+    "Category": "ARCH",
+    "Instruction": "In Next.js i18n configuration, the translation dictionaries directory is 'messages' at the project root (e.g. 'messages/en.json', 'messages/fa.json'), not 'app/dictionaries'.",
+    "Why": "user explicit correction: next-intl standard root messages directory convention"
   }
 ]
-

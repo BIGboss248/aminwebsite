@@ -28,5 +28,17 @@
     "Category": "ARCH",
     "Instruction": "In Next.js i18n configuration, the translation dictionaries directory is 'messages' at the project root (e.g. 'messages/en.json', 'messages/fa.json'), not 'app/dictionaries'.",
     "Why": "user explicit correction: next-intl standard root messages directory convention"
+  },
+  {
+    "Rule_number": 6,
+    "Category": "ARCH",
+    "Instruction": "Do not configure or generate Docker development environments (no Dockerfile.dev or dev compose watch service) - configure Docker strictly for standalone production builds (Dockerfile, docker-compose.yml for production standalone, .dockerignore, and next.config standalone output).",
+    "Why": "user explicit preference: user runs dev server locally without docker and only wants Docker for production containerization"
+  },
+  {
+    "Rule_number": 7,
+    "Category": "ARCH",
+    "Instruction": "In Docker containerization setup, always name the Docker Compose configuration file 'docker-compose.yml' (not 'compose.yaml').",
+    "Why": "user explicit preference: standard docker-compose.yml naming convention"
   }
 ]

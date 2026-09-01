@@ -54,9 +54,9 @@ Every commit message merged into `main` must adhere to the Conventional Commits 
 
 ---
 
-## 4. Docker Deployment Integration
+## 4. Multi-Architecture GitHub Container Registry (GHCR) Deployment
 
-In containerized deployments, Docker images are built and published **only when an official release is created**:
+In containerized deployments, production Docker images are built concurrently for **AMD64 (`linux/amd64`)** and **ARM64 (`linux/arm64`)** across separate dedicated runner machines and merged into a unified multi-arch package on **GitHub Container Registry (`ghcr.io`)** automatically when an official release is created:
 
 ```yaml
 jobs:
@@ -65,23 +65,95 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: node
 
-  docker-build-and-deploy:
-    needs: release-please
+  build-container:
+    name: Build Container Image (${{ matrix.platform }})
+    needs: [test, release-please]
     if: needs.release-please.outputs.release_created == 'true'
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            platform: linux/amd64
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
-      - name: Build & Push Docker image
-        # Images are tagged with the semantic version tag (e.g. :1.2.0) and :latest
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+      - uses: docker/build-push-action@v6
+        id: build
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
+      - name: Export digest
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:${{ needs.release-please.outputs.tag_name }} .
-          docker push ghcr.io/${{ github.repository }}:${{ needs.release-please.outputs.tag_name }}
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.arch }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge-manifest:
+    name: Create & Push Multi-Arch Manifest (AMD64 + ARM64)
+    needs: [release-please, build-container]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digests-*
+          merge-multiple: true
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=${{ needs.release-please.outputs.version }}
+            type=raw,value=v${{ needs.release-please.outputs.version }}
+            type=raw,value=latest
+      - name: Create manifest list and push
+        working-directory: /tmp/digests
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf 'ghcr.io/${{ github.repository }}@sha256:%s ' *)
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ github.repository }}:${{ needs.release-please.outputs.version }}
 ```
 
 ---
@@ -89,7 +161,7 @@ jobs:
 ## 5. Required GitHub Repository Access Permissions
 
 > [!IMPORTANT]
-> To allow Release Please to open and update the automated Release Pull Request, GitHub Actions permissions must be enabled on the repository:
+> To allow Release Please to manage Release Pull Requests and deploy container images to GitHub Packages:
 >
 > 1. Navigate to **Settings** → **Actions** → **General** in your repository.
 > 2. Under **Workflow permissions**:

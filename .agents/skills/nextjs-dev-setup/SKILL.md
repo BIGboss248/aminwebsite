@@ -1,9 +1,9 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, docker-compose.yml, and .dockerignore), or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", or when configuring/creating docs/project.json or mcp.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, docker-compose.yml, and .dockerignore), setup git hooks and commitlint, or configure Release Please automation with multi-arch (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployment. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", "deploy package on release", or when configuring/creating docs/project.json or mcp.json.
 metadata:
   author: BIGboss248
-  version: "1.8"
+  version: "2.0"
 ---
 
 # Next.js Development Setup & Project Configuration Skill (`nextjs-dev-setup`)
@@ -400,9 +400,9 @@ Configure `package.json` scripts with flags so freshly created projects without 
 
 ---
 
-### Step 7: Setup Credit-Optimized CI/CD & Release Automation (Release Please & Tests)
+### Step 7: Setup Credit-Optimized CI/CD, Release Automation & Multi-Arch GHCR Container Packaging
 
-To minimize GitHub Actions minutes and consume as few billing credits as possible while ensuring robust release gating:
+To minimize GitHub Actions minutes, consume as few billing credits as possible, and automate both semantic releases and multi-platform (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployments:
 
 1. **GitHub Credit-Saving Design Patterns:**
    - **`concurrency.cancel-in-progress: true`**: Automatically cancels redundant in-flight builds when a new commit is pushed to the same branch, preventing wasted runner minutes.
@@ -410,6 +410,7 @@ To minimize GitHub Actions minutes and consume as few billing credits as possibl
    - **Playwright Binary Caching**: Caches `~/.cache/ms-playwright` using `actions/cache` keyed against lockfile hashes, eliminating repeated multi-hundred-megabyte browser downloads on every run.
    - **CI Single Browser Targeting / Sequential Execution**: Runs Playwright efficiently against built production output (`[pm] run build && [pm] run start` or `test:e2e`).
    - **Node.js Active LTS Runtime**: Uses `node-version: 22` to avoid runner deprecation warnings.
+   - **Two-Stage Multi-Arch Matrix Builder**: Builds `linux/amd64` and `linux/arm64` images concurrently across separate dedicated runner machines (`ubuntu-latest` and `ubuntu-24.04-arm`). Each machine pushes its architecture image by digest and caches layers scoped to its architecture (`scope=${{ matrix.arch }}`). A lightweight `merge-manifest` job stitches the digests into a unified multi-arch manifest list without rebuilding.
 
 2. **Generate Package-Manager-Specific GitHub Actions Workflow (`.github/workflows/release-please.yml`):**
 
@@ -419,6 +420,7 @@ To minimize GitHub Actions minutes and consume as few billing credits as possibl
 
    > [!IMPORTANT]
    > When using `actions/setup-node@v4` with `cache: "pnpm"`, `pnpm` MUST be installed before `setup-node` (via `pnpm/action-setup@v4`) so that `setup-node` can locate the `pnpm` executable to configure the global store cache path.
+   > The workflow includes `packages: write` permissions, matrix build jobs on distinct runners for AMD64 and ARM64, and a downstream `merge-manifest` job that deploys the multi-arch package to GitHub Container Registry (`ghcr.io`).
 
    ```yaml
    name: Release Please & CI Validation
@@ -438,6 +440,7 @@ To minimize GitHub Actions minutes and consume as few billing credits as possibl
    permissions:
      contents: write
      pull-requests: write
+     packages: write # Grants permissions to publish container images to GitHub Container Registry (ghcr.io)
 
    jobs:
      test:
@@ -495,12 +498,117 @@ To minimize GitHub Actions minutes and consume as few billing credits as possibl
            id: release
            with:
              release-type: node
+
+     # Parallel Matrix Builder: builds AMD64 and ARM64 images concurrently on separate runner machines
+     build-container:
+       name: Build Container Image (${{ matrix.platform }})
+       needs: [test, release-please]
+       if: needs.release-please.outputs.release_created == 'true'
+       strategy:
+         fail-fast: false
+         matrix:
+           include:
+             - runner: ubuntu-latest
+               platform: linux/amd64
+               arch: amd64
+             - runner: ubuntu-24.04-arm
+               platform: linux/arm64
+               arch: arm64
+       runs-on: ${{ matrix.runner }}
+       steps:
+         - name: Checkout Repository
+           uses: actions/checkout@v4
+
+         - name: Set up Docker Buildx
+           uses: docker/setup-buildx-action@v3
+
+         - name: Log in to GitHub Container Registry
+           uses: docker/login-action@v3
+           with:
+             registry: ghcr.io
+             username: ${{ github.actor }}
+             password: ${{ secrets.GITHUB_TOKEN }}
+
+         - name: Extract Docker metadata (labels)
+           id: meta
+           uses: docker/metadata-action@v5
+           with:
+             images: ghcr.io/${{ github.repository }}
+
+         - name: Build and push by digest
+           id: build
+           uses: docker/build-push-action@v6
+           with:
+             context: .
+             file: ./Dockerfile
+             platforms: ${{ matrix.platform }}
+             labels: ${{ steps.meta.outputs.labels }}
+             outputs: type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,name-canonical=true,push=true
+             cache-from: type=gha,scope=${{ matrix.arch }}
+             cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
+
+         - name: Export digest
+           run: |
+             mkdir -p /tmp/digests
+             digest="${{ steps.build.outputs.digest }}"
+             touch "/tmp/digests/${digest#sha256:}"
+
+         - name: Upload digest
+           uses: actions/upload-artifact@v4
+           with:
+             name: digests-${{ matrix.arch }}
+             path: /tmp/digests/*
+             if-no-files-found: error
+             retention-days: 1
+
+     # Manifest Merger: stitches AMD64 and ARM64 architecture digests into a unified multi-arch release tag
+     merge-manifest:
+       name: Create & Push Multi-Arch Manifest (AMD64 + ARM64)
+       needs: [release-please, build-container]
+       runs-on: ubuntu-latest
+       steps:
+         - name: Download digests
+           uses: actions/download-artifact@v4
+           with:
+             path: /tmp/digests
+             pattern: digests-*
+             merge-multiple: true
+
+         - name: Set up Docker Buildx
+           uses: docker/setup-buildx-action@v3
+
+         - name: Log in to GitHub Container Registry
+           uses: docker/login-action@v3
+           with:
+             registry: ghcr.io
+             username: ${{ github.actor }}
+             password: ${{ secrets.GITHUB_TOKEN }}
+
+         - name: Extract Docker metadata (tags, labels)
+           id: meta
+           uses: docker/metadata-action@v5
+           with:
+             images: ghcr.io/${{ github.repository }}
+             tags: |
+               type=raw,value=${{ needs.release-please.outputs.version }}
+               type=raw,value=v${{ needs.release-please.outputs.version }}
+               type=raw,value=latest
+
+         - name: Create manifest list and push
+           working-directory: /tmp/digests
+           run: |
+             docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+               $(printf 'ghcr.io/${{ github.repository }}@sha256:%s ' *)
+
+         - name: Inspect image
+           run: |
+             docker buildx imagetools inspect ghcr.io/${{ github.repository }}:${{ needs.release-please.outputs.version }}
    ```
 
 3. **Required GitHub Repository Access Permissions:**
 
    > [!IMPORTANT]
-   > For Release Please to open and maintain Release Pull Requests:
+   > For Release Please to open and maintain Release Pull Requests and publish GHCR container images:
    >
    > 1. Go to repository **Settings** → **Actions** → **General**.
    > 2. Under **Workflow permissions**:
@@ -509,7 +617,7 @@ To minimize GitHub Actions minutes and consume as few billing credits as possibl
    > 3. Click **Save**.
 
 4. **Verify Documentation:**
-   - Reference `docs/release-automation.md` for team workflow conventions, commit message types, and Release PR management.
+   - Reference `docs/release-automation.md` for team workflow conventions, commit message types, Release PR management, and multi-arch GitHub Packages deployment.
 
 ---
 
@@ -781,18 +889,18 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 ```markdown
 ## 🛠️ Next.js Dev Setup Execution Report
 
-| Step / Component                 | Target File(s) / Resource                           | Status                          | Notes / Details                                                      |
-| :------------------------------- | :-------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------- |
-| **1. Project Metadata**          | `docs/project.json`                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.  |
-| **2. Core Dependencies**         | `package.json`, Lockfile                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.              |
-| **3. Jest Unit Testing**         | `jest.config.ts`, `jest.setup.ts`                   | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.   |
-| **4. Playwright E2E Testing**    | `playwright.config.ts`                              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit). |
-| **5. Husky Git Hooks**           | `.husky/commit-msg`, `.husky/pre-push`              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.  |
-| **6. Commitlint Config**         | `commitlint.config.mjs`                             | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                        |
-| **7. Release Automation**        | `.github/workflows/release-please.yml`              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Credit-optimized CI/CD with test gating and semver release PRs.      |
-| **8. MCP Server Integration**    | `mcp.json` / `.vscode/mcp.json`                     | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP.  |
-| **9. Docker Containerization**   | `Dockerfile`, `docker-compose.yml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & docker-compose.yml.    |
-| **10. Environment Verification** | `scripts/verify-project-config.ts`                  | `[PASSED]`                      | Sanity check passed with zero errors.                                |
+| Step / Component                 | Target File(s) / Resource                           | Status                          | Notes / Details                                                                |
+| :------------------------------- | :-------------------------------------------------- | :------------------------------ | :----------------------------------------------------------------------------- |
+| **1. Project Metadata**          | `docs/project.json`                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.            |
+| **2. Core Dependencies**         | `package.json`, Lockfile                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                        |
+| **3. Jest Unit Testing**         | `jest.config.ts`, `jest.setup.ts`                   | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.             |
+| **4. Playwright E2E Testing**    | `playwright.config.ts`                              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit).           |
+| **5. Husky Git Hooks**           | `.husky/commit-msg`, `.husky/pre-push`              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.            |
+| **6. Commitlint Config**         | `commitlint.config.mjs`                             | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                  |
+| **7. Release & GHCR Packaging**  | `.github/workflows/release-please.yml`              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Credit-optimized CI/CD, SemVer release PRs, and GHCR container package deploy. |
+| **8. MCP Server Integration**    | `mcp.json` / `.vscode/mcp.json`                     | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP.            |
+| **9. Docker Containerization**   | `Dockerfile`, `docker-compose.yml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & docker-compose.yml.              |
+| **10. Environment Verification** | `scripts/verify-project-config.ts`                  | `[PASSED]`                      | Sanity check passed with zero errors.                                          |
 
 #### Status Definitions:
 

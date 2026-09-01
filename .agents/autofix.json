@@ -1,0 +1,15 @@
+[
+  {
+    "Rule_number": 1,
+    "Category": "PROCESS",
+    "Instruction": "Always sync updated Next.js skills and any specifically modified skill in '.agents/skills/' directly to 'd:/Scripts/Obsidian/skills/' without blind bulk copying of all skills - ensure customized/updated skills are centrally mirrored in the Obsidian vault.",
+    "Why": "user preference: keep Next.js and modified skills synced to Obsidian knowledge base"
+  },
+  {
+    "Rule_number": 2,
+    "Category": "PROCESS",
+    "Instruction": "Always invoke and scan '.agents/skills/self-repair' and load '.agents/autofix.json' at session start and before executing any task - ensure active learned rules and constraints are always enforced.",
+    "Why": "user explicit instruction to invoke self-repair every time"
+  }
+]
+

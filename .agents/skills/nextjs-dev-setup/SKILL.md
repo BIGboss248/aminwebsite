@@ -18,15 +18,17 @@ The `docs/project.json` file is the mandatory single source of truth for compone
 
 ### Complete Properties Specification (`project_context_and_metadata`)
 
-| Property Name         | Type                  | Description                                                                 | Discovery / Example                                                                                 |
-| :-------------------- | :-------------------- | :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `package_manager`     | `string`              | Package manager used in the project (`"pnpm"`, `"npm"`, `"yarn"`, `"bun"`). | Auto-discovered from lockfiles or `package.json` `"packageManager"`.                                |
-| `new_component_dir`   | `string`              | Target directory where components, skeletons, and unit tests are created.   | Auto-discovered from `app/` or `src/` (e.g. `"app/components"` or `"src/components"`).              |
-| `style_file_dir`      | `string`              | Relative path to the global CSS / theme stylesheet.                         | Auto-discovered from stylesheet path (e.g. `"app/globals.css"` or `"src/app/globals.css"`).         |
-| `component_library`   | `string`              | UI component library or design system adopted in the project.               | Discovered from `package.json` dependencies / `docs/` (e.g. `"shadcn/ui"`, `"radix-ui"`, `"none"`). |
-| `animation_library`   | `Array<string>`       | Motion and animation libraries used for complex animations.                 | Discovered from `package.json` / `docs/adr/` (e.g. `["gsap"]`, `["framer-motion"]`, `["none"]`).    |
-| `testing_library`     | `Array<string>`       | Testing frameworks and libraries configured in the project.                 | Discovered from `package.json` / config files (e.g. `["jest", "playwright", "@testing-library/react"]`). |
-| `supported_languages` | `Array<LocaleObject>` | List of supported locales with direction, currency, and calendar metadata.  | Discovered from `docs/adr/`, `docs/project-plan.md`, or `CONTEXT.md`.                               |
+| Property Name             | Type                  | Description                                                                 | Discovery / Example                                                                                      |
+| :------------------------ | :-------------------- | :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| `package_manager`         | `string`              | Package manager used in the project (`"pnpm"`, `"npm"`, `"yarn"`, `"bun"`). | Auto-discovered from lockfiles or `package.json` `"packageManager"`.                                     |
+| `new_component_dir`       | `string`              | Target directory where components, skeletons, and unit tests are created.   | Auto-discovered from `app/` or `src/` (e.g. `"app/components"` or `"src/components"`).                   |
+| `style_file_dir`          | `string`              | Relative path to the global CSS / theme stylesheet.                         | Auto-discovered from stylesheet path (e.g. `"app/globals.css"` or `"src/app/globals.css"`).              |
+| `component_library`       | `string`              | UI component library or design system adopted in the project.               | Discovered from `package.json` dependencies / `docs/` (e.g. `"shadcn/ui"`, `"radix-ui"`, `"none"`).      |
+| `animation_library`       | `Array<string>`       | Motion and animation libraries used for complex animations.                 | Discovered from `package.json` / `docs/adr/` (e.g. `["gsap"]`, `["framer-motion"]`, `["none"]`).         |
+| `testing_library`         | `Array<string>`       | Testing frameworks and libraries configured in the project.                 | Discovered from `package.json` / config files (e.g. `["jest", "playwright", "@testing-library/react"]`). |
+| `supported_languages`     | `Array<LocaleObject>` | List of supported locales with direction, currency, and calendar metadata.  | Discovered from `docs/adr/`, `docs/project-plan.md`, or `CONTEXT.md`.                                    |
+| `dictionaries_dir`        | `string`              | Relative directory path for i18n translation message catalogs.              | Defaults to `"messages"` (or `"src/messages"` / `"dictionaries"`).                                       |
+| `dictionary_file_pattern` | `string`              | Filename naming pattern for locale translation JSON files.                  | Defaults to `"[locale].json"`.                                                                           |
 
 #### Locale Object Schema (`supported_languages[...]`)
 
@@ -74,7 +76,9 @@ Each entry in the `supported_languages` array contains:
         "native_name": "فارسی",
         "calendar_type": "persian"
       }
-    ]
+    ],
+    "dictionaries_dir": "messages",
+    "dictionary_file_pattern": "[locale].json"
   }
 }
 ```
@@ -195,54 +199,54 @@ Next.js provides built-in integration with Jest via the `next/jest` transformer,
    Create `jest.config.ts` at the project root using `next/jest`:
 
    ```ts
-   import type { Config } from 'jest'
-   import nextJest from 'next/jest.js'
+   import type { Config } from "jest";
+   import nextJest from "next/jest.js";
 
    const createJestConfig = nextJest({
      // Provide the path to your Next.js app to load next.config.js and .env files
-     dir: './',
-   })
+     dir: "./",
+   });
 
    const config: Config = {
-     coverageProvider: 'v8',
-     testEnvironment: 'jsdom',
-     setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+     coverageProvider: "v8",
+     testEnvironment: "jsdom",
+     setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
      moduleNameMapper: {
-       '^@/(.*)$': '<rootDir>/$1',
+       "^@/(.*)$": "<rootDir>/$1",
      },
-   }
+   };
 
    // Export createJestConfig to ensure next/jest loads async Next.js config
-   export default createJestConfig(config)
+   export default createJestConfig(config);
    ```
 
 3. **Configure `jest.setup.ts`:**
    Create `jest.setup.ts` to extend Jest with `@testing-library/jest-dom` custom matchers:
 
    ```ts
-   import '@testing-library/jest-dom'
+   import "@testing-library/jest-dom";
    ```
 
 4. **Reference Implementation Example (For Future Test Creation):**
 
    ```tsx
    // Reference: Unit and snapshot test pattern (Do NOT generate this file during dev setup)
-   import '@testing-library/jest-dom'
-   import { render, screen } from '@testing-library/react'
-   import Page from '../app/page'
+   import "@testing-library/jest-dom";
+   import { render, screen } from "@testing-library/react";
+   import Page from "../app/page";
 
-   describe('Page Component', () => {
-     it('renders heading correctly', () => {
-       render(<Page />)
-       const heading = screen.getByRole('heading', { level: 1 })
-       expect(heading).toBeInTheDocument()
-     })
+   describe("Page Component", () => {
+     it("renders heading correctly", () => {
+       render(<Page />);
+       const heading = screen.getByRole("heading", { level: 1 });
+       expect(heading).toBeInTheDocument();
+     });
 
-     it('matches snapshot', () => {
-       const { container } = render(<Page />)
-       expect(container).toMatchSnapshot()
-     })
-   })
+     it("matches snapshot", () => {
+       const { container } = render(<Page />);
+       expect(container).toMatchSnapshot();
+     });
+   });
    ```
 
 ---
@@ -261,46 +265,49 @@ Playwright tests the complete running Next.js application across real browser en
    Configure `playwright.config.ts` with `baseURL` and `webServer`:
 
    ```ts
-   import { defineConfig, devices } from '@playwright/test'
+   import { defineConfig, devices } from "@playwright/test";
 
-   const PORT = process.env.PORT || 3000
-   const BASE_URL = `http://localhost:${PORT}`
+   const PORT = process.env.PORT || 3000;
+   const BASE_URL = `http://localhost:${PORT}`;
 
    export default defineConfig({
-     testDir: './tests',
+     testDir: "./tests",
      fullyParallel: true,
      forbidOnly: !!process.env.CI,
      retries: process.env.CI ? 2 : 0,
      workers: process.env.CI ? 1 : undefined,
-     reporter: 'html',
+     reporter: "html",
      use: {
        baseURL: BASE_URL,
-       trace: 'on-first-retry',
+       trace: "on-first-retry",
      },
      projects: [
        {
-         name: 'chromium',
-         use: { ...devices['Desktop Chrome'] },
+         name: "chromium",
+         use: { ...devices["Desktop Chrome"] },
        },
        {
-         name: 'firefox',
-         use: { ...devices['Desktop Firefox'] },
+         name: "firefox",
+         use: { ...devices["Desktop Firefox"] },
        },
        {
-         name: 'webkit',
-         use: { ...devices['Desktop Safari'] },
+         name: "webkit",
+         use: { ...devices["Desktop Safari"] },
        },
      ],
      webServer: {
-       command: process.env.CI ? 'npm run build && npm run start' : 'npm run dev',
+       command: process.env.CI
+         ? "npm run build && npm run start"
+         : "npm run dev",
        url: BASE_URL,
        timeout: 120 * 1000,
        reuseExistingServer: !process.env.CI,
      },
-   })
+   });
    ```
 
 3. **Install Target Browser Binaries:**
+
    ```bash
    pnpm exec playwright install --with-deps chromium firefox webkit
    ```
@@ -309,12 +316,12 @@ Playwright tests the complete running Next.js application across real browser en
 
    ```ts
    // Reference: Playwright E2E navigation test pattern (Do NOT generate this file during dev setup)
-   import { test, expect } from '@playwright/test'
+   import { test, expect } from "@playwright/test";
 
-   test('should navigate across pages', async ({ page }) => {
-     await page.goto('/')
-     await expect(page.locator('h1')).toBeVisible()
-   })
+   test("should navigate across pages", async ({ page }) => {
+     await page.goto("/");
+     await expect(page.locator("h1")).toBeVisible();
+   });
    ```
 
 ---
@@ -475,6 +482,7 @@ To minimize GitHub Actions minutes and consume as few billing credits as possibl
 
    > [!IMPORTANT]
    > For Release Please to open and maintain Release Pull Requests:
+   >
    > 1. Go to repository **Settings** → **Actions** → **General**.
    > 2. Under **Workflow permissions**:
    >    - Select **"Read and write permissions"**.

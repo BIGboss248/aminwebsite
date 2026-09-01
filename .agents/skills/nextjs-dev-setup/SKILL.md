@@ -408,9 +408,17 @@ To minimize GitHub Actions minutes and consume as few billing credits as possibl
    - **`concurrency.cancel-in-progress: true`**: Automatically cancels redundant in-flight builds when a new commit is pushed to the same branch, preventing wasted runner minutes.
    - **Fail-Fast Testing Hierarchy**: Runs lightweight, in-memory **Jest unit tests first**. If unit tests fail, the job terminates immediately before spending time or runner resources installing browsers and running Playwright.
    - **Playwright Binary Caching**: Caches `~/.cache/ms-playwright` using `actions/cache` keyed against lockfile hashes, eliminating repeated multi-hundred-megabyte browser downloads on every run.
-   - **CI Single Browser Targeting / Sequential Execution**: Runs Playwright efficiently against built production output (`npm run build && npm run start`).
+   - **CI Single Browser Targeting / Sequential Execution**: Runs Playwright efficiently against built production output (`[pm] run build && [pm] run start` or `test:e2e`).
+   - **Node.js Active LTS Runtime**: Uses `node-version: 22` to avoid runner deprecation warnings.
 
-2. **Create the Credit-Optimized GitHub Actions Workflow (`.github/workflows/release-please.yml`):**
+2. **Generate Package-Manager-Specific GitHub Actions Workflow (`.github/workflows/release-please.yml`):**
+
+   Generate the configuration matching the project's detected `package_manager` (from `docs/project.json` or `package.json`):
+
+   #### Option A: For `pnpm` (`package_manager: "pnpm"`):
+
+   > [!IMPORTANT]
+   > When using `actions/setup-node@v4` with `cache: "pnpm"`, `pnpm` MUST be installed before `setup-node` (via `pnpm/action-setup@v4`) so that `setup-node` can locate the `pnpm` executable to configure the global store cache path.
 
    ```yaml
    name: Release Please & CI Validation
@@ -439,10 +447,15 @@ To minimize GitHub Actions minutes and consume as few billing credits as possibl
          - name: Checkout Repository
            uses: actions/checkout@v4
 
+         - name: Install pnpm
+           uses: pnpm/action-setup@v4
+           with:
+             run_install: false
+
          - name: Setup Node.js
            uses: actions/setup-node@v4
            with:
-             node-version: 20
+             node-version: 22
              cache: "pnpm"
 
          - name: Install Dependencies

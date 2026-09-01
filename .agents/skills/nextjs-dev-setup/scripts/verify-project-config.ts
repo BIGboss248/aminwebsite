@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 
 /**
  * Locale object structure expected in supported_languages array.
@@ -184,7 +185,7 @@ function auditFileSystemPaths(
 /**
  * Audits dev environment automation: Husky, Commitlint, Playwright, and Release Please.
  */
-function auditDevAutomation(): DevAutomationCheckResult[] {
+function auditDevAutomation(meta?: Partial<ProjectContextAndMetadata>): DevAutomationCheckResult[] {
   const rootDir = process.cwd();
   const results: DevAutomationCheckResult[] = [];
 
@@ -272,11 +273,17 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
     fs.existsSync(path.resolve(rootDir, "docs/release-please.md"));
 
   if (foundReleaseWorkflow) {
+    const wfContent = fs.readFileSync(path.resolve(rootDir, foundReleaseWorkflow), "utf-8");
+    const pm = meta?.package_manager || "pnpm";
+    let pmWarning = "";
+    if (pm === "pnpm" && wfContent.includes('cache: "pnpm"') && !wfContent.includes("pnpm/action-setup")) {
+      pmWarning = " (Warning: Missing 'pnpm/action-setup' before 'actions/setup-node' with pnpm cache)";
+    }
     results.push({
       name: "Release Please CI/CD",
       category: "release_automation",
-      status: "configured",
-      details: `Found GitHub Actions workflow '${foundReleaseWorkflow}'.`,
+      status: pmWarning ? "warning" : "configured",
+      details: `Found GitHub Actions workflow '${foundReleaseWorkflow}' configured for ${pm}.${pmWarning}`,
     });
   } else {
     results.push({
@@ -590,6 +597,9 @@ export function verifyProjectConfig(filePath: string): ValidationResult {
   // 7. Audit filesystem paths referenced in metadata
   result.pathChecks = auditFileSystemPaths(result.metadata, result.warnings);
 
+  // 8. Audit dev environment automation (Husky, Commitlint, Playwright, Release Please)
+  result.automationChecks = auditDevAutomation(result.metadata);
+
   result.passed = result.errors.length === 0;
   return result;
 }
@@ -616,7 +626,7 @@ function printReport(result: ValidationResult, jsonOutput: boolean): void {
     for (const [k, v] of Object.entries(result.metadata)) {
       if (k === "supported_languages" && Array.isArray(v)) {
         const langs = v
-          .map((l) => (l && typeof l === "object" ? (l as Record<string, string>).language_code : "?"))
+          .map((l) => (l && typeof l === "object" ? ((l as unknown as Record<string, string>).language_code || "?") : "?"))
           .join(", ");
         console.log(`  - ${cyan}${k}${reset}: [${langs}] (${v.length} locale(s))`);
       } else if ((k === "animation_library" || k === "testing_library") && Array.isArray(v)) {
@@ -680,7 +690,13 @@ function printReport(result: ValidationResult, jsonOutput: boolean): void {
 }
 
 // CLI Execution
-if (require.main === module) {
+const isDirectExecution =
+  process.argv[1] &&
+  (process.argv[1] === fileURLToPath(import.meta.url) ||
+    process.argv[1].endsWith("verify-project-config.ts") ||
+    process.argv[1].endsWith("verify-project-config.js"));
+
+if (isDirectExecution) {
   const args = process.argv.slice(2);
   const jsonFlag = args.includes("--json");
   const filteredArgs = args.filter((a) => a !== "--json");

@@ -409,11 +409,11 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
     });
   }
 
-  // 6. Docker Containerization Check (Dockerfile, compose.yaml, .dockerignore)
+  // 6. Docker Containerization Check (Dockerfile, docker-compose.yml, .dockerignore)
   const dockerfilePath = path.resolve(rootDir, "Dockerfile");
-  const composePath = fs.existsSync(path.resolve(rootDir, "compose.yaml"))
-    ? path.resolve(rootDir, "compose.yaml")
-    : path.resolve(rootDir, "docker-compose.yml");
+  const composePath = fs.existsSync(path.resolve(rootDir, "docker-compose.yml"))
+    ? path.resolve(rootDir, "docker-compose.yml")
+    : path.resolve(rootDir, "compose.yaml");
   const dockerignorePath = path.resolve(rootDir, ".dockerignore");
 
   const hasDockerfile = fs.existsSync(dockerfilePath);
@@ -421,16 +421,17 @@ function auditDevAutomation(): DevAutomationCheckResult[] {
   const hasDockerignore = fs.existsSync(dockerignorePath);
 
   if (hasDockerfile && hasCompose && hasDockerignore) {
+    const composeFileName = path.basename(composePath);
     results.push({
       name: "Docker Containerization",
       category: "dev_tools",
       status: "configured",
-      details: "Configured multi-stage production standalone Dockerfile, compose.yaml, and .dockerignore.",
+      details: `Configured multi-stage production standalone Dockerfile, ${composeFileName}, and .dockerignore.`,
     });
   } else {
     const missing: string[] = [];
     if (!hasDockerfile) missing.push("Dockerfile");
-    if (!hasCompose) missing.push("compose.yaml");
+    if (!hasCompose) missing.push("docker-compose.yml");
     if (!hasDockerignore) missing.push(".dockerignore");
     results.push({
       name: "Docker Containerization",

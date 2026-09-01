@@ -1,6 +1,6 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, compose.yaml, and .dockerignore), or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", or when configuring/creating docs/project.json or mcp.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, docker-compose.yml, and .dockerignore), or setup git hooks, commitlint, and Release Please automation. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", or when configuring/creating docs/project.json or mcp.json.
 metadata:
   author: BIGboss248
   version: "1.8"
@@ -626,19 +626,21 @@ FROM node:${NODE_VERSION} AS dependencies
 
 WORKDIR /app
 
-# Copy package declarations and lockfiles
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+ENV CI=true
 
-# Install dependencies using BuildKit cache mounts and frozen lockfile
+# Copy package declarations, workspace configs, and lockfiles
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
+
+# Install dependencies using BuildKit cache mounts, frozen lockfile, and container-only hoisting
 RUN --mount=type=cache,target=/root/.npm \
     --mount=type=cache,target=/usr/local/share/.cache/yarn \
     --mount=type=cache,target=/root/.local/share/pnpm/store \
   if [ -f package-lock.json ]; then \
-    npm ci --no-audit --no-fund; \
+    npm ci --no-audit --no-fund --ignore-scripts; \
   elif [ -f yarn.lock ]; then \
-    corepack enable yarn && yarn install --frozen-lockfile --production=false; \
+    corepack enable yarn && yarn install --frozen-lockfile --production=false --ignore-scripts; \
   elif [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm install --frozen-lockfile; \
+    corepack enable pnpm && pnpm install --frozen-lockfile --ignore-scripts --shamefully-hoist; \
   else \
     echo "No lockfile found." && exit 1; \
   fi
@@ -654,6 +656,7 @@ WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
+ENV CI=true
 ENV NODE_ENV=production
 # Next.js telemetry (uncomment to disable during build)
 # ENV NEXT_TELEMETRY_DISABLED=1
@@ -664,7 +667,7 @@ RUN if [ -f package-lock.json ]; then \
   elif [ -f yarn.lock ]; then \
     corepack enable yarn && yarn build; \
   elif [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm build; \
+    ./node_modules/.bin/next build; \
   else \
     echo "No lockfile found." && exit 1; \
   fi
@@ -680,6 +683,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+ENV NODE_PATH="/app/node_modules"
 # ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy public directory assets
@@ -702,9 +706,9 @@ EXPOSE 3000
 CMD ["node", "server.js"]
 ```
 
-#### 9.4. Production `compose.yaml`
+#### 9.4. Production `docker-compose.yml`
 
-Create `compose.yaml` at the repository root:
+Create `docker-compose.yml` at the repository root:
 
 ```yaml
 services:
@@ -750,7 +754,7 @@ services:
    - Validate each locale object in `supported_languages` array.
    - Verify presence and configuration of testing suites (Jest and Playwright).
    - Audit `mcp.json` / `.vscode/mcp.json` for `next-devtools` and `playwright` MCP servers.
-   - Audit Docker containerization configuration (`Dockerfile`, `compose.yaml`, `.dockerignore`, and standalone output).
+   - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `.dockerignore`, and standalone output).
 3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, or Docker files and re-run until all checks pass.
 
 ---
@@ -764,18 +768,18 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 ```markdown
 ## 🛠️ Next.js Dev Setup Execution Report
 
-| Step / Component                 | Target File(s) / Resource                     | Status                          | Notes / Details                                                      |
-| :------------------------------- | :-------------------------------------------- | :------------------------------ | :------------------------------------------------------------------- |
-| **1. Project Metadata**          | `docs/project.json`                           | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.  |
-| **2. Core Dependencies**         | `package.json`, Lockfile                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.              |
-| **3. Jest Unit Testing**         | `jest.config.ts`, `jest.setup.ts`             | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.   |
-| **4. Playwright E2E Testing**    | `playwright.config.ts`                        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit). |
-| **5. Husky Git Hooks**           | `.husky/commit-msg`, `.husky/pre-push`        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.  |
-| **6. Commitlint Config**         | `commitlint.config.mjs`                       | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                        |
-| **7. Release Automation**        | `.github/workflows/release-please.yml`        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Credit-optimized CI/CD with test gating and semver release PRs.      |
-| **8. MCP Server Integration**    | `mcp.json` / `.vscode/mcp.json`               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP.  |
-| **9. Docker Containerization**   | `Dockerfile`, `compose.yaml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & compose.yaml.          |
-| **10. Environment Verification** | `scripts/verify-project-config.ts`            | `[PASSED]`                      | Sanity check passed with zero errors.                                |
+| Step / Component                 | Target File(s) / Resource                           | Status                          | Notes / Details                                                      |
+| :------------------------------- | :-------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------- |
+| **1. Project Metadata**          | `docs/project.json`                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.  |
+| **2. Core Dependencies**         | `package.json`, Lockfile                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.              |
+| **3. Jest Unit Testing**         | `jest.config.ts`, `jest.setup.ts`                   | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.   |
+| **4. Playwright E2E Testing**    | `playwright.config.ts`                              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit). |
+| **5. Husky Git Hooks**           | `.husky/commit-msg`, `.husky/pre-push`              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.  |
+| **6. Commitlint Config**         | `commitlint.config.mjs`                             | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                        |
+| **7. Release Automation**        | `.github/workflows/release-please.yml`              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Credit-optimized CI/CD with test gating and semver release PRs.      |
+| **8. MCP Server Integration**    | `mcp.json` / `.vscode/mcp.json`                     | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP.  |
+| **9. Docker Containerization**   | `Dockerfile`, `docker-compose.yml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & docker-compose.yml.    |
+| **10. Environment Verification** | `scripts/verify-project-config.ts`                  | `[PASSED]`                      | Sanity check passed with zero errors.                                |
 
 #### Status Definitions:
 

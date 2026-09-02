@@ -405,7 +405,7 @@ Configure `package.json` scripts with flags so freshly created projects without 
 To minimize GitHub Actions minutes, consume as few billing credits as possible, and automate both semantic releases and multi-platform (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployments:
 
 1. **GitHub Credit-Saving Design Patterns:**
-   - **`concurrency.cancel-in-progress: true`**: Automatically cancels redundant in-flight builds when a new commit is pushed to the same branch, preventing wasted runner minutes.
+   - **`concurrency.cancel-in-progress: false`**: Ensures active release and workflow runs on main are never cancelled in-flight when new commits are pushed.
    - **Fail-Fast Testing Hierarchy**: Runs lightweight, in-memory **Jest unit tests first**. If unit tests fail, the job terminates immediately before spending time or runner resources installing browsers and running Playwright.
    - **Playwright Binary Caching**: Caches `~/.cache/ms-playwright` using `actions/cache` keyed against lockfile hashes, eliminating repeated multi-hundred-megabyte browser downloads on every run.
    - **CI Single Browser Targeting / Sequential Execution**: Runs Playwright efficiently against built production output (`[pm] run build && [pm] run start` or `test:e2e`).
@@ -435,7 +435,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
 
    concurrency:
      group: ${{ github.workflow }}-${{ github.ref }}
-     cancel-in-progress: true
+     cancel-in-progress: false
 
    permissions:
      contents: write

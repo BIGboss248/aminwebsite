@@ -40,5 +40,17 @@
     "Category": "ARCH",
     "Instruction": "In Docker containerization setup, always name the Docker Compose configuration file 'docker-compose.yml' (not 'compose.yaml').",
     "Why": "user explicit preference: standard docker-compose.yml naming convention"
+  },
+  {
+    "Rule_number": 8,
+    "Category": "ARCH",
+    "Instruction": "In multi-architecture Docker container workflows (AMD64 & ARM64), build natively on separate dedicated runner machines in matrix jobs without using QEMU emulation (docker/setup-qemu-action).",
+    "Why": "user explicit preference: build multi-arch container images natively across separate machines without QEMU emulation"
+  },
+  {
+    "Rule_number": 9,
+    "Category": "ARCH",
+    "Instruction": "In GitHub Actions CI/CD and Release Please workflows, configure concurrency 'cancel-in-progress: false' to ensure ongoing workflow runs and release builds on main are never cancelled when new commits are pushed.",
+    "Why": "user explicit preference: prevent workflow runs and release builds from being cancelled by subsequent commits"
   }
 ]

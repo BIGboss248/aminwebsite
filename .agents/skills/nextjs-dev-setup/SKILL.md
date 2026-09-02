@@ -523,6 +523,10 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
          - name: Checkout Repository
            uses: actions/checkout@v4
 
+         - name: Lowercase Repository Name
+           run: |
+             echo "IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
          - name: Set up Docker Buildx
            uses: docker/setup-buildx-action@v3
 
@@ -537,7 +541,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
            id: meta
            uses: docker/metadata-action@v5
            with:
-             images: ghcr.io/${{ github.repository }}
+             images: ${{ env.IMAGE_NAME }}
 
          - name: Build and push by digest
            id: build
@@ -547,7 +551,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
              file: ./Dockerfile
              platforms: ${{ matrix.platform }}
              labels: ${{ steps.meta.outputs.labels }}
-             outputs: type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,name-canonical=true,push=true
+             outputs: type=image,name=${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
              cache-from: type=gha,scope=${{ matrix.arch }}
              cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
 
@@ -577,6 +581,10 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
              path: /tmp/digests
              pattern: digests-*
              merge-multiple: true
+
+         - name: Lowercase Repository Name
+           run: |
+             echo "IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
 
          - name: Set up Docker Buildx
            uses: docker/setup-buildx-action@v3

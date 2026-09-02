@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/app/components/Link";
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -92,6 +92,11 @@ export default async function Home({ params }: HomePageProps) {
           >
             {t("cta_docs")}
           </a>
+        </div>
+        <div>
+          <Link href={"/about"} locale="fa">
+            About page
+          </Link>
         </div>
       </main>
     </div>

@@ -17,10 +17,12 @@
   },
   "dependencies": {
     "@swc/helpers": "^0.5.23",
+    "framer-motion": "^13.1.1",
     "next": "16.3.1",
     "next-intl": "^4.14.1",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-transition-progress": "^0.0.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.2",
@@ -43,11 +45,5 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
-  "packageManager": "pnpm@11.22.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@swc/core"
-    ]
-  }
+  "packageManager": "pnpm@11.22.0"
 }

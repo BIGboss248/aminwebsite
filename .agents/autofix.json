@@ -58,5 +58,11 @@
     "Category": "ARCH",
     "Instruction": "In GitHub Actions container build workflows (GHCR/Docker), always lowercase the repository name (e.g. using 'tr [:upper:] [:lower:]' into an IMAGE_NAME environment variable) because Docker OCI naming specifications strictly forbid uppercase characters.",
     "Why": "fix failure: Docker buildx failed with 'repository name must be lowercase' when repository owner/name contains uppercase characters"
+  },
+  {
+    "Rule_number": 11,
+    "Category": "ARCH",
+    "Instruction": "Create custom React UI components (including JSX wrappers like Link) in separate .tsx files under the components directory (e.g. 'app/components/Link.tsx') and keep navigation helper configuration files like 'i18n/navigation.ts' pure TypeScript without JSX.",
+    "Why": "user explicit correction: create the Link component in a separate file in @components"
   }
 ]

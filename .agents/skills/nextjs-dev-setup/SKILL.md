@@ -165,103 +165,35 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 
 ---
 
-### Step 5: Setup Testing Suites (Jest Unit/Snapshot Testing & Playwright E2E Testing)
+### Step 5: Setup Next.js Dev Server MCP Server (`next-devtools`)
 
-> [!IMPORTANT]
-> **NO DUMMY / SAMPLE TEST GENERATION IN PROJECT:**
-> Do NOT create placeholder or dummy test files in the actual user project during setup. The test code examples provided below are strictly for agent reference and developer documentation. Only configure framework configuration files (`jest.config.ts`, `jest.setup.ts`, `playwright.config.ts`, and scripts).
+Model Context Protocol (MCP) servers equip AI coding agents with direct runtime inspection, dev server telemetry, and automated route evaluation.
 
-#### 5.1. Jest Setup for Unit & Snapshot Testing (`next/jest`)
+1. **Configure Next.js Dev Server MCP (`next-devtools` / `@modelcontextprotocol/server-nextjs`):**
+   - Enables the agent to query live Next.js compilation status, inspect runtime/build errors, list active routes, clear cache, and evaluate browser scripts against the running dev server on port 3000.
+   - Package: `next-devtools`
 
-Next.js provides built-in integration with Jest via the `next/jest` transformer, which automatically configures SWC transforms, mocks CSS modules and fonts, and loads `.env` variables.
+2. **Standard MCP Server Configuration (`.vscode/mcp.json` / `mcp.json`):**
+   - Create or update `mcp.json` or `.vscode/mcp.json` with the following configuration:
 
-> [!NOTE]
-> **Async Server Components Limitation:** Because `async` React Server Components run in Node server environments, Jest (running in `jsdom`) currently does not execute `async` RSCs directly. Use Jest for synchronous Server/Client Components, hooks, and utilities; rely on Playwright E2E tests for `async` Server Components.
-
-1. **Install Jest & React Testing Library:**
-   Install the necessary dev dependencies using the detected package manager:
-
-   ```bash
-   # pnpm:
-   pnpm add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
-
-   # npm:
-   npm install -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
-
-   # yarn:
-   yarn add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
-
-   # bun:
-   bun add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
-   ```
-
-2. **Configure `jest.config.ts`:**
-   Create `jest.config.ts` at the project root using `next/jest`:
-
-   ```ts
-   import type { Config } from "jest";
-   import nextJest from "next/jest.js";
-
-   const createJestConfig = nextJest({
-     // Provide the path to your Next.js app to load next.config.js and .env files
-     dir: "./",
-   });
-
-   const config: Config = {
-     coverageProvider: "v8",
-     testEnvironment: "jsdom",
-     setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-     testPathIgnorePatterns: [
-       "<rootDir>/node_modules/",
-       "<rootDir>/.next/",
-       "<rootDir>/e2e/",
-       "<rootDir>/tests/",
-     ],
-     moduleNameMapper: {
-       "^@/(.*)$": "<rootDir>/$1",
-     },
-   };
-
-   // Export createJestConfig to ensure next/jest loads async Next.js config
-   export default createJestConfig(config);
-   ```
-
-3. **Configure `jest.setup.ts`:**
-   Create `jest.setup.ts` to extend Jest with `@testing-library/jest-dom` custom matchers:
-
-   ```ts
-   import "@testing-library/jest-dom";
-   ```
-
-4. **Reference Implementation Example (For Future Test Creation):**
-
-   ```tsx
-   // Reference: Unit and snapshot test pattern (Do NOT generate this file during dev setup)
-   import "@testing-library/jest-dom";
-   import { render, screen } from "@testing-library/react";
-   import Page from "../app/page";
-
-   describe("Page Component", () => {
-     it("renders heading correctly", () => {
-       render(<Page />);
-       const heading = screen.getByRole("heading", { level: 1 });
-       expect(heading).toBeInTheDocument();
-     });
-
-     it("matches snapshot", () => {
-       const { container } = render(<Page />);
-       expect(container).toMatchSnapshot();
-     });
-   });
-   ```
+```json
+{
+  "mcpServers": {
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools"]
+    }
+  }
+}
+```
 
 ---
 
-#### 5.2. Playwright Setup for End-to-End (E2E) Testing
+### Step 6: Setup Playwright End-to-End (E2E) Testing & Playwright MCP Server
 
-Playwright tests the complete running Next.js application across real browser engines (**Chromium**, **Firefox**, and **WebKit**), verifying routing, auth flows, and `async` Server Components.
+Playwright tests the complete running Next.js application across real browser engines (**Chromium**, **Firefox**, and **WebKit**), verifying routing, auth flows, and `async` Server Components, while the Playwright MCP server empowers AI coding agents to perform browser automation, visual snapshot inspection, and DOM interaction directly.
 
-1. **Install Playwright Dependency:**
+1. **Install Playwright Dev Dependency:**
 
    ```bash
    pnpm add -D @playwright/test
@@ -318,11 +250,40 @@ Playwright tests the complete running Next.js application across real browser en
    pnpm exec playwright install --with-deps chromium firefox webkit
    ```
 
-4. **CI Execution & Web Server Lifecycle (Build & Run Behavior):**
-   - **Jest Unit Tests (`pnpm test`)**: Does **not** require building or running the Next.js application. Jest executes tests in an in-memory virtual DOM (`jsdom`) using Next.js SWC compilation (`next/jest`), testing components, hooks, and utilities directly.
-   - **Playwright E2E Tests (`pnpm test:e2e`)**: Requires the full Next.js application built and running, but **no manual build/run steps are needed in GitHub Actions**. Playwright's `webServer` configuration automatically detects `CI=true`, runs `pnpm build && pnpm start`, waits for `http://localhost:3000` to become healthy, runs the browser test suite, and cleanly terminates the server upon test completion.
+4. **Configure Playwright MCP Server (`@executeautomation/playwright-mcp-server` / `@modelcontextprotocol/server-playwright`):**
+   - Enables the agent to perform browser automation, end-to-end testing, visual snapshot verification, DOM element interaction, and console inspection.
+   - Update `mcp.json` or `.vscode/mcp.json` to include both servers:
 
-5. **Reference Implementation Example (For Future Test Creation):**
+   ```json
+   {
+     "mcpServers": {
+       "next-devtools": {
+         "command": "npx",
+         "args": ["-y", "next-devtools"]
+       },
+       "playwright": {
+         "command": "npx",
+         "args": ["-y", "@executeautomation/playwright-mcp-server"]
+       }
+     }
+   }
+   ```
+
+5. **CI Execution & Web Server Lifecycle (Build & Run Behavior):**
+   - Requires the full Next.js application built and running, but **no manual build/run steps are needed in GitHub Actions**. Playwright's `webServer` configuration automatically detects `CI=true`, runs `pnpm build && pnpm start`, waits for `http://localhost:3000` to become healthy, runs the browser test suite, and cleanly terminates the server upon test completion.
+
+6. **Configure Playwright Test Scripts (`package.json`):**
+
+   ```json
+   {
+     "scripts": {
+       "test:e2e": "playwright test --pass-with-no-tests",
+       "test:e2e:ui": "playwright test --ui"
+     }
+   }
+   ```
+
+7. **Reference Implementation Example (For Future Test Creation):**
 
    ```ts
    // Reference: Playwright E2E navigation test pattern (Do NOT generate this file during dev setup)
@@ -336,26 +297,353 @@ Playwright tests the complete running Next.js application across real browser en
 
 ---
 
-#### 5.3. Unified Test Scripts (Zero-Test Safe)
+### Step 7: Setup Jest Unit & Snapshot Testing (`next/jest`)
 
-Configure `package.json` scripts with flags so freshly created projects without test files will exit with code 0 instead of breaking git hooks or CI/CD pipelines:
+Next.js provides built-in integration with Jest via the `next/jest` transformer, which automatically configures SWC transforms, mocks CSS modules and fonts, and loads `.env` variables.
 
-```json
-{
-  "scripts": {
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch --passWithNoTests",
-    "test:coverage": "jest --coverage --passWithNoTests",
-    "test:e2e": "playwright test --pass-with-no-tests",
-    "test:e2e:ui": "playwright test --ui",
-    "test:all": "jest --passWithNoTests && playwright test --pass-with-no-tests"
-  }
-}
-```
+> [!IMPORTANT]
+> **NO DUMMY / SAMPLE TEST GENERATION IN PROJECT:**
+> Do NOT create placeholder or dummy test files in the actual user project during setup. The test code examples provided below are strictly for agent reference and developer documentation. Only configure framework configuration files (`jest.config.ts`, `jest.setup.ts`, and scripts).
+
+> [!NOTE]
+> **Async Server Components Limitation:** Because `async` React Server Components run in Node server environments, Jest (running in `jsdom`) currently does not execute `async` RSCs directly. Use Jest for synchronous Server/Client Components, hooks, and utilities; rely on Playwright E2E tests (Step 6) for `async` Server Components.
+
+1. **Install Jest & React Testing Library:**
+   Install the necessary dev dependencies using the detected package manager:
+
+   ```bash
+   # pnpm:
+   pnpm add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+
+   # npm:
+   npm install -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+
+   # yarn:
+   yarn add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+
+   # bun:
+   bun add -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+   ```
+
+2. **Configure `jest.config.ts`:**
+   Create `jest.config.ts` at the project root using `next/jest`:
+
+   ```ts
+   import type { Config } from "jest";
+   import nextJest from "next/jest.js";
+
+   const createJestConfig = nextJest({
+     // Provide the path to your Next.js app to load next.config.js and .env files
+     dir: "./",
+   });
+
+   const config: Config = {
+     coverageProvider: "v8",
+     testEnvironment: "jsdom",
+     setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+     testPathIgnorePatterns: [
+       "<rootDir>/node_modules/",
+       "<rootDir>/.next/",
+       "<rootDir>/e2e/",
+       "<rootDir>/tests/",
+     ],
+     moduleNameMapper: {
+       "^@/(.*)$": "<rootDir>/$1",
+     },
+   };
+
+   // Export createJestConfig to ensure next/jest loads async Next.js config
+   export default createJestConfig(config);
+   ```
+
+3. **Configure `jest.setup.ts`:**
+   Create `jest.setup.ts` to extend Jest with `@testing-library/jest-dom` custom matchers:
+
+   ```ts
+   import "@testing-library/jest-dom";
+   ```
+
+4. **CI Execution & Web Server Lifecycle (Build & Run Behavior):**
+   - Jest does **not** require building or running the Next.js application. Jest executes tests in an in-memory virtual DOM (`jsdom`) using Next.js SWC compilation (`next/jest`), testing components, hooks, and utilities directly.
+
+5. **Configure Unified Test Scripts (`package.json`):**
+   Configure `package.json` scripts with flags so freshly created projects without test files will exit with code 0 instead of breaking git hooks or CI/CD pipelines:
+
+   ```json
+   {
+     "scripts": {
+       "test": "jest --passWithNoTests",
+       "test:watch": "jest --watch --passWithNoTests",
+       "test:coverage": "jest --coverage --passWithNoTests",
+       "test:e2e": "playwright test --pass-with-no-tests",
+       "test:e2e:ui": "playwright test --ui",
+       "test:all": "jest --passWithNoTests && playwright test --pass-with-no-tests"
+     }
+   }
+   ```
+
+6. **Reference Implementation Example (For Future Test Creation):**
+
+   ```tsx
+   // Reference: Unit and snapshot test pattern (Do NOT generate this file during dev setup)
+   import "@testing-library/jest-dom";
+   import { render, screen } from "@testing-library/react";
+   import Page from "../app/page";
+
+   describe("Page Component", () => {
+     it("renders heading correctly", () => {
+       render(<Page />);
+       const heading = screen.getByRole("heading", { level: 1 });
+       expect(heading).toBeInTheDocument();
+     });
+
+     it("matches snapshot", () => {
+       const { container } = render(<Page />);
+       expect(container).toMatchSnapshot();
+     });
+   });
+   ```
 
 ---
 
-### Step 6: Setup Git Hooks with Husky & Commitlint (Dual-Suite Pre-Push Enforcement)
+### Step 8: Setup Docker Containerization (Standalone Production Container)
+
+Containerizing Next.js using **Standalone Mode** packages only the traced production `node_modules` and compiled assets into a minimal, secure, non-root Node.js container (`server.js`). Local development runs directly on the host machine using the project package manager (`pnpm run dev`), while Docker is configured strictly for production builds and deployments.
+
+#### 8.1. Enable Standalone Output in Next.js (`next.config.ts` / `next.config.js`)
+
+Ensure `output: "standalone"` is enabled in `next.config.ts` (or `next.config.js`):
+
+```ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  output: "standalone",
+};
+
+export default nextConfig;
+```
+
+#### 8.2. Configure Docker Ignore File (`.dockerignore`)
+
+Create or update `.dockerignore` at the repository root to exclude local build artifacts, secrets, and caches:
+
+```dockerignore
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+.pnpm-store/
+
+# Next.js build outputs
+.next/
+out/
+dist/
+build/
+.vercel/
+
+# Testing and coverage
+coverage/
+.nyc_output/
+__tests__/
+__mocks__/
+jest/
+cypress/
+playwright-report/
+test-results/
+.vitest/
+
+# Environment files (prevent leaking secrets into image context)
+.env
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs and debug
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE and git
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Docker files
+Dockerfile*
+.dockerignore
+compose*.yaml
+docker-compose*.yml
+
+# Documentation & CI
+*.md
+docs/
+.github/
+```
+
+#### 8.3. Production Multi-Stage `Dockerfile` (Standalone Mode)
+
+Create `Dockerfile` at the repository root using a 3-stage multi-stage build (`dependencies` -> `builder` -> `runner`):
+
+```dockerfile
+# ============================================
+# Stage 1: Dependencies Installation Stage
+# ============================================
+ARG NODE_VERSION=22-slim
+
+FROM node:${NODE_VERSION} AS dependencies
+
+WORKDIR /app
+
+ENV CI=true
+
+# Copy package declarations, workspace configs, and lockfiles
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
+
+# Install dependencies using BuildKit cache mounts, frozen lockfile, and container-only hoisting
+RUN --mount=type=cache,target=/root/.npm \
+    --mount=type=cache,target=/usr/local/share/.cache/yarn \
+    --mount=type=cache,target=/root/.local/share/pnpm/store \
+  if [ -f package-lock.json ]; then \
+    npm ci --no-audit --no-fund --ignore-scripts; \
+  elif [ -f yarn.lock ]; then \
+    corepack enable yarn && yarn install --frozen-lockfile --production=false --ignore-scripts; \
+  elif [ -f pnpm-lock.yaml ]; then \
+    corepack enable pnpm && pnpm install --frozen-lockfile --ignore-scripts --shamefully-hoist; \
+  else \
+    echo "No lockfile found." && exit 1; \
+  fi
+
+# ============================================
+# Stage 2: Build Next.js Application
+# ============================================
+FROM node:${NODE_VERSION} AS builder
+
+WORKDIR /app
+
+# Copy dependencies from dependencies stage
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY . .
+
+ENV CI=true
+ENV NODE_ENV=production
+# Next.js telemetry (uncomment to disable during build)
+# ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build Next.js standalone application
+RUN if [ -f package-lock.json ]; then \
+    npm run build; \
+  elif [ -f yarn.lock ]; then \
+    corepack enable yarn && yarn build; \
+  elif [ -f pnpm-lock.yaml ]; then \
+    ./node_modules/.bin/next build; \
+  else \
+    echo "No lockfile found." && exit 1; \
+  fi
+
+# ============================================
+# Stage 3: Minimal Production Standalone Runner
+# ============================================
+FROM node:${NODE_VERSION} AS runner
+
+WORKDIR /app
+
+# Set production environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV NODE_PATH="/app/node_modules"
+# ENV NEXT_TELEMETRY_DISABLED=1
+
+# Copy public directory assets
+COPY --from=builder --chown=node:node /app/public ./public
+
+# Set permissions for prerender cache
+RUN mkdir .next && chown node:node .next
+
+# Copy standalone build output and static assets
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+
+# Switch to non-root user for security best practices
+USER node
+
+# Expose port 3000 for HTTP traffic
+EXPOSE 3000
+
+# Start Next.js standalone server
+CMD ["node", "server.js"]
+```
+
+#### 8.4. Local Build Stack (`docker-compose.yml`)
+
+Create `docker-compose.yml` at the repository root for building and running standalone production containers directly from local source:
+
+```yaml
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nextjs-app:latest
+    container_name: nextjs-standalone-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+```
+
+#### 8.5. GHCR Package Deployment Stack (`docker-compose.prod.yml`)
+
+Create `docker-compose.prod.yml` at the repository root for lightweight production deployments pulling pre-built multi-arch images directly from GitHub Container Registry (GHCR) without needing local source code or build tooling:
+
+```yaml
+services:
+  nextjs-app:
+    image: ghcr.io/<lowercase-repo-owner>/<lowercase-repo-name>:${IMAGE_TAG:-latest}
+    container_name: nextjs-standalone-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+```
+
+#### 8.6. Container Commands Reference
+
+- **Local Build & Run (Direct Docker)**:
+  ```bash
+  docker build -t nextjs-app:latest .
+  docker run -d -p 3000:3000 --name nextjs-standalone-app nextjs-app:latest
+  ```
+- **Local Build & Run (Docker Compose)**:
+  ```bash
+  docker compose up -d --build
+  ```
+- **GHCR Production Package Deployment**:
+
+  ```bash
+  # Pull the latest published image from GHCR
+  docker compose -f docker-compose.prod.yml pull
+
+  # Deploy the container stack (defaults to latest)
+  docker compose -f docker-compose.prod.yml up -d
+
+  # Deploy a specific semantic release version:
+  IMAGE_TAG=1.0.0 docker compose -f docker-compose.prod.yml up -d
+  ```
+
+---
+
+### Step 9: Setup Git Hooks with Husky & Commitlint (Dual-Suite Pre-Push Enforcement)
 
 1. **Install Husky & Commitlint:**
    - Install `husky`, `@commitlint/cli`, and `@commitlint/config-conventional` as dev dependencies using the detected package manager:
@@ -404,7 +692,7 @@ Configure `package.json` scripts with flags so freshly created projects without 
 
 ---
 
-### Step 7: Setup Credit-Optimized CI/CD, Release Automation & Multi-Arch GHCR Container Packaging
+### Step 10: Setup Credit-Optimized CI/CD, Release Automation & Multi-Arch GHCR Container Packaging
 
 To minimize GitHub Actions minutes, consume as few billing credits as possible, and automate both semantic releases and multi-platform (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployments:
 
@@ -419,8 +707,6 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
 2. **Generate Package-Manager-Specific GitHub Actions Workflow (`.github/workflows/release-please.yml`):**
 
    Generate the configuration matching the project's detected `package_manager` (from `docs/project.json` or `package.json`):
-
-   #### Option A: For `pnpm` (`package_manager: "pnpm"`):
 
    > [!IMPORTANT]
    > When using `actions/setup-node@v4` with `cache: "pnpm"`, `pnpm` MUST be installed before `setup-node` (via `pnpm/action-setup@v4`) so that `setup-node` can locate the `pnpm` executable to configure the global store cache path.
@@ -600,7 +886,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
            id: meta
            uses: docker/metadata-action@v5
            with:
-             images: ghcr.io/${{ github.repository }}
+             images: ${{ env.IMAGE_NAME }}
              tags: |
                type=raw,value=${{ needs.release-please.outputs.version }}
                type=raw,value=v${{ needs.release-please.outputs.version }}
@@ -610,11 +896,11 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
            working-directory: /tmp/digests
            run: |
              docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-               $(printf 'ghcr.io/${{ github.repository }}@sha256:%s ' *)
+               $(printf '${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
          - name: Inspect image
            run: |
-             docker buildx imagetools inspect ghcr.io/${{ github.repository }}:${{ needs.release-please.outputs.version }}
+             docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${{ needs.release-please.outputs.version }}
    ```
 
 3. **Required GitHub Repository Access Permissions:**
@@ -633,276 +919,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
 
 ---
 
-### Step 8: Setup Agent MCP Servers (Next.js Dev Server & Playwright MCP)
-
-Model Context Protocol (MCP) servers equip AI coding agents with direct runtime inspection, dev server telemetry, and automated browser testing capabilities.
-
-1. **Configure Next.js Dev Server MCP (`next-devtools` / `@modelcontextprotocol/server-nextjs`):**
-   - Enables the agent to query live Next.js compilation status, inspect runtime/build errors, list active routes, clear cache, and evaluate browser scripts against the running dev server on port 3000.
-   - Package: `next-devtools`
-
-2. **Configure Playwright MCP Server (`@executeautomation/playwright-mcp-server` / `@modelcontextprotocol/server-playwright`):**
-   - Enables the agent to perform browser automation, end-to-end testing, visual snapshot verification, DOM element interaction, and console inspection.
-   - Package: `@executeautomation/playwright-mcp-server`
-
-3. **Standard MCP Server Configuration (`.vscode/mcp.json` / `mcp.json`):**
-   - Create or update `mcp.json` or `.vscode/mcp.json` with the following configuration:
-
-```json
-{
-  "mcpServers": {
-    "next-devtools": {
-      "command": "npx",
-      "args": ["-y", "next-devtools"]
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@executeautomation/playwright-mcp-server"]
-    }
-  }
-}
-```
-
----
-
-### Step 9: Setup Docker Containerization (Standalone Production Container)
-
-Containerizing Next.js using **Standalone Mode** packages only the traced production `node_modules` and compiled assets into a minimal, secure, non-root Node.js container (`server.js`). Local development runs directly on the host machine using the project package manager (`pnpm run dev`), while Docker is configured strictly for production builds and deployments.
-
-#### 9.1. Enable Standalone Output in Next.js (`next.config.ts` / `next.config.js`)
-
-Ensure `output: "standalone"` is enabled in `next.config.ts` (or `next.config.js`):
-
-```ts
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  output: "standalone",
-};
-
-export default nextConfig;
-```
-
-#### 9.2. Configure Docker Ignore File (`.dockerignore`)
-
-Create or update `.dockerignore` at the repository root to exclude local build artifacts, secrets, and caches:
-
-```dockerignore
-# Dependencies
-node_modules/
-.pnp/
-.pnp.js
-.pnpm-store/
-
-# Next.js build outputs
-.next/
-out/
-dist/
-build/
-.vercel/
-
-# Testing and coverage
-coverage/
-.nyc_output/
-__tests__/
-__mocks__/
-jest/
-cypress/
-playwright-report/
-test-results/
-.vitest/
-
-# Environment files (prevent leaking secrets into image context)
-.env
-.env*
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Logs and debug
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# IDE and git
-.git/
-.gitignore
-.vscode/
-.idea/
-
-# Docker files
-Dockerfile*
-.dockerignore
-compose*.yaml
-docker-compose*.yml
-
-# Documentation & CI
-*.md
-docs/
-.github/
-```
-
-#### 9.3. Production Multi-Stage `Dockerfile` (Standalone Mode)
-
-Create `Dockerfile` at the repository root using a 3-stage multi-stage build (`dependencies` -> `builder` -> `runner`):
-
-```dockerfile
-# ============================================
-# Stage 1: Dependencies Installation Stage
-# ============================================
-ARG NODE_VERSION=22-slim
-
-FROM node:${NODE_VERSION} AS dependencies
-
-WORKDIR /app
-
-ENV CI=true
-
-# Copy package declarations, workspace configs, and lockfiles
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
-
-# Install dependencies using BuildKit cache mounts, frozen lockfile, and container-only hoisting
-RUN --mount=type=cache,target=/root/.npm \
-    --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    --mount=type=cache,target=/root/.local/share/pnpm/store \
-  if [ -f package-lock.json ]; then \
-    npm ci --no-audit --no-fund --ignore-scripts; \
-  elif [ -f yarn.lock ]; then \
-    corepack enable yarn && yarn install --frozen-lockfile --production=false --ignore-scripts; \
-  elif [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm install --frozen-lockfile --ignore-scripts --shamefully-hoist; \
-  else \
-    echo "No lockfile found." && exit 1; \
-  fi
-
-# ============================================
-# Stage 2: Build Next.js Application
-# ============================================
-FROM node:${NODE_VERSION} AS builder
-
-WORKDIR /app
-
-# Copy dependencies from dependencies stage
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY . .
-
-ENV CI=true
-ENV NODE_ENV=production
-# Next.js telemetry (uncomment to disable during build)
-# ENV NEXT_TELEMETRY_DISABLED=1
-
-# Build Next.js standalone application
-RUN if [ -f package-lock.json ]; then \
-    npm run build; \
-  elif [ -f yarn.lock ]; then \
-    corepack enable yarn && yarn build; \
-  elif [ -f pnpm-lock.yaml ]; then \
-    ./node_modules/.bin/next build; \
-  else \
-    echo "No lockfile found." && exit 1; \
-  fi
-
-# ============================================
-# Stage 3: Minimal Production Standalone Runner
-# ============================================
-FROM node:${NODE_VERSION} AS runner
-
-WORKDIR /app
-
-# Set production environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-ENV NODE_PATH="/app/node_modules"
-# ENV NEXT_TELEMETRY_DISABLED=1
-
-# Copy public directory assets
-COPY --from=builder --chown=node:node /app/public ./public
-
-# Set permissions for prerender cache
-RUN mkdir .next && chown node:node .next
-
-# Copy standalone build output and static assets
-COPY --from=builder --chown=node:node /app/.next/standalone ./
-COPY --from=builder --chown=node:node /app/.next/static ./.next/static
-
-# Switch to non-root user for security best practices
-USER node
-
-# Expose port 3000 for HTTP traffic
-EXPOSE 3000
-
-# Start Next.js standalone server
-CMD ["node", "server.js"]
-```
-
-#### 9.4. Local Build Stack (`docker-compose.yml`)
-
-Create `docker-compose.yml` at the repository root for building and running standalone production containers directly from local source:
-
-```yaml
-services:
-  nextjs-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: nextjs-app:latest
-    container_name: nextjs-standalone-app
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-```
-
-#### 9.5. GHCR Package Deployment Stack (`docker-compose.prod.yml`)
-
-Create `docker-compose.prod.yml` at the repository root for lightweight production deployments pulling pre-built multi-arch images directly from GitHub Container Registry (GHCR) without needing local source code or build tooling:
-
-```yaml
-services:
-  nextjs-app:
-    image: ghcr.io/<lowercase-repo-owner>/<lowercase-repo-name>:${IMAGE_TAG:-latest}
-    container_name: nextjs-standalone-app
-    restart: always
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-```
-
-#### 9.6. Container Commands Reference
-
-- **Local Build & Run (Direct Docker)**:
-  ```bash
-  docker build -t nextjs-app:latest .
-  docker run -d -p 3000:3000 --name nextjs-standalone-app nextjs-app:latest
-  ```
-- **Local Build & Run (Docker Compose)**:
-  ```bash
-  docker compose up -d --build
-  ```
-- **GHCR Production Package Deployment**:
-
-  ```bash
-  # Pull the latest published image from GHCR
-  docker compose -f docker-compose.prod.yml pull
-
-  # Deploy the container stack (defaults to latest)
-  docker compose -f docker-compose.prod.yml up -d
-
-  # Deploy a specific semantic release version:
-  IMAGE_TAG=1.0.0 docker compose -f docker-compose.prod.yml up -d
-  ```
-
----
-
-### Step 10: Verify Project Configuration & Sanity Check
+### Step 11: Verify Project Configuration & Sanity Check
 
 1. Run the project configuration verification script:
    ```bash
@@ -915,12 +932,12 @@ services:
    - Validate each locale object in `supported_languages` array.
    - Verify presence and configuration of testing suites (Jest and Playwright).
    - Audit `mcp.json` / `.vscode/mcp.json` for `next-devtools` and `playwright` MCP servers.
-   - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `.dockerignore`, and standalone output).
+   - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`, and standalone output).
 3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, or Docker files and re-run until all checks pass.
 
 ---
 
-### Step 11: Generate Dev Setup Execution Report
+### Step 12: Generate Dev Setup Execution Report
 
 Upon completing the verification, the agent MUST output a clear and concise execution report summarizing the status of every step and artifact, explicitly distinguishing between what was freshly implemented vs. what was already configured (and left untouched).
 
@@ -929,18 +946,18 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 ```markdown
 ## 🛠️ Next.js Dev Setup Execution Report
 
-| Step / Component                 | Target File(s) / Resource                           | Status                          | Notes / Details                                                                |
-| :------------------------------- | :-------------------------------------------------- | :------------------------------ | :----------------------------------------------------------------------------- |
-| **1. Project Metadata**          | `docs/project.json`                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.            |
-| **2. Core Dependencies**         | `package.json`, Lockfile                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                        |
-| **3. Jest Unit Testing**         | `jest.config.ts`, `jest.setup.ts`                   | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.             |
-| **4. Playwright E2E Testing**    | `playwright.config.ts`                              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner & browser binaries (Chromium, Firefox, WebKit).           |
-| **5. Husky Git Hooks**           | `.husky/commit-msg`, `.husky/pre-push`              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.            |
-| **6. Commitlint Config**         | `commitlint.config.mjs`                             | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                  |
-| **7. Release & GHCR Packaging**  | `.github/workflows/release-please.yml`              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Credit-optimized CI/CD, SemVer release PRs, and GHCR container package deploy. |
-| **8. MCP Server Integration**    | `mcp.json` / `.vscode/mcp.json`                     | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) and Playwright MCP.            |
-| **9. Docker Containerization**   | `Dockerfile`, `docker-compose.yml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & docker-compose.yml.              |
-| **10. Environment Verification** | `scripts/verify-project-config.ts`                  | `[PASSED]`                      | Sanity check passed with zero errors.                                          |
+| Step / Component                    | Target File(s) / Resource                                                 | Status                          | Notes / Details                                                                |
+| :---------------------------------- | :------------------------------------------------------------------------ | :------------------------------ | :----------------------------------------------------------------------------- |
+| **1. Project Metadata**             | `docs/project.json`                                                       | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.            |
+| **2. Core Dependencies**            | `package.json`, Lockfile                                                  | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                        |
+| **3. Next.js Dev Server MCP**       | `mcp.json` / `.vscode/mcp.json`                                           | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) MCP server.                   |
+| **4. Playwright & Playwright MCP**  | `playwright.config.ts`, `mcp.json`                                        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP server.                |
+| **5. Jest Unit Testing**            | `jest.config.ts`, `jest.setup.ts`                                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.             |
+| **6. Docker Containerization**      | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks. |
+| **7. Husky Git Hooks**              | `.husky/commit-msg`, `.husky/pre-push`                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.            |
+| **8. Commitlint Config**            | `commitlint.config.mjs`                                                   | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                  |
+| **9. Release & GHCR Packaging**     | `.github/workflows/release-please.yml`                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Credit-optimized CI/CD, SemVer release PRs, and GHCR container package deploy. |
+| **10. Environment Verification**    | `scripts/verify-project-config.ts`                                        | `[PASSED]`                      | Sanity check passed with zero errors.                                          |
 
 #### Status Definitions:
 

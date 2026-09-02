@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/BIGboss248/aminwebsite/compare/v1.0.0...v1.1.0) (2026-09-02)
+
+
+### Features
+
+* **ci:** build multi-arch container images natively across machines without qemu ([3efd388](https://github.com/BIGboss248/aminwebsite/commit/3efd3883cda0de0832a719aba9eb3bcb7595713c))
+* **ci:** fixed release workflow ([9a1cb9a](https://github.com/BIGboss248/aminwebsite/commit/9a1cb9ad7ed8f3faf17353991e3c1fb1be11f84f))
+
 ## 1.0.0 (2026-09-01)
 
 

@@ -839,9 +839,9 @@ EXPOSE 3000
 CMD ["node", "server.js"]
 ```
 
-#### 9.4. Production `docker-compose.yml`
+#### 9.4. Local Build Stack (`docker-compose.yml`)
 
-Create `docker-compose.yml` at the repository root:
+Create `docker-compose.yml` at the repository root for building and running standalone production containers directly from local source:
 
 ```yaml
 services:
@@ -851,25 +851,53 @@ services:
       dockerfile: Dockerfile
     image: nextjs-app:latest
     container_name: nextjs-standalone-app
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - PORT=3000
 ```
 
-#### 9.5. Container Commands Reference
+#### 9.5. GHCR Package Deployment Stack (`docker-compose.prod.yml`)
 
-- **Build Production Image**:
+Create `docker-compose.prod.yml` at the repository root for lightweight production deployments pulling pre-built multi-arch images directly from GitHub Container Registry (GHCR) without needing local source code or build tooling:
+
+```yaml
+services:
+  nextjs-app:
+    image: ghcr.io/<lowercase-repo-owner>/<lowercase-repo-name>:${IMAGE_TAG:-latest}
+    container_name: nextjs-standalone-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+```
+
+#### 9.6. Container Commands Reference
+
+- **Local Build & Run (Direct Docker)**:
   ```bash
   docker build -t nextjs-app:latest .
-  ```
-- **Run Production Container**:
-  ```bash
   docker run -d -p 3000:3000 --name nextjs-standalone-app nextjs-app:latest
   ```
-- **Run with Docker Compose**:
+- **Local Build & Run (Docker Compose)**:
   ```bash
-  docker compose up -d
+  docker compose up -d --build
+  ```
+- **GHCR Production Package Deployment**:
+
+  ```bash
+  # Pull the latest published image from GHCR
+  docker compose -f docker-compose.prod.yml pull
+
+  # Deploy the container stack (defaults to latest)
+  docker compose -f docker-compose.prod.yml up -d
+
+  # Deploy a specific semantic release version:
+  IMAGE_TAG=1.0.0 docker compose -f docker-compose.prod.yml up -d
   ```
 
 ---

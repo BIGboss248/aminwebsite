@@ -1,0 +1,11 @@
+services:
+  nextjs-app:
+    image: ghcr.io/bigboss248/aminwebsite:${IMAGE_TAG:-latest}
+    container_name: nextjs-standalone-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+

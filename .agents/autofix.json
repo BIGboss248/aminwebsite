@@ -52,5 +52,11 @@
     "Category": "ARCH",
     "Instruction": "In GitHub Actions CI/CD and Release Please workflows, configure concurrency 'cancel-in-progress: false' to ensure ongoing workflow runs and release builds on main are never cancelled when new commits are pushed.",
     "Why": "user explicit preference: prevent workflow runs and release builds from being cancelled by subsequent commits"
+  },
+  {
+    "Rule_number": 10,
+    "Category": "ARCH",
+    "Instruction": "In GitHub Actions container build workflows (GHCR/Docker), always lowercase the repository name (e.g. using 'tr [:upper:] [:lower:]' into an IMAGE_NAME environment variable) because Docker OCI naming specifications strictly forbid uppercase characters.",
+    "Why": "fix failure: Docker buildx failed with 'repository name must be lowercase' when repository owner/name contains uppercase characters"
   }
 ]

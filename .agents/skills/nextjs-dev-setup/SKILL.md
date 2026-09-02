@@ -318,7 +318,11 @@ Playwright tests the complete running Next.js application across real browser en
    pnpm exec playwright install --with-deps chromium firefox webkit
    ```
 
-4. **Reference Implementation Example (For Future Test Creation):**
+4. **CI Execution & Web Server Lifecycle (Build & Run Behavior):**
+   - **Jest Unit Tests (`pnpm test`)**: Does **not** require building or running the Next.js application. Jest executes tests in an in-memory virtual DOM (`jsdom`) using Next.js SWC compilation (`next/jest`), testing components, hooks, and utilities directly.
+   - **Playwright E2E Tests (`pnpm test:e2e`)**: Requires the full Next.js application built and running, but **no manual build/run steps are needed in GitHub Actions**. Playwright's `webServer` configuration automatically detects `CI=true`, runs `pnpm build && pnpm start`, waits for `http://localhost:3000` to become healthy, runs the browser test suite, and cleanly terminates the server upon test completion.
+
+5. **Reference Implementation Example (For Future Test Creation):**
 
    ```ts
    // Reference: Playwright E2E navigation test pattern (Do NOT generate this file during dev setup)

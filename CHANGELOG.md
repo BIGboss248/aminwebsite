@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/BIGboss248/aminwebsite/compare/v1.1.0...v1.2.0) (2026-09-02)
+
+
+### Features
+
+* **ci:** release workflow fix ([ac9c25e](https://github.com/BIGboss248/aminwebsite/commit/ac9c25e0eb3635685dd7f4b81c0142d4d5eaa9c3))
+
 ## [1.1.0](https://github.com/BIGboss248/aminwebsite/compare/v1.0.0...v1.1.0) (2026-09-02)
 
 

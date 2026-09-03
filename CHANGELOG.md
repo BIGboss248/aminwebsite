@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/BIGboss248/aminwebsite/compare/v1.2.1...v1.3.0) (2026-09-03)
+
+
+### Features
+
+* **ci:** added health check ([5b3da61](https://github.com/BIGboss248/aminwebsite/commit/5b3da61d45ce654a3440f7148a93d834ece6d1c8))
+* progress and locale aware Link component ([7cfbce2](https://github.com/BIGboss248/aminwebsite/commit/7cfbce26341e1ce54fb8b643bf5e5fdd98339709))
+
 ## [1.2.1](https://github.com/BIGboss248/aminwebsite/compare/v1.2.0...v1.2.1) (2026-09-02)
 
 

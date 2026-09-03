@@ -555,7 +555,8 @@ WORKDIR /app
 
 # Set production environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
+ARG PORT=3000
+ENV PORT=${PORT}
 ENV HOSTNAME="0.0.0.0"
 ENV NODE_PATH="/app/node_modules"
 # ENV NEXT_TELEMETRY_DISABLED=1
@@ -573,8 +574,8 @@ COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 # Switch to non-root user for security best practices
 USER node
 
-# Expose port 3000 for HTTP traffic
-EXPOSE 3000
+# Expose port for HTTP traffic (defaults to 3000)
+EXPOSE ${PORT}
 
 # Start Next.js standalone server
 CMD ["node", "server.js"]
@@ -590,14 +591,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - PORT=${PORT:-3000}
     image: nextjs-app:latest
     container_name: nextjs-standalone-app
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${PORT:-3000}:${PORT:-3000}"
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=${PORT:-3000}
 ```
 
 #### 8.5. GHCR Package Deployment Stack (`docker-compose.prod.yml`)
@@ -611,10 +614,10 @@ services:
     container_name: nextjs-standalone-app
     restart: always
     ports:
-      - "3000:3000"
+      - "${PORT:-3000}:${PORT:-3000}"
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=${PORT:-3000}
 ```
 
 #### 8.6. Container Commands Reference

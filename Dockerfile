@@ -62,7 +62,8 @@ WORKDIR /app
 
 # Set production environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
+ARG PORT=3000
+ENV PORT=${PORT}
 ENV HOSTNAME="0.0.0.0"
 ENV NODE_PATH="/app/node_modules"
 # ENV NEXT_TELEMETRY_DISABLED=1
@@ -80,8 +81,8 @@ COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 # Switch to non-root user for security best practices
 USER node
 
-# Expose port 3000 for HTTP traffic
-EXPOSE 3000
+# Expose port for HTTP traffic (defaults to 3000)
+EXPOSE ${PORT}
 
 # Start Next.js standalone server
 CMD ["node", "server.js"]

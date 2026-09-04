@@ -3,7 +3,7 @@ name: nextjs-create-component
 description: Step-by-step workflow and engineering standards for designing, creating, styling, and documenting Next.js React components (RSC and Client Components). Use when creating new React components, UI elements, layouts, page sections or pages in Next.js App Router applications.
 metadata:
   author: BIGboss248
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Next.js Component Creation Skill (`nextjs-create-component`)
@@ -45,6 +45,10 @@ When deployed in a Next.js repository, official Next.js documentation is accessi
   - [Forms & Mutations Guide](../../../node_modules/next/dist/docs/01-app/02-guides/forms.md)
   - [Server Actions Guide](../../../node_modules/next/dist/docs/01-app/02-guides/server-actions.md)
   - [`<Form>` Component API Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/form.md)
+- **Client-Side Data Fetching & Cache Coordination:**
+  - [TanStack Query & Next.js App Router Guide](../../../docs/tanstack-query-nextjs-guide.md)
+  - [`use cache` Directive Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-cache.md)
+  - [`updateTag` API Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/04-functions/updateTag.md)
 
 ---
 
@@ -85,6 +89,10 @@ _(Reference: [Server & Client Components](../../../node_modules/next/dist/docs/0
 4. **Directory Structure:**
    - Store components under `PROJECT["project_context_and_metadata"]["new_component_dir"]`, categorized by page/feature module.
    - Implement responsive adaptations for mobile, tablet, and desktop viewports directly within a single component using Tailwind CSS breakpoint classes (e.g., `sm:`, `md:`, `lg:`).
+5. **Client Data Fetching & Unified Cache Contracts (`queryOptions`):**
+   - When components require client-side dynamic fetching, infinite scroll, polling, or optimistic mutations, implement TanStack Query using a **Unified Cache Contract** (`[feature]-cache.ts`).
+   - Define a single contract object with `key` (typed tuple), `tag` (server cache tag for `updateTag`), and `options` (`queryOptions(...)`) with an explicit `staleTime` (e.g. `30_000` ms).
+   - **Zero Direct Relative Fetching on Server:** In Server Components, calling relative URLs (`fetch('/api/...')`) is strictly FORBIDDEN because Node.js lacks origin context and relative fetch introduces loopback overhead. Server prefetching MUST call internal database or service functions directly (e.g. `getProduct(id)`), overriding the contract's `queryFn`. Client components fetch from Route Handlers via the contract's default `queryFn`.
 
 ### 3. Next.js Optimized Components & Styling Rules
 
@@ -118,8 +126,29 @@ _(Reference: [Streaming & Suspense](../../../node_modules/next/dist/docs/01-app/
 2. **Route Transition Progress:**
    - Use `<Link>` from `@vercel/react-transition-progress` to trigger top-bar progress on high-priority navigation points (primary menus, header links, hero CTAs, and interactive cards).
    - Ensure the top progress bar is fixed (`fixed top-0 left-0 right-0 z-[9999] h-1 pointer-events-none`) with theme primary colors.
+3. **TanStack Query Suspense Integration (`useSuspenseQuery` vs `useQuery`):**
+   - **Streamed Components:** Use `useSuspenseQuery(cache.options(...))` for components rendered inside `<Suspense fallback={<[ComponentName]Skeleton />}>`. It guarantees defined `data`, streams the skeleton fallback on initial fetch, and prevents layout shift or skeleton flashing on subsequent background refetches.
+   - **Interactive Shells:** Use standard `useQuery` with `enabled: boolean` when building interactive shells (such as search autocompletes, filter drawers, or command palettes) where the input shell must remain interactive and visible while queries resolve.
 
-### 5. i18n & SEO Integration Rules
+### 5. Server Prefetching, Cache Coordination & Cache Component Safety
+
+_(Reference: [TanStack Query Integration Guide](../../../docs/tanstack-query-nextjs-guide.md), [`use cache`](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-cache.md), and [`updateTag`](../../../node_modules/next/dist/docs/01-app/03-api-reference/04-functions/updateTag.md))_
+
+1. **Non-Blocking Server Prefetch Pattern:**
+   - On the server, instantiate `new QueryClient()` per request (never a shared singleton).
+   - Trigger prefetching without awaiting: `void queryClient.prefetchQuery(...)`. This allows Next.js to stream the component shell and `<Skeleton>` fallback immediately without blocking on database queries.
+   - Dehydrate pending queries: wrap the Client Component in `<HydrationBoundary state={dehydrate(queryClient, { shouldDehydrateQuery: (q) => defaultShouldDehydrateQuery(q) || q.state.status === 'pending' })}>`.
+2. **Cache Coordination & Optimistic Mutations:**
+   - In mutating Client Components, use `useMutation` with `onMutate` to immediately apply optimistic UI updates via `queryClient.setQueryData(...)` and snapshot previous state.
+   - In `onError`, restore `context.previous`.
+   - The invoked Server Action performs the database write and calls `updateTag(cache.tag(...))` from `next/cache` to invalidate cached server reads for subsequent navigations.
+3. **Cache Components Safety (Next.js 15+):**
+   - With `cacheComponents: true` enabled in `next.config.ts`, `dehydrate()` calling `Date.now()` during static prerendering throws a blocking build error.
+   - Use the safe hydration helper pattern: wrap the timestamp lookup in an isolated `'use cache'` function tagged with the same `cacheTag`, ensuring the timestamp is deterministically cached alongside the data.
+4. **Explicit `staleTime` Standard:**
+   - Always set an explicit `staleTime` (e.g. `30_000` ms) in `queryOptions`. A `staleTime` of `0` causes the browser to trigger an instant redundant HTTP refetch upon client hydration.
+
+### 6. i18n & SEO Integration Rules
 
 _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/02-guides/internationalization.md), [JSON-LD](../../../node_modules/next/dist/docs/01-app/02-guides/json-ld.md), and [Metadata & OG Images](../../../node_modules/next/dist/docs/01-app/01-getting-started/14-metadata-and-og-images.md))_
 
@@ -135,7 +164,7 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
      - Convert CMS rich text trees to plain strings using `lexicalToPlainText(...)` before schema assignment.
      - Mark schema script with `<!-- TODO: Validate on https://validator.schema.org/ -->`.
 
-### 6. TSDoc & Module Mapping Rules
+### 7. TSDoc & Module Mapping Rules
 
 1. **Strict English TSDoc (MANDATORY):**
    - All exported functions, props, generics, and components MUST be annotated in **English** using strict TSDoc syntax.
@@ -144,7 +173,7 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
    - Create or append to `README.modules.md` in the component folder detailing algorithmic breakdown, internal state Mermaid diagram, consumer file references, and integration flowchart.
    - Update root `ARCHITECTURE.md` if data flow, module boundaries, or Payload CMS schemas are altered.
 
-### 7. Common Edge Cases & Pitfalls
+### 8. Common Edge Cases & Pitfalls
 
 | Edge Case / Anti-Pattern                               | Correct Pattern                                                                                                                                                                 |
 | :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -159,6 +188,12 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
 | Naked internal links (`<Link href="/about">`)          | Use localized paths (`<Link href={localizePath("/about", locale)}>`)                                                                                                            |
 | Manual date/currency formatting strings                | Use native `Intl.DateTimeFormat` or `Intl.NumberFormat`                                                                                                                         |
 | Skipping `@param` tags or writing non-English TSDoc    | Write strict English TSDoc for every single prop & parameter                                                                                                                    |
+| Shared singleton `QueryClient` on server               | Instantiate `new QueryClient()` per request on server; reuse singleton only in browser (`browserQueryClient ??= new QueryClient()`)                                            |
+| Awaiting `prefetchQuery` in RSC                        | Use non-blocking prefetch `void queryClient.prefetchQuery(...)` inside `<Suspense>` to stream `<Skeleton>` immediately                                                         |
+| Relative URLs in server prefetch                       | Call internal service or direct DB function in server prefetch `queryFn`; reserve relative URLs for browser fetches                                                            |
+| Missing `staleTime` on hydrated queries                | Set explicit `staleTime: 30_000` in `queryOptions` to prevent instant duplicate network refetch on client hydration                                                           |
+| Calling `Date.now()` during Cache Components build     | Wrap dehydration timestamp in `'use cache'` helper with matching `cacheTag`s to prevent prerender build failures                                                              |
+| Sequential `useSuspenseQuery` waterfalls               | Split independent queries into sibling components or use `useSuspenseQueries`                                                                                                   |
 
 ---
 
@@ -248,9 +283,12 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
      - Suspense & `<Skeleton>` rendering during loading states
      - Accessibility ARIA attributes (`role`, `aria-busy`, `aria-label`)
      - BiDi / RTL text orientation expectations
-  3. **TDD Red-Green Loop:**
+  3. **Testing TanStack Query Components:**
+     - When testing components using `useQuery` or `useSuspenseQuery`, use a test harness with `QueryClientProvider` configured with `retry: false` and `gcTime: Infinity`.
+     - Seed mock data directly into the test cache using `queryClient.setQueryData(cache.key(...), mockData)` to verify loaded data rendering, or leave unseeded inside `<Suspense fallback={<[ComponentName]Skeleton />}>` to verify fallback rendering without real network requests.
+  4. **TDD Red-Green Loop:**
      - Write tests defining the contract (Red).
-     - Implement component and skeleton fallbacks (Green) until all unit tests pass cleanly (`bun test` or project runner).
+     - Implement component and skeleton fallbacks (Green) until all unit tests pass cleanly (`bun test`, `pnpm test`, or project runner).
 
 - [ ] **Step 5: Component & Responsive Development**
       Develop the component (`[ComponentName].tsx`) and its skeleton fallback `[ComponentName]Skeleton.tsx` using Tailwind CSS responsive classes (e.g. `sm:`, `md:`, `lg:`) to handle mobile, tablet, and desktop layouts within a single file according to architectural guidelines and test requirements.
@@ -271,6 +309,7 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
      - [ ] Styling Tokens: Used semantic tokens (`bg-background`) instead of hardcoded colors (`bg-blue-500`).
      - [ ] BiDi/RTL: Exclusively used Tailwind logical properties (`ms-`, `pe-`).
      - [ ] TSDoc Completeness: Fully annotated in English with `@param`, `@returns`, and `@defaultValue`.
+     - [ ] Query Cache Hygiene: Explicit `staleTime` defined; zero relative fetch calls on server.
 
   3. **Identified Bugs & Corrections:**
      - Documented any layout shifts, hydration warnings, or missing ARIA labels identified and fixed.
@@ -291,7 +330,7 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
   2. **History Persistence Finalization:** Ensure all subtasks in `.agents/history/plan-[component-name].json` are updated with `"status": "completed"`.
   3. **Handoff Output:** Present completed work summary:
      - Component Name & File Path
-     - Rendering & Caching Strategy (RSC / Client / ISR)
+     - Rendering & Caching Strategy (RSC / Client / ISR / TanStack Query Hydrated)
      - Dependencies & Imports
      - Props & Data Mutations
   4. **Git Operations:** Leave all git staging and committing entirely to the user. You may suggest conventional commit messages (e.g. `feat: add [ComponentName] UI component`).
@@ -300,7 +339,9 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
 
 ## Reference Implementation Template
 
-### 1. TDD Unit Test Contract (`FeatureCard.test.tsx`) - Written First
+### Reference 1: Pure Server Component (`FeatureCard`)
+
+#### 1. TDD Unit Test Contract (`FeatureCard.test.tsx`) - Written First
 
 ```tsx
 import { render, screen } from "@testing-library/react";
@@ -338,7 +379,7 @@ describe("FeatureCard (TDD)", () => {
 });
 ```
 
-### 2. Component Implementation (`FeatureCard.tsx`) - Implemented to Pass Tests
+#### 2. Component Implementation (`FeatureCard.tsx`) - Implemented to Pass Tests
 
 ```tsx
 import React, { Suspense } from "react";
@@ -446,6 +487,211 @@ export function FeatureCardSkeleton(): React.JSX.Element {
       <div className="h-4 w-full bg-muted rounded" />
       <div className="h-4 w-1/4 bg-muted rounded ms-auto" />
     </div>
+  );
+}
+```
+
+---
+
+### Reference 2: Dynamic Client Component with TanStack Query & Optimistic Mutations
+
+#### 1. Shared Cache Contract (`product-cache.ts`)
+
+```ts
+import { queryOptions } from "@tanstack/react-query";
+
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  isFavorite: boolean;
+}
+
+export const productCache = {
+  key: (id: string) => ["product", id] as const,
+  tag: (id: string) => `product:${id}`,
+  options: (id: string) =>
+    queryOptions({
+      queryKey: productCache.key(id),
+      queryFn: async (): Promise<Product> => {
+        const res = await fetch(`/api/products/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch product");
+        return res.json();
+      },
+      staleTime: 30_000,
+    }),
+};
+```
+
+#### 2. TDD Unit Test Contract (`ProductCard.test.tsx`) - Written First
+
+```tsx
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Suspense } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render } from "@testing-library/react";
+import { ProductCard, ProductCardSkeleton } from "./ProductCard";
+import { productCache } from "./product-cache";
+
+function renderWithClient(ui: React.ReactElement, client: QueryClient) {
+  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>);
+}
+
+describe("ProductCard (TDD with useSuspenseQuery)", () => {
+  it("renders cached product data when available", () => {
+    const testClient = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: Infinity } },
+    });
+
+    testClient.setQueryData(productCache.key("prod-1"), {
+      id: "prod-1",
+      name: "Ergonomic Chair",
+      price: 299,
+      isFavorite: false,
+    });
+
+    renderWithClient(
+      <Suspense fallback={<ProductCardSkeleton />}>
+        <ProductCard id="prod-1" onToggleFavorite={jest.fn()} />
+      </Suspense>,
+      testClient,
+    );
+
+    expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent("Ergonomic Chair");
+    expect(screen.getByText("$299")).toBeInTheDocument();
+  });
+
+  it("renders Skeleton matching component dimensions during fallback", () => {
+    const { container } = render(<ProductCardSkeleton />);
+    expect(container.firstChild).toHaveClass("animate-pulse");
+  });
+});
+```
+
+#### 3. Client Component with `useSuspenseQuery` & Optimistic Mutation (`ProductCard.tsx`)
+
+```tsx
+"use client";
+
+import React from "react";
+import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { productCache, type Product } from "./product-cache";
+
+export interface ProductCardProps {
+  id: string;
+  onToggleFavorite: (id: string, nextStatus: boolean) => Promise<void>;
+  className?: string;
+}
+
+export function ProductCard({
+  id,
+  onToggleFavorite,
+  className = "",
+}: ProductCardProps): React.JSX.Element {
+  const queryClient = useQueryClient();
+  const { data: product } = useSuspenseQuery(productCache.options(id));
+  const queryKey = productCache.key(id);
+
+  const mutation = useMutation({
+    mutationFn: (nextStatus: boolean) => onToggleFavorite(id, nextStatus),
+    onMutate: async (nextStatus) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Product>(queryKey);
+      if (previous) {
+        queryClient.setQueryData<Product>(queryKey, {
+          ...previous,
+          isFavorite: nextStatus,
+        });
+      }
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(queryKey, context.previous);
+      }
+    },
+  });
+
+  return (
+    <article
+      className={cn(
+        "flex flex-col gap-3 p-5 rounded-lg border border-border bg-card text-card-foreground shadow-sm",
+        className,
+      )}
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-foreground">{product.name}</h3>
+        <button
+          type="button"
+          aria-label={product.isFavorite ? "Remove favorite" : "Add favorite"}
+          onClick={() => mutation.mutate(!product.isFavorite)}
+          className="text-sm font-medium text-primary hover:underline ms-2"
+        >
+          {product.isFavorite ? "★ Favorited" : "☆ Favorite"}
+        </button>
+      </div>
+      <p className="text-sm font-medium text-muted-foreground">${product.price}</p>
+    </article>
+  );
+}
+
+export function ProductCardSkeleton(): React.JSX.Element {
+  return (
+    <div className="flex flex-col gap-3 p-5 rounded-lg border border-border bg-muted/40 animate-pulse">
+      <div className="h-6 w-2/3 bg-muted rounded" />
+      <div className="h-4 w-1/4 bg-muted rounded" />
+    </div>
+  );
+}
+```
+
+#### 4. Server Prefetch Wrapper (`ProductSection.tsx`)
+
+```tsx
+import { Suspense } from "react";
+import {
+  defaultShouldDehydrateQuery,
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import { ProductCard, ProductCardSkeleton } from "./ProductCard";
+import { productCache } from "./product-cache";
+import { getProductFromDb } from "@/lib/db/products"; // Direct server function (no relative fetch)
+import { toggleFavoriteAction } from "@/app/actions/product";
+
+interface ProductSectionProps {
+  id: string;
+}
+
+export function ProductSection({ id }: ProductSectionProps): React.JSX.Element {
+  return (
+    <Suspense fallback={<ProductCardSkeleton />}>
+      <ProductSectionData id={id} />
+    </Suspense>
+  );
+}
+
+async function ProductSectionData({ id }: { id: string }): Promise<React.JSX.Element> {
+  const queryClient = new QueryClient();
+
+  // Non-blocking server prefetch (unawaited to allow route streaming)
+  void queryClient.prefetchQuery({
+    ...productCache.options(id),
+    queryFn: () => getProductFromDb(id), // Direct DB call on server
+  });
+
+  return (
+    <HydrationBoundary
+      state={dehydrate(queryClient, {
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) || query.state.status === "pending",
+      })}
+    >
+      <ProductCard id={id} onToggleFavorite={toggleFavoriteAction} />
+    </HydrationBoundary>
   );
 }
 ```

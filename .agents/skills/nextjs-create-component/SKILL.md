@@ -188,11 +188,11 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
 | Naked internal links (`<Link href="/about">`)          | Use localized paths (`<Link href={localizePath("/about", locale)}>`)                                                                                                            |
 | Manual date/currency formatting strings                | Use native `Intl.DateTimeFormat` or `Intl.NumberFormat`                                                                                                                         |
 | Skipping `@param` tags or writing non-English TSDoc    | Write strict English TSDoc for every single prop & parameter                                                                                                                    |
-| Shared singleton `QueryClient` on server               | Instantiate `new QueryClient()` per request on server; reuse singleton only in browser (`browserQueryClient ??= new QueryClient()`)                                            |
-| Awaiting `prefetchQuery` in RSC                        | Use non-blocking prefetch `void queryClient.prefetchQuery(...)` inside `<Suspense>` to stream `<Skeleton>` immediately                                                         |
-| Relative URLs in server prefetch                       | Call internal service or direct DB function in server prefetch `queryFn`; reserve relative URLs for browser fetches                                                            |
-| Missing `staleTime` on hydrated queries                | Set explicit `staleTime: 30_000` in `queryOptions` to prevent instant duplicate network refetch on client hydration                                                           |
-| Calling `Date.now()` during Cache Components build     | Wrap dehydration timestamp in `'use cache'` helper with matching `cacheTag`s to prevent prerender build failures                                                              |
+| Shared singleton `QueryClient` on server               | Instantiate `new QueryClient()` per request on server; reuse singleton only in browser (`browserQueryClient ??= new QueryClient()`)                                             |
+| Awaiting `prefetchQuery` in RSC                        | Use non-blocking prefetch `void queryClient.prefetchQuery(...)` inside `<Suspense>` to stream `<Skeleton>` immediately                                                          |
+| Relative URLs in server prefetch                       | Call internal service or direct DB function in server prefetch `queryFn`; reserve relative URLs for browser fetches                                                             |
+| Missing `staleTime` on hydrated queries                | Set explicit `staleTime: 30_000` in `queryOptions` to prevent instant duplicate network refetch on client hydration                                                             |
+| Calling `Date.now()` during Cache Components build     | Wrap dehydration timestamp in `'use cache'` helper with matching `cacheTag`s to prevent prerender build failures                                                                |
 | Sequential `useSuspenseQuery` waterfalls               | Split independent queries into sibling components or use `useSuspenseQueries`                                                                                                   |
 
 ---
@@ -535,7 +535,9 @@ import { ProductCard, ProductCardSkeleton } from "./ProductCard";
 import { productCache } from "./product-cache";
 
 function renderWithClient(ui: React.ReactElement, client: QueryClient) {
-  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>);
+  return render(
+    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
+  );
 }
 
 describe("ProductCard (TDD with useSuspenseQuery)", () => {
@@ -558,7 +560,9 @@ describe("ProductCard (TDD with useSuspenseQuery)", () => {
       testClient,
     );
 
-    expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent("Ergonomic Chair");
+    expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent(
+      "Ergonomic Chair",
+    );
     expect(screen.getByText("$299")).toBeInTheDocument();
   });
 
@@ -575,7 +579,11 @@ describe("ProductCard (TDD with useSuspenseQuery)", () => {
 "use client";
 
 import React from "react";
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useSuspenseQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { productCache, type Product } from "./product-cache";
 
@@ -622,7 +630,9 @@ export function ProductCard({
       )}
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-foreground">{product.name}</h3>
+        <h3 className="text-lg font-semibold text-foreground">
+          {product.name}
+        </h3>
         <button
           type="button"
           aria-label={product.isFavorite ? "Remove favorite" : "Add favorite"}
@@ -632,7 +642,9 @@ export function ProductCard({
           {product.isFavorite ? "★ Favorited" : "☆ Favorite"}
         </button>
       </div>
-      <p className="text-sm font-medium text-muted-foreground">${product.price}</p>
+      <p className="text-sm font-medium text-muted-foreground">
+        ${product.price}
+      </p>
     </article>
   );
 }
@@ -674,7 +686,11 @@ export function ProductSection({ id }: ProductSectionProps): React.JSX.Element {
   );
 }
 
-async function ProductSectionData({ id }: { id: string }): Promise<React.JSX.Element> {
+async function ProductSectionData({
+  id,
+}: {
+  id: string;
+}): Promise<React.JSX.Element> {
   const queryClient = new QueryClient();
 
   // Non-blocking server prefetch (unawaited to allow route streaming)
@@ -687,7 +703,8 @@ async function ProductSectionData({ id }: { id: string }): Promise<React.JSX.Ele
     <HydrationBoundary
       state={dehydrate(queryClient, {
         shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) || query.state.status === "pending",
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === "pending",
       })}
     >
       <ProductCard id={id} onToggleFavorite={toggleFavoriteAction} />

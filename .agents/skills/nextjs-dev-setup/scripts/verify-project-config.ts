@@ -279,11 +279,16 @@ function auditDevAutomation(meta?: Partial<ProjectContextAndMetadata>): DevAutom
     if (pm === "pnpm" && wfContent.includes('cache: "pnpm"') && !wfContent.includes("pnpm/action-setup")) {
       pmWarning = " (Warning: Missing 'pnpm/action-setup' before 'actions/setup-node' with pnpm cache)";
     }
+    const hasNextCache = wfContent.includes(".next/cache");
+    const cacheStatus = hasNextCache
+      ? " [Next.js CI build cache enabled]"
+      : " (Note: Missing '.next/cache' build caching step; recommended to avoid 'No Cache Detected' and accelerate CI)";
+
     results.push({
       name: "Release Please CI/CD",
       category: "release_automation",
       status: pmWarning ? "warning" : "configured",
-      details: `Found GitHub Actions workflow '${foundReleaseWorkflow}' configured for ${pm}.${pmWarning}`,
+      details: `Found GitHub Actions workflow '${foundReleaseWorkflow}' configured for ${pm}.${pmWarning}${cacheStatus}`,
     });
   } else {
     results.push({

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/BIGboss248/aminwebsite/compare/v1.3.0...v1.3.1) (2026-09-05)
+
+
+### Bug Fixes
+
+* **ci:** nextjs cache setup ([43ae0f4](https://github.com/BIGboss248/aminwebsite/commit/43ae0f42a61ef1bcfd2e5c375d103e9f21c828a4))
+* **dev:** fixed ag terminal command issue ([595652b](https://github.com/BIGboss248/aminwebsite/commit/595652b6b1074e4d010a095dcca547c2eb9e988e))
+
 ## [1.3.0](https://github.com/BIGboss248/aminwebsite/compare/v1.2.1...v1.3.0) (2026-09-03)
 
 

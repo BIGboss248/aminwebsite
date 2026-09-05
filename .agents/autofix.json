@@ -64,5 +64,11 @@
     "Category": "ARCH",
     "Instruction": "Create custom React UI components (including JSX wrappers like Link) in separate .tsx files under the components directory (e.g. 'app/components/Link.tsx') and keep navigation helper configuration files like 'i18n/navigation.ts' pure TypeScript without JSX.",
     "Why": "user explicit correction: create the Link component in a separate file in @components"
+  },
+  {
+    "Rule_number": 12,
+    "Category": "PROCESS",
+    "Instruction": "Never chain multiple commands using '&&', '||', or ';' on a single line; execute terminal commands individually as discrete single operations. When running inspection commands like 'git diff' or 'git status', avoid appending unnecessary specific path arguments unless specifically required so commands match user-configured custom permissions and allowlists.",
+    "Why": "user requirement: compound one-liner commands and granular arguments break Antigravity custom permissions and command allowlists"
   }
 ]

@@ -1,6 +1,6 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, docker-compose.yml, and .dockerignore), setup git hooks and commitlint, or configure Release Please automation with multi-arch (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployment. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", "deploy package on release", or when configuring/creating docs/project.json or mcp.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, docker-compose.yml, and .dockerignore), setup git hooks and commitlint, or configure Release Please automation with multi-arch (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployment and credit-optimized Next.js CI build caching (.next/cache). Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", "deploy package on release", or when configuring/creating docs/project.json or mcp.json.
 metadata:
   author: BIGboss248
   version: "2.0"
@@ -703,6 +703,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
    - **`concurrency.cancel-in-progress: false`**: Ensures active release and workflow runs on main are never cancelled in-flight when new commits are pushed.
    - **Fail-Fast Testing Hierarchy**: Runs lightweight, in-memory **Jest unit tests first**. If unit tests fail, the job terminates immediately before spending time or runner resources installing browsers and running Playwright.
    - **Playwright Binary Caching**: Caches `~/.cache/ms-playwright` using `actions/cache` keyed against lockfile hashes, eliminating repeated multi-hundred-megabyte browser downloads on every run.
+   - **Next.js CI Build Caching (`.next/cache`)**: Persists the `.next/cache` directory between CI workflow runs using `actions/cache@v4`. Next.js saves SWC compilation artifacts, Webpack/Turbopack caches, and prerendered static assets in `.next/cache`. Persisting this cache eliminates full rebuilds from scratch during CI (such as when Playwright runs `pnpm build && pnpm start` in `webServer`), cuts CI execution times, saves GitHub Actions minutes, and eliminates the Next.js `No Cache Detected` diagnostic error ([Next.js: No Cache Detected](https://nextjs.org/docs/messages/no-cache)). Keyed with `${{ runner.os }}-nextjs-${{ hashFiles('**/<lockfile>') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.json') }}` and incremental fallback `restore-keys`.
    - **CI Single Browser Targeting / Sequential Execution**: Runs Playwright efficiently against built production output (`[pm] run build && [pm] run start` or `test:e2e`).
    - **Node.js Active LTS Runtime**: Uses `node-version: 22` to avoid runner deprecation warnings.
    - **Two-Stage Multi-Arch Matrix Builder**: Builds `linux/amd64` and `linux/arm64` images concurrently across separate dedicated runner machines (`ubuntu-latest` and `ubuntu-24.04-arm`). Each machine pushes its architecture image by digest and caches layers scoped to its architecture (`scope=${{ matrix.arch }}`). A lightweight `merge-manifest` job stitches the digests into a unified multi-arch manifest list without rebuilding.
@@ -773,7 +774,20 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
            if: steps.playwright-cache.outputs.cache-hit != 'true'
            run: pnpm exec playwright install --with-deps
 
-         # 3. Execute End-to-End browser tests against built app
+         # 3. Next.js CI Build Cache (.next/cache) to prevent "No Cache Detected" and accelerate build times
+         - name: Restore Next.js Build Cache
+           uses: actions/cache@v4
+           with:
+             # Next.js saves build artifacts, compilation output, and prerender caches in .next/cache
+             path: |
+               ${{ github.workspace }}/.next/cache
+             # Generate a new cache whenever packages or source files change.
+             key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.json') }}
+             # If source files changed but packages didn't, rebuild incrementally from a prior cache.
+             restore-keys: |
+               ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+         # 4. Execute End-to-End browser tests against built app
          - name: Run Playwright E2E Tests
            run: pnpm test:e2e
 
@@ -906,7 +920,94 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
              docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${{ needs.release-please.outputs.version }}
    ```
 
-3. **Required GitHub Repository Access Permissions:**
+3. **Next.js CI Build Caching Deep-Dive & Multi-Package-Manager Matrix:**
+
+   Next.js continuously records compiler cache, Webpack/Turbopack compilation artifacts, and page prerenders into `.next/cache`. Persisting this directory across CI workflow runs enables incremental compilation, saving GitHub Actions billing credits and eliminating the Next.js `No Cache Detected` diagnostic error ([Next.js Documentation: No Cache Detected](https://nextjs.org/docs/messages/no-cache)).
+
+   #### How the Cache Key Strategy Works:
+   - **Exact Match (`key`)**:
+     Composed of the runner OS, lockfile hash, and source file patterns:
+     `${{ runner.os }}-nextjs-${{ hashFiles('**/<lockfile>') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.json') }}`.
+     When neither source code nor dependencies have changed, the cache hits exactly, completing the build step with near-instant execution.
+   - **Incremental Fallback (`restore-keys`)**:
+     Configured with the prefix fallback: `${{ runner.os }}-nextjs-${{ hashFiles('**/<lockfile>') }}-`.
+     When application code changes on a branch or PR but dependencies have not changed, the primary key misses, but `restore-keys` restores the previous build cache for those exact dependencies. Next.js then performs **incremental compilation** — compiling only the modified routes, server actions, and components instead of rebuilding from scratch.
+   - **Dependency Invalidation**:
+     Whenever dependencies are updated or lockfiles change, the lockfile hash in both the key and restore-keys changes, safely invalidating outdated caches and creating a fresh, clean baseline cache.
+
+   #### Multi-Package-Manager Configuration Matrix:
+
+   Depending on the project's detected `package_manager` in `docs/project.json` or `package.json`, configure the Next.js cache step in `.github/workflows/release-please.yml`:
+
+   | Package Manager | Lockfile Pattern              | Setup Action & Cache Setting                                       | Next.js Cache Path                                                              |
+   | :-------------- | :---------------------------- | :----------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+   | **pnpm**        | `**/pnpm-lock.yaml`           | `pnpm/action-setup@v4` + `actions/setup-node@v4` (`cache: "pnpm"`) | `${{ github.workspace }}/.next/cache`                                           |
+   | **npm**         | `**/package-lock.json`        | `actions/setup-node@v4` (`cache: "npm"`)                           | `${{ github.workspace }}/.next/cache` (or `~/.npm` if setup-node cache omitted) |
+   | **yarn**        | `**/yarn.lock`                | `actions/setup-node@v4` (`cache: "yarn"`)                          | `${{ github.workspace }}/.next/cache`                                           |
+   | **bun**         | `**/bun.lockb`, `**/bun.lock` | `oven-sh/setup-bun@v2`                                             | `${{ github.workspace }}/.next/cache`                                           |
+
+   ##### Package Manager Snippet Specifications:
+   - **pnpm (`pnpm-lock.yaml`)**:
+
+     ```yaml
+     - name: Restore Next.js Build Cache
+       uses: actions/cache@v4
+       with:
+         path: |
+           ${{ github.workspace }}/.next/cache
+         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.json') }}
+         restore-keys: |
+           ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+     ```
+
+   - **npm (`package-lock.json`)**:
+
+     ```yaml
+     - name: Restore Next.js Build Cache
+       uses: actions/cache@v4
+       with:
+         path: |
+           ${{ github.workspace }}/.next/cache
+         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.json') }}
+         restore-keys: |
+           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+     ```
+
+   - **yarn (`yarn.lock`)**:
+
+     ```yaml
+     - name: Restore Next.js Build Cache
+       uses: actions/cache@v4
+       with:
+         path: |
+           ${{ github.workspace }}/.next/cache
+         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.json') }}
+         restore-keys: |
+           ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
+     ```
+
+   - **bun (`bun.lockb` or `bun.lock`)**:
+     ```yaml
+     - name: Restore Next.js Build Cache
+       uses: actions/cache@v4
+       with:
+         path: |
+           ${{ github.workspace }}/.next/cache
+         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lockb', '**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.json') }}
+         restore-keys: |
+           ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lockb', '**/bun.lock') }}-
+     ```
+
+   #### 4-Layer Credit-Saving Caching Hierarchy:
+
+   | Layer                                    | Target Resource                                      | Caching Mechanism                                     | Purpose                                                                          |
+   | :--------------------------------------- | :--------------------------------------------------- | :---------------------------------------------------- | :------------------------------------------------------------------------------- |
+   | **Layer 1: Package Manager Store**       | Global store (`~/.local/share/pnpm/store`, `~/.npm`) | `actions/setup-node@v4` (`cache: "[pm]"`)             | Avoids re-downloading dependency tarballs over the network.                      |
+   | **Layer 2: Next.js CI Build Cache**      | `${{ github.workspace }}/.next/cache`                | `actions/cache@v4` with composite lockfile+source key | Accelerates SWC compilation & prerendering; eliminates "No Cache Detected".      |
+   | **Layer 3: Playwright Browser Binaries** | `~/.cache/ms-playwright`                             | `actions/cache@v4` keyed by lockfile                  | Eliminates multi-hundred-megabyte browser downloads (Chromium, WebKit, Firefox). |
+   | **Layer 4: Docker Container Layers**     | OCI build stages & layers                            | `docker/build-push-action@v6` with `type=gha`         | Caches container stages across runs for native multi-arch builds.                |
+
+4. **Required GitHub Repository Access Permissions:**
 
    > [!IMPORTANT]
    > For Release Please to open and maintain Release Pull Requests and publish GHCR container images:
@@ -917,7 +1018,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
    >    - Check **"Allow GitHub Actions to create and approve pull requests"**.
    > 3. Click **Save**.
 
-4. **Verify Documentation:**
+5. **Verify Documentation:**
    - Reference `docs/release-automation.md` for team workflow conventions, commit message types, Release PR management, and multi-arch GitHub Packages deployment.
 
 ---
@@ -936,6 +1037,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
    - Verify presence and configuration of testing suites (Jest and Playwright).
    - Audit `mcp.json` / `.vscode/mcp.json` for `next-devtools` and `playwright` MCP servers.
    - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`, and standalone output).
+   - Audit `.github/workflows/release-please.yml` for credit-optimized Next.js CI build caching (`.next/cache`), package manager setup, SemVer release automation, and multi-arch GHCR publishing.
 3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, or Docker files and re-run until all checks pass.
 
 ---
@@ -949,18 +1051,18 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 ```markdown
 ## 🛠️ Next.js Dev Setup Execution Report
 
-| Step / Component                    | Target File(s) / Resource                                                 | Status                          | Notes / Details                                                                |
-| :---------------------------------- | :------------------------------------------------------------------------ | :------------------------------ | :----------------------------------------------------------------------------- |
-| **1. Project Metadata**             | `docs/project.json`                                                       | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.            |
-| **2. Core Dependencies**            | `package.json`, Lockfile                                                  | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                        |
-| **3. Next.js Dev Server MCP**       | `mcp.json` / `.vscode/mcp.json`                                           | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) MCP server.                   |
-| **4. Playwright & Playwright MCP**  | `playwright.config.ts`, `mcp.json`                                        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP server.                |
-| **5. Jest Unit Testing**            | `jest.config.ts`, `jest.setup.ts`                                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.             |
-| **6. Docker Containerization**      | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks. |
-| **7. Husky Git Hooks**              | `.husky/commit-msg`, `.husky/pre-push`                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.            |
-| **8. Commitlint Config**            | `commitlint.config.mjs`                                                   | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                  |
-| **9. Release & GHCR Packaging**     | `.github/workflows/release-please.yml`                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Credit-optimized CI/CD, SemVer release PRs, and GHCR container package deploy. |
-| **10. Environment Verification**    | `scripts/verify-project-config.ts`                                        | `[PASSED]`                      | Sanity check passed with zero errors.                                          |
+| Step / Component                   | Target File(s) / Resource                                                      | Status                          | Notes / Details                                                                 |
+| :--------------------------------- | :----------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------------------ |
+| **1. Project Metadata**            | `docs/project.json`                                                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.             |
+| **2. Core Dependencies**           | `package.json`, Lockfile                                                       | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                         |
+| **3. Next.js Dev Server MCP**      | `mcp.json` / `.vscode/mcp.json`                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) MCP server.                     |
+| **4. Playwright & Playwright MCP** | `playwright.config.ts`, `mcp.json`                                             | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP server.                 |
+| **5. Jest Unit Testing**           | `jest.config.ts`, `jest.setup.ts`                                              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.              |
+| **6. Docker Containerization**     | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks. |
+| **7. Husky Git Hooks**             | `.husky/commit-msg`, `.husky/pre-push`                                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.             |
+| **8. Commitlint Config**           | `commitlint.config.mjs`                                                        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                   |
+| **9. Release & CI Build Caching**  | `.github/workflows/release-please.yml`                                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.    |
+| **10. Environment Verification**   | `scripts/verify-project-config.ts`                                             | `[PASSED]`                      | Sanity check passed with zero errors.                                           |
 
 #### Status Definitions:
 

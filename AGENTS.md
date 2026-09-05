@@ -20,6 +20,11 @@ Canonical triage roles mapped to repository labels. See `docs/agents/triage-labe
 
 Single-context layout (`CONTEXT.md` and `docs/adr/`). See `docs/agents/domain.md`.
 
+### Terminal Command Execution
+
+- **Discrete Commands**: Never chain multiple terminal commands using `&&`, `||`, or `;` on a single line. Always execute terminal commands individually as discrete single operations.
+- **Permission Alignment**: When running inspection or diagnostic commands (e.g., `git diff`, `git status`), avoid appending unnecessary file/path arguments unless specifically requested, ensuring commands cleanly match user-configured permission allowlists.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/app/components/Link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -16,8 +17,8 @@ export default async function Home({ params }: HomePageProps) {
   const otherLocaleName = locale === "en" ? "فارسی" : "English";
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+    <div className="flex flex-col flex-1 items-center justify-center bg-background font-sans">
+      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-card text-card-foreground rounded-2xl border border-border shadow-xs sm:items-start">
         <div className="w-full flex items-center justify-between mb-8">
           <Image
             className="dark:invert h-5 w-[100px]"
@@ -27,31 +28,34 @@ export default async function Home({ params }: HomePageProps) {
             height={20}
             priority
           />
-          <Link
-            href="/"
-            locale={otherLocale}
-            className="text-sm font-medium rounded-full border border-black/10 dark:border-white/20 px-3 py-1 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-          >
-            {tCommon("switch_language")}: {otherLocaleName}
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link
+              href="/"
+              locale={otherLocale}
+              className="text-sm font-medium rounded-full border border-border px-3 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              {tCommon("switch_language")}: {otherLocaleName}
+            </Link>
+          </div>
         </div>
 
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-start">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-foreground">
             {t.rich("hero_title", {
               file: (chunks) => (
-                <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em] text-foreground">
                   {chunks}
                 </code>
               ),
             })}
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+          <p className="max-w-md text-lg leading-8 text-muted-foreground">
             {t.rich("hero_description", {
               templates: (chunks) => (
                 <a
                   href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-                  className="font-medium text-zinc-950 dark:text-zinc-50 underline decoration-zinc-400 underline-offset-2"
+                  className="font-medium text-foreground underline decoration-muted-foreground/50 underline-offset-2"
                 >
                   {chunks}
                 </a>
@@ -59,7 +63,7 @@ export default async function Home({ params }: HomePageProps) {
               learning: (chunks) => (
                 <a
                   href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-                  className="font-medium text-zinc-950 dark:text-zinc-50 underline decoration-zinc-400 underline-offset-2"
+                  className="font-medium text-foreground underline decoration-muted-foreground/50 underline-offset-2"
                 >
                   {chunks}
                 </a>
@@ -70,7 +74,7 @@ export default async function Home({ params }: HomePageProps) {
 
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row mt-8">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-5 text-primary-foreground transition-colors hover:bg-primary/90 md:w-[158px]"
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
             target="_blank"
             rel="noopener noreferrer"
@@ -85,7 +89,7 @@ export default async function Home({ params }: HomePageProps) {
             {t("cta_deploy")}
           </a>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
+            className="flex h-12 w-full items-center justify-center rounded-full border border-border px-5 text-foreground transition-colors hover:bg-muted md:w-[158px]"
             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
             target="_blank"
             rel="noopener noreferrer"

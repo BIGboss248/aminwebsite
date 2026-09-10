@@ -1,233 +1,318 @@
 ---
 name: setup-repository
-description: Sets up and integrates the codebase-memory-mcp code intelligence knowledge graph server for a repository. Covers binary installation, client MCP registration (workspace mcp.json, .agents/mcp_config.json, global config), initial indexing, team persistence snapshots, git hygiene (.gitignore / Git LFS), cadence updates, and verification. Triggers on "/setup-repository", "setup repository", "setup repo", "setup codebase memory", "setup cbm", or "initialize codebase memory".
+description: Universal repository onboarding and standard CI/CD workflow setup skill. Interactively inspects or inquires about project language, build tools, test suites, and deployment targets to configure project metadata (docs/project.json), codebase intelligence (codebase-memory-mcp), git hooks (Husky/Commitlint), and standard automated CI/CD with semantic releases (Release Please) and build/publish placeholders. Triggers on "/setup-repository", "setup repository", "setup repo", "setup ci cd", "initialize repository", "new repo setup", or when establishing standard CI/CD workflows for any software project.
 metadata:
   author: BIGboss248
-  version: "1.1"
+  version: "2.1"
 ---
 
-# Codebase Memory MCP Setup Skill (`setup-repository`)
+# Standard Repository CI/CD & Tooling Setup Skill (`setup-repository`)
 
-This skill defines the complete procedure for equipping any repository with the **`codebase-memory-mcp`** persistent knowledge graph code intelligence server.
+This skill establishes a standardized development and CI/CD workflow for **any software repository** (regardless of language or framework). Guided by automated discovery and targeted developer clarification, it configures:
 
----
-
-## 1. Install `codebase-memory-mcp` Binary
-
-Install the native binary or global CLI for your platform:
-
-### Windows (PowerShell)
-
-```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.ps1 -OutFile install.ps1
-Unblock-File .\install.ps1
-.\install.ps1
-Remove-Item .\install.ps1
-```
-
-### macOS / Linux (Bash)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
-```
-
-### Global npm Package Alternative (Any OS)
-
-```bash
-npm install -g codebase-memory-mcp@latest
-```
-
-### Verify Installation
-
-```bash
-codebase-memory-mcp --version
-```
-
-Expected output: `codebase-memory-mcp 0.x.x`
+1. **Project Metadata Ground Truth** (`docs/project.json`)
+2. **Codebase Intelligence Knowledge Graph** (`codebase-memory-mcp`)
+3. **Commit Standardization & Pre-Push Quality Gates** (Husky & Commitlint)
+4. **Standard CI/CD & Automated Semantic Releases** (GitHub Actions with Release Please and build/publish placeholders)
+5. **Execution Reporting & Git Guidance**
 
 ---
 
-## 2. Register MCP Server in Configuration Files
+## Workflow Overview
 
-Register `codebase-memory-mcp` across the relevant MCP configuration files:
+```mermaid
+flowchart TD
+    A["1. Discovery & Interactive Clarification"] --> B["2. Generic Project Ground Truth (docs/project.json)"]
+    B --> C["3. Codebase Memory MCP Setup & Indexing"]
+    C --> D["4. Git Hooks & Commit Standards"]
+    D --> E["5. Standard CI/CD & Release Workflow"]
+    E --> F["6. Verification & Sanity Check"]
+    F --> G["7. Execution Report & Git Commit Guidance"]
+```
 
-### A. Workspace Root `mcp.json`
+---
 
-Add to `mcp.json` at the root of the repository:
+## Step 1: Discovery & Interactive Scaffolding
+
+### 1.1. Automated Inspection (Zero Interruption Rule)
+
+Scan the repository before prompting the developer:
+
+- **Runtime & Build Tools**: Inspect manifests (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `pom.xml`, `Makefile`, etc.).
+- **Test & Quality Tools**: Detect test runners and linters from configs or lockfiles.
+- **Documentation**: Check `README.md`, `docs/`, or `CONTEXT.md` for existing architectural guidelines.
+
+### 1.2. Interactive Clarification (AI-Assisted Scaffolding)
+
+If any critical parameters are missing, ambiguous, or undetermined from existing files, ask the user focused questions using clear options:
+
+```markdown
+### 📋 Repository Setup & CI/CD Configuration
+
+To configure the standard CI/CD workflow for this repository, please confirm or specify:
+
+1. **Primary Language & Runtime**: (e.g., Node.js / TypeScript, Python, Go, Rust, Java, C++)
+2. **Test Command**: (e.g., `pnpm test`, `pytest`, `cargo test`, `go test ./...`)
+3. **Build Command**: (e.g., `pnpm run build`, `cargo build --release`, `go build`, `none`)
+4. **Release / Publish Target**:
+   - [ ] Docker Container Image (GHCR / Docker Hub)
+   - [ ] Package Registry (npm, PyPI, Crates.io, Maven)
+   - [ ] Binary Release Assets (GitHub Releases)
+   - [ ] Static Site / Documentation (GitHub Pages)
+   - [ ] None (CI Testing & SemVer Git Tags only)
+```
+
+---
+
+## Step 2: Generic Project Configuration Template (`docs/project.json`)
+
+Establish a clean, runtime-agnostic ground truth file at `docs/project.json`:
 
 ```json
 {
-  "mcpServers": {
-    "codebase-memory": {
-      "command": "codebase-memory-mcp",
-      "args": []
-    }
+  "project_context_and_metadata": {
+    "project_name": "project-name",
+    "runtime": "node | python | rust | go | java | generic",
+    "package_manager": "pnpm | cargo | go | poetry | uv | maven | generic",
+    "source_dir": "src",
+    "test_command": "pnpm test",
+    "build_command": "pnpm run build",
+    "ci_cd_provider": "github-actions",
+    "release_automation": "release-please",
+    "publish_target": "container | package | binary | none"
   }
 }
 ```
 
-### B. Workspace Agent Config (`.agents/mcp_config.json`)
-
-If the repository uses an `.agents/` directory:
-
-```json
-{
-  "mcpServers": {
-    "codebase-memory": {
-      "command": "codebase-memory-mcp",
-      "args": []
-    }
-  }
-}
-```
-
-### C. Global User Config (`mcp_config.json`)
-
-For Antigravity / Gemini global settings (`~/.gemini/config/mcp_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "codebase-memory": {
-      "command": "codebase-memory-mcp",
-      "args": []
-    }
-  }
-}
-```
+1. Ensure the `docs/` directory exists.
+2. Write or update `docs/project.json` with the confirmed project values.
 
 ---
 
-## 3. Git & Storage Hygiene
+## Step 3: Setup `codebase-memory-mcp` Code Intelligence Server
 
-By default, the SQLite knowledge graph is stored centrally in your user cache:
+Equip the repository with `codebase-memory-mcp` so AI agents can query the codebase knowledge graph (functions, classes, dependencies, call hierarchies) in milliseconds.
 
-- `~/.cache/codebase-memory-mcp/<project-name>.db`
+### 3.1. Install Binary
 
-### Local-Only Mode (Default)
+- **Windows (PowerShell)**:
+  ```powershell
+  Invoke-WebRequest -Uri https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.ps1 -OutFile install.ps1
+  Unblock-File .\install.ps1
+  .\install.ps1
+  Remove-Item .\install.ps1
+  ```
+- **macOS / Linux (Bash)**:
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
+  ```
+- **npm Global CLI**:
+  ```bash
+  npm install -g codebase-memory-mcp@latest
+  ```
 
-If you do not want local graph snapshots tracked in git, add `.codebase-memory/` to `.gitignore`:
+### 3.2. Register MCP Server
 
-```gitignore
-# Codebase Memory MCP local snapshot
-.codebase-memory/
-```
+Add `codebase-memory` to:
 
-### Team Sharing Mode (Portable Snapshots)
+- **Root `mcp.json`**:
+  ```json
+  {
+    "mcpServers": {
+      "codebase-memory": {
+        "command": "codebase-memory-mcp",
+        "args": []
+      }
+    }
+  }
+  ```
+- **Agent Config (`.agents/mcp_config.json`)** if present.
+- **Global Config (`~/.gemini/config/mcp_config.json` / Claude Desktop / Cursor)**.
 
-If teammates should share the precomputed graph snapshot:
+### 3.3. Git Hygiene & Cadence Maintenance
 
-1. Remove `.codebase-memory/` from `.gitignore`.
-2. Track the binary snapshot with **Git LFS** in root `.gitattributes` to avoid inflating git history:
-   ```gitattributes
-   .codebase-memory/graph.db.zst filter=lfs diff=lfs merge=lfs -text
+1. **Ignore Local Cache**: Add `.codebase-memory/` to `.gitignore` (or track with Git LFS if team snapshot sharing is requested).
+2. **Initial Index**:
+   ```bash
+   codebase-memory-mcp cli index_repository --repo-path "<canonical-repo-path>"
+   ```
+3. **Cadence Script**: If the project has a task runner (e.g. `package.json`, `Makefile`), add a command to update the index on milestones:
+   ```json
+   "cbm:update": "codebase-memory-mcp cli index_repository --repo-path . --persistence true"
    ```
 
 ---
 
-## 4. Run Initial Repository Indexing
+## Step 4: Setup Git Hooks & Commit Standardization
 
-Index the repository to build the initial knowledge graph:
+Enforce Conventional Commits and guarantee tests run before code is pushed to remote branches.
 
-### Standard Local Index:
+1. **Install Husky & Commitlint** (for Node/JS projects) or configure `pre-commit` (for Python/Go/Rust):
+   ```bash
+   pnpm add -D husky @commitlint/cli @commitlint/config-conventional
+   pnpm exec husky init
+   ```
+2. **Configure `commitlint.config.mjs`**:
+   ```javascript
+   export default {
+     extends: ["@commitlint/config-conventional"],
+   };
+   ```
+3. **Configure Hooks**:
+   - `.husky/commit-msg`: validates commit messages against Conventional Commits:
+     ```bash
+     echo "pnpm exec commitlint --edit \$1" > .husky/commit-msg
+     ```
+   - `.husky/pre-push`: runs the project test suite before pushing:
+     ```bash
+     echo "<test-command>" > .husky/pre-push
+     ```
 
-```bash
-codebase-memory-mcp cli index_repository --repo-path "<canonical-repo-path>"
-```
-
-### Persistent Team Artifact Index:
-
-```bash
-codebase-memory-mcp cli index_repository --repo-path "<canonical-repo-path>" --persistence true
-```
-
-_Generates `.codebase-memory/graph.db.zst` and `artifact.json` in the repository root._
+> [!NOTE]
+> Never generate dummy or sample test files in the workspace. Ensure test commands pass gracefully if test files are not yet created (e.g., `--passWithNoTests`).
 
 ---
 
-## 5. Deliberate Cadence Maintenance
+## Step 5: Standard CI/CD Workflow with Release Please & Publish Placeholder
 
-To prevent committing binary graph changes on every minor edit, update the snapshot on a deliberate cadence:
+Create a robust, credit-optimized GitHub Actions workflow at `.github/workflows/release-please.yml` featuring:
 
-### Package Script (`package.json`)
-
-Add a script for on-demand milestone/release updates:
-
-```json
-{
-  "scripts": {
-    "cbm:update": "codebase-memory-mcp cli index_repository --repo-path . --persistence true"
-  }
-}
-```
-
-Run when checkpointing:
-
-```bash
-pnpm run cbm:update
-```
-
-### Scheduled GitHub Action (`.github/workflows/cbm-sync.yml`)
-
-For automated weekly/nightly synchronization:
+1. **Automated Test / CI Gate**: Runs project tests on pull requests and commits to `main`.
+2. **Release Please Automation**: Automates version bumps, changelogs, and release PRs.
+3. **Build & Publish Placeholder Job**: Triggers only when a new release is merged/created, providing a clean extension point for building and publishing artifacts, packages, or container images.
 
 ```yaml
-name: Codebase Memory Sync
+name: CI Validation & Release Please
 
 on:
-  schedule:
-    - cron: "0 2 * * 0" # Weekly at 2 AM UTC on Sunday
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 concurrency:
-  group: cbm-sync
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
 jobs:
-  sync-graph:
+  # =======================================================
+  # 1. CI Validation Gate: Run Linters & Test Suites
+  # =======================================================
+  test:
+    name: Test & Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install CBM
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-      - name: Index Repository
-        run: codebase-memory-mcp cli index_repository --repo-path . --persistence true
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # --- [Setup Runtime Placeholder] ---
+      # Example: uses: actions/setup-node@v4 / actions/setup-python@v5 / dtolnay/rust-toolchain@stable / actions/setup-go@v5
+      - name: Setup Runtime Environment
+        uses: actions/setup-node@v4
         with:
-          commit_message: "chore(cbm): refresh knowledge graph [skip ci]"
-          file_pattern: ".codebase-memory/*"
+          node-version: 22
+
+      - name: Install Dependencies
+        run: echo "Run dependency installation here (e.g. pnpm install / pip install -r requirements.txt / cargo fetch)"
+
+      - name: Run Test Suite
+        run: echo "Run test command here (e.g. pnpm test / pytest / cargo test / go test ./...)"
+
+  # =======================================================
+  # 2. Release Please: Automated SemVer & Changelog PRs
+  # =======================================================
+  release-please:
+    name: Release Please Automation
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - name: Run Release Please
+        uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          # Configured release type (e.g. node, python, rust, go, or simple)
+          release-type: simple
+
+  # =======================================================
+  # 3. Publish Placeholder: Runs When a Release is Created
+  # =======================================================
+  publish-release:
+    name: Build & Publish Release Artifact
+    needs: [test, release-please]
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Echo Release Information
+        run: |
+          echo "New release created: ${{ needs.release-please.outputs.version }}"
+          echo "Tag: ${{ needs.release-please.outputs.tag_name }}"
+
+      # --- [USER BUILD & PUBLISH PLACEHOLDER] ---
+      # Replace this step with your specific release action:
+      # - Docker image build and push to GHCR / Docker Hub
+      # - Library publish to npm / PyPI / Crates.io
+      # - Binary compilation and upload to GitHub Release assets
+      - name: Build & Publish Artifact
+        run: |
+          echo "Execute release build & publishing steps here."
 ```
 
 ---
 
-## 6. Verification & Smoke Test
+## Step 6: Environment Sanity Verification
 
-Verify the graph is populated and operational:
+Audit the newly created configurations:
 
-1. **Architecture Overview**:
+1. Verify `docs/project.json` exists and is valid JSON.
+2. Verify `mcp.json` contains `codebase-memory`.
+3. Verify `codebase-memory-mcp cli get_architecture` runs cleanly.
+4. Verify Commitlint validates valid Conventional Commit messages.
+5. Verify `.github/workflows/release-please.yml` syntax is valid.
 
-   ```bash
-   codebase-memory-mcp cli get_architecture --project "<project-name>"
-   ```
+---
 
-   _Verify node count, edge count, detected languages, entry points, and packages._
+## Step 7: Standardized Execution Report & Git Commit Protocol
 
-2. **Call Path Traversal**:
+Upon completing setup, output the standardized execution report summarizing every component, explicitly distinguishing between what was freshly implemented vs. what was already configured:
 
-   ```bash
-   codebase-memory-mcp cli trace_path --project "<project-name>" --function-name "<target-symbol>" --direction "inbound"
-   ```
+### Standard Output Report Template
 
-3. **(Optional) 3D Visualizer Web UI**:
+```markdown
+## 🛠️ Repository Setup Execution Report
 
-   ```bash
-   codebase-memory-mcp --ui=true --port=9749
-   ```
+| Step / Component                | Target File(s) / Resource              | Status                          | Notes / Details                                               |
+| :------------------------------ | :------------------------------------- | :------------------------------ | :------------------------------------------------------------ |
+| **1. Project Metadata**         | `docs/project.json`                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured generic project metadata ground truth.             |
+| **2. Codebase Memory MCP**      | `mcp.json`, `.agents/mcp_config.json`  | `[IMPLEMENTED]` / `[UNTOUCHED]` | Binary installed, MCP registered, and initial graph indexed.  |
+| **3. Git Hooks & Standards**    | `.husky/`, `commitlint.config.mjs`     | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Conventional Commits and pre-push testing gate.    |
+| **4. Standard CI/CD Workflow**  | `.github/workflows/release-please.yml` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Automated test gate, Release Please, and publish placeholder. |
+| **5. Environment Sanity Check** | Workspace Audit                        | `[PASSED]`                      | All configurations verified cleanly.                          |
 
-   _Open `http://localhost:9749` to explore the 3D graph._
+### Status Definitions:
 
-4. **Agent Tool Activation**:
-   _Restart or reload the agent session to activate the newly registered MCP server tools (`search_graph`, `trace_path`, `query_graph`, `get_architecture`, `detect_changes`)._
+- **`[IMPLEMENTED]`**: Freshly created, installed, or modified during this setup run.
+- **`[UNTOUCHED]`**: Already properly configured prior to running the skill; preserved as-is.
+- **`[SKIPPED]`**: Intentionally omitted based on project needs or developer preference.
+```
+
+### Git Commit Instructions
+
+Group files and generate a commit message summarizing the changes made during the setup process. **Do not commit anything automatically**; output the exact git commit commands and leave committing to the human:
+
+```bash
+git add docs/project.json mcp.json commitlint.config.mjs .husky/ .github/workflows/
+git commit -m "chore: configure standard repository tooling, codebase intelligence, and ci/cd"
+```

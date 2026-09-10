@@ -6,10 +6,10 @@ Rules are persistent constraints, coding standards, architectural guardrails, an
 
 ## 1. Rule Locations & Precedence
 
-| Scope | Location | Activation Behavior |
-| :--- | :--- | :--- |
-| **Global Rule** | `~/.gemini/GEMINI.md` | Injected across all projects on this machine. |
-| **Workspace Hierarchical** | `AGENTS.md` or `GEMINI.md` | Placed at repository root or subdirectories. Loaded as agent navigates paths. |
+| Scope                       | Location                       | Activation Behavior                                                                 |
+| :-------------------------- | :----------------------------- | :---------------------------------------------------------------------------------- |
+| **Global Rule**             | `~/.gemini/GEMINI.md`          | Injected across all projects on this machine.                                       |
+| **Workspace Hierarchical**  | `AGENTS.md` or `GEMINI.md`     | Placed at repository root or subdirectories. Loaded as agent navigates paths.       |
 | **Modular Workspace Rules** | `.agents/rules/<rule-name>.md` | Configurable per-rule activation (`always_on`, `glob`, `model_decision`, `manual`). |
 
 ---
@@ -19,28 +19,38 @@ Rules are persistent constraints, coding standards, architectural guardrails, an
 Each file inside `.agents/rules/<rule-name>.md` can specify an activation mode in its frontmatter:
 
 ### Mode 1: Always On (`always_on`)
+
 The rule is injected into every conversation turn. Use strictly for critical global constraints.
+
 ```markdown
 ---
 trigger: always_on
 ---
+
 # Critical Safety Protocol
+
 Never commit secrets, API keys, or credentials to git.
 ```
 
 ### Mode 2: Model Decision (`model_decision`)
+
 The model evaluates the description and decides whether to load the rule for the task.
+
 ```markdown
 ---
 trigger: model_decision
 description: Applies when working with database migrations, Drizzle ORM schemas, or SQL queries.
 ---
+
 # Database Guidelines
+
 Always generate and inspect migration files before running migrations in production.
 ```
 
 ### Mode 3: File Glob (`glob`)
+
 Automatically injected whenever files matching the pattern are opened, read, or modified.
+
 ```markdown
 ---
 trigger: glob
@@ -48,18 +58,24 @@ globs:
   - "src/**/*.tsx"
   - "components/**/*.tsx"
 ---
+
 # React Component Rules
+
 - Use Functional Components with TypeScript interfaces.
 - Separate UI markup from business logic hooks.
 ```
 
 ### Mode 4: Manual Mention (`manual`)
+
 Only loaded into context when explicitly referenced by the user in the prompt using `@<rule-name>.md`.
+
 ```markdown
 ---
 trigger: manual
 ---
+
 # Security Audit Checklist
+
 Perform exhaustive threat modeling against OWASP Top 10 vulnerabilities.
 ```
 

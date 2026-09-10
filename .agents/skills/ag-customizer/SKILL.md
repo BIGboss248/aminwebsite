@@ -13,15 +13,15 @@ Use this skill to autonomously design, scaffold, configure, migrate, and validat
 
 Determine which customization mechanism best solves the problem:
 
-| Need | Mechanism | File Location | Reference Guide |
-| :--- | :--- | :--- | :--- |
-| Teach the agent a multi-step runbook, procedure, or slash command | **Skill** | `.agents/skills/<name>/SKILL.md` or `~/.gemini/antigravity/skills/<name>/SKILL.md` | [skills-guide.md](references/skills-guide.md) |
-| Enforce persistent constraints, coding standards, or style rules | **Rule** | `.agents/rules/<name>.md`, `AGENTS.md`, or `~/.gemini/GEMINI.md` | [rules-guide.md](references/rules-guide.md) |
-| Connect external services, local databases, or custom tools | **MCP Server** | `.agents/mcp_config.json` or `~/.gemini/config/mcp_config.json` | [mcp-guide.md](references/mcp-guide.md) |
-| Intercept lifecycle events (gate commands, inject prompts, stop watchdog) | **Lifecycle Hook** | `.agents/hooks.json` or `~/.gemini/config/hooks.json` | [hooks-guide.md](references/hooks-guide.md) |
-| Bundle skills, rules, hooks, and MCP into a shareable package | **Plugin** | `.agents/plugins/<name>/` or `~/.gemini/config/plugins/<name>/` | [plugins-and-configs.md](references/plugins-and-configs.md) |
-| Register non-standard paths or share customizations via VCS | **JSON Config** | `.agents/skills.json` or `.agents/plugins.json` | [plugins-and-configs.md](references/plugins-and-configs.md) |
-| Upgrade deprecated workflows into modern slash-command skills | **Workflow Migration** | `.agents/workflows/*.md` -> `.agents/skills/<name>/SKILL.md` | [workflows-migration.md](references/workflows-migration.md) |
+| Need                                                                      | Mechanism              | File Location                                                                      | Reference Guide                                             |
+| :------------------------------------------------------------------------ | :--------------------- | :--------------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| Teach the agent a multi-step runbook, procedure, or slash command         | **Skill**              | `.agents/skills/<name>/SKILL.md` or `~/.gemini/antigravity/skills/<name>/SKILL.md` | [skills-guide.md](references/skills-guide.md)               |
+| Enforce persistent constraints, coding standards, or style rules          | **Rule**               | `.agents/rules/<name>.md`, `AGENTS.md`, or `~/.gemini/GEMINI.md`                   | [rules-guide.md](references/rules-guide.md)                 |
+| Connect external services, local databases, or custom tools               | **MCP Server**         | `.agents/mcp_config.json` or `~/.gemini/config/mcp_config.json`                    | [mcp-guide.md](references/mcp-guide.md)                     |
+| Intercept lifecycle events (gate commands, inject prompts, stop watchdog) | **Lifecycle Hook**     | `.agents/hooks.json` or `~/.gemini/config/hooks.json`                              | [hooks-guide.md](references/hooks-guide.md)                 |
+| Bundle skills, rules, hooks, and MCP into a shareable package             | **Plugin**             | `.agents/plugins/<name>/` or `~/.gemini/config/plugins/<name>/`                    | [plugins-and-configs.md](references/plugins-and-configs.md) |
+| Register non-standard paths or share customizations via VCS               | **JSON Config**        | `.agents/skills.json` or `.agents/plugins.json`                                    | [plugins-and-configs.md](references/plugins-and-configs.md) |
+| Upgrade deprecated workflows into modern slash-command skills             | **Workflow Migration** | `.agents/workflows/*.md` -> `.agents/skills/<name>/SKILL.md`                       | [workflows-migration.md](references/workflows-migration.md) |
 
 ---
 
@@ -152,6 +152,7 @@ Determine which customization mechanism best solves the problem:
 ## Validation & Verification Checklist
 
 Before considering any customization complete:
+
 - [ ] **JSON Syntax**: Ensure all `.json` files parse cleanly without syntax errors or comments.
 - [ ] **Frontmatter Check**: Verify `SKILL.md` contains valid YAML frontmatter with `name` and descriptive `description`.
 - [ ] **Character Budget**: Ensure rule Markdown files are within the 12,000 character limit.

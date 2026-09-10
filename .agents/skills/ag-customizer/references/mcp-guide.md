@@ -35,7 +35,11 @@ Spawns a local executable process and communicates over standard input/output.
   "mcpServers": {
     "sqlite-server": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sqlite", "./data/database.db"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "./data/database.db"
+      ],
       "env": {
         "SQLITE_READONLY": "true"
       },
@@ -45,12 +49,12 @@ Spawns a local executable process and communicates over standard input/output.
 }
 ```
 
-| Property | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `command` | string | Yes | The executable binary to spawn (`node`, `npx`, `python`, `uvx`, or full binary path). |
-| `args` | string[] | No | Array of arguments passed to the command. |
-| `env` | object | No | Custom environment variables injected into the process. |
-| `cwd` | string | No | Working directory for the server process. |
+| Property  | Type     | Required | Description                                                                           |
+| :-------- | :------- | :------- | :------------------------------------------------------------------------------------ |
+| `command` | string   | Yes      | The executable binary to spawn (`node`, `npx`, `python`, `uvx`, or full binary path). |
+| `args`    | string[] | No       | Array of arguments passed to the command.                                             |
+| `env`     | object   | No       | Custom environment variables injected into the process.                               |
+| `cwd`     | string   | No       | Working directory for the server process.                                             |
 
 ---
 
@@ -80,7 +84,9 @@ Connects to a remote server over HTTP using Server-Sent Events (SSE) or Streamab
 ## 3. Authentication Mechanisms
 
 ### Option A: Google Application Default Credentials (ADC)
+
 For connecting to Google Cloud services or internal Google APIs:
+
 ```json
 {
   "mcpServers": {
@@ -91,14 +97,18 @@ For connecting to Google Cloud services or internal Google APIs:
   }
 }
 ```
+
 Requires local ADC login via Google Cloud CLI:
+
 ```bash
 gcloud auth application-default login
 gcloud auth application-default set-quota-project YOUR_PROJECT_ID
 ```
 
 ### Option B: OAuth 2.0 (Dynamic Client Registration & Manual)
+
 If the server supports OAuth Dynamic Client Registration (DCR), specify only the `serverUrl`:
+
 ```json
 {
   "mcpServers": {
@@ -108,7 +118,9 @@ If the server supports OAuth Dynamic Client Registration (DCR), specify only the
   }
 }
 ```
+
 If manual client credentials are required:
+
 ```json
 {
   "mcpServers": {
@@ -122,6 +134,7 @@ If manual client credentials are required:
   }
 }
 ```
+
 > [!NOTE]
 > The redirect URI registered with your OAuth provider must be:
 > `https://antigravity.google/oauth-callback`
@@ -158,6 +171,7 @@ You can disable servers or withhold dangerous tools without deleting the configu
 ## 5. Ready-to-Use Popular Server Recipes
 
 ### GitHub MCP
+
 ```json
 {
   "mcpServers": {
@@ -173,24 +187,34 @@ You can disable servers or withhold dangerous tools without deleting the configu
 ```
 
 ### PostgreSQL MCP
+
 ```json
 {
   "mcpServers": {
     "postgres": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://user:password@localhost:5432/mydb"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://user:password@localhost:5432/mydb"
+      ]
     }
   }
 }
 ```
 
 ### Filesystem MCP (Restricted scope)
+
 ```json
 {
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./safe-directory"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "./safe-directory"
+      ]
     }
   }
 }

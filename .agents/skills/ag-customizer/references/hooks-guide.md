@@ -7,6 +7,7 @@ Lifecycle hooks allow you to execute external shell commands or scripts at deter
 ## 1. File Location & Structure
 
 Hooks are configured in `hooks.json`:
+
 - **Workspace**: `<workspace_root>/.agents/hooks.json`
 - **Global**: `~/.gemini/config/hooks.json`
 - **Plugin**: `.agents/plugins/<plugin_name>/hooks.json`
@@ -46,15 +47,16 @@ Top-level structure maps arbitrary hook identifiers to event configurations:
 
 ## 2. Event Types & Matchers
 
-| Event | Firing Point | Matcher Required? | Execution Structure |
-| :--- | :--- | :--- | :--- |
-| **`PreToolUse`** | Before a tool executes | Yes (`matcher` regex) | Grouped inside `hooks` wrapper |
-| **`PostToolUse`** | Immediately after tool finishes | Yes (`matcher` regex) | Grouped inside `hooks` wrapper |
-| **`PreInvocation`** | Before the model is called | No | Flat array of handler objects |
-| **`PostInvocation`** | After model completes turn | No | Flat array of handler objects |
-| **`Stop`** | When execution loop is about to exit | No | Flat array of handler objects |
+| Event                | Firing Point                         | Matcher Required?     | Execution Structure            |
+| :------------------- | :----------------------------------- | :-------------------- | :----------------------------- |
+| **`PreToolUse`**     | Before a tool executes               | Yes (`matcher` regex) | Grouped inside `hooks` wrapper |
+| **`PostToolUse`**    | Immediately after tool finishes      | Yes (`matcher` regex) | Grouped inside `hooks` wrapper |
+| **`PreInvocation`**  | Before the model is called           | No                    | Flat array of handler objects  |
+| **`PostInvocation`** | After model completes turn           | No                    | Flat array of handler objects  |
+| **`Stop`**           | When execution loop is about to exit | No                    | Flat array of handler objects  |
 
 ### Matcher Syntax (for `PreToolUse` and `PostToolUse`):
+
 - `"*"` or `""`: Matches any tool.
 - `"run_command"`: Matches exact tool.
 - `"run_command|write_to_file"`: Matches either tool.
@@ -65,11 +67,13 @@ Top-level structure maps arbitrary hook identifiers to event configurations:
 ## 3. Communication Protocol (stdin / stdout)
 
 Hooks communicate exclusively through JSON over standard streams:
+
 - **stdin**: Injected with the event payload JSON.
 - **stdout**: Hook script must write its response JSON.
 - **All payload keys are strictly camelCase** (e.g. `conversationId`, `stepIdx`, `toolCall`).
 
 ### Common Input Metadata (Provided to all hooks):
+
 ```json
 {
   "conversationId": "ec33ebf9-0cba-4100-8142-c61503f6c587",
@@ -85,9 +89,11 @@ Hooks communicate exclusively through JSON over standard streams:
 ## 4. Event Contracts & Payload Specifications
 
 ### 1. `PreToolUse` Contract
+
 Intercept and inspect tool calls before they run.
 
 **stdin Input**:
+
 ```json
 {
   "toolCall": {
@@ -102,6 +108,7 @@ Intercept and inspect tool calls before they run.
 ```
 
 **stdout Response**:
+
 ```json
 {
   "decision": "ask",
@@ -111,6 +118,7 @@ Intercept and inspect tool calls before they run.
   }
 }
 ```
+
 - **`decision`**: `"allow"` (auto-run), `"deny"` (hard block), `"ask"` (prompt user), or `"force_ask"` (prompt user even if previously approved).
 - **`overwrite`**: Shallow top-level object to overwrite tool arguments before execution.
 - **`reason`**: Explanation displayed to user/agent.
@@ -118,9 +126,11 @@ Intercept and inspect tool calls before they run.
 ---
 
 ### 2. `PostToolUse` Contract
+
 Run post-execution formatting, linting, or telemetry.
 
 **stdin Input**:
+
 ```json
 {
   "stepIdx": 12,
@@ -135,9 +145,11 @@ Must return an empty JSON object: `{}`.
 ---
 
 ### 3. `PreInvocation` Contract
+
 Inject transient system messages or context before the model generates its next turn.
 
 **stdin Input**:
+
 ```json
 {
   "invocationNum": 2,
@@ -147,6 +159,7 @@ Inject transient system messages or context before the model generates its next 
 ```
 
 **stdout Response**:
+
 ```json
 {
   "injectSteps": [
@@ -160,22 +173,27 @@ Inject transient system messages or context before the model generates its next 
 ---
 
 ### 4. `PostInvocation` Contract
+
 Inspect model outputs and control execution flow.
 
 **stdout Response**:
+
 ```json
 {
   "terminationBehavior": "force_continue"
 }
 ```
+
 - `terminationBehavior`: `"force_continue"` (forces another turn) or `"terminate"` (stops agent).
 
 ---
 
 ### 5. `Stop` Contract (Watchdog)
+
 Inspect why the agent stopped and prevent premature termination if work remains undone.
 
 **stdin Input**:
+
 ```json
 {
   "executionNum": 1,
@@ -187,12 +205,14 @@ Inspect why the agent stopped and prevent premature termination if work remains 
 ```
 
 **stdout Response**:
+
 ```json
 {
   "decision": "continue",
   "reason": "Test suite has not passed yet. Please run pnpm test and fix any errors."
 }
 ```
+
 - Set `decision: "continue"` to block stopping and send the agent back into the loop with `reason`.
 
 ---
@@ -212,12 +232,12 @@ def main():
         if not raw_input:
             print(json.dumps({"decision": "allow"}))
             return
-        
+
         payload = json.loads(raw_input)
         tool_call = payload.get("toolCall", {})
         tool_name = tool_call.get("name", "")
         args = tool_call.get("args", {})
-        
+
         # Check command safety
         if tool_name == "run_command":
             cmd = args.get("CommandLine", "")

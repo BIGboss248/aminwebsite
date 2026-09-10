@@ -38,6 +38,7 @@ description: Comprehensive description in third person. States exactly what the 
 ```
 
 ### Key Field Rules:
+
 1. **`name`**:
    - Must be lowercase, numbers, and hyphens only (e.g., `nextjs-dev-setup`, `ag-customizer`).
    - Also registers as an immediate chat slash command: typing `/<name>` in the chat prompt directly suggests and triggers this skill.
@@ -55,6 +56,7 @@ description: Comprehensive description in third person. States exactly what the 
 ## 3. Progressive Disclosure Architecture
 
 To protect the model's context window and attention span:
+
 1. **In-file Steps (Tier 1)**:
    - Place the primary step-by-step procedure and binary completion criteria directly in `SKILL.md`.
    - Ensure steps are numbered and clear.
@@ -70,10 +72,11 @@ To protect the model's context window and attention span:
 ## 4. Completion Criteria & Leading Words
 
 Following agent engineering principles:
+
 - End each phase on an **observable, binary completion criterion**:
   - Bad: "Verify the configuration looks reasonable."
   - Good: "Run `npm test` and verify that all 14 test cases pass with exit code 0."
-- Use **positive prompting**: State what the agent *should* do, rather than an endless list of prohibitions.
+- Use **positive prompting**: State what the agent _should_ do, rather than an endless list of prohibitions.
 - Avoid no-op filler words ("Be careful", "As an AI assistant"). Keep every line directly actionable.
 
 ---
@@ -103,14 +106,17 @@ List required tools, environment variables, or files to check before running.
 ## Step-by-Step Procedure
 
 ### Step 1: Inspection & Planning
+
 1. Inspect the target environment...
 2. Verify existing status...
 
 ### Step 2: Implementation
+
 1. Create or modify the target configuration...
 2. Ensure adherence to standards...
 
 ### Step 3: Verification
+
 1. Run verification command: `<command>`
 2. Confirm output matches expected pattern...
 
@@ -119,8 +125,10 @@ List required tools, environment variables, or files to check before running.
 ## Decision Trees & Variations
 
 If Scenario A occurs:
+
 - Follow branch A...
 
 If Scenario B occurs:
+
 - Follow branch B...
 ```

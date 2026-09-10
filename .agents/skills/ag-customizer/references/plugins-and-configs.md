@@ -9,6 +9,7 @@ This guide covers how to bundle customizations into distributable **Plugins** an
 A plugin bundles skills, rules, lifecycle hooks, and MCP servers into a single cohesive, namespaced package.
 
 ### Directory Layout:
+
 ```text
 .agents/plugins/<plugin-name>/
 ├── plugin.json          # Required: Manifest file
@@ -22,16 +23,20 @@ A plugin bundles skills, rules, lifecycle hooks, and MCP servers into a single c
 ```
 
 ### Manifest (`plugin.json`):
+
 ```json
 {
   "name": "fullstack-toolkit",
   "description": "Comprehensive development tools and workflows for our web stack."
 }
 ```
+
 - A plugin can default to inactive by including `"disabled": true` in `plugin.json`.
 
 ### Managing Plugin State:
+
 Plugin enable/disable status is recorded in your workstation's `config.json`:
+
 ```json
 {
   "plugins": {
@@ -41,6 +46,7 @@ Plugin enable/disable status is recorded in your workstation's `config.json`:
   }
 }
 ```
+
 `config.json` settings override the default in `plugin.json`.
 
 ---
@@ -53,6 +59,7 @@ When skills or plugins reside in non-standard paths, across monorepos, or in sha
 - **Plugins Manifest**: `.agents/plugins.json` or `~/.gemini/config/plugins.json`
 
 ### Configuration Schema:
+
 Both files share the exact same schema:
 
 ```json
@@ -78,26 +85,25 @@ Both files share the exact same schema:
 
 ### Field Definitions:
 
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| **`entries`** | array | List of directory paths to scan for skills or plugins. |
-| **`inherits`** | array | List of other JSON configuration files to merge into this one. |
-| **`path`** | string | Path to target. Can be absolute (`/opt/...`), home-relative (`~/...`), or workspace-relative (`tools/...`). |
-| **`include_only`** | string[] | Array of regex patterns. If specified, only customizations matching at least one pattern will load. |
-| **`exclude`** | string[] | Array of regex patterns. Customizations matching any pattern are skipped. |
+| Field              | Type     | Description                                                                                                 |
+| :----------------- | :------- | :---------------------------------------------------------------------------------------------------------- |
+| **`entries`**      | array    | List of directory paths to scan for skills or plugins.                                                      |
+| **`inherits`**     | array    | List of other JSON configuration files to merge into this one.                                              |
+| **`path`**         | string   | Path to target. Can be absolute (`/opt/...`), home-relative (`~/...`), or workspace-relative (`tools/...`). |
+| **`include_only`** | string[] | Array of regex patterns. If specified, only customizations matching at least one pattern will load.         |
+| **`exclude`**      | string[] | Array of regex patterns. Customizations matching any pattern are skipped.                                   |
 
 ---
 
 ## 3. Team Sharing Workflow via Version Control
 
 To distribute standardized skills and plugins to an entire engineering team:
+
 1. Commit the shared skills to a common directory in the repository (e.g. `engineering/tools/skills/`).
 2. Add `.agents/skills.json` at the repository root:
    ```json
    {
-     "entries": [
-       { "path": "engineering/tools/skills" }
-     ]
+     "entries": [{ "path": "engineering/tools/skills" }]
    }
    ```
 3. When any developer checks out the repo and opens Antigravity, `.agents/skills.json` is discovered automatically, making the team skills immediately available.

@@ -173,8 +173,19 @@ Model Context Protocol (MCP) servers equip AI coding agents with direct runtime 
    - Enables the agent to query live Next.js compilation status, inspect runtime/build errors, list active routes, clear cache, and evaluate browser scripts against the running dev server on port 3000.
    - Package: `next-devtools`
 
-2. **Standard MCP Server Configuration (`.vscode/mcp.json` / `mcp.json`):**
-   - Create or update `mcp.json` or `.vscode/mcp.json` with the following configuration:
+2. **Mandatory Dual MCP Configuration (Workspace + Antigravity Global System):**
+
+   > [!IMPORTANT]
+   > **Antigravity (AG) MCP Discovery & Loading Rule:**
+   > Antigravity (AG) **only sees and loads MCP servers that are configured globally on the host system** (in `~/.gemini/antigravity/mcp_config.json` and `~/.gemini/config/mcp_config.json`). Workspace-level MCP configuration files alone are NOT loaded by AG's Language Server.
+   > However, workspace-level configuration files (`mcp.json`, `.vscode/mcp.json`, or `.agents/plugins/workspace-tools/mcp_config.json`) are required for repository portability, version control, and non-AG coding agents (Cursor, Windsurf, Claude Code, Junie, VS Code).
+   > **Therefore, the agent MUST configure MCP servers for BOTH the workspace AND globally for AG on the host system.**
+   - **Antigravity (AG) Global System Configuration (`~/.gemini/antigravity/mcp_config.json` & `~/.gemini/config/mcp_config.json`)**:
+     Merge the server definitions into the global MCP configuration file so Antigravity recognizes the tools across all agent sessions and makes them available in the agent toolset and the `@` mentions menu.
+   - **Workspace Configuration (`mcp.json`, `.vscode/mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`)**:
+     Maintain `mcp.json` at the project root (for Cursor, Windsurf, Claude Code, Junie), `.vscode/mcp.json` (for VS Code), and `.agents/plugins/workspace-tools/mcp_config.json` (with `plugin.json` for repository plugin distribution).
+
+   - Both configurations use the standard schema:
 
 ```json
 {
@@ -250,9 +261,12 @@ Playwright tests the complete running Next.js application across real browser en
    pnpm exec playwright install --with-deps chromium firefox webkit
    ```
 
-4. **Configure Playwright MCP Server (`@executeautomation/playwright-mcp-server` / `@modelcontextprotocol/server-playwright`):**
-   - Enables the agent to perform browser automation, end-to-end testing, visual snapshot verification, DOM element interaction, and console inspection.
-   - Update `mcp.json` or `.vscode/mcp.json` to include both servers:
+4. **Configure Playwright MCP Server (`@playwright/mcp`):**
+   - Uses the official Microsoft `@playwright/mcp` server (`@playwright/mcp@latest`) to provide browser automation and testing capabilities using structured accessibility snapshots (no vision models required).
+   - **Mandatory Dual Configuration (Workspace + Antigravity Global System):**
+     - **Antigravity (AG) Global System Config (`~/.gemini/antigravity/mcp_config.json` & `~/.gemini/config/mcp_config.json`)**: Antigravity (AG) only discovers and loads MCP servers that are configured globally on the host system. Add or merge the `playwright` server block here so the browser automation tools are available in Antigravity.
+     - **Workspace Config (`mcp.json`, `.vscode/mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`)**: Maintain the identical server block in the repository's workspace configs for team portability, git tracking, and universal editor support (Cursor, Windsurf, Claude Code, Junie, VS Code).
+   - Standard universal schema:
 
    ```json
    {
@@ -263,11 +277,27 @@ Playwright tests the complete running Next.js application across real browser en
        },
        "playwright": {
          "command": "npx",
-         "args": ["-y", "@executeautomation/playwright-mcp-server"]
+         "args": ["-y", "@playwright/mcp@latest"]
        }
      }
    }
    ```
+
+   > [!IMPORTANT]
+   > **Antigravity Global MCP Loading Rule:**
+   >
+   > - Antigravity only loads MCP servers defined in global system files (`~/.gemini/antigravity/mcp_config.json` and `~/.gemini/config/mcp_config.json`). Workspace-only configs will **not** be picked up by AG.
+   > - Typing **`/`** triggers **Slash Commands & Skills** (e.g. `/nextjs-dev-setup`, `/goal`). MCP servers do **not** appear under `/`.
+   > - Typing **`@`** opens the **Mentions menu**, which lists loaded MCP servers, tools, files, and context.
+   > - In Antigravity Desktop, connected MCP tools are visible and manageable via **Additional Options (`...`) > MCP Servers** or **Left Sidebar > Skills & Customizations > MCP Servers**.
+   > - When editing `~/.gemini/antigravity/mcp_config.json` or `~/.gemini/config/mcp_config.json`, start a new chat session or restart Antigravity so the Language Server spawns the MCP processes.
+
+   > [!TIP]
+   > **Headed vs. Headless:** `@playwright/mcp` runs headed by default (opens a visible browser window). For background unattended agent workflows or environments without a display, append `"--headless"` to `args`.
+   >
+   > **Capabilities & Assertions:** Pass `"--caps=vision,pdf,devtools"` in `args` if coordinate clicks, PDF generation, or devtools assertions are needed.
+   >
+   > **Coding Agent Efficiency (CLI vs. MCP):** For automated test runs, running CLI commands (`pnpm test:e2e`) is token-efficient; utilize MCP tools for exploratory workflows, live DOM inspection, and iterative UI troubleshooting.
 
 5. **CI Execution & Web Server Lifecycle (Build & Run Behavior):**
    - Requires the full Next.js application built and running, but **no manual build/run steps are needed in GitHub Actions**. Playwright's `webServer` configuration automatically detects `CI=true`, runs `pnpm build && pnpm start`, waits for `http://localhost:3000` to become healthy, runs the browser test suite, and cleanly terminates the server upon test completion.
@@ -1035,10 +1065,10 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
    - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`) are present and non-empty.
    - Validate each locale object in `supported_languages` array.
    - Verify presence and configuration of testing suites (Jest and Playwright).
-   - Audit `mcp.json` / `.vscode/mcp.json` for `next-devtools` and `playwright` MCP servers.
+   - Audit both workspace MCP configuration (`mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `.vscode/mcp.json`) AND Antigravity global system MCP configuration (`~/.gemini/antigravity/mcp_config.json`, `~/.gemini/config/mcp_config.json`) for `next-devtools` and `playwright` MCP servers (since AG only recognizes MCP servers configured globally on the host system).
    - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`, and standalone output).
    - Audit `.github/workflows/release-please.yml` for credit-optimized Next.js CI build caching (`.next/cache`), package manager setup, SemVer release automation, and multi-arch GHCR publishing.
-3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, or Docker files and re-run until all checks pass.
+3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `~/.gemini/antigravity/mcp_config.json`, or Docker files and re-run until all checks pass.
 
 ---
 
@@ -1051,18 +1081,18 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 ```markdown
 ## 🛠️ Next.js Dev Setup Execution Report
 
-| Step / Component                   | Target File(s) / Resource                                                      | Status                          | Notes / Details                                                                 |
-| :--------------------------------- | :----------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------------------ |
-| **1. Project Metadata**            | `docs/project.json`                                                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.             |
-| **2. Core Dependencies**           | `package.json`, Lockfile                                                       | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                         |
-| **3. Next.js Dev Server MCP**      | `mcp.json` / `.vscode/mcp.json`                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) MCP server.                     |
-| **4. Playwright & Playwright MCP** | `playwright.config.ts`, `mcp.json`                                             | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP server.                 |
-| **5. Jest Unit Testing**           | `jest.config.ts`, `jest.setup.ts`                                              | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.              |
-| **6. Docker Containerization**     | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks. |
-| **7. Husky Git Hooks**             | `.husky/commit-msg`, `.husky/pre-push`                                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.             |
-| **8. Commitlint Config**           | `commitlint.config.mjs`                                                        | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                   |
-| **9. Release & CI Build Caching**  | `.github/workflows/release-please.yml`                                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.    |
-| **10. Environment Verification**   | `scripts/verify-project-config.ts`                                             | `[PASSED]`                      | Sanity check passed with zero errors.                                           |
+| Step / Component                   | Target File(s) / Resource                                                                              | Status                          | Notes / Details                                                                  |
+| :--------------------------------- | :----------------------------------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------------------- |
+| **1. Project Metadata**            | `docs/project.json`                                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.              |
+| **2. Core Dependencies**           | `package.json`, Lockfile                                                                               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                          |
+| **3. Next.js Dev Server MCP**      | `~/.gemini/antigravity/mcp_config.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) globally for AG & in workspace.  |
+| **4. Playwright & Playwright MCP** | `playwright.config.ts`, `~/.gemini/antigravity/mcp_config.json`, `mcp.json`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP globally & in workspace. |
+| **5. Jest Unit Testing**           | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
+| **6. Docker Containerization**     | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks.  |
+| **7. Husky Git Hooks**             | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
+| **8. Commitlint Config**           | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
+| **9. Release & CI Build Caching**  | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
+| **10. Environment Verification**   | `scripts/verify-project-config.ts`                                                                     | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
 
 #### Status Definitions:
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import * as fs from "node:fs";
+import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -357,18 +358,28 @@ function auditDevAutomation(meta?: Partial<ProjectContextAndMetadata>): DevAutom
     });
   }
 
-  // 5. MCP Server Configuration Check (mcp.json / .vscode/mcp.json)
-  const mcpCandidatePaths = [
+  // 5. MCP Server Configuration Check (Dual check: Workspace + Antigravity Global System)
+  // Antigravity (AG) only discovers and loads MCP servers that are configured globally on the host system.
+  // Workspace configurations ensure repository portability, version control, and universal agent compatibility.
+  const workspaceMcpPaths = [
     path.resolve(rootDir, "mcp.json"),
+    path.resolve(rootDir, ".agents/plugins/workspace-tools/mcp_config.json"),
     path.resolve(rootDir, ".vscode/mcp.json"),
-    path.resolve(rootDir, ".agents/mcp.json"),
     path.resolve(rootDir, ".cursor/mcp.json"),
+    path.resolve(rootDir, ".agents/mcp_config.json"),
+    path.resolve(rootDir, "mcp_config.json"),
   ];
-  const foundMcpConfig = mcpCandidatePaths.find((p) => fs.existsSync(p));
+  const foundWorkspaceMcp = workspaceMcpPaths.find((p) => fs.existsSync(p));
 
-  if (foundMcpConfig) {
+  const agGlobalMcpPaths = [
+    path.resolve(os.homedir(), ".gemini/antigravity/mcp_config.json"),
+    path.resolve(os.homedir(), ".gemini/config/mcp_config.json"),
+  ];
+  const foundAgGlobalMcp = agGlobalMcpPaths.find((p) => fs.existsSync(p));
+
+  const parseMcpServers = (filePath: string) => {
     try {
-      const rawMcp = fs.readFileSync(foundMcpConfig, "utf-8");
+      const rawMcp = fs.readFileSync(filePath, "utf-8");
       const cleanedMcpJson = rawMcp.replace(/(?<!:)\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
       const parsedMcp = JSON.parse(cleanedMcpJson);
       const servers = (parsedMcp.mcpServers || parsedMcp.servers || {}) as Record<string, unknown>;
@@ -386,38 +397,83 @@ function auditDevAutomation(meta?: Partial<ProjectContextAndMetadata>): DevAutom
           JSON.stringify(servers[k]).includes("playwright")
       );
 
-      if (hasNextDevTools && hasPlaywrightMcp) {
-        results.push({
-          name: "MCP Server Integration",
-          category: "dev_tools",
-          status: "configured",
-          details: `Found '${path.relative(rootDir, foundMcpConfig)}' configured with Next.js Dev Server (next-devtools) and Playwright MCP.`,
-        });
-      } else {
-        const missing: string[] = [];
-        if (!hasNextDevTools) missing.push("Next.js Dev Server MCP (next-devtools)");
-        if (!hasPlaywrightMcp) missing.push("Playwright MCP (playwright)");
-        results.push({
-          name: "MCP Server Integration",
-          category: "dev_tools",
-          status: "warning",
-          details: `'${path.relative(rootDir, foundMcpConfig)}' exists, but missing server(s): ${missing.join(", ")}`,
-        });
-      }
+      return { hasNextDevTools, hasPlaywrightMcp, error: null };
     } catch (e) {
+      return { hasNextDevTools: false, hasPlaywrightMcp: false, error: (e as Error).message };
+    }
+  };
+
+  // 5a. Verify Workspace MCP Config
+  if (foundWorkspaceMcp) {
+    const wsCheck = parseMcpServers(foundWorkspaceMcp);
+    if (wsCheck.error) {
       results.push({
-        name: "MCP Server Integration",
+        name: "Workspace MCP Server Integration",
         category: "dev_tools",
         status: "warning",
-        details: `Failed to parse '${path.relative(rootDir, foundMcpConfig)}': ${(e as Error).message}`,
+        details: `Failed to parse workspace config '${path.relative(rootDir, foundWorkspaceMcp)}': ${wsCheck.error}`,
+      });
+    } else if (wsCheck.hasNextDevTools && wsCheck.hasPlaywrightMcp) {
+      results.push({
+        name: "Workspace MCP Server Integration",
+        category: "dev_tools",
+        status: "configured",
+        details: `Found '${path.relative(rootDir, foundWorkspaceMcp)}' configured with Next.js Dev Server (next-devtools) and Playwright MCP.`,
+      });
+    } else {
+      const missing: string[] = [];
+      if (!wsCheck.hasNextDevTools) missing.push("next-devtools");
+      if (!wsCheck.hasPlaywrightMcp) missing.push("playwright");
+      results.push({
+        name: "Workspace MCP Server Integration",
+        category: "dev_tools",
+        status: "warning",
+        details: `'${path.relative(rootDir, foundWorkspaceMcp)}' exists, but missing server(s): ${missing.join(", ")}`,
       });
     }
   } else {
     results.push({
-      name: "MCP Server Integration",
+      name: "Workspace MCP Server Integration",
       category: "dev_tools",
       status: "warning",
-      details: "Missing mcp.json / .vscode/mcp.json. Configure Next.js Dev Server (next-devtools) and Playwright MCP servers for agent telemetry.",
+      details: "Missing workspace mcp.json / .vscode/mcp.json / .agents/plugins/workspace-tools/mcp_config.json for repository portability and non-AG editors.",
+    });
+  }
+
+  // 5b. Verify Antigravity Global System MCP Config
+  if (foundAgGlobalMcp) {
+    const agCheck = parseMcpServers(foundAgGlobalMcp);
+    if (agCheck.error) {
+      results.push({
+        name: "Antigravity Global MCP Integration",
+        category: "dev_tools",
+        status: "warning",
+        details: `Failed to parse Antigravity global config '${foundAgGlobalMcp}': ${agCheck.error}`,
+      });
+    } else if (agCheck.hasNextDevTools && agCheck.hasPlaywrightMcp) {
+      results.push({
+        name: "Antigravity Global MCP Integration",
+        category: "dev_tools",
+        status: "configured",
+        details: `Found Antigravity global config '${foundAgGlobalMcp}' configured with Next.js Dev Server (next-devtools) and Playwright MCP.`,
+      });
+    } else {
+      const missing: string[] = [];
+      if (!agCheck.hasNextDevTools) missing.push("next-devtools");
+      if (!agCheck.hasPlaywrightMcp) missing.push("playwright");
+      results.push({
+        name: "Antigravity Global MCP Integration",
+        category: "dev_tools",
+        status: "warning",
+        details: `'${foundAgGlobalMcp}' exists, but missing server(s): ${missing.join(", ")}. Note: Antigravity only discovers MCP servers configured globally on the system.`,
+      });
+    }
+  } else {
+    results.push({
+      name: "Antigravity Global MCP Integration",
+      category: "dev_tools",
+      status: "warning",
+      details: "Missing Antigravity global mcp_config.json (~/.gemini/antigravity/mcp_config.json or ~/.gemini/config/mcp_config.json). Antigravity only discovers and loads MCP servers configured globally on the host system.",
     });
   }
 

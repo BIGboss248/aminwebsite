@@ -70,5 +70,11 @@
     "Category": "PROCESS",
     "Instruction": "Never chain multiple commands using '&&', '||', or ';' on a single line; execute terminal commands individually as discrete single operations. When running inspection commands like 'git diff' or 'git status', avoid appending unnecessary specific path arguments unless specifically required so commands match user-configured custom permissions and allowlists.",
     "Why": "user requirement: compound one-liner commands and granular arguments break Antigravity custom permissions and command allowlists"
+  },
+  {
+    "Rule_number": 13,
+    "Category": "ARCH",
+    "Instruction": "Antigravity (AG) only discovers and loads MCP servers that are configured globally on the host system (e.g. '~/.gemini/antigravity/mcp_config.json' and '~/.gemini/config/mcp_config.json'). When setting up or updating MCP servers (such as 'next-devtools' or 'playwright'), always configure them for BOTH the workspace (e.g. 'mcp.json', '.vscode/mcp.json', or '.agents/plugins/workspace-tools/mcp_config.json') AND globally for AG on the host system.",
+    "Why": "user explicit correction: AG only recognizes MCP servers configured globally on the host system, so both workspace and global AG configurations must always be configured"
   }
 ]

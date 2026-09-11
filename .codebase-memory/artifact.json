@@ -1,0 +1,11 @@
+{
+    "schema_version": 2,
+    "commit": "04acfcc5b066a1dc242ff138e40a8b76df77c56c",
+    "indexed_at": "2026-09-10T08:53:14Z",
+    "project": "D-Scripts-aminwebsite",
+    "nodes": 1376,
+    "edges": 1579,
+    "original_size": 4063232,
+    "compressed_size": 554948,
+    "compression_level": 3
+}

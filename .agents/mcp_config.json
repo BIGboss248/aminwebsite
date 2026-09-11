@@ -1,8 +1,12 @@
 {
   "mcpServers": {
     "next-devtools": {
-      "command": "pnx",
+      "command": "npx",
       "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "codebase-memory": {
+      "command": "codebase-memory-mcp",
+      "args": []
     }
   }
 }

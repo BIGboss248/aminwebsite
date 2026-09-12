@@ -4,9 +4,13 @@
       "command": "npx",
       "args": ["-y", "next-devtools"]
     },
+    "codebase-memory": {
+      "command": "codebase-memory-mcp",
+      "args": []
+    },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+      "args": ["-y", "@playwright/mcp@latest"]
     }
   }
 }

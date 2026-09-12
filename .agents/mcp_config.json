@@ -7,6 +7,10 @@
     "codebase-memory": {
       "command": "codebase-memory-mcp",
       "args": []
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
     }
   }
 }

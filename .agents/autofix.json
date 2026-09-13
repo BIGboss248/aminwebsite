@@ -82,5 +82,11 @@
     "Category": "ARCH",
     "Instruction": "When setting up MCP servers globally on the host system, configure them strictly for Google Antigravity / AGY only ('~/.gemini/antigravity/mcp_config.json' and '~/.gemini/config/mcp_config.json'). Do NOT configure or register MCP servers globally for other coding agents (e.g., Claude Desktop, Cursor, VS Code, Cline).",
     "Why": "user explicit requirement: setup MCP servers globally for AGY only, not for other coding agents"
+  },
+  {
+    "Rule_number": 15,
+    "Category": "PROCESS",
+    "Instruction": "When executing cross-directory file synchronization, copy operations, or filesystem tasks on Windows, invoke PowerShell ('powershell -Command ...') instead of writing and running ad-hoc Python scratch scripts.",
+    "Why": "user explicit correction and preference: use powershell for file operations"
   }
 ]

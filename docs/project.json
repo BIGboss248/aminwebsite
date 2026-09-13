@@ -4,7 +4,11 @@
     "new_component_dir": "app/components",
     "style_file_dir": "app/globals.css",
     "component_library": "shadcn/ui",
-    "animation_library": ["gsap", "@gsap/react", "motion"],
+    "animation_library": [
+      "framer-motion",
+      "tw-animate-css",
+      "react-transition-progress"
+    ],
     "testing_library": [
       "jest",
       "playwright",

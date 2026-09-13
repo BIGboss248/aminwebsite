@@ -3,7 +3,7 @@ name: nextjs-create-component
 description: Step-by-step workflow and engineering standards for designing, creating, styling, and documenting Next.js React components (RSC and Client Components). Consumes planning artifacts from nextjs-plan (docs/project.json, docs/plan.md, lib/routes.ts, lib/site-config.ts, and docs/design/).
 metadata:
   author: BIGboss248
-  version: "1.4"
+  version: "1.5"
 ---
 
 # Next.js Component Creation Skill (`nextjs-create-component`)
@@ -234,6 +234,7 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
 | Physical directional margins (`ml-4`, `pr-2`)          | Use logical properties (`ms-4`, `pe-2`)                                                                                                                                         |
 | Standard `<img>` tag                                   | Use Next.js `<Image src="..." width={...} height={...} alt="..." />`                                                                                                            |
 | Writing component code before unit tests               | Follow TDD: Write unit tests first ([ComponentName].test.tsx), establish contract, and code until tests pass                                                                    |
+| Self-certifying quality without adversarial testing    | Spawn Adversarial Auditor subagent in Step 6 to inject edge-case tests ([ComponentName].edge.test.tsx) without author confirmation bias                                         |
 | Guessing unspecific or vague requirements              | Interview user (suggest /grill-me) to clarify props, layout & behavior before writing tests                                                                                     |
 | Keeping JSON plan transient in chat memory only        | Save plan to `.agents/history/plan-[component-name].json` and update subtask statuses to `"completed"` as work finishes                                                         |
 | Using standard `next/link` everywhere indiscriminately | Use `@vercel/react-transition-progress` `Link` for primary menus, headers, hero CTAs, and interactive cards; reserve `next/link` for static footers and minor inline text links |
@@ -275,12 +276,12 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
       Before executing any task, you MUST generate your own tailored JSON plan for the component and persist it into `.agents/history/` directory.
 
   > [!IMPORTANT]
-  > **EXAMPLE FORMAT SCHEMA ONLY:** The JSON structure below is an **example layout**. You MUST generate a comprehensive plan tailored to your specific task that includes subtasks for all steps (including TDD tests in Step 4, component creation in Step 5, self-reflection in Step 6, and **executing unit tests via `run_command` in Step 7**).
+  > **EXAMPLE FORMAT SCHEMA ONLY:** The JSON structure below is an **example layout**. You MUST generate a comprehensive plan tailored to your specific task that includes subtasks for all steps (including Builder contract definition & TDD tests in Step 4, component creation in Step 5, Adversarial Auditor subagent in Step 6, and **executing the full test suite via `run_command` in Step 7**).
   1. **History Directory:** Ensure `.agents/history/` directory exists (create it if missing).
   2. **File Saving:** Save the initial JSON plan to `.agents/history/plan-[component-name].json`.
   3. **Sequential Task Execution & Crossing Off:** As each subtask is executed and completed:
      - Update the subtask's `"status"` field in `.agents/history/plan-[component-name].json` from `"pending"` to `"completed"`.
-     - Output a progress update crossing off the completed task (e.g. `[x] Subtask 4: Execute unit tests`).
+     - Output a progress update crossing off the completed task (e.g. `[x] Subtask 4: Execute full test suite`).
 
   ```json
   {
@@ -289,99 +290,109 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
     "sources_audited": [
       {
         "path": ".agents/skills/nextjs-create-component/SKILL.md",
-        "scope_summary": "Extracted RSC boundary strategy, styling, i18n, TSDoc, and reflection rules"
+        "scope_summary": "Extracted RSC boundary strategy, styling, i18n, TSDoc, and adversarial audit rules"
       }
     ],
     "subtasks": [
       {
         "id": 1,
-        "description": "Requirement alignment and TDD unit test creation ([ComponentName].test.tsx)",
-        "workflow_phase_ref": "Step 4: Test-Driven Development (TDD)",
+        "description": "TypeScript contract definition and baseline TDD unit test creation ([ComponentName].test.tsx)",
+        "workflow_phase_ref": "Step 4: Builder TDD & Contract Definition",
         "tool_intents": ["write_to_file"],
-        "verification_criteria": "Unit test suite written matching component specification",
+        "verification_criteria": "TypeScript prop types and baseline unit test suite written matching component specification",
         "status": "pending"
       },
       {
         "id": 2,
         "description": "Component placement, skeleton, and responsive layout implementation",
-        "workflow_phase_ref": "Step 5: Component & Responsive Variant Development",
+        "workflow_phase_ref": "Step 5: Builder Component & Responsive Development",
         "tool_intents": ["write_to_file"],
         "verification_criteria": "Component and skeleton fallbacks created without lint or type errors",
         "status": "pending"
       },
       {
         "id": 3,
-        "description": "Perform Self-Reflection & Quality Audit",
-        "workflow_phase_ref": "Step 6: Self-Reflection & Quality Audit",
-        "tool_intents": [],
-        "verification_criteria": "Output mandatory Self-Reflection block with 3 adversarial checks",
+        "description": "Spawn Adversarial Auditor Subagent for Independent Code Review & Edge-Case Test Injection",
+        "workflow_phase_ref": "Step 6: Adversarial Auditor Subagent & Edge-Case Injection",
+        "tool_intents": ["invoke_subagent"],
+        "verification_criteria": "Subagent completes unbiased audit and writes [ComponentName].edge.test.tsx without author bias",
         "status": "pending"
       },
       {
         "id": 4,
-        "description": "Execute Unit Tests",
-        "workflow_phase_ref": "Step 7: Unit Test Execution",
+        "description": "Execute Full Test Suite (Baseline + Adversarial) & Auto-Repair",
+        "workflow_phase_ref": "Step 7: Two-Tier Verification & Auto-Repair Loop",
         "tool_intents": ["run_command"],
-        "verification_criteria": "Run unit test runner with 0 errors via run_command tool",
+        "verification_criteria": "All unit and adversarial tests pass with 0 errors via run_command tool",
         "status": "pending"
       }
     ],
     "eval_metrics": [
-      "Zero CLS, full RTL support, 100% English TSDoc, clean build, unit tests pass"
+      "Zero CLS, full RTL support, 100% English TSDoc, clean build, baseline and adversarial tests pass"
     ],
-    "risk_factors": ["Hydration mismatch, layout shift during data streaming"]
+    "risk_factors": [
+      "Hydration mismatch, layout shift during data streaming, unhandled boundary cases"
+    ]
   }
   ```
 
-- [ ] **Step 4: Test-Driven Development (TDD) - Write Unit Tests First**
-  1. **Write Unit Tests First:** Based on the clarified specification, write the complete unit test file (`[ComponentName].test.tsx`) in `new_component_dir` (read from `docs/project.json`) BEFORE writing any component code. Ensure tests verify responsive layouts across desktop, tablet, and mobile breakpoints.
-  2. **Comprehensive Test Scope:**
-     - Props & Default Values (`@defaultValue`)
-     - Interactive Client Callbacks & Event Handlers
-     - Suspense & `<Skeleton>` rendering during loading states
-     - Accessibility ARIA attributes (`role`, `aria-busy`, `aria-label`)
-     - BiDi / RTL text orientation expectations
+- [ ] **Step 4: Builder Phase: TypeScript Contract Definition & Baseline TDD**
+  1. **Define TypeScript Contract:**
+     - The Builder agent begins by defining the component's complete TypeScript interface and types (either at the top of the component file or in `[ComponentName].types.ts` for complex components).
+     - Annotate all props, generic parameters, and return types in **English** using strict TSDoc syntax (`@param`, `@defaultValue`, `@returns`).
+     - Specify exact callback signatures (e.g. `(id: string, selected: boolean) => void`) rather than ambiguous `Function` or `any`.
+  2. **Write Baseline Unit Tests First (`[ComponentName].test.tsx`):**
+     - In `new_component_dir` (read from `docs/project.json`), write the baseline unit test file BEFORE implementing the component.
+     - Scope of Baseline Tests:
+       - Default prop values (`@defaultValue`) and core rendering behavior.
+       - Interactive client callbacks and event handlers.
+       - Loading states: Suspense & `<Skeleton>` rendering.
+       - Core accessibility: verify semantic roles and basic ARIA labels.
+       - BiDi / RTL text orientation expectations.
   3. **Testing TanStack Query Components:**
      - When testing components using `useQuery` or `useSuspenseQuery`, use a test harness with `QueryClientProvider` configured with `retry: false` and `gcTime: Infinity`.
      - Seed mock data directly into the test cache using `queryClient.setQueryData(cache.key(...), mockData)` to verify loaded data rendering, or leave unseeded inside `<Suspense fallback={<[ComponentName]Skeleton />}>` to verify fallback rendering without real network requests.
   4. **TDD Red-Green Loop:**
-     - Write tests defining the contract (Red).
-     - Implement component and skeleton fallbacks (Green) until all unit tests pass cleanly (`bun test`, `pnpm test`, or project runner).
+     - Write baseline tests defining the contract (Red).
+     - Implement component and skeleton fallbacks (Green) until baseline tests pass.
 
-- [ ] **Step 5: Component & Responsive Development**
-      Develop the component (`[ComponentName].tsx`) and its skeleton fallback `[ComponentName]Skeleton.tsx` using Tailwind CSS responsive classes (e.g. `sm:`, `md:`, `lg:`) to handle mobile, tablet, and desktop layouts within a single file according to architectural guidelines and test requirements.
+- [ ] **Step 5: Builder Phase: Component & Responsive Development**
+      Develop the component (`[ComponentName].tsx`) and its skeleton fallback `[ComponentName]Skeleton.tsx` using Tailwind CSS responsive classes (e.g. `sm:`, `md:`, `lg:`) to handle mobile, tablet, and desktop layouts within a single file according to architectural guidelines and baseline test requirements.
 
-- [ ] **Step 6: Self-Reflection & Quality Audit (MANDATORY)**
-      Before completing work, execute a **Self-Reflection Pass** and output the following critique block:
+- [ ] **Step 6: Adversarial Auditor Subagent & Edge-Case Injection (MANDATORY UNBIASED LOOP)**
 
-  ```markdown
-  ### Self-Reflection & Quality Audit
+  > [!IMPORTANT]
+  > **Unbiased Verification Architecture:** To eliminate author confirmation bias and prevent self-grading, the primary Builder agent MUST NOT perform self-certification. Instead, you MUST invoke an independent subagent using the `invoke_subagent` tool.
+  1. **Spawn Adversarial Auditor Subagent:**
+     - Call `invoke_subagent` with:
+       - `TypeName`: `"self"`
+       - `Role`: `"Adversarial Code & QA Auditor"`
+       - `Model`: `"inherit"`
+       - `Prompt`: Provide a rigorous auditing instruction containing:
+         - The path to the component file (`[ComponentName].tsx`), skeleton file, and baseline tests.
+         - The requirement to audit against core architectural rules: RSC boundary isolation, Tailwind logical properties (`ms-`, `pe-`, `start`, `end`), semantic OKLCH tokens, TSDoc completeness, and TanStack Query cache contracts.
+         - **Mandatory Adversarial Test Generation:** The subagent MUST write a dedicated edge-case test suite (`[ComponentName].edge.test.tsx` in `new_component_dir`) targeting edge cases the Builder might have overlooked:
+           - Boundary values: empty strings, null/undefined inputs, extremely long text, special characters / RTL Persian glyphs.
+           - Unhandled optional prop combinations.
+           - Async rejection / error state handling / broken API responses.
+           - Accessibility depth: keyboard navigation (`Enter`, `Space`, `Tab`), `aria-expanded`, `aria-busy`, focus management.
+           - Stress testing: rapid re-renders, unmount lifecycle cleanup.
+  2. **Audit Report Reception:**
+     - When the subagent completes its task, review its structured audit findings and confirm that `[ComponentName].edge.test.tsx` has been generated on the local filesystem.
 
-  1. **Adversarial Edge-Case Checks:**
-     - [ ] Mobile/Tablet Breakpoints: Verified layout behavior across small screens without horizontal scroll.
-     - [ ] Loading & Skeleton Match: Verified `<Skeleton>` dimensions match loaded content exactly to prevent CLS.
-     - [ ] Async Data & Empty States: Tested behavior when data lists are empty or API returns null.
-
-  2. **Domain Rule Compliance Audit:**
-     - [ ] RSC Purity: `"use client"` is isolated to leaf components; server components passed via `children`.
-     - [ ] Styling Tokens: Used semantic tokens (`bg-background`) instead of hardcoded colors (`bg-blue-500`).
-     - [ ] BiDi/RTL: Exclusively used Tailwind logical properties (`ms-`, `pe-`).
-     - [ ] TSDoc Completeness: Fully annotated in English with `@param`, `@returns`, and `@defaultValue`.
-     - [ ] Query Cache Hygiene: Explicit `staleTime` defined; zero relative fetch calls on server.
-
-  3. **Identified Bugs & Corrections:**
-     - Documented any layout shifts, hydration warnings, or missing ARIA labels identified and fixed.
-  ```
-
-- [ ] **Step 7: Unit Test Execution & Constraint Verification (MANDATORY SHELL EXECUTION)**
+- [ ] **Step 7: Two-Tier Test Execution & Auto-Repair Loop (MANDATORY SHELL EXECUTION)**
 
   > [!CRITICAL]
-  > You MUST physically execute unit tests and constraint verification using the `run_command` tool before declaring completion or proceeding to Step 8. Do NOT skip this step, omit it from your plan, or present final handoff without calling `run_command`.
+  > You MUST physically execute the full test suite (baseline unit tests AND adversarial edge-case tests) along with constraint verification using the `run_command` tool before declaring completion or proceeding to Step 8. Do NOT skip this step, omit it from your plan, or present final handoff without calling `run_command`.
   1. **Run Constraint Verification Script:**
      - Run `npx tsx .agents/skills/nextjs-create-component/scripts/verify-component-files.ts [target_component_dir]` to verify component file, skeleton file, and test file exist.
-  2. **Run Unit Tests (MUST use `run_command` tool):**
-     - Execute project test runner (`bun test`, `npm test`, `jest`, or custom runner).
-  3. **TDD Fix Loop:** If any unit test or constraint check fails, return to Step 5 to fix issues and re-run verification until all tests pass cleanly with 0 errors.
+  2. **Run Full Test Suite (Baseline + Adversarial):**
+     - Execute project test runner (`bun test`, `npm test`, `pnpm test`, or `jest`) via `run_command`.
+  3. **Strict Auto-Repair Rules (The Immutable Adversarial Tests Principle):**
+     - **Modifying Adversarial Tests is Strictly FORBIDDEN:** The Builder agent is NOT permitted to delete, comment out, or soften the assertions in `[ComponentName].edge.test.tsx`.
+     - **Component Fix Loop:** If any adversarial test fails, modify the component code (`[ComponentName].tsx`) to properly handle the edge case (e.g., adding fallback guards, null checks, ARIA attributes, or error handling).
+     - **Re-Run Verification:** Re-execute the test runner until ALL tests (baseline and adversarial) pass cleanly with 0 errors.
+     - **Contract Dispute Exception:** If an adversarial test objectively violates the frozen TypeScript contract established in Step 4, document the contract mismatch in `.agents/history/plan-[component-name].json` and reconcile with the auditor rather than silently deleting the test.
 
 - [ ] **Step 8: Verification & Handoff**
   1. **Code Cleanup:** Mark debug code or temporary mock data with `// TODO: REMOVE BEFORE PRODUCTION`.

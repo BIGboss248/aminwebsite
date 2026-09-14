@@ -88,5 +88,11 @@
     "Category": "PROCESS",
     "Instruction": "When executing cross-directory file synchronization, copy operations, or filesystem tasks on Windows, invoke PowerShell ('powershell -Command ...') instead of writing and running ad-hoc Python scratch scripts.",
     "Why": "user explicit correction and preference: use powershell for file operations"
+  },
+  {
+    "Rule_number": 16,
+    "Category": "ARCH",
+    "Instruction": "In the 'nextjs-plan' skill and 'docs/plan.md', Step 1 must grill the user on what pages the web app needs, followed by what sections and components each page requires; in 'docs/plan.md', outline every page as a checklist item with all of its components as nested sub-checklists, where a page is ticked off only when all its components are designed.",
+    "Why": "user explicit requirement: grill on pages then sections, and outline pages with component sub-checklists ticked off when all components are designed"
   }
 ]

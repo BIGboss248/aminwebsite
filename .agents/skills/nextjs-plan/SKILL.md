@@ -1,17 +1,17 @@
 ---
 name: nextjs-plan
-description: End-to-end planning skill for Next.js App Router projects. Automatically scans workspace files to extract known specifications, grills the user on general needs and requirements, and generates docs/project.json (specifications) and docs/plan.md (an actionable from-empty-workspace-to-current-state checklist). Triggers on "/nextjs-plan", "plan a nextjs project", "plan nextjs app", "create nextjs project plan", "outline nextjs architecture", or "generate plan.md".
+description: End-to-end planning skill for Next.js App Router projects. Automatically scans workspace files to extract known specifications, grills the user on general needs, pages, sections, and components, and generates docs/project.json (specifications) and docs/plan.md (an actionable checklist outlining pages and components where pages are ticked off when all components are designed). Triggers on "/nextjs-plan", "plan a nextjs project", "plan nextjs app", "create nextjs project plan", "outline nextjs architecture", or "generate plan.md".
 metadata:
   author: BIGboss248
-  version: "2.1"
+  version: "2.2"
 ---
 
 # Next.js Project Planning Skill (`nextjs-plan`)
 
-This skill defines the complete workflow for planning a Next.js App Router project from concept to launch. When invoked, it automatically extracts known technical specifications from existing workspace files, conducts a targeted grilling interview on the user's general needs, and outputs two core files inside `./docs`:
+This skill defines the complete workflow for planning a Next.js App Router project from concept to launch. When invoked, it automatically extracts known technical specifications from existing workspace files, conducts a targeted grilling interview on the user's general needs, pages, sections, and components, and outputs two core files inside `./docs`:
 
 1. **`docs/project.json`**: The canonical technical specifications and metadata schema (single source of truth).
-2. **`docs/plan.md`**: An actionable, chronological checklist (`- [ ]`) configured to take the project from an **empty workspace** all the way to **where the project currently is / target state**, outlining general steps that can be refined in detail later.
+2. **`docs/plan.md`**: An actionable, chronological checklist (`- [ ]`) configured to take the project from an **empty workspace** all the way to **where the project currently is / target state**. In Step 1, every page is outlined as a checklist item with all of its components as sub-checklists, where a page is ticked off only when all its components are designed.
 
 ---
 
@@ -20,11 +20,11 @@ This skill defines the complete workflow for planning a Next.js App Router proje
 ```mermaid
 flowchart TD
     Invoke["Invoke /nextjs-plan"] --> Step1["Step 1: Automated Workspace Scan<br/>(Extract dependencies, directory layout, styles, configs, routes)"]
-    Step1 --> Step2["Step 2: User Grilling on General Needs<br/>(Structured rounds with Q&A and recommended answers)"]
+    Step1 --> Step2["Step 2: User Grilling on Needs, Pages & Sections<br/>(Methodical grilling on pages, sections, components & architecture)"]
     Step2 --> Step3["Step 3: Generate Canonical Specifications<br/>(docs/project.json)"]
     Step3 --> Step35["Step 3.5: Centralized Code Data in lib/<br/>(lib/routes.ts & lib/site-config.ts)"]
     Step35 --> Step36["Step 3.6: Save Design & Strategy Docs<br/>(docs/design/01-strategy, 02-sitemap, 03-tokens)"]
-    Step36 --> Step4["Step 4: Generate docs/plan.md<br/>(14-Step Empty Workspace &rarr; Current State Checklist)"]
+    Step36 --> Step4["Step 4: Generate docs/plan.md<br/>(Checklist outlining pages & component sub-checklists)"]
     Step4 --> Complete["Execution Complete<br/>(Present files to user; do NOT invoke downstream skills)"]
 ```
 
@@ -34,7 +34,7 @@ A machine-readable JSON configuration specifying package manager, component path
 
 ### Deliverable 2: `docs/plan.md` (The Checklist)
 
-A comprehensive, phased checklist file (`- [ ]`) outlining the general steps necessary to get from a clean/empty workspace to the project's current state and target milestones. Any milestones already completed in the existing workspace are marked as `- [x]`, while remaining steps are marked as `- [ ]`.
+A comprehensive, phased checklist file (`- [ ]`) outlining the steps necessary to get from a clean/empty workspace to the project's current state and target milestones. In Step 1, every page is outlined as a checklist item with all of its components as sub-checklists; a page is ticked off only when all of its components are designed. Any milestones already completed in the existing workspace are marked as `- [x]`, while remaining steps are marked as `- [ ]`.
 
 ### Standard Project Directory & Documentation Architecture
 
@@ -105,9 +105,17 @@ Before asking any questions, inspect the workspace and extract all existing cont
 
 ---
 
-### Step 2: Grilling the User on General Needs
+### Step 2: Grilling the User on General Needs, Pages, Sections & Components
 
-Once the workspace facts are collected, identify any remaining gaps in product vision, architecture, and general requirements. Engage the user in a structured interview using the **grilling methodology**:
+Once the workspace facts are collected, identify any remaining gaps in product vision, architecture, pages, and general requirements. Engage the user in a structured interview using the **grilling methodology**:
+
+> [!IMPORTANT]
+> **Mandatory Step 1 Grilling Sequence (Pages $\rightarrow$ Sections $\rightarrow$ Components):**
+> For Step 1 (Design Website & User Experience), the skill MUST methodically grill the user through three progressive layers before finalizing the plan:
+>
+> 1. **Pages Grilling**: Drill down on what exact pages the web app needs (e.g. Home `/`, About `/about`, Projects `/projects`, Blog `/blog`, Lab `/lab`, Contact `/contact`, Dashboard `/dashboard`). List every route that must exist.
+> 2. **Sections Grilling**: For each identified page, drill down on what specific content sections that page needs from top to bottom (e.g. for Home: Global Header, Hero, Trust Signals / Credentials, Featured Case Studies, Interactive Lab Preview, CTA Bar, Global Footer).
+> 3. **Components Grilling**: For each section, drill down on what individual UI components are required to construct that section (e.g. Hero needs `HeroHeadline`, `AvailabilityBadge`, `PrimaryCTAButtons`, `HeroGraphic`; Case Studies section needs `ProjectGrid`, `ProjectCard`, `MetricHighlight`).
 
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
 
@@ -135,29 +143,38 @@ The session is done when the frontier is empty: every branch of the design tree 
 
 #### Core Areas of Inquiry:
 
-1. **Product Purpose & Target Audience**:
+1. **Pages Inventory Grilling (Step 1 Design Core)**:
+   - What pages must exist in the web application?
+   - What are their target routes, and which pages belong in the primary navigation vs. utility/detail routes?
+2. **Page Sections Grilling (Step 1 Design Core)**:
+   - For every page identified above, what specific content sections are needed from top to bottom?
+   - What is the primary purpose and narrative flow of each section?
+3. **Component Breakdown Grilling (Step 1 Design Core)**:
+   - For every section, what specific UI components must be created or assembled?
+   - Which components are reusable across multiple pages (e.g. `SiteHeader`, `SiteFooter`, `Card`, `Badge`) vs. page-specific (e.g. `DoHProberConsole`, `ProjectFilterBar`)?
+4. **Product Purpose & Target Audience**:
    - What core problem does this project solve?
    - Who are the target users (geographic location, language preferences, technical literacy)?
-2. **Core Feature Scope & User Journeys**:
+5. **Core Feature Scope & User Journeys**:
    - What are the primary user flows (e.g. portfolio browsing, case studies, client booking, e-commerce checkout, dashboard)?
    - What constitutes the immediate MVP vs. later phases?
-3. **Authentication & Authorization**:
+6. **Authentication & Authorization**:
    - Is authentication required? If so, what provider (Better Auth, Clerk, Auth.js, Supabase Auth)?
    - What user roles exist (Public, Authenticated Member, Admin)?
-4. **Data Layer, CMS & Services**:
+7. **Data Layer, CMS & Services**:
    - How is data stored and queried (PostgreSQL, SQLite, Supabase, Redis)?
    - Which ORM or data layer is preferred (Drizzle, Prisma, Server Functions)?
    - Is a CMS needed for non-technical editors (Payload CMS in-repo, Headless CMS, or local MDX)?
-5. **Internationalization & Localization (i18n)**:
+8. **Internationalization & Localization (i18n)**:
    - What languages must be supported (e.g. English `en`, Persian `fa`, German `de`)?
    - Are there RTL (Right-to-Left) requirements and dedicated font pairings?
    - Note: Dictionaries are always placed in `messages/` at the project root.
-6. **Visual Tone & Design Preferences**:
+9. **Visual Tone & Design Preferences**:
    - What emotional feel and aesthetic tone is desired (e.g. minimalist dark mode, corporate trust, high-velocity tech, playful)?
    - Any brand primary seed colors or theme preferences?
-7. **Deployment & Infrastructure**:
-   - Where will the application be deployed (self-hosted Docker on VPS, Vercel, Cloudflare)?
-   - Are health monitoring (`/api/health`), OpenTelemetry tracing, or automated CI/CD required?
+10. **Deployment & Infrastructure**:
+    - Where will the application be deployed (self-hosted Docker on VPS, Vercel, Cloudflare)?
+    - Are health monitoring (`/api/health`), OpenTelemetry tracing, or automated CI/CD required?
 
 ---
 
@@ -293,10 +310,11 @@ Captures the foundational purpose, audience personas, quantifiable success metri
 
 #### 2. Sitemap & Route Inventory: `docs/design/02-sitemap-and-routes.md`
 
-Documents the information architecture, navigation hierarchy, section layout, and Next.js rendering strategy (from Step 1.2).
+Documents the information architecture, navigation hierarchy, section layout, and Next.js rendering strategy derived from the Step 1 grilling interview:
 
 - **Page Inventory & Hierarchy**: Complete tree of routes (Home, About, Projects, Resume, Lab tools, Contact).
-- **Section Breakdown**: Hero, features, case studies, interactive tools, footers per page.
+- **Section Breakdown**: Section hierarchy per page (Hero, Features, Case Studies, Interactive Tools, Forms, Footers).
+- **Component Breakdown**: Specific UI components associated with each section.
 - **Rendering Strategy Matrix**: Explicit breakdown of SSG (Static Site Generation), ISR (Incremental Static Regeneration), SSR (Server-Side Rendering), and Client Components per route.
 - **UX & Wireframe References**: Links to Google Stitch screens, Figma boards, or layout blueprints.
 
@@ -313,9 +331,17 @@ Captures the storytelling theme, brand tone, typography, and semantic CSS variab
 
 ### Step 4: Generate `docs/plan.md`
 
-Generate `docs/plan.md` as an actionable, chronological checklist (`- [ ]`) tracking the general steps from an **empty workspace** to the **current state and target milestones**.
+Generate `docs/plan.md` as an actionable, chronological checklist (`- [ ]`) tracking the steps from an **empty workspace** to the **current state and target milestones**.
 
-The plan must outline general steps that provide high-level clarity, allowing the user to dive into greater detail on specific items later.
+> [!IMPORTANT]
+> **Step 1 Page & Component Checklist Architecture:**
+> For **Step 1: Design Website & User Experience**, the plan MUST outline:
+>
+> 1. **Every page as a checklist item**: `- [ ] **Page: <Page Name> (<Route>)**`
+> 2. **All components as sub-checklist items** organized under their respective page and section:
+>    `  - [ ] **Section: <Section Name>**`
+>    `   - [ ] Component:`<ComponentName>` - <Description/Role>`
+> 3. **Page Completion Rule**: A page checklist item is ticked off (`- [x]`) **IF AND ONLY WHEN all of its component sub-checklist items are designed** (wireframed in Google Stitch/Figma, styled with design tokens, and specified).
 
 #### Structure of `docs/plan.md`:
 
@@ -331,18 +357,64 @@ The plan must outline general steps that provide high-level clarity, allowing th
   - [ ] Set quantifiable success metrics and KPIs (Lighthouse scores, sub-second LCP, CLS < 0.1)
   - [ ] Conduct competitive analysis and review top reference websites in the domain
   - [ ] Classify website category (Ecommerce, Marketing, Content/Media, Educational, Portfolio, Web App)
-- [ ] **1.2 Structure & Information Architecture (UX & Wireframing)**
-  - [ ] Map complete page inventory (Home, About, Services/Products, Blog/Case Studies, Contact)
-  - [ ] Map page content sections (Hero, Features, Testimonials, Pricing, CTAs, Gallery, Header, Footer)
-  - [ ] Create sitemap and map rendering strategy (SSG, ISR, SSR, CSR) per route
-  - [ ] Develop wireframes to bypass blank page (via Google Stitch, Figma, or AI scaffolding)
-- [ ] **1.3 Visual Identity & UI Design System (UI & Aesthetics)**
+- [ ] **1.2 Visual Identity & UI Design System (UI & Aesthetics)**
   - [ ] Define brand narrative and storytelling: "What message will this convey?"
   - [ ] Establish color palette & semantic CSS tokens for light and dark themes (backgrounds, elevated cards, primary/secondary CTA, borders, radius)
   - [ ] Select typography and font pairings via `next/font` (Latin headings/body + locale-specific fonts like Persian/Arabic)
   - [ ] Design logo mark and brand assets
   - [ ] Curate imagery, custom illustrations, and icon system (`lucide-react`)
-  - [ ] Design reusable UI components (Button, Card, Input, Modal, Badge) before code implementation
+  - [ ] Design reusable UI primitives (Button, Card, Input, Modal, Badge) before code implementation
+- [ ] **1.3 Page & Component Design Checklist (UX Wireframing & Screen Specs)**
+
+  > [!IMPORTANT]
+  > **Page Completion Rule**: A page checklist item is ticked off (`- [x]`) ONLY when all of its individual component sub-checklist items are designed.
+  - [ ] **Page: Home (`/`)**
+    - [ ] **Section: Global Navigation**
+      - [ ] `SiteNavbar` - Brand header with desktop navigation links
+      - [ ] `MobileDrawer` - Slide-out navigation menu for mobile viewports
+      - [ ] `LocaleSwitcher` - Language selector dropdown
+      - [ ] `ThemeToggle` - Dark/light mode switcher
+    - [ ] **Section: Hero**
+      - [ ] `HeroHeadline` - Core value proposition and intro copy
+      - [ ] `AvailabilityBadge` - Status indicator pill (contract / full-time)
+      - [ ] `HeroGraphic` - Animated visual or interactive hero asset
+      - [ ] `PrimaryActions` - Call-to-action button group (Projects / Contact)
+    - [ ] **Section: Featured Projects**
+      - [ ] `ProjectGrid` - Responsive layout grid for featured work
+      - [ ] `ProjectCard` - Showcase card with preview, tech tags, and metric highlights
+    - [ ] **Section: Interactive Lab Preview**
+      - [ ] `LabToolsGrid` - Interactive tool showcase grid
+      - [ ] `ToolPreviewCard` - Tool card with live status & direct launcher
+    - [ ] **Section: Trust Signals & Credentials**
+      - [ ] `CredentialsBar` - Verified credentials, DOIs, ORCID icons, and awards
+    - [ ] **Section: Global Footer**
+      - [ ] `SiteFooter` - Author bio, contact links, copyright, and legal notices
+
+  - [ ] **Page: About (`/about`)**
+    - [ ] **Section: Biography & Philosophy**
+      - [ ] `BioContent` - Professional narrative and engineering philosophy
+      - [ ] `SkillMatrix` - Categorized competencies and technology pills
+    - [ ] **Section: Career & Timeline**
+      - [ ] `TimelineCard` - Career and education milestones
+      - [ ] `CertBadgeList` - Vendor and research credential tokens
+
+  - [ ] **Page: Projects / Case Studies (`/projects`)**
+    - [ ] **Section: Filter & Search**
+      - [ ] `ProjectFilterBar` - Category, domain, and tech stack filter buttons
+    - [ ] **Section: Case Studies**
+      - [ ] `CaseStudyCard` - Deep-dive project overview card
+      - [ ] `MetricHighlight` - Highlighted project outcomes and benchmark stats
+
+  - [ ] **Page: Interactive Lab (`/lab`)**
+    - [ ] **Section: Lab Console**
+      - [ ] `ToolSelector` - Tabbed diagnostic tool selector
+      - [ ] `LiveConsole` - Interactive diagnostic runner and log view
+      - [ ] `MetricGraph` - Real-time metrics visualization canvas
+
+  - [ ] **Page: Contact (`/contact`)**
+    - [ ] **Section: Inquiry Channels**
+      - [ ] `ContactForm` - Accessible inquiry form with input validation
+      - [ ] `DirectContactCard` - Direct email, timezone, and calendar link
 
 ## Step 2: Install Package Manager
 
@@ -444,9 +516,10 @@ The plan must outline general steps that provide high-level clarity, allowing th
 > [!NOTE]
 > Tailor the phases and items in `docs/plan.md` to match the exact findings from Step 1 and answers from Step 2:
 >
-> - If an item is already accomplished in the current workspace, mark it with `- [x]`.
-> - If an item is yet to be built, mark it with `- [ ]`.
-> - Keep items clear and general so the developer can expand them into granular subtasks when executing.
+> - **Step 1 Checklist Rule**: Outline every page identified during the grilling interview as a checklist item (`- [ ] **Page: <Page Name> (<Route>)**`), with all of its sections and individual components as nested sub-checklists.
+> - **Page Completion Rule**: Mark a page as complete (`- [x]`) **if and only when all of its component sub-checklist items are designed**.
+> - For all subsequent steps, mark an item with `- [x]` if already accomplished in the current workspace, or `- [ ]` if yet to be built.
+> - Keep items clear, actionable, and structured so the developer can expand them into granular subtasks when executing.
 
 ---
 

@@ -22,7 +22,7 @@ A comprehensive, chronological checklist tracking all milestones from empty work
     - [x] Trust signals bar (DOIs, ORCID, vendor certifications)
     - [x] Global header (navigation, locale switcher, theme toggle) & comprehensive footer
   - [x] Define rendering strategy per route (SSG for marketing/case studies, SSR for dynamic diagnostics, client-side for lab tools) in [`docs/design/02-sitemap-and-routes.md`](file:///d:/Scripts/aminwebsite/docs/design/02-sitemap-and-routes.md)
-  - [ ] Develop wireframes and interaction flows (bypassing the blank page via Google Stitch / Figma)
+  - [ ] Develop wireframes and interaction flows in [`docs/design/wireframes/`](file:///d:/Scripts/aminwebsite/docs/design/wireframes/) (bypassing the blank page via Google Stitch / Figma)
 - [ ] **1.3 Visual Identity & UI Design System (UI & Aesthetics)**
   - [x] Formulate core storytelling & emotional message in [`docs/design/03-ui-design-tokens.md`](file:///d:/Scripts/aminwebsite/docs/design/03-ui-design-tokens.md): "Technical clarity, high-precision systems engineering, trustworthy infrastructure"
   - [x] Define color palette & semantic CSS tokens for light and dark themes (OKLCH slate dark canvas, Emerald/Amber status, neutral borders)
@@ -58,6 +58,7 @@ A comprehensive, chronological checklist tracking all milestones from empty work
 - [x] **3.5 Setup CI/CD & Production Containerization**
   - [x] Configure multi-stage production Dockerfile (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`) for standalone output
   - [x] Configure Husky git hooks (`pre-commit`, `pre-push`) with Commitlint conventional commits
+  - [x] Configure semantic versioning and release automation in [`docs/operations/release-automation.md`](file:///d:/Scripts/aminwebsite/docs/operations/release-automation.md)
 
 ---
 
@@ -70,7 +71,7 @@ A comprehensive, chronological checklist tracking all milestones from empty work
 
 ## Step 5: Health & Log Monitoring
 
-- [x] Configure Docker container liveness probe endpoint (`/api/health` monitoring V8 heap saturation, event loop lag, and process uptime)
+- [x] Configure Docker container liveness probe endpoint (`/api/health` monitoring V8 heap saturation, event loop lag, and process uptime) documented in [`docs/operations/health-and-telemetry.md`](file:///d:/Scripts/aminwebsite/docs/operations/health-and-telemetry.md)
 - [ ] Setup server telemetry and distributed tracing via OpenTelemetry (`instrumentation.ts` / `@vercel/otel`)
 - [ ] Setup Core Web Vitals (RUM) monitoring component (`useReportWebVitals` / beacon dispatcher)
 
@@ -134,7 +135,7 @@ A comprehensive, chronological checklist tracking all milestones from empty work
 - [ ] **11.3 Digital Resume & Credentials (`/[locale]/resume` or `/[locale]/about`)**
   - [ ] Interactive career milestones timeline
   - [ ] Peer-reviewed research publications section with permanent DOI links
-  - [ ] Downloadable PDF resume action
+  - [ ] Downloadable PDF resume action (reference content in [`docs/design/resume.html`](file:///d:/Scripts/aminwebsite/docs/design/resume.html))
   - [ ] Skills matrix (Languages, Frameworks, DevOps, Networking)
 - [ ] **11.4 Interactive Diagnostic Lab Suite (`/[locale]/lab`)**
   - [ ] **Stage 1 (MVP)**: Lab directory hub (`/[locale]/lab`)
@@ -172,6 +173,6 @@ A comprehensive, chronological checklist tracking all milestones from empty work
 
 ## Step 14: Setup 3rd Party Plugins & Integrations
 
-- [ ] Configure PostHog analytics and session recording gated behind user consent
+- [ ] Configure PostHog analytics and session recording gated behind user consent policies in [`docs/operations/privacy-and-gdpr.md`](file:///d:/Scripts/aminwebsite/docs/operations/privacy-and-gdpr.md)
 - [ ] Configure Sentry exception tracking and error monitoring
 - [ ] Configure Resend API integration for email delivery

@@ -35,5 +35,69 @@
     ],
     "dictionaries_dir": "messages",
     "dictionary_file_pattern": "[locale].json"
+  },
+  "design_system": {
+    "brand_message": "Developer Cockpit & Systems Observatory: High-precision engineered minimalism, calm authority, deep obsidian surfaces with crisp structural borders and electric telemetry accents communicating real-time systems competence",
+    "color_palette": {
+      "light": {
+        "canvas_background": "#FAFAFA",
+        "canvas_foreground": "#0A0A0A",
+        "section_alternate_background": "#F4F4F5",
+        "section_alternate_foreground": "#18181B",
+        "surface_elevated": "#FFFFFF",
+        "surface_elevated_foreground": "#0A0A0A",
+        "border": "#E4E4E7",
+        "primary_accent": "#0891B2",
+        "primary_accent_foreground": "#FFFFFF",
+        "secondary_accent": "#7C3AED",
+        "secondary_accent_foreground": "#FFFFFF",
+        "status_success": "#10B981",
+        "status_warning": "#F59E0B",
+        "status_error": "#EF4444",
+        "status_info": "#06B6D4"
+      },
+      "dark": {
+        "canvas_background": "#050505",
+        "canvas_foreground": "#FAFAFA",
+        "section_alternate_background": "#0A0A0C",
+        "section_alternate_foreground": "#E4E4E7",
+        "surface_elevated": "#111115",
+        "surface_elevated_foreground": "#FAFAFA",
+        "border": "#27272A",
+        "primary_accent": "#06B6D4",
+        "primary_accent_foreground": "#050505",
+        "secondary_accent": "#8B5CF6",
+        "secondary_accent_foreground": "#050505",
+        "status_success": "#10B981",
+        "status_warning": "#F59E0B",
+        "status_error": "#F87171",
+        "status_info": "#38BDF8"
+      }
+    },
+    "typography": {
+      "en": {
+        "heading_font": "Geist Sans, Inter, sans-serif",
+        "body_font": "Geist Sans, Inter, sans-serif",
+        "code_font": "Geist Mono, JetBrains Mono, monospace"
+      },
+      "fa": {
+        "heading_font": "Vazirmatn, sans-serif",
+        "body_font": "Vazirmatn, sans-serif",
+        "code_font": "Geist Mono, monospace"
+      }
+    },
+    "border_radius": {
+      "base": "0.5rem",
+      "card": "0.75rem",
+      "button": "0.5rem",
+      "badge": "9999px",
+      "modal": "1rem"
+    },
+    "elevation_and_shadows": {
+      "card": "0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2)",
+      "elevated": "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)",
+      "modal": "0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4)",
+      "neon_glow": "0 0 24px -4px rgba(6, 182, 212, 0.25)"
+    }
   }
 }

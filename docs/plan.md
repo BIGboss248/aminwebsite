@@ -30,6 +30,154 @@ A comprehensive, chronological checklist tracking all milestones from empty work
   - [ ] Design brand logo mark and favicon assets
   - [x] Curate iconography (`lucide-react` with consistent 1.75px stroke) and custom diagram assets in [`docs/design/03-ui-design-tokens.md`](file:///d:/Scripts/aminwebsite/docs/design/03-ui-design-tokens.md)
   - [x] Design reusable UI primitives (Button, Card, Badge, Input, Modal) to centralize styling before code implementation
+- [ ] **1.4 Page & Component Design Checklist (UX Wireframing & Screen Specs)**
+
+  > [!IMPORTANT]
+  > **Page Completion Rule**: A page checklist item is ticked off (`- [x]`) **IF AND ONLY WHEN all of its individual component sub-checklist items are designed**.
+
+  - [ ] **Page: Home (`/`)**
+    - [ ] **Section: Global Navigation / Header**
+      - [x] `SiteNavbar` - Brand header with desktop route links
+      - [ ] `MobileNavDrawer` - Slide-out navigation menu for mobile viewports
+      - [x] `LocaleSwitcher` - Language selector dropdown (EN / FA)
+      - [x] `ThemeToggle` - Dark / light mode switcher
+    - [ ] **Section: Hero**
+      - [ ] `HeroHeadline` - Core value proposition and intro copy
+      - [ ] `AvailabilityBadge` - Work status indicator pill
+      - [ ] `HeroMotionGraphic` - Animated systems visual / interactive terminal accent
+      - [ ] `HeroActionButtons` - Primary CTA (Case Studies) & Secondary CTA (Lab Tools)
+    - [ ] **Section: Trust Signals & Credentials**
+      - [ ] `CredentialsBar` - Peer-reviewed research DOIs, ORCID link, and cloud certifications
+      - [ ] `MetricHighlightList` - Key performance callouts (<1.0s LCP, 99.99% Uptime)
+    - [ ] **Section: Featured Case Studies**
+      - [ ] `FeaturedProjectsGrid` - Responsive card container for top 2-3 engineering projects
+      - [ ] `ProjectCard` - Showcase card with visual preview, tech stack tags, and metric improvements
+    - [ ] **Section: Interactive Lab Tools Launcher**
+      - [ ] `LabLauncherSection` - Interactive launcher container
+      - [ ] `ToolQuickCard` - Quick diagnostic tool card with live status indicator & prober launch trigger
+    - [ ] **Section: Competencies & Tech Matrix**
+      - [ ] `TechStackMatrix` - Categorized competency tags (Next.js, TypeScript, Go, Docker)
+      - [ ] `SkillBadge` - Interactive skill tag with experience context
+    - [ ] **Section: Global Footer**
+      - [ ] `SiteFooter` - Author bio, contact links, copyright, and social links
+      - [ ] `SocialLinksBar` - GitHub, LinkedIn, ORCID, Twitter/X links
+
+  - [ ] **Page: About (`/about`)**
+    - [ ] **Section: Narrative Biography**
+      - [ ] `AboutHero` - Headline, author portrait/graphic, and core engineering philosophy
+      - [ ] `BioStory` - In-depth professional story and systems architecture journey
+    - [ ] **Section: Engineering Philosophy & Architecture Principles**
+      - [ ] `PhilosophyCards` - Modular principles (Reliability, Zero-Compromise Performance, Deep Systems Competence)
+    - [ ] **Section: Experience & Education Timeline**
+      - [ ] `ExperienceTimeline` - Chronological career and education milestones
+      - [ ] `TimelineItem` - Expandable role card with key impact deliverables
+    - [ ] **Section: Academic & Research Credentials**
+      - [ ] `ResearchPublicationList` - Peer-reviewed publications list with permanent DOI links
+      - [ ] `DoiBadge` - Verified DOI token and BibTeX citation modal
+      - [ ] `OrcidVerificationCard` - Live ORCID profile integration card
+    - [ ] **Section: Beyond Code & Community**
+      - [ ] `PersonalInterestsGrid` - Open-source contributions, technical reading, and community engagement
+
+  - [ ] **Page: Projects / Case Studies Archive (`/projects`)**
+    - [ ] **Section: Header & Value Intro**
+      - [ ] `ProjectsHero` - Archive introduction and filter summary
+    - [ ] **Section: Category Filter & Search Bar**
+      - [ ] `ProjectFilterTabs` - Interactive tabs (All, Full-Stack, Systems/Networking, Web Design, Open Source)
+      - [ ] `ProjectSearchBar` - Real-time keyword filter for case studies
+    - [ ] **Section: Projects Showcase Grid**
+      - [ ] `ProjectArchiveGrid` - Comprehensive responsive grid
+      - [ ] `CaseStudyCard` - High-density project card with metrics, architecture tags, and live links
+    - [ ] **Section: Open Source & Repositories**
+      - [ ] `OpenSourceShowcase` - GitHub open-source repositories and utility tools
+      - [ ] `GithubRepoCard` - Real-time star count, language badge, and repo link
+
+  - [ ] **Page: Case Study Detail (`/projects/[slug]`)**
+    - [ ] **Section: Case Study Header & Metrics**
+      - [ ] `CaseStudyHero` - Title, time horizon, client domain, and deployed live preview link
+      - [ ] `MetricBadgeRow` - Highlighted production impact metrics (cache hits, latency drops)
+    - [ ] **Section: Problem Statement & Architecture**
+      - [ ] `ProblemStatementBlock` - Background context, constraints, and requirements
+      - [ ] `ArchitectureDiagramViewer` - Interactive system architecture diagram with component boundaries
+    - [ ] **Section: Engineering Deep-Dive & Trade-offs**
+      - [ ] `TechnicalWalkthrough` - Code patterns, data flow, and concurrency mechanics
+      - [ ] `CodeBlockWithCopy` - Syntax-highlighted code viewer with copy button
+      - [ ] `TradeoffMatrix` - Table of architectural decisions, pros, cons, and alternatives considered
+    - [ ] **Section: Verifiable Results & Performance**
+      - [ ] `BenchmarkComparison` - Before-and-after performance benchmarks
+      - [ ] `LighthouseScoreCard` - Live or recorded Lighthouse audit breakdown (Performance, Accessibility, SEO)
+    - [ ] **Section: Navigation & Next Case Study**
+      - [ ] `PrevNextProjectNav` - Links to adjacent case studies
+
+  - [ ] **Page: Interactive Lab Hub (`/lab`)**
+    - [ ] **Section: Lab Hub Header**
+      - [ ] `LabHero` - Developer cockpit introduction and privacy/censorship diagnostic mission
+      - [ ] `PrivacyGuaranteeBanner` - Notice explaining all tests execute client-side with zero PII logging
+    - [ ] **Section: Diagnostic Tools Catalog**
+      - [ ] `LabToolGrid` - Grid of interactive utilities
+      - [ ] `LabToolCard` - Detailed tool card with protocol badges, execution requirements, and direct launch action
+
+  - [ ] **Page: Lab - DNS over HTTPS (DoH) Prober (`/lab/doh`)**
+    - [ ] **Section: Tool Header & Methodology**
+      - [ ] `DohToolHeader` - Title, protocol explanation, and censorship detection mechanics
+      - [ ] `DohMethodologyTooltip` - Explainer on DNS poisoning, query paths, and resolver differences
+    - [ ] **Section: Query Controller**
+      - [ ] `ResolverSelector` - Resolver tabs (Cloudflare, Google, Quad9, Custom endpoint)
+      - [ ] `DomainQueryInput` - Input bar with auto-fill domain chips
+      - [ ] `RecordTypeSelector` - Record type toggle chips (A, AAAA, CNAME, MX, TXT)
+      - [ ] `ExecuteQueryButton` - Primary execute button with loading spinner & batch query toggle
+    - [ ] **Section: Diagnostic Console & Output**
+      - [ ] `DohLatencyGraph` - Real-time horizontal bar comparison of resolver latencies
+      - [ ] `DohResponseTerminal` - Dark terminal with JSON/raw DNS wire answers
+      - [ ] `CensorshipIndicatorBadge` - Visual status badge (Secure, Poisoned, Blocked, Timeout)
+    - [ ] **Section: Export & Sharing**
+      - [ ] `ExportDohResultsButton` - Copy JSON / Shareable benchmark URL
+
+  - [ ] **Page: Lab - IP & Identity Leak Scanner (`/lab/ipinfo`)**
+    - [ ] **Section: Scanner Header**
+      - [ ] `IpScanHeader` - Real-time identity diagnostic title and explanation
+    - [ ] **Section: Leak Detection Grid**
+      - [ ] `PublicIpCard` - Public IPv4/IPv6, ISP, ASN, and organization details
+      - [ ] `WebRtcLeakCard` - STUN/TURN server leak probe checking for local/private IP exposure
+      - [ ] `DnsLeakCard` - Transparent DNS resolver leak detector
+      - [ ] `TimezoneMismatchCard` - System clock vs IP geolocation timezone alignment check
+    - [ ] **Section: Geolocation Map & Routing**
+      - [ ] `GeoLocationMap` - Client-rendered map showing detected physical location coordinates
+    - [ ] **Section: Mitigation Guidance**
+      - [ ] `LeakMitigationAdvice` - Actionable advice for hardening proxy and VPN tunnels
+
+  - [ ] **Page: Lab - Client Device Fingerprint Inspector (`/lab/fingerprint`)**
+    - [ ] **Section: Fingerprint Header**
+      - [ ] `FingerprintHeader` - Entropy score overview and hardware tracking explainer
+    - [ ] **Section: Canvas & GPU Signatures**
+      - [ ] `CanvasRendererCard` - Hidden 2D canvas drawing and hash generation visualizer
+      - [ ] `GpuHashDisplay` - WebGL unmasked renderer, vendor string, and shader precision
+    - [ ] **Section: Audio & Hardware Parameters**
+      - [ ] `AudioWaveformVisualizer` - AudioContext oscillator waveform hash
+      - [ ] `HardwareProfileTable` - CPU logical cores, device memory, screen resolution, color depth
+    - [ ] **Section: Master Hash & Entropy Analysis**
+      - [ ] `FingerprintHashCard` - Deterministic master fingerprint hash with copy button and entropy breakdown
+
+  - [ ] **Page: Contact & Booking (`/contact`)**
+    - [ ] **Section: Contact Intro & Direct Channels**
+      - [ ] `ContactHero` - Direct inquiry value proposition and response time guarantee (<24h)
+      - [ ] `DirectEmailCard` - Direct email with one-click copy and PGP public key link
+      - [ ] `PgpKeyDownloadCard` - Verified PGP key fingerprint and `.asc` download button
+    - [ ] **Section: Smart Inquiry Form**
+      - [ ] `ContactInquiryForm` - Type-safe form with honeypot and rate-limiting feedback
+      - [ ] `IntentSelector` - Radio/chip selector (Consulting/Architecture, Full-Time Role, Project, Security/Diagnostic Inquiry)
+      - [ ] `FormSubmitButton` - Submit button with loading state and localized confirmation feedback
+    - [ ] **Section: Calendar Booking Integration**
+      - [ ] `CalendarBookingWidget` - Direct 15-minute introductory call scheduler embed / link
+
+  - [ ] **Page: System & Error Pages**
+    - [ ] **Section: 404 Not Found (`not-found.tsx`)**
+      - [ ] `NotFoundHero` - Branded creative 404 headline with developer easter egg
+      - [ ] `RecoveryNavigation` - Quick recovery links back to Home, Projects, Lab, and Contact
+      - [ ] `InteractiveTerminalEasterEgg` - Interactive terminal allowing commands (`help`, `ls`, `cat bio`, `home`)
+    - [ ] **Section: Global Error Boundary (`error.tsx` / `global-error.tsx`)**
+      - [ ] `ErrorDisplayCard` - Polite, privacy-conscious error notice without leaking stack traces
+      - [ ] `ResetErrorBoundaryButton` - Retry button calling `reset()`
+      - [ ] `ReportBugLink` - Direct link to file an issue with anonymized error context
 
 ---
 

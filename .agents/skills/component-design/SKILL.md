@@ -1,10 +1,8 @@
 ---
 name: component-design
-description: Pure UX and UI design workflow for web and app components, sections, and pages. First enforces a Design Token Verification Gate to centralize and verify all global tokens in docs/project.json (grilling user on missing tokens), then grills on component intent, leverages Google Stitch (StitchMCP) for AI screen scaffolding, layout generation, and variant exploration, produces bespoke visual assets via proactive image generation (generate_image), and outputs a dedicated folder at docs/design/components/[page name]/[component name]/ with an authentic responsive iframe preview and comprehensive design specification markdown. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
 description: Pure UX and UI design workflow for web and app components, sections, and pages. First enforces a Design Token Verification Gate to centralize and verify all global tokens in docs/project.json (grilling user on missing tokens), then grills on component intent, leverages Google Stitch (StitchMCP) for AI screen scaffolding, layout generation, and variant exploration while persisting Stitch project properties in docs/project.json to prevent duplicate projects, produces bespoke visual assets via proactive image generation (generate_image), and outputs a dedicated folder at docs/design/components/[page name]/[component name]/ with an authentic responsive iframe preview and comprehensive design specification markdown. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
 metadata:
   author: BIGboss248
-  version: "1.8"
   version: "1.9"
 ---
 
@@ -131,17 +129,15 @@ With all global design tokens verified and recorded, interview the user regardin
 
 To defeat the "Curse of the White Page" and ground every design in professional layout architecture, use **Google Stitch (`StitchMCP`)** to scaffold screens, explore spatial variants, and generate bespoke assets.
 
-#### 1. Google Stitch Project & Design System Seeding (`StitchMCP`)
 #### 1. Google Stitch Project Persistence & Design System Seeding (`StitchMCP`)
 
 > [!IMPORTANT]
-> **Stitch Design System Integration:**
-> Stitch projects act as containers for UI designs and screen layouts. Before generating screens, configure the project with the design tokens verified in Step 1.
 > **Single Project Per Repository Rule (Zero Duplicate Projects):**
 > Every repository must maintain exactly **one shared Google Stitch project container** for all of its component and screen designs.
 > NEVER create multiple Stitch projects for the same repository.
 >
 > **Project Persistence Protocol:**
+>
 > 1. **Check `docs/project.json` First:** Inspect `docs/project.json` for an existing `"stitch"` object with `project_id`.
 > 2. **Reuse Existing Project:** If `stitch.project_id` exists, ALWAYS reuse that `projectId` directly for all screen scaffolding, variants, and design system updates. Do NOT call `create_project`.
 > 3. **Create & Immediately Persist:** If no `stitch.project_id` exists in `docs/project.json`:
@@ -156,12 +152,6 @@ To defeat the "Curse of the White Page" and ground every design in professional 
 >      }
 >      ```
 > 4. **Seed Design Tokens (`upload_design_md` or `create_design_system`):** Provide the project's canonical design system (from `docs/project.json`) to Stitch via `upload_design_md` or `create_design_system_from_design_md` to establish global color, font, and radius consistency.
-
-1. **Manage Stitch Project:**
-   - Call `call_mcp_tool` on `StitchMCP` with `list_projects` to check for an existing project container for this workspace.
-   - If no project exists, call `create_project` with `title: "[Project Name] Design System"` to create one, and record the resulting `projectId`.
-2. **Seed Design Tokens (`upload_design_md` or `create_design_system`):**
-   - Provide the project's canonical design system (from `docs/project.json`) to Stitch via `upload_design_md` or `create_design_system_from_design_md` to establish global color, font, and radius consistency.
 
 #### 2. Screen Scaffolding from Prompt (`generate_screen_from_text`)
 

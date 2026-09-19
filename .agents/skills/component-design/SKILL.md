@@ -1,9 +1,9 @@
 ---
 name: component-design
-description: Pure UX and UI design workflow for web and app components, sections, and pages. First enforces a Design Token Verification Gate to centralize and verify all global tokens in docs/project.json (grilling user on missing tokens), then grills on component intent, leverages Google Stitch (StitchMCP) for AI screen scaffolding, layout generation, and variant exploration while persisting Stitch project properties in docs/project.json to prevent duplicate projects, produces bespoke visual assets via proactive image generation (generate_image), and outputs a dedicated folder at docs/design/components/[page name]/[component name]/ with an authentic responsive iframe preview and comprehensive design specification markdown. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
+description: Pure UX and UI design workflow for web and app components, sections, and pages. First enforces a Design Token Verification Gate to centralize and verify all global tokens in docs/project.json (grilling user on missing tokens), then grills on component intent, leverages Google Stitch (StitchMCP) for AI screen scaffolding, layout generation, and variant exploration while persisting Stitch project properties in docs/project.json to prevent duplicate projects, produces bespoke visual assets via proactive image generation (generate_image), outputs a dedicated folder at docs/design/components/[page name]/[component name]/ with an authentic responsive iframe preview and comprehensive design specification markdown, and invokes an independent subagent to rigorously audit design fidelity, token compliance, and zero-coding guardrails. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
 metadata:
   author: BIGboss248
-  version: "1.9"
+  version: "2.0"
 ---
 
 # Component & UI Design Skill (`component-design`)
@@ -32,7 +32,8 @@ flowchart TD
     CheckTokens -- "Yes / Verified" --> Step2["Step 2: Structured Component Grilling<br/>(Interview user with 3 context-driven choices based on docs)"]
     Step2 --> Step3["Step 3: Google Stitch Scaffolding & Asset Generation<br/>(StitchMCP screen/variant generation + proactive generate_image)"]
     Step3 --> Step4["Step 4: Generate Component Design Folder<br/>(docs/design/components/[page]/[component]/preview.html + design-spec.md)"]
-    Step4 --> Finish["Review & Visual Approval<br/>(Authentic iframe responsive preview in browser/IDE)"]
+    Step4 --> Step5["Step 5: Independent Subagent Quality & Design Audit<br/>(invoke_subagent checks guardrails, tokens, iframe & spec)"]
+    Step5 --> Finish["Review & Visual Approval<br/>(Authentic iframe responsive preview in browser/IDE)"]
 ```
 
 ### Deliverable 1: Canonical Design Tokens in `docs/project.json`
@@ -233,6 +234,64 @@ A comprehensive specification documenting:
 
 ---
 
+### Step 5: Independent Subagent Quality & Design Audit (`invoke_subagent`)
+
+> [!IMPORTANT]
+> **Unbiased Verification Architecture (Subagent Review Loop):**
+> To eliminate author confirmation bias and prevent self-grading, the primary design agent MUST NOT self-certify its output. Before presenting the completed design to the user, you MUST invoke an independent reviewer subagent using the `invoke_subagent` tool to audit the generated deliverables.
+
+#### 1. Spawn Independent Design Auditor Subagent
+
+Call `invoke_subagent` with:
+
+- `TypeName`: `"self"`
+- `Role`: `"Independent Design & UX Auditor"`
+- `Model`: `"inherit"`
+- `Prompt`: Provide a rigorous design auditing prompt:
+
+```text
+You are an independent Senior Design & UX Reviewer. You did NOT generate these designs. Your job is to audit the completed design deliverables with completely fresh eyes and find any flaws, token mismatches, or guardrail breaches before the user reviews them.
+
+TARGET COMPONENT DIRECTORY:
+docs/design/components/[page name]/[component name]/
+
+CANONICAL PROJECT TOKENS:
+docs/project.json (under "design_system")
+
+Deliverables to Audit:
+1. docs/design/components/[page name]/[component name]/preview.html
+2. docs/design/components/[page name]/[component name]/design-spec.md
+3. docs/design/components/[page name]/[component name]/stitch/ (if generated)
+4. docs/design/components/[page name]/[component name]/ (generated images/assets)
+
+Audit against these strict criteria:
+1. Zero Coding Guardrail: Confirm that NO React components, Next.js directives ('use client'/'use server'), TypeScript prop interfaces, or package installation commands (no shadcn/Radix CLI commands) leaked into design-spec.md or preview.html. Code implementation belongs strictly downstream.
+2. Design System & Token Compliance: Verify that colors (light/dark canvas, surfaces, accents, status), typography (headings, body, code per locale), border radii, and elevation shadows used in preview.html and design-spec.md strictly align with docs/project.json without arbitrary or hallucinated values.
+3. Interactive Iframe Viewport Architecture: Verify preview.html renders the component within an <iframe> so Desktop (100%), Tablet (768px), and Mobile (375px) controls resize the iframe's isolated window context and trigger genuine CSS media queries. Verify that closing script tags in template literals are safely escaped (<\/script>).
+4. Bilingual & Directional Fidelity: If the project supports RTL languages (e.g. Persian 'fa'), verify preview.html includes a functional LTR/RTL toggle and that design-spec.md provides clear bidirectional mirroring guidelines.
+5. Specification Completeness: Verify design-spec.md documents all 9 required sections: Executive Summary, Google Stitch benchmarks, Visual Hierarchy, Breakpoints Grid, Design Tokens, Typography Scale, Interaction States Matrix, BiDi Adaptations, and Accessibility (contrast & >= 44px touch targets).
+6. Asset & Stitch Integrity: Verify any proactive visual assets (generate_image) are saved locally in the folder, and that Stitch project properties are persisted in docs/project.json.
+
+Respond in this exact format:
+VERDICT: PASS | ISSUES_FOUND
+
+ISSUES (if any):
+- LOCATION: {file:line or section}
+- PROBLEM: {what is non-compliant or broken}
+- FIX: {concrete instruction to fix}
+
+SUMMARY: {brief overall evaluation}
+```
+
+#### 2. Evaluate Review & Auto-Repair Resolution
+
+1. **Evaluate Subagent Verdict:**
+   - **PASS**: The reviewer found no issues. Proceed directly to presenting the completed deliverables to the user.
+   - **ISSUES_FOUND**: The primary design agent MUST immediately resolve all flagged issues in `preview.html` and `design-spec.md` (e.g., removing leaked code snippets, correcting mismatched token hex values, fixing unescaped script tags, or filling missing spec sections) before completing execution.
+2. **Sanity Check**: Confirm all auditor corrections are applied and clean.
+
+---
+
 ## 3. Execution Verification Checklist
 
 Before presenting the design to the user, ensure:
@@ -246,3 +305,4 @@ Before presenting the design to the user, ensure:
 - [ ] `preview.html` uses an `<iframe>` viewport wrapper so Desktop/Tablet/Mobile buttons trigger real CSS media queries.
 - [ ] Proactive visual assets were generated via `generate_image` if beneficial for the component.
 - [ ] `design-spec.md` details Stitch layout benchmarks, visual hierarchy, tokens, per-locale typography, and states.
+- [ ] **Independent subagent design audit was invoked via `invoke_subagent`, and all flagged issues were resolved.**

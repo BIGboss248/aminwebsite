@@ -1,9 +1,9 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, docker-compose.yml, and .dockerignore), setup git hooks and commitlint, or configure Release Please automation with multi-arch (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployment and credit-optimized Next.js CI build caching (.next/cache). Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", "deploy package on release", or when configuring/creating docs/project.json or mcp.json.
+description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Storybook with themes, accessibility (a11y), and Storybook AI MCP server, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, docker-compose.yml, and .dockerignore), setup git hooks and commitlint, or configure Release Please automation with multi-arch (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployment and credit-optimized Next.js CI build caching (.next/cache). Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", "deploy package on release", or when configuring/creating docs/project.json or mcp.json.
 metadata:
   author: BIGboss248
-  version: "2.0"
+  version: "2.1"
 ---
 
 # Next.js Development Setup & Project Configuration Skill (`nextjs-dev-setup`)
@@ -119,7 +119,7 @@ Each entry in the `supported_languages` array contains:
    - Check `dependencies` and `devDependencies`:
      - Component libraries: `radix-ui`, `shadcn`, `@headlessui/react`, etc.
      - Animation libraries: `gsap`, `@gsap/react`, `framer-motion`, `motion`, `tailwind-animate` (stored as an array of strings in `animation_library`).
-     - Testing libraries: `jest`, `jest-environment-jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@playwright/test`, `playwright` (stored as an array of strings in `testing_library`).
+     - Testing & Workshop libraries: `jest`, `jest-environment-jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@playwright/test`, `playwright`, `storybook`, `@storybook/nextjs-vite` (stored as an array of strings in `testing_library`).
      - Git hooks & commit standards: `husky`, `@commitlint/cli`, `@commitlint/config-conventional`, `lint-staged`.
 
 ---
@@ -157,11 +157,12 @@ _(If all properties were successfully discovered during Step 1, proceed directly
    - Animation libraries: configured entries in `animation_library` (e.g. `["gsap", "@gsap/react"]`)
    - SEO / Structured data: `schema-dts`
    - Testing libraries: configured entries in `testing_library` (e.g. `["jest", "playwright", "@testing-library/react", "@testing-library/jest-dom"]`)
+   - Component Workshop & Storybook: `storybook`, `@storybook/nextjs-vite`, `@storybook/addon-docs`, `@storybook/addon-a11y`, `@storybook/addon-themes`, `@storybook/addon-mcp`
    - Git hook & commit tooling: `husky`, `@commitlint/cli`, `@commitlint/config-conventional`
 2. **Install Any Missing Required Packages:**
    - Run the detected package manager (e.g. `pnpm add ...` or `bun add ...`) for any missing dependencies.
 3. **Verify Script Setup:**
-   - Ensure `package.json` contains appropriate `dev`, `build`, `lint`, and `test` scripts.
+   - Ensure `package.json` contains appropriate `dev`, `build`, `lint`, `test`, `storybook`, and `build-storybook` scripts.
 
 ---
 
@@ -436,11 +437,249 @@ Next.js provides built-in integration with Jest via the `next/jest` transformer,
 
 ---
 
-### Step 8: Setup Docker Containerization (Standalone Production Container)
+### Step 8: Setup Storybook Component Workshop, Themes, Accessibility (a11y), and Storybook AI MCP Server
+
+Storybook provides an isolated UI component development workshop, visual regression testing, interactive sandbox testing, and living styleguide documentation. In an AI-augmented Next.js development workflow, Storybook acts as a direct inspection interface via the **Storybook AI MCP server**, allowing coding agents to preview components, detect changed stories, run tests, and generate accurate stories automatically.
+
+> [!IMPORTANT]
+> **NO DUMMY / SAMPLE STORY GENERATION IN WORKSPACE (Rule 3):**
+> Do NOT create placeholder or dummy story files in the user workspace during setup. Story implementations should only be generated alongside real components or provided as reference patterns in documentation.
+
+#### 8.1. Storybook AI Setup Assistant (`npx storybook skills setup`)
+
+Storybook provides an official AI configuration command that analyzes the repository and outputs a tailored, project-specific prompt and execution plan for AI coding agents:
+
+```bash
+# Execute using detected package manager:
+pnpm exec storybook skills setup
+# Or via npx:
+npx storybook skills setup
+```
+
+The output prompt equips the agent with exact rules of engagement and a structured 8-step workflow:
+
+1. **Runtime Discovery (≤12 Reads Budget)**: Discovers entry files, providers, root CSS, theme tokens, data hooks, and portal mount points (`createPortal`) without reading inside `node_modules`.
+2. **Shared Preview Configuration**: Configures `.storybook/preview.tsx` with real provider trees, global CSS, and theme decorators once so individual stories remain lean.
+3. **Portal Roots Decorator**: Creates target portal divs (`modal-root`, `drawer-root`) inside a Storybook decorator rather than modifying static HTML.
+4. **MSW Network Mocking**: Installs `msw-storybook-addon@3`, initializes worker (`pnpm exec msw init ./public --save`), and sets up mock handlers for components fetching data.
+5. **Batch Story Authoring**: Writes co-located stories tagged initially with `tags: ['ai-generated', 'needs-work']`.
+6. **Mandatory `CssCheck` Story**: Requires exactly one `CssCheck` story across the project that asserts a resolved `getComputedStyle(element)` value (e.g. background color or font) to prove that Tailwind CSS and stylesheets successfully load in the preview iframe.
+7. **Focused `play` Functions**: Adds `play` functions only for non-trivial assertions (interactions, async MSW data resolution, portals, or semantic state), omitting redundant visibility checks on static variants.
+8. **Batch Verification Loop**: Runs tests in batch (`pnpm exec vitest --project storybook run`), stripping `'needs-work'` upon passing to leave `tags: ['ai-generated']`.
+
+#### 8.2. Co-Located Story Architecture
+
+Story files MUST be co-located directly beside their respective UI component files across `components/` and `app/`:
+
+- UI Component: `components/ui/button.tsx` -> Story: `components/ui/button.stories.tsx`
+- Feature Component: `app/components/header/Header.tsx` -> Story: `app/components/header/Header.stories.tsx`
+
+This guarantees complete modularity, atomic refactoring, and automatic discovery by both Next.js and Storybook.
+
+#### 8.3. Install Storybook Core & Addons
+
+Install Storybook with Vite builder for Next.js (`@storybook/nextjs-vite`), accessibility addon (`@storybook/addon-a11y` powered by axe-core), theme switching addon (`@storybook/addon-themes`), and the official Storybook MCP addon (`@storybook/addon-mcp`):
+
+```bash
+# pnpm:
+pnpm add -D storybook @storybook/nextjs-vite @storybook/addon-docs @storybook/addon-a11y @storybook/addon-themes @storybook/addon-mcp @chromatic-com/storybook
+
+# npm:
+npm install -D storybook @storybook/nextjs-vite @storybook/addon-docs @storybook/addon-a11y @storybook/addon-themes @storybook/addon-mcp @chromatic-com/storybook
+
+# yarn:
+yarn add -D storybook @storybook/nextjs-vite @storybook/addon-docs @storybook/addon-a11y @storybook/addon-themes @storybook/addon-mcp @chromatic-com/storybook
+
+# bun:
+bun add -D storybook @storybook/nextjs-vite @storybook/addon-docs @storybook/addon-a11y @storybook/addon-themes @storybook/addon-mcp @chromatic-com/storybook
+```
+
+> [!TIP]
+> **pnpm & Vite Compatibility:** When using `pnpm`, if Vite/esbuild encounters module resolution issues across monorepos or strict hoisted stores, ensure `pnpm-workspace.yaml` or `package.json` configures `esbuild: true` or hoisting appropriately.
+
+#### 8.4. Configure `.storybook/main.ts`
+
+Create `.storybook/main.ts` configured with co-located story globs, required addons, Vite framework, static public assets, and the `componentsManifest` feature flag (which powers Storybook AI MCP component discovery):
+
+```ts
+import type { StorybookConfig } from "@storybook/nextjs-vite";
+
+const config: StorybookConfig = {
+  stories: [
+    "../app/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+    "../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+  ],
+  addons: [
+    "@storybook/addon-docs",
+    "@storybook/addon-a11y",
+    "@storybook/addon-themes",
+    "@storybook/addon-mcp",
+    "@chromatic-com/storybook",
+  ],
+  framework: {
+    name: "@storybook/nextjs-vite",
+    options: {},
+  },
+  staticDirs: ["../public"],
+  features: {
+    componentsManifest: true,
+  },
+};
+
+export default config;
+```
+
+#### 8.5. Configure `.storybook/preview.tsx` (Global Styles, Themes & A11y)
+
+Create `.storybook/preview.tsx` importing the global Tailwind CSS stylesheet, setting up class-based dark/light theme switching with `withThemeByClassName`, configuring axe-core accessibility audits, and enabling autodocs:
+
+```tsx
+import type { Preview } from "@storybook/nextjs-vite";
+import { withThemeByClassName } from "@storybook/addon-themes";
+import "../app/globals.css";
+
+const preview: Preview = {
+  parameters: {
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
+    },
+    a11y: {
+      test: "todo",
+    },
+  },
+  decorators: [
+    withThemeByClassName({
+      themes: {
+        light: "",
+        dark: "dark",
+      },
+      defaultTheme: "light",
+    }),
+  ],
+  tags: ["autodocs"],
+};
+
+export default preview;
+```
+
+#### 8.6. Configure Storybook AI MCP Server (`@storybook/addon-mcp`)
+
+When Storybook runs (`pnpm run storybook`), `@storybook/addon-mcp` exposes an SSE/HTTP Model Context Protocol endpoint at `http://localhost:6006/mcp`.
+
+> [!IMPORTANT]
+> **Mandatory Dual Configuration (Workspace + Antigravity Global System):**
+>
+> 1. **Antigravity (AG) Global System Config (`~/.gemini/antigravity/mcp_config.json` & `~/.gemini/config/mcp_config.json`)**: Antigravity only discovers and loads MCP servers configured globally on the host system.
+> 2. **Workspace Config (`mcp.json`, `.vscode/mcp.json`)**: Maintain the identical server block in workspace configs for cross-editor team portability.
+
+Add the Storybook MCP server to both global and workspace configurations:
+
+```json
+{
+  "mcpServers": {
+    "storybook": {
+      "url": "http://localhost:6006/mcp"
+    }
+  }
+}
+```
+
+##### Available Storybook AI MCP Tools:
+
+- **`stories-preview`**: Returns preview details and rendered URL for a story.
+- **`get-storybook-story-instructions`**: Returns system guidelines for crafting stories adhering to project conventions.
+- **`stories-changed`**: Lists stories impacted by recent code edits.
+- **`stories-find-by-component`**: Locates existing stories associated with a given UI component.
+- **`test-run`**: Triggers component and visual test runs against active stories.
+- **`docs-list` / `docs-show` / `docs-show-story`**: Retrieves Storybook documentation and story manifests.
+
+#### 8.7. Configure `package.json` Scripts
+
+Add dev and build scripts to `package.json`:
+
+```json
+{
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  }
+}
+```
+
+#### 8.8. Reference Story Implementation Example (CSF3 with CssCheck)
+
+```tsx
+// Reference: Component Story Format 3 (CSF3) pattern (Do NOT generate dummy stories during dev setup)
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { expect } from "storybook/test";
+import { Button } from "./button";
+
+const meta: Meta<typeof Button> = {
+  title: "UI/Button",
+  component: Button,
+  tags: ["autodocs", "ai-generated"],
+  argTypes: {
+    variant: {
+      control: "select",
+      options: [
+        "default",
+        "destructive",
+        "outline",
+        "secondary",
+        "ghost",
+        "link",
+      ],
+    },
+    size: {
+      control: "select",
+      options: ["default", "sm", "lg", "icon"],
+    },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+export const Default: Story = {
+  args: {
+    children: "Button",
+    variant: "default",
+  },
+};
+
+export const DarkMode: Story = {
+  args: {
+    children: "Dark Button",
+    variant: "default",
+  },
+  parameters: {
+    theme: "dark",
+  },
+};
+
+// Mandatory single CssCheck story verifying global CSS and Tailwind loaded correctly
+export const CssCheck: Story = {
+  args: {
+    children: "Submit",
+  },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button", { name: /submit/i });
+    // Verifies that computed styling loaded from global CSS
+    await expect(getComputedStyle(button).display).toBe("inline-flex");
+  },
+};
+```
+
+---
+
+### Step 9: Setup Docker Containerization (Standalone Production Container)
 
 Containerizing Next.js using **Standalone Mode** packages only the traced production `node_modules` and compiled assets into a minimal, secure, non-root Node.js container (`server.js`). Local development runs directly on the host machine using the project package manager (`pnpm run dev`), while Docker is configured strictly for production builds and deployments.
 
-#### 8.1. Enable Standalone Output in Next.js (`next.config.ts` / `next.config.js`)
+#### 9.1. Enable Standalone Output in Next.js (`next.config.ts` / `next.config.js`)
 
 Ensure `output: "standalone"` is enabled in `next.config.ts` (or `next.config.js`):
 
@@ -454,7 +693,7 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 ```
 
-#### 8.2. Configure Docker Ignore File (`.dockerignore`)
+#### 9.2. Configure Docker Ignore File (`.dockerignore`)
 
 Create or update `.dockerignore` at the repository root to exclude local build artifacts, secrets, and caches:
 
@@ -516,7 +755,7 @@ docs/
 .github/
 ```
 
-#### 8.3. Production Multi-Stage `Dockerfile` (Standalone Mode)
+#### 9.3. Production Multi-Stage `Dockerfile` (Standalone Mode)
 
 Create `Dockerfile` at the repository root using a 3-stage multi-stage build (`dependencies` -> `builder` -> `runner`):
 
@@ -611,7 +850,7 @@ EXPOSE ${PORT}
 CMD ["node", "server.js"]
 ```
 
-#### 8.4. Local Build Stack (`docker-compose.yml`)
+#### 9.4. Local Build Stack (`docker-compose.yml`)
 
 Create `docker-compose.yml` at the repository root for building and running standalone production containers directly from local source:
 
@@ -633,7 +872,7 @@ services:
       - PORT=${PORT:-3000}
 ```
 
-#### 8.5. GHCR Package Deployment Stack (`docker-compose.prod.yml`)
+#### 9.5. GHCR Package Deployment Stack (`docker-compose.prod.yml`)
 
 Create `docker-compose.prod.yml` at the repository root for lightweight production deployments pulling pre-built multi-arch images directly from GitHub Container Registry (GHCR) without needing local source code or build tooling:
 
@@ -650,7 +889,7 @@ services:
       - PORT=${PORT:-3000}
 ```
 
-#### 8.6. Container Commands Reference
+#### 9.6. Container Commands Reference
 
 - **Local Build & Run (Direct Docker)**:
   ```bash
@@ -676,7 +915,7 @@ services:
 
 ---
 
-### Step 9: Setup Git Hooks with Husky & Commitlint (Dual-Suite Pre-Push Enforcement)
+### Step 10: Setup Git Hooks with Husky & Commitlint (Dual-Suite Pre-Push Enforcement)
 
 1. **Install Husky & Commitlint:**
    - Install `husky`, `@commitlint/cli`, and `@commitlint/config-conventional` as dev dependencies using the detected package manager:
@@ -725,7 +964,7 @@ services:
 
 ---
 
-### Step 10: Setup Credit-Optimized CI/CD, Release Automation & Multi-Arch GHCR Container Packaging
+### Step 11: Setup Credit-Optimized CI/CD, Release Automation & Multi-Arch GHCR Container Packaging
 
 To minimize GitHub Actions minutes, consume as few billing credits as possible, and automate both semantic releases and multi-platform (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployments:
 
@@ -1053,7 +1292,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
 
 ---
 
-### Step 11: Verify Project Configuration & Sanity Check
+### Step 12: Verify Project Configuration & Sanity Check
 
 1. Run the project configuration verification script:
    ```bash
@@ -1064,15 +1303,16 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
    - Verify valid JSON structure.
    - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`) are present and non-empty.
    - Validate each locale object in `supported_languages` array.
-   - Verify presence and configuration of testing suites (Jest and Playwright).
-   - Audit both workspace MCP configuration (`mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `.vscode/mcp.json`) AND Antigravity global system MCP configuration (`~/.gemini/antigravity/mcp_config.json`, `~/.gemini/config/mcp_config.json`) for `next-devtools` and `playwright` MCP servers (since AG only recognizes MCP servers configured globally on the host system).
+   - Verify presence and configuration of testing suites (Jest, Playwright, and Storybook).
+   - Audit both workspace MCP configuration (`mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `.vscode/mcp.json`) AND Antigravity global system MCP configuration (`~/.gemini/antigravity/mcp_config.json`, `~/.gemini/config/mcp_config.json`) for `next-devtools`, `playwright`, and `storybook` MCP servers (since AG only recognizes MCP servers configured globally on the host system).
+   - Audit Storybook configuration (`.storybook/main.ts`, `.storybook/preview.tsx`).
    - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`, and standalone output).
    - Audit `.github/workflows/release-please.yml` for credit-optimized Next.js CI build caching (`.next/cache`), package manager setup, SemVer release automation, and multi-arch GHCR publishing.
 3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `~/.gemini/antigravity/mcp_config.json`, or Docker files and re-run until all checks pass.
 
 ---
 
-### Step 12: Generate Dev Setup Execution Report
+### Step 13: Generate Dev Setup Execution Report
 
 Upon completing the verification, the agent MUST output a clear and concise execution report summarizing the status of every step and artifact, explicitly distinguishing between what was freshly implemented vs. what was already configured (and left untouched).
 
@@ -1088,11 +1328,12 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 | **3. Next.js Dev Server MCP**      | `~/.gemini/antigravity/mcp_config.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) globally for AG & in workspace.  |
 | **4. Playwright & Playwright MCP** | `playwright.config.ts`, `~/.gemini/antigravity/mcp_config.json`, `mcp.json`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP globally & in workspace. |
 | **5. Jest Unit Testing**           | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
-| **6. Docker Containerization**     | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks.  |
-| **7. Husky Git Hooks**             | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
-| **8. Commitlint Config**           | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
-| **9. Release & CI Build Caching**  | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
-| **10. Environment Verification**   | `scripts/verify-project-config.ts`                                                                     | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
+| **6. Storybook & Storybook MCP**   | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |
+| **7. Docker Containerization**     | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks.  |
+| **8. Husky Git Hooks**             | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
+| **9. Commitlint Config**           | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
+| **10. Release & CI Build Caching** | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
+| **11. Environment Verification**   | `scripts/verify-project-config.ts`                                                                     | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
 
 #### Status Definitions:
 

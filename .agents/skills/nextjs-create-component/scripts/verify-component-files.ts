@@ -14,6 +14,8 @@ export interface ComponentCheckResult {
   skeletonFilePath?: string;
   hasTestFile: boolean;
   testFilePath?: string;
+  hasStoryFile: boolean;
+  storyFilePath?: string;
   passed: boolean;
   errors: string[];
 }
@@ -179,6 +181,33 @@ function verifyComponent(
   }
 
   const passed = hasComponentFile && hasSkeletonFile && hasTestFile;
+  // 4. Storybook Story File Check (for main components)
+  const storyExtensions = [".stories.tsx", ".stories.ts", ".stories.jsx", ".stories.js"];
+  let storyFilePath: string | undefined;
+
+  for (const ext of storyExtensions) {
+    const possiblePaths = [
+      path.join(searchDir, `${componentName}${ext}`),
+      path.join(searchDir, `index${ext}`),
+      path.join(searchDir, "stories", `${componentName}${ext}`),
+    ];
+    for (const p of possiblePaths) {
+      if (fs.existsSync(p) && fs.statSync(p).isFile()) {
+        storyFilePath = p;
+        break;
+      }
+    }
+    if (storyFilePath) break;
+  }
+
+  const hasStoryFile = Boolean(storyFilePath);
+  if (!hasStoryFile) {
+    errors.push(
+      `Storybook story missing (expected ${componentName}.stories.tsx in ${searchDir})`
+    );
+  }
+
+  const passed = hasComponentFile && hasSkeletonFile && hasTestFile && hasStoryFile;
 
   return {
     componentName,
@@ -189,6 +218,8 @@ function verifyComponent(
     skeletonFilePath,
     hasTestFile,
     testFilePath,
+    hasStoryFile,
+    storyFilePath,
     passed,
     errors,
   };
@@ -331,6 +362,12 @@ function printReport(summary: VerificationSummary, jsonOutput: boolean): void {
     console.log(
       `   3. Test File:      ${res.hasTestFile
         ? `${green}✓ Exists${reset} (${res.testFilePath})`
+        : `${red}✗ Missing${reset}`
+      }`
+    );
+    console.log(
+      `   4. Story File:     ${res.hasStoryFile
+        ? `${green}✓ Exists${reset} (${res.storyFilePath})`
         : `${red}✗ Missing${reset}`
       }`
     );

@@ -11,6 +11,10 @@
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "storybook": {
+      "serverUrl": "http://localhost:6006/mcp",
+      "url": "http://localhost:6006/mcp"
     }
   }
 }

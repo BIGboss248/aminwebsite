@@ -1,9 +1,12 @@
-import type { Preview } from '@storybook/nextjs-vite';
-import { withThemeByClassName } from '@storybook/addon-themes';
-import '../app/globals.css';
+import type { Preview } from "@storybook/nextjs-vite";
+import { withThemeByClassName } from "@storybook/addon-themes";
+import "../app/globals.css";
 
 const preview: Preview = {
   parameters: {
+    nextjs: {
+      appDirectory: true,
+    },
     a11y: {
       // axe-core configuration and options
       config: {
@@ -12,8 +15,6 @@ const preview: Preview = {
     },
     controls: {
       matchers: {
-       color: /(background|color)$/i,
-       date: /Date$/i,
         color: /(background|color)$/i,
         date: /Date$/i,
       },
@@ -22,10 +23,10 @@ const preview: Preview = {
   decorators: [
     withThemeByClassName({
       themes: {
-        light: '',
-        dark: 'dark',
+        light: "",
+        dark: "dark",
       },
-      defaultTheme: 'dark',
+      defaultTheme: "dark",
     }),
   ],
 };

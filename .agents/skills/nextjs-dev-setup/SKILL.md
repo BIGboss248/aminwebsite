@@ -540,6 +540,9 @@ import "../app/globals.css";
 
 const preview: Preview = {
   parameters: {
+    nextjs: {
+      appDirectory: true, // Enables next/navigation routing, hooks & actions for App Router
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

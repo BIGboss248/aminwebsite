@@ -286,6 +286,7 @@ Every newly created main component MUST include a co-located Storybook story fil
 | Designing UI without consulting design tokens                        | Review `docs/design/03-ui-design-tokens.md` and `docs/design/02-sitemap-and-routes.md`                                                                                          |
 | Creating stories for internal leaf client helpers                    | Only create stories for main components; test leaf components via main component story or unit tests                                                                            |
 | Hardcoded callback stubs instead of `fn()` in stories                | Import `fn` from `'storybook/test'` so user interactions trigger visual events in the Storybook Actions panel                                                                   |
+| Skipping Storybook tests in verification gate                        | Execute Storybook smoke (`pnpm run storybook:smoke`) and static build (`pnpm run build-storybook`) in Step 7 to catch syntax, indexing, and bundle errors                       |
 | Recreating pre-existing component / ignoring missing companion files | Check if component exists first; run gap analysis and backfill missing companion files (skeleton, tests, stories, edge tests) without overwriting existing component code       |
 
 ---
@@ -587,21 +588,29 @@ When prompted to create or work on any component:
   2. **Audit Report Reception:**
      - When the subagent completes its task, review its structured audit findings and confirm that `[ComponentName].edge.test.tsx` has been generated on the local filesystem.
 
-- [ ] **Step 7: Two-Tier Test Execution & Auto-Repair Loop (MANDATORY SHELL EXECUTION)**
+- [ ] **Step 7: Verification Gate & Auto-Repair Loop (MANDATORY SHELL EXECUTION)**
 
   > [!CRITICAL]
-  > You MUST physically execute the full test suite (baseline unit tests AND adversarial edge-case tests) along with constraint verification using the `run_command` tool before declaring completion or proceeding to Step 8. Do NOT skip this step, omit it from your plan, or present final handoff without calling `run_command`.
+  > You MUST physically execute the full verification gate (companion constraints, baseline/adversarial test suites, AND Storybook tests) using the `run_command` tool before declaring completion or proceeding to Step 8. Do NOT skip this step, omit it from your plan, or present final handoff without calling `run_command`.
 
   > [!NOTE]
-  > **COMPANION FILE BACKFILL AUTO-REPAIR:** In backfill mode, if tests reveal bugs or unhandled edge cases in the existing component, patch the component to satisfy assertions while preserving its external public API contracts and existing prop types.
-  1. **Run Constraint Verification Script:**
+  > **COMPANION FILE BACKFILL AUTO-REPAIR:** In backfill mode, if tests or Storybook checks reveal bugs, syntax collisions, or unhandled edge cases in the component or stories, patch them to satisfy assertions while preserving external public API contracts and existing prop types.
+  1. **Tier 1: Companion Constraint Verification Script:**
      - Run `npx tsx .agents/skills/nextjs-create-component/scripts/verify-component-files.ts [target_component_dir]` to verify component file, skeleton file, test file, and Storybook story exist.
-  2. **Run Full Test Suite (Baseline + Adversarial):**
+  2. **Tier 2: Baseline & Adversarial Test Suite:**
      - Execute project test runner (`bun test`, `npm test`, `pnpm test`, or `jest`) via `run_command`.
-  3. **Strict Auto-Repair Rules (The Immutable Adversarial Tests Principle):**
+     - All baseline unit tests (`[ComponentName].test.tsx`) and adversarial edge-case tests (`[ComponentName].edge.test.tsx`) must pass with 0 failures.
+  3. **Tier 3: Storybook Verification Suite (Smoke & Static Build):**
+     - **Storybook Smoke & Indexing Test:**
+       - Execute `pnpm run storybook:smoke` (or `pnpm exec storybook dev --smoke-test`) via `run_command`.
+       - Verifies that Storybook starts cleanly and parses/indexes all component stories without syntax errors, AST collisions, or missing export errors.
+     - **Storybook Production Build Test:**
+       - Execute `pnpm run build-storybook` (or `pnpm exec storybook build`) via `run_command`.
+       - Verifies that all stories, CSF3 metadata, controls (`argTypes`), action spies, and Docs renderers compile and bundle into static production assets without bundling or module directive errors.
+  4. **Strict Auto-Repair Rules (The Immutable Adversarial Tests Principle):**
      - **Modifying Adversarial Tests is Strictly FORBIDDEN:** The Builder agent is NOT permitted to delete, comment out, or soften the assertions in `[ComponentName].edge.test.tsx`.
-     - **Component Fix Loop:** If any adversarial test fails, modify the component code (`[ComponentName].tsx`) to properly handle the edge case (e.g., adding fallback guards, null checks, ARIA attributes, or error handling).
-     - **Re-Run Verification:** Re-execute the test runner until ALL tests (baseline and adversarial) pass cleanly with 0 errors.
+     - **Component & Story Fix Loop:** If any adversarial test, baseline test, or Storybook verification test fails, modify the component code (`[ComponentName].tsx`) or story (`[ComponentName].stories.tsx`) to properly handle the error (e.g., adding fallback guards, null checks, ARIA attributes, fixing CSF3 exports, or resolving syntax errors).
+     - **Re-Run Verification:** Re-execute the verification gate until ALL tiers (constraints, tests, and Storybook) pass cleanly with 0 errors.
      - **Contract Dispute Exception:** If an adversarial test objectively violates the frozen TypeScript contract established in Step 4, document the contract mismatch in `.agents/history/plan-[component-name].json` and reconcile with the auditor rather than silently deleting the test.
 
 - [ ] **Step 8: Verification & Handoff**
@@ -611,7 +620,7 @@ When prompted to create or work on any component:
   >
   > - Pre-existing Component detected & retained: `[ComponentName].tsx`
   > - Backfilled companion files created: Skeleton (`[ComponentName]Skeleton.tsx`), Unit Tests (`[ComponentName].test.tsx`), Storybook Story (`[ComponentName].stories.tsx`), Edge Tests (`[ComponentName].edge.test.tsx`)
-  > - Test suite verification results via `run_command`
+  > - Full verification gate results: Constraint script, Jest unit/edge tests (`pnpm test`), and Storybook tests (`pnpm run storybook:smoke`, `pnpm run build-storybook`)
   > - Story preview instruction (`pnpm storybook`)
   1. **Code Cleanup:** Mark debug code or temporary mock data with `// TODO: REMOVE BEFORE PRODUCTION`.
   2. **History Persistence Finalization:** Ensure all subtasks in `.agents/history/plan-[component-name].json` are updated with `"status": "completed"`.

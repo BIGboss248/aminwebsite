@@ -15,6 +15,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:all": "jest --passWithNoTests && playwright test --pass-with-no-tests",
     "storybook": "storybook dev -p 6006",
+    "storybook:smoke": "storybook dev --smoke-test",
     "build-storybook": "storybook build"
   },
   "dependencies": {

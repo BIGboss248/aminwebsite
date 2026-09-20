@@ -167,24 +167,108 @@ Choose the platform method:
    ```
 
 ### 3.3. Git Hygiene & Persistence
+### 3.3. Configure `.cbmignore` Exclusions (Prevent Editor Stutter & Discovery Churn)
 
 - **Local-Only (Default)**: Add `.codebase-memory/` to `.gitignore`.
+> [!IMPORTANT]
+> **Stutter Prevention & High-Churn Exclusions (`.cbmignore`):**
+> `codebase-memory-mcp` reads a `.cbmignore` file located strictly at the repository root (`<repo>/.cbmignore`) using `.gitignore` syntax. Without `.cbmignore`, non-code files (like planning docs, agent memory, test artifacts, and build caches) trigger continuous AST discovery, type resolution, and disk writes whenever edited.
+> Always generate `<repo>/.cbmignore` at repository root:
+
+```gitignore
+# codebase-memory-mcp ignore rules (.cbmignore)
+# Prevents non-code and high-churn files from triggering graph indexing or inflating the AST graph.
+
+# Agent logs, metadata, and planning documents (high churn during active sessions)
+.agents/
+docs/
+*.md
+
+# Build artifacts & compilation caches
+dist/
+build/
+out/
+.next/
+.swc/
+
+# Testing, reports, and coverage
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.playwright-mcp/
+storybook-static/
+*storybook.log
+
+# Codebase Memory local artifacts (prevent self-triggering loops)
+.codebase-memory/
+
+# System and logs
+*.log
+*.tsbuildinfo
+.DS_Store
+
+# Static assets and media (zero code symbols)
+public/
+assets/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.webp
+*.mp4
+*.mp3
+*.pdf
+
+# Environment & lockfiles
+.env*
+*.pem
+*.lock
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+bun.lockb
+```
+
+### 3.4. Disable Automatic Session File-Watching (`auto_watch = false`)
+
+> [!CAUTION]
+> **System Stutter Prevention:**
+> By default, `codebase-memory-mcp` automatically registers connected projects with its background git watcher (`auto_watch = true`). On Windows and multi-tasking systems, the watcher detects file saves, spawns an `index.supervisor` worker process, and compresses `.codebase-memory/graph.db.zst` via zstd on every single keystroke/save, leading to severe editor UI and window manager micro-stutters.
+> **Always disable automatic session watching globally:**
+
+```bash
+codebase-memory-mcp config set auto_watch false
+```
+
+When disabled, sessions do not register with the background watcher, completely eliminating editor freezes. The graph is queried via MCP tools and refreshed explicitly on-demand.
+
+### 3.5. Git Hygiene & Persistence
+
+- **Local-Only (Default)**: Add `.codebase-memory/` to `.gitignore`. Never commit the binary artifact on every save.
 - **Team Snapshot Sharing**: If committing the pre-indexed graph snapshot for the team, track `.codebase-memory/graph.db.zst` with Git LFS in root `.gitattributes`:
   ```gitattributes
   .codebase-memory/graph.db.zst filter=lfs diff=lfs merge=lfs -text
   ```
 
 ### 3.4. Initial Indexing & Cadence Script
+### 3.6. Initial On-Demand Indexing & Cadence Script
 
 1. Run initial indexing:
+1. Run initial indexing on-demand (using `moderate` or `fast` mode to skip heavy semantic embedding calculations):
    ```bash
    codebase-memory-mcp cli index_repository --repo-path "<canonical-repo-path>"
+   codebase-memory-mcp cli index_repository --repo-path "<canonical-repo-path>" --mode moderate
    ```
 2. Add a cadence script to `package.json` for refreshing the index on milestones:
+2. Add a cadence script to `package.json` for refreshing the index on major milestones/commits:
    ```json
    {
      "scripts": {
        "cbm:update": "codebase-memory-mcp cli index_repository --repo-path . --persistence true"
+       "cbm:update": "codebase-memory-mcp cli index_repository --repo-path . --mode moderate --persistence true"
      }
    }
    ```
@@ -500,6 +584,14 @@ Audit the configuration integrity:
 5. Verify `.husky/commit-msg` and `.husky/pre-push` are configured and executable.
 6. Verify Docker configuration parses cleanly (`docker compose config`).
 7. Verify `.github/workflows/release-please.yml` syntax is valid.
+3. Verify `<repo>/.cbmignore` exists and contains high-churn exclusion patterns (`.agents/`, `docs/`, `*.md`, build/test caches).
+4. Verify `codebase-memory-mcp config get auto_watch` returns `false` (to guarantee stutter-free editing).
+5. Verify `.codebase-memory/` is added to `.gitignore`.
+6. Verify `codebase-memory-mcp cli get_architecture` runs cleanly.
+7. Verify Commitlint validates valid Conventional Commit messages and rejects invalid formats.
+8. Verify `.husky/commit-msg` and `.husky/pre-push` are configured and executable.
+9. Verify Docker configuration parses cleanly (`docker compose config`).
+10. Verify `.github/workflows/release-please.yml` syntax is valid.
 
 ---
 

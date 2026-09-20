@@ -398,8 +398,17 @@ function auditDevAutomation(meta?: Partial<ProjectContextAndMetadata>): DevAutom
       );
 
       return { hasNextDevTools, hasPlaywrightMcp, error: null };
+      const hasCodebaseMemory = Object.keys(servers).some(
+        (k) =>
+          k.toLowerCase().includes("codebase-memory") ||
+          k.toLowerCase() === "codebase-memory" ||
+          JSON.stringify(servers[k]).includes("codebase-memory-mcp")
+      );
+
+      return { hasNextDevTools, hasPlaywrightMcp, hasCodebaseMemory, error: null };
     } catch (e) {
       return { hasNextDevTools: false, hasPlaywrightMcp: false, error: (e as Error).message };
+      return { hasNextDevTools: false, hasPlaywrightMcp: false, hasCodebaseMemory: false, error: (e as Error).message };
     }
   };
 
@@ -414,15 +423,18 @@ function auditDevAutomation(meta?: Partial<ProjectContextAndMetadata>): DevAutom
         details: `Failed to parse workspace config '${path.relative(rootDir, foundWorkspaceMcp)}': ${wsCheck.error}`,
       });
     } else if (wsCheck.hasNextDevTools && wsCheck.hasPlaywrightMcp) {
+    } else if (wsCheck.hasNextDevTools && wsCheck.hasPlaywrightMcp && wsCheck.hasCodebaseMemory) {
       results.push({
         name: "Workspace MCP Server Integration",
         category: "dev_tools",
         status: "configured",
         details: `Found '${path.relative(rootDir, foundWorkspaceMcp)}' configured with Next.js Dev Server (next-devtools) and Playwright MCP.`,
+        details: `Found '${path.relative(rootDir, foundWorkspaceMcp)}' configured with next-devtools, codebase-memory, and playwright.`,
       });
     } else {
       const missing: string[] = [];
       if (!wsCheck.hasNextDevTools) missing.push("next-devtools");
+      if (!wsCheck.hasCodebaseMemory) missing.push("codebase-memory");
       if (!wsCheck.hasPlaywrightMcp) missing.push("playwright");
       results.push({
         name: "Workspace MCP Server Integration",
@@ -451,15 +463,18 @@ function auditDevAutomation(meta?: Partial<ProjectContextAndMetadata>): DevAutom
         details: `Failed to parse Antigravity global config '${foundAgGlobalMcp}': ${agCheck.error}`,
       });
     } else if (agCheck.hasNextDevTools && agCheck.hasPlaywrightMcp) {
+    } else if (agCheck.hasNextDevTools && agCheck.hasPlaywrightMcp && agCheck.hasCodebaseMemory) {
       results.push({
         name: "Antigravity Global MCP Integration",
         category: "dev_tools",
         status: "configured",
         details: `Found Antigravity global config '${foundAgGlobalMcp}' configured with Next.js Dev Server (next-devtools) and Playwright MCP.`,
+        details: `Found Antigravity global config '${foundAgGlobalMcp}' configured with next-devtools, codebase-memory, and playwright.`,
       });
     } else {
       const missing: string[] = [];
       if (!agCheck.hasNextDevTools) missing.push("next-devtools");
+      if (!agCheck.hasCodebaseMemory) missing.push("codebase-memory");
       if (!agCheck.hasPlaywrightMcp) missing.push("playwright");
       results.push({
         name: "Antigravity Global MCP Integration",
@@ -474,6 +489,38 @@ function auditDevAutomation(meta?: Partial<ProjectContextAndMetadata>): DevAutom
       category: "dev_tools",
       status: "warning",
       details: "Missing Antigravity global mcp_config.json (~/.gemini/antigravity/mcp_config.json or ~/.gemini/config/mcp_config.json). Antigravity only discovers and loads MCP servers configured globally on the host system.",
+    });
+  }
+
+  // 5c. Verify .cbmignore Stutter Prevention Exclusions
+  const cbmignorePath = path.resolve(rootDir, ".cbmignore");
+  const hasCbmignore = fs.existsSync(cbmignorePath);
+  if (hasCbmignore) {
+    const cbmContent = fs.readFileSync(cbmignorePath, "utf-8");
+    const hasAgents = cbmContent.includes(".agents");
+    const hasDocs = cbmContent.includes("docs");
+    const hasNext = cbmContent.includes(".next");
+    if (hasAgents && hasDocs && hasNext) {
+      results.push({
+        name: "Codebase Memory Exclusions (.cbmignore)",
+        category: "dev_tools",
+        status: "configured",
+        details: "Found root '.cbmignore' with proper exclusions for high-churn documents and Next.js caches.",
+      });
+    } else {
+      results.push({
+        name: "Codebase Memory Exclusions (.cbmignore)",
+        category: "dev_tools",
+        status: "warning",
+        details: "Found '.cbmignore' but missing key exclusions (.agents/, docs/, or .next/) to prevent editor stutters.",
+      });
+    }
+  } else {
+    results.push({
+      name: "Codebase Memory Exclusions (.cbmignore)",
+      category: "dev_tools",
+      status: "warning",
+      details: "Missing root '.cbmignore' file. High-churn files (.agents/, docs/, *.md) will cause editor stutters during indexing.",
     });
   }
 

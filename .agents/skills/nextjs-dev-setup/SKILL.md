@@ -276,6 +276,10 @@ Playwright tests the complete running Next.js application across real browser en
          "command": "npx",
          "args": ["-y", "next-devtools"]
        },
+       "codebase-memory": {
+         "command": "codebase-memory-mcp",
+         "args": []
+       },
        "playwright": {
          "command": "npx",
          "args": ["-y", "@playwright/mcp@latest"]
@@ -325,6 +329,110 @@ Playwright tests the complete running Next.js application across real browser en
      await expect(page.locator("h1")).toBeVisible();
    });
    ```
+
+---
+
+### Step 6b: Setup Codebase Intelligence MCP Server (`codebase-memory-mcp`) with Stutter Prevention
+
+`codebase-memory-mcp` constructs a persistent knowledge graph of functions, classes, Next.js App Router routes, and components (162 languages, Tree-sitter AST, Hybrid LSP semantic type resolution) allowing AI coding agents to navigate the architecture with 99% fewer tokens than raw grep cycles.
+
+#### 1. Binary Installation:
+- **Windows (PowerShell)**:
+  ```powershell
+  Invoke-WebRequest -Uri https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.ps1 -OutFile install.ps1
+  Unblock-File .\install.ps1
+  .\install.ps1
+  Remove-Item .\install.ps1
+  ```
+- **macOS / Linux**:
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
+  ```
+
+#### 2. Dual MCP Registration (Workspace & AGY Global Only):
+- **Workspace (`mcp.json`)**: Add `"codebase-memory": { "command": "codebase-memory-mcp", "args": [] }`.
+- **AGY Host Global (`~/.gemini/antigravity/mcp_config.json` & `~/.gemini/config/mcp_config.json`)**: Add the same block strictly for Antigravity. (Never register globally for other coding agents per Rule 14).
+
+#### 3. Crucial Stutter Prevention Gate (`auto_watch = false`):
+> [!CAUTION]
+> **Eliminate Editor Stutters On Save:**
+> By default, `codebase-memory-mcp` automatically registers connected workspaces with its background git watcher (`auto_watch = true`). Whenever a file is edited, the watcher detects file changes, spawns an `index.supervisor` worker process, and compresses `.codebase-memory/graph.db.zst` via zstd on every single keystroke/save, leading to severe editor and window manager micro-stutters.
+> **Always disable automatic session watching globally during dev setup:**
+```bash
+codebase-memory-mcp config set auto_watch false
+```
+
+#### 4. Configure Root Exclusions (`.cbmignore`):
+`codebase-memory-mcp` reads `.cbmignore` strictly at the repository root (`<repo>/.cbmignore`) at discovery time. Create `.cbmignore` to prevent non-code documentation, test outputs, and Next.js build caches from bloating the graph or triggering reindexing:
+
+```gitignore
+# codebase-memory-mcp ignore rules (.cbmignore)
+# High-churn documents & conversation logs
+.agents/
+docs/
+*.md
+
+# Next.js build outputs and compiler caches
+.next/
+out/
+build/
+dist/
+.swc/
+
+# Storybook and Playwright outputs
+storybook-static/
+*storybook.log
+playwright-report/
+test-results/
+blob-report/
+.playwright-mcp/
+/playwright/.cache/
+/playwright/.auth/
+
+# Codebase Memory artifact itself
+.codebase-memory/
+
+# Test coverage and system logs
+coverage/
+*.log
+*.tsbuildinfo
+
+# Static public assets (zero code symbols)
+public/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.webp
+*.mp4
+*.mp3
+*.pdf
+
+# Environment & lockfiles
+.env*
+*.pem
+*.lock
+pnpm-lock.yaml
+```
+
+#### 5. Git Hygiene:
+- Add `.codebase-memory/` to `.gitignore` so local binary graph caches never dirty git status or trigger Git diff calculations.
+
+#### 6. On-Demand Indexing:
+- Index on-demand without background polling penalty:
+  ```bash
+  codebase-memory-mcp cli index_repository --repo-path . --mode moderate
+  ```
+- Add a script to `package.json`:
+  ```json
+  {
+    "scripts": {
+      "cbm:update": "codebase-memory-mcp cli index_repository --repo-path . --mode moderate --persistence true"
+    }
+  }
+  ```
 
 ---
 
@@ -1300,6 +1408,7 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
 1. Run the project configuration verification script:
    ```bash
    npx tsx .agents/skills/nextjs-dev-setup/scripts/verify-project-config.ts
+   pnpm exec ts-node --esm .agents/skills/nextjs-dev-setup/scripts/verify-project-config.ts
    ```
 2. The verification script will:
    - Verify `docs/project.json` exists.
@@ -1312,6 +1421,12 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
    - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`, and standalone output).
    - Audit `.github/workflows/release-please.yml` for credit-optimized Next.js CI build caching (`.next/cache`), package manager setup, SemVer release automation, and multi-arch GHCR publishing.
 3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `~/.gemini/antigravity/mcp_config.json`, or Docker files and re-run until all checks pass.
+    - Audit both workspace MCP configuration (`mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `.vscode/mcp.json`) AND Antigravity global system MCP configuration (`~/.gemini/antigravity/mcp_config.json`, `~/.gemini/config/mcp_config.json`) for `next-devtools`, `codebase-memory`, `playwright`, and `storybook` MCP servers (since AG only recognizes MCP servers configured globally on the host system).
+    - Audit root `.cbmignore` and verify `codebase-memory-mcp config get auto_watch` returns `false` (to guarantee stutter-free editing).
+    - Audit Storybook configuration (`.storybook/main.ts`, `.storybook/preview.tsx`).
+    - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`, and standalone output).
+    - Audit `.github/workflows/release-please.yml` for credit-optimized Next.js CI build caching (`.next/cache`), package manager setup, SemVer release automation, and multi-arch GHCR publishing.
+3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `~/.gemini/antigravity/mcp_config.json`, `.cbmignore`, or Docker files and re-run until all checks pass.
 
 ---
 
@@ -1337,6 +1452,14 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 | **9. Commitlint Config**           | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
 | **10. Release & CI Build Caching** | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
 | **11. Environment Verification**   | `scripts/verify-project-config.ts`                                                                     | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
+| **5. Codebase Memory & Stutter Fix**| `.cbmignore`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`, `auto_watch=false`                   | `[IMPLEMENTED]` / `[UNTOUCHED]` | Registered MCP, configured .cbmignore exclusions, and disabled session watcher.  |
+| **6. Jest Unit Testing**           | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
+| **7. Storybook & Storybook MCP**   | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |
+| **8. Docker Containerization**     | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks.  |
+| **9. Husky Git Hooks**             | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
+| **10. Commitlint Config**          | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
+| **11. Release & CI Build Caching** | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
+| **12. Environment Verification**   | `scripts/verify-project-config.ts`                                                                     | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
 
 #### Status Definitions:
 

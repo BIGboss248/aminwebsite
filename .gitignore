@@ -51,3 +51,6 @@ node_modules/
 
 *storybook.log
 storybook-static
+
+# codebase-memory-mcp local artifact
+.codebase-memory/

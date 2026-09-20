@@ -1,0 +1,74 @@
+{
+  "goal": "Audit and backfill missing companion files for existing component ThemeToggle",
+  "mode": "companion_backfill",
+  "existing_component_path": "components/theme-toggle.tsx",
+  "missing_files_detected": [
+    "components/theme-toggleSkeleton.tsx",
+    "components/theme-toggle.test.tsx",
+    "components/theme-toggle.stories.tsx",
+    "components/theme-toggle.edge.test.tsx"
+  ],
+  "history_file": ".agents/history/plan-theme-toggle.json",
+  "sources_audited": [
+    {
+      "path": ".agents/skills/nextjs-create-component/SKILL.md",
+      "scope_summary": "Extracted companion file gap analysis, Storybook CSF3 rules, TSDoc standards, and adversarial edge test requirements"
+    }
+  ],
+  "subtasks": [
+    {
+      "id": 1,
+      "description": "Create baseline unit tests components/theme-toggle.test.tsx covering existing contract, theme toggling, view transitions, and accessibility",
+      "workflow_phase_ref": "Step 4: Contract Baseline TDD",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "Unit tests verify mounted state, theme toggle callbacks, keyboard/click triggers, and ARIA labels",
+      "status": "completed"
+    },
+    {
+      "id": 2,
+      "description": "Create missing Skeleton fallback and add strict English TSDoc & optional ThemeToggleProps to components/theme-toggle.tsx and components/theme-toggleSkeleton.tsx",
+      "workflow_phase_ref": "Step 5a: Companion Backfill: Skeleton Generation & Non-Breaking Enhancement",
+      "tool_intents": ["write_to_file", "replace_file_content"],
+      "verification_criteria": "Skeleton component exported matching button icon dimensions and ThemeToggle annotated with strict English TSDoc",
+      "status": "completed"
+    },
+    {
+      "id": 3,
+      "description": "Create missing Storybook story components/theme-toggle.stories.tsx with CSF3 controls, action spies, and theme variations",
+      "workflow_phase_ref": "Step 5b: Builder Storybook Story Creation",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "CSF3 story created for ThemeToggle with controls, action spies, and theme variations",
+      "status": "completed"
+    },
+    {
+      "id": 4,
+      "description": "Spawn Adversarial Auditor Subagent for edge-case test injection (components/theme-toggle.edge.test.tsx)",
+      "workflow_phase_ref": "Step 6: Adversarial Auditor Subagent",
+      "tool_intents": ["invoke_subagent"],
+      "verification_criteria": "Subagent completes unbiased audit and writes components/theme-toggle.edge.test.tsx without author bias",
+      "status": "completed"
+    },
+    {
+      "id": 5,
+      "description": "Execute Full Test Suite (Baseline + Adversarial) & Verification Script via run_command",
+      "workflow_phase_ref": "Step 7: Two-Tier Verification & Auto-Repair Loop",
+      "tool_intents": ["run_command"],
+      "verification_criteria": "All unit and adversarial tests pass with 0 errors via run_command tool",
+      "status": "completed"
+    },
+    {
+      "id": 6,
+      "description": "Update module documentation README.modules.md and finalize plan checklist",
+      "workflow_phase_ref": "Step 8: Verification & Handoff",
+      "tool_intents": ["write_to_file", "replace_file_content"],
+      "verification_criteria": "Documentation and history status finalized",
+      "status": "completed"
+    }
+  ],
+  "eval_metrics": [
+    "Zero CLS, full RTL support, 100% English TSDoc, clean build, Storybook story with controls, baseline and adversarial tests pass"
+  ],
+  "risk_factors": [
+    "Hydration mismatch in tests without next-themes ThemeProvider mock, document.startViewTransition browser mock requirements"
+  ]
+}

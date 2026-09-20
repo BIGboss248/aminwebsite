@@ -4,11 +4,44 @@ import * as React from "react";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { flushSync } from "react-dom";
+import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 
 const emptySubscribe = () => () => {};
 
-export function ThemeToggle() {
+/**
+ * Configuration properties for the ThemeToggle component.
+ */
+export interface ThemeToggleProps {
+  /**
+   * Optional custom CSS class names to merge onto the toggle button container.
+   * @defaultValue `""`
+   */
+  className?: string;
+  /**
+   * Optional callback triggered when the theme is toggled.
+   * @param nextTheme - The newly selected theme ("light" | "dark").
+   */
+  onToggle?: (nextTheme: "light" | "dark") => void;
+}
+
+/**
+ * Interactive Client Component for switching between light and dark themes.
+ *
+ * Features:
+ * - Direct integration with `next-themes`
+ * - Hydration-safe external store subscription to prevent layout mismatch
+ * - Circular expanding clip-path animation via View Transitions API with graceful fallback
+ * - Automatic reduction of motion when `prefers-reduced-motion: reduce` is detected
+ * - Accessible keyboard and screen-reader support
+ *
+ * @param props - Configuration properties for ThemeToggle.
+ * @returns A client-rendered toggle button with animated Sun and Moon icons.
+ */
+export function ThemeToggle({
+  className = "",
+  onToggle,
+}: ThemeToggleProps = {}): React.JSX.Element {
   const { setTheme, resolvedTheme } = useTheme();
   const mounted = React.useSyncExternalStore(
     emptySubscribe,
@@ -20,6 +53,7 @@ export function ThemeToggle() {
     if (!mounted) return;
 
     const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
+    onToggle?.(nextTheme);
 
     const prefersReducedMotion =
       typeof window !== "undefined" &&
@@ -30,36 +64,60 @@ export function ThemeToggle() {
       return;
     }
 
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX || rect.left + rect.width / 2;
-    const y = event.clientY || rect.top + rect.height / 2;
+    let rect: { left: number; top: number; width: number; height: number } = {
+      left: 0,
+      top: 0,
+      width: 0,
+      height: 0,
+    };
+    try {
+      if (
+        event.currentTarget &&
+        typeof event.currentTarget.getBoundingClientRect === "function"
+      ) {
+        rect = event.currentTarget.getBoundingClientRect() ?? rect;
+      }
+    } catch {
+      // Gracefully handle environments where getBoundingClientRect fails
+    }
+
+    const x = event.clientX || (rect ? rect.left + rect.width / 2 : 0);
+    const y = event.clientY || (rect ? rect.top + rect.height / 2 : 0);
 
     const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
+      Math.max(x, (typeof window !== "undefined" ? window.innerWidth : 0) - x),
+      Math.max(y, (typeof window !== "undefined" ? window.innerHeight : 0) - y),
     );
 
-    const transition = document.startViewTransition(() => {
-      flushSync(() => {
-        setTheme(nextTheme);
+    try {
+      const transition = document.startViewTransition(() => {
+        flushSync(() => {
+          setTheme(nextTheme);
+        });
       });
-    });
 
-    transition.ready.then(() => {
-      document.documentElement.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
-          ],
-        },
-        {
-          duration: 500,
-          easing: "ease-in-out",
-          pseudoElement: "::view-transition-new(root)",
-        },
-      );
-    });
+      transition?.ready
+        ?.then(() => {
+          document.documentElement.animate(
+            {
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${endRadius}px at ${x}px ${y}px)`,
+              ],
+            },
+            {
+              duration: 500,
+              easing: "ease-in-out",
+              pseudoElement: "::view-transition-new(root)",
+            },
+          );
+        })
+        ?.catch(() => {
+          // Prevent unhandled promise rejection if transition is aborted or superseded
+        });
+    } catch {
+      setTheme(nextTheme);
+    }
   };
 
   return (
@@ -68,7 +126,7 @@ export function ThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       aria-label="Toggle theme"
-      className="relative"
+      className={cn("relative", className)}
     >
       <Sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <Moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -76,3 +134,25 @@ export function ThemeToggle() {
     </Button>
   );
 }
+
+/**
+ * Skeleton placeholder matching the exact dimensions of ThemeToggle
+ * to eliminate cumulative layout shift (CLS) during streaming and initial mount.
+ *
+ * @param props - Optional HTML div attributes including className.
+ * @returns An accessible pulse-animated placeholder element.
+ */
+export function ThemeToggleSkeleton({
+  className = "",
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn("h-8 w-8 rounded-lg bg-muted/50 animate-pulse", className)}
+      {...props}
+    />
+  );
+}
+
+export const Skeleton = ThemeToggleSkeleton;

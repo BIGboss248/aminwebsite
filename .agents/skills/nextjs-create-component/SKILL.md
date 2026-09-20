@@ -238,14 +238,26 @@ Every newly created main component MUST include a co-located Storybook story fil
    - Map component TypeScript props to Storybook controls (`control: "select"`, `"text"`, `"boolean"`, `"color"`, `"number"`) in `meta.argTypes`.
    - Provide realistic default prop values in `args` so the component renders immediately without missing prop warnings.
 3. **Action Spies & Event Handlers (`fn()` from `'storybook/test'`):**
-   - For all callback and mutation props (e.g., `onClick`, `onToggle`, `onSubmit`, `onSelect`), bind `fn()` from `'storybook/test'`.
+   - For all callback and mutation props (e.g., `onClick`, `onToggle`, `onSubmit`, `onSelect`), bind `fn()` from `'storybook/test'` in default `args`.
    - When users interact with buttons or inputs in Storybook, events and parameters will log directly to the Actions panel.
-4. **Standard Story Variations:**
-   - **`Default`**: Standard presentation with typical props.
-   - **`Interactive`**: Story exposing all action spies and interactive states.
-   - **`Skeleton` / `Loading`**: Renders `<[ComponentName]Skeleton />` to visually preview the streaming loading fallback.
-   - **`DarkMode`**: Configures `parameters: { theme: "dark" }` to verify dark mode OKLCH semantic tokens.
-   - **`RTL`** (if bilingual): Configures locale / direction props to verify bidirectional typography and logical margin/padding behavior.
+4. **Storybook Documentation Standards (`parameters.docs`):**
+   - Provide comprehensive, structured markdown documentation in `meta.parameters.docs.description.component`:
+     - **Overview & Purpose**: What the component is and why it exists.
+     - **Architecture & Boundaries**: RSC vs. leaf Client Component (`"use client"`), data fetching/caching strategy, and hooks.
+     - **Key Interactions**: Click handlers, state toggles, View Transitions, and animations.
+     - **Accessibility & Motion**: ARIA roles/labels, keyboard shortcuts, and `prefers-reduced-motion` compliance.
+   - Annotate every story with strict TSDoc and `parameters.docs.description.story` describing the preview state.
+5. **Docs Page Dual-Theme Presentation & Background Isolation (MANDATORY):**
+   - In Storybook's auto-generated Docs page (`tags: ["autodocs"]`), all component stories are displayed sequentially on a shared canvas. Without isolated backgrounds, light-themed elements can lose contrast or appear washed out.
+   - To guarantee complete visibility and allow developers to inspect both themes and both skeleton states side-by-side in the Docs page without needing to toggle the global toolbar, export strictly four story variants:
+     1. **`Light`**: Configured with `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` and wrapped in a dedicated light canvas card using production semantic tokens (`light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) with a `"Light Mode"` label (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`).
+     2. **`Dark`**: Configured with `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` and wrapped in a dedicated dark canvas card using production semantic tokens (`dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) with a `"Dark Mode"` label (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`).
+     3. **`SkeletonLight`**: Configured with `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` and wrapped in a dedicated light canvas card using production semantic tokens (`light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) with a `"Skeleton (Light)"` label (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`) to preview the loading fallback in Light Mode.
+     4. **`SkeletonDark`**: Configured with `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` and wrapped in a dedicated dark canvas card using production semantic tokens (`dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) with a `"Skeleton (Dark)"` label (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`) to preview the loading fallback in Dark Mode.
+6. **Production Theme Token Standard for Storybook (CRITICAL ZERO-HARDCODING RULE):**
+   - **Zero Hardcoded Colors**: Under NO circumstances use arbitrary hex values (e.g. `#FAFAFA`, `#050505`) or non-token palette colors (e.g. `border-zinc-200`, `text-zinc-500`) in Storybook decorators, stories, or preview configs.
+   - **Semantic Production Tokens Only**: Always use the exact theme tokens defined in `app/globals.css` (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, etc.).
+   - Dark mode contrast in Storybook stories is achieved by adding the scoped `.dark` class alongside production tokens (`dark bg-background text-foreground border-border`), while light mode is scoped with `.light bg-background text-foreground border-border`.
 
 ### 9. Common Edge Cases & Pitfalls
 
@@ -520,25 +532,36 @@ When prompted to create or work on any component:
       Create a co-located Storybook story file (`[ComponentName].stories.tsx`) directly alongside the component.
 
   > [!NOTE]
-  > **COMPANION FILE BACKFILL MODE:** If `[ComponentName].stories.tsx` is missing for an existing main component, inspect its props, interactive handlers, and visual states. Generate `[ComponentName].stories.tsx` with CSF3 metadata, `argTypes` controls for all configurable props, `fn()` action spies for event callbacks, and the standard story variants (`Default`, `Interactive`, `Skeleton`, `DarkMode`, `RTL`).
+  > **COMPANION FILE BACKFILL MODE:** If `[ComponentName].stories.tsx` is missing for an existing main component, inspect its props, interactive handlers, and visual states. Generate `[ComponentName].stories.tsx` with CSF3 metadata, `parameters.docs` markdown documentation, `argTypes` controls, `fn()` action spies, and the standard high-contrast story variants: `Light`, `Dark`, `SkeletonLight`, and `SkeletonDark`.
 
   > [!IMPORTANT]
   > **MAIN COMPONENT SCOPE ONLY (LEAF CLIENT COMPONENT EXCLUSION):**
   > When interactive client behavior is pushed down the tree into micro leaf Client Components (e.g., isolated toggle buttons, click listeners, or drawer toggles), **DO NOT** create separate stories for those internal sub-elements.
   > **Create a Storybook story ONLY for the main component.** The main component's story serves as the complete, integrated playground for modifying props and observing interactions.
-  1. **CSF3 Story Structure:**
+  1. **CSF3 Story Structure & Comprehensive Docs:**
      - Use Component Story Format 3 (CSF3) with `Meta<typeof ComponentName>` and `StoryObj<typeof ComponentName>`.
      - Include tags: `tags: ["autodocs", "ai-generated"]`.
+     - **Write Structured Storybook Docs (`parameters.docs`)**:
+       - In `meta.parameters.docs.description.component`, write a rich markdown overview including:
+         - **Overview**: Purpose and use case of the component.
+         - **Architecture**: RSC vs leaf Client Component (`"use client"`), hooks, and caching contracts.
+         - **Interactivity & State**: Click handlers, state toggles, and View Transition animations.
+         - **Accessibility & Motion**: ARIA labels/roles, keyboard accessibility, and `prefers-reduced-motion` compliance.
+       - In each story, provide `parameters.docs.description.story` describing the specific state.
   2. **Interactive Controls (`argTypes`):**
      - Map component props to interactive controls (`select`, `text`, `boolean`, `number`) in `meta.argTypes` so users can dynamically tweak properties in Storybook.
   3. **Action Spies (`fn()` from `'storybook/test'`):**
      - For all event callbacks (e.g., `onClick`, `onToggle`, `onSubmit`, `onSelect`), bind `fn()` from `'storybook/test'` in default args so user interactions log cleanly to the Storybook Actions panel.
-  4. **Standard Story Set:**
-     - `Default`: Standard render with realistic sample data.
-     - `Interactive`: Story configured with action spies.
-     - `Skeleton` / `Loading`: Renders `<[ComponentName]Skeleton />` to preview the skeleton fallback.
-     - `DarkMode`: Configured with `parameters: { theme: "dark" }`.
-     - `RTL` (if bilingual): Configured with RTL locale/direction to verify BiDi layout.
+  4. **Docs Page Dual-Theme Presentation & Background Isolation (MANDATORY):**
+     - Because Storybook's documentation page displays all stories on a shared canvas, light-themed components can appear invisible or washed out on default white backgrounds.
+     - To guarantee optimal contrast and immediate inspection of both themes side-by-side in the Docs page without needing to toggle the global toolbar, export strictly:
+       - **`Light`**: Configured with `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` and wrapped in a dedicated light canvas card using production semantic tokens (`light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) labeled `"Light Mode"` (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`).
+       - **`Dark`**: Configured with `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` and wrapped in a dedicated dark canvas card using production semantic tokens (`dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) labeled `"Dark Mode"` (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`).
+       - **`SkeletonLight`**: Configured with `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` and wrapped in a dedicated light canvas card using production semantic tokens (`light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) labeled `"Skeleton (Light)"` (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`) to preview the loading fallback in Light Mode.
+       - **`SkeletonDark`**: Configured with `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` and wrapped in a dedicated dark canvas card using production semantic tokens (`dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) labeled `"Skeleton (Dark)"` (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`) to preview the loading fallback in Dark Mode.
+  5. **Zero Hardcoded Colors Rule:**
+     - Under NO circumstances use arbitrary hex values (e.g. `#FAFAFA`, `#050505`) or non-token palette colors (e.g. `border-zinc-200`, `text-zinc-500`) in Storybook decorators or stories.
+     - Strictly use the production semantic tokens from `app/globals.css` (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, etc.).
 
 - [ ] **Step 6: Adversarial Auditor Subagent & Edge-Case Injection (MANDATORY UNBIASED LOOP)**
 
@@ -804,24 +827,43 @@ export default meta;
 type Story = StoryObj<typeof FeatureCard>;
 
 export const Default: Story = {};
-
-export const DarkMode: Story = {
+export const Light: Story = {
   parameters: {
-    theme: "dark",
+    themes: { themeOverride: "light" },
+    backgrounds: { default: "light" },
   },
+  decorators: [
+    (Story) => (
+      <div className="bg-[#FAFAFA] text-[#0A0A0A] p-6 rounded-xl border border-zinc-200 shadow-sm flex flex-col items-center justify-center">
+        <Story />
+      </div>
+    ),
+  ],
 };
 
-export const PersianRTL: Story = {
-  args: {
-    title: "معماری سرور کامپوننت",
-    description:
-      "طراحی شده با ساختار مدرن نکست جی‌اس، توکن‌های اوکی‌ال‌سی‌اچ و جهت‌بندی راست‌به‌چپ.",
-    locale: "fa",
+export const Dark: Story = {
+  parameters: {
+    themes: { themeOverride: "dark" },
+    backgrounds: { default: "dark" },
   },
+  decorators: [
+    (Story) => (
+      <div className="dark bg-[#050505] text-[#FAFAFA] p-6 rounded-xl border border-zinc-800 shadow-sm flex flex-col items-center justify-center">
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 export const Skeleton: Story = {
   render: () => <FeatureCardSkeleton />,
+  decorators: [
+    (Story) => (
+      <div className="bg-muted/20 text-foreground p-6 rounded-xl border border-border shadow-sm flex flex-col items-center justify-center">
+        <Story />
+      </div>
+    ),
+  ],
 };
 ```
 

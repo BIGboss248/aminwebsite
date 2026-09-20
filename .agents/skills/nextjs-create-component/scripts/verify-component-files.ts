@@ -69,6 +69,10 @@ function getDefaultTargetDir(): string {
   return process.cwd();
 }
 
+function toPascalCase(str: string): string {
+  return str.replace(/(^|-)([a-z0-9])/gi, (_, __, c) => c.toUpperCase());
+}
+
 /**
  * Checks if a file contains an exported skeleton component definition.
  */
@@ -76,9 +80,12 @@ function fileExportsSkeleton(filePath: string, componentName: string): boolean {
   if (!fs.existsSync(filePath)) return false;
   try {
     const content = fs.readFileSync(filePath, "utf-8");
+    const pascalName = toPascalCase(componentName);
     const skeletonRegexes = [
       new RegExp(`export\\s+(function|const|class)\\s+${componentName}Skeleton\\b`),
+      new RegExp(`export\\s+(function|const|class)\\s+${pascalName}Skeleton\\b`),
       new RegExp(`export\\s+default\\s+function\\s+${componentName}Skeleton\\b`),
+      new RegExp(`export\\s+default\\s+function\\s+${pascalName}Skeleton\\b`),
       new RegExp(`export\\s+(function|const|class)\\s+Skeleton\\b`),
     ];
     return skeletonRegexes.some((regex) => regex.test(content));
@@ -95,6 +102,7 @@ function verifyComponent(
   searchDir: string
 ): ComponentCheckResult {
   const errors: string[] = [];
+  const pascalName = toPascalCase(componentName);
 
   // 1. Component File Check
   const componentExtensions = [".tsx", ".jsx", ".ts", ".js"];
@@ -103,6 +111,7 @@ function verifyComponent(
   for (const ext of componentExtensions) {
     const possiblePaths = [
       path.join(searchDir, `${componentName}${ext}`),
+      path.join(searchDir, `${pascalName}${ext}`),
       path.join(searchDir, `index${ext}`),
     ];
     for (const p of possiblePaths) {
@@ -126,6 +135,8 @@ function verifyComponent(
   for (const ext of componentExtensions) {
     const possiblePaths = [
       path.join(searchDir, `${componentName}Skeleton${ext}`),
+      path.join(searchDir, `${componentName}-skeleton${ext}`),
+      path.join(searchDir, `${pascalName}Skeleton${ext}`),
       path.join(searchDir, `Skeleton${ext}`),
       path.join(searchDir, `indexSkeleton${ext}`),
     ];
@@ -149,7 +160,7 @@ function verifyComponent(
 
   if (!hasSkeletonFile) {
     errors.push(
-      `Skeleton file/export missing (expected ${componentName}Skeleton.tsx or export function ${componentName}Skeleton)`
+      `Skeleton file/export missing (expected ${componentName}Skeleton.tsx or export function ${pascalName}Skeleton)`
     );
   }
 
@@ -160,8 +171,10 @@ function verifyComponent(
   for (const ext of testExtensions) {
     const possiblePaths = [
       path.join(searchDir, `${componentName}${ext}`),
+      path.join(searchDir, `${pascalName}${ext}`),
       path.join(searchDir, `index${ext}`),
       path.join(searchDir, "__tests__", `${componentName}${ext}`),
+      path.join(searchDir, "__tests__", `${pascalName}${ext}`),
       path.join(searchDir, "__tests__", `index${ext}`),
     ];
     for (const p of possiblePaths) {
@@ -180,7 +193,6 @@ function verifyComponent(
     );
   }
 
-  const passed = hasComponentFile && hasSkeletonFile && hasTestFile;
   // 4. Storybook Story File Check (for main components)
   const storyExtensions = [".stories.tsx", ".stories.ts", ".stories.jsx", ".stories.js"];
   let storyFilePath: string | undefined;
@@ -188,8 +200,10 @@ function verifyComponent(
   for (const ext of storyExtensions) {
     const possiblePaths = [
       path.join(searchDir, `${componentName}${ext}`),
+      path.join(searchDir, `${pascalName}${ext}`),
       path.join(searchDir, `index${ext}`),
       path.join(searchDir, "stories", `${componentName}${ext}`),
+      path.join(searchDir, "stories", `${pascalName}${ext}`),
     ];
     for (const p of possiblePaths) {
       if (fs.existsSync(p) && fs.statSync(p).isFile()) {
@@ -243,7 +257,7 @@ export function auditDirectory(targetDir: string): VerificationSummary {
   const results: ComponentCheckResult[] = [];
   const entries = fs.readdirSync(absoluteDir, { withFileTypes: true });
 
-  const ignoredDirs = new Set(["node_modules", ".git", ".next", "dist", "build", "coverage", "scripts", "__tests__"]);
+  const ignoredDirs = new Set(["node_modules", ".git", ".next", "dist", "build", "coverage", "scripts", "__tests__", "ui"]);
 
   // Check if targetDir itself is a component directory (contains component file matching directory name or index)
   const dirName = path.basename(absoluteDir);

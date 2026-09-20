@@ -399,7 +399,12 @@ function printReport(summary: VerificationSummary, jsonOutput: boolean): void {
 }
 
 // CLI Execution Entry Point
-if (require.main === module) {
+const isDirectRun =
+  typeof require !== "undefined" && require.main === module
+    ? true
+    : Boolean(process.argv[1] && process.argv[1].includes("verify-component-files"));
+
+if (isDirectRun) {
   const args = process.argv.slice(2);
   const jsonFlag = args.includes("--json");
   const filteredArgs = args.filter((a) => a !== "--json");

@@ -1,0 +1,82 @@
+{
+  "goal": "Create LocaleSwitcher component in Next.js App Router based on approved design specification",
+  "mode": "standard_creation",
+  "target_component_path": "app/components/LocaleSwitcher.tsx",
+  "history_file": ".agents/history/plan-locale-switcher.json",
+  "sources_audited": [
+    {
+      "path": ".agents/skills/nextjs-create-component/SKILL.md",
+      "scope_summary": "Extracted TDD workflow, RSC/Client boundaries, CSF3 Storybook rules with 4 variants (Light, Dark, SkeletonLight, SkeletonDark), adversarial subagent audit loop, and Storybook build verification gate"
+    },
+    {
+      "path": "docs/design/components/home/locale-switcher/design-spec.md",
+      "scope_summary": "Extracted design specification: segmented pill layout, 16px globe icon, active Electric Cyan glow (#06B6D4), 36px height / 44px touch target, and RTL ordering (Globe -> FA -> EN)"
+    },
+    {
+      "path": "docs/project.json",
+      "scope_summary": "Extracted canonical tokens: canvas #050505, surface_elevated #111115, primary #06B6D4, font stacks (Geist Sans, Vazirmatn, JetBrains Mono)"
+    }
+  ],
+  "subtasks": [
+    {
+      "id": 1,
+      "description": "Define TypeScript contract and write baseline TDD unit tests (app/components/LocaleSwitcher.test.tsx)",
+      "workflow_phase_ref": "Step 4: Builder TDD & Contract Definition",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "Unit tests verify default rendering, active locale indicator, locale switching callback/navigation, keyboard navigation, and ARIA roles",
+      "status": "completed"
+    },
+    {
+      "id": 2,
+      "description": "Implement LocaleSwitcher component and LocaleSwitcherSkeleton fallback (app/components/LocaleSwitcher.tsx, app/components/LocaleSwitcherSkeleton.tsx)",
+      "workflow_phase_ref": "Step 5a: Builder Component & Responsive Development",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "Component and skeleton implement segmented pill design, next-intl navigation integration, logical CSS properties, and RTL ordering",
+      "status": "completed"
+    },
+    {
+      "id": 3,
+      "description": "Create co-located Storybook story with 4 theme/skeleton variants and action spies (app/components/LocaleSwitcher.stories.tsx)",
+      "workflow_phase_ref": "Step 5b: Builder Storybook Story Creation",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "CSF3 story created with Light, Dark, SkeletonLight, SkeletonDark variants, argTypes, fn() action spies, and parameters.docs documentation",
+      "status": "completed"
+    },
+    {
+      "id": 4,
+      "description": "Spawn Adversarial Auditor Subagent for independent code review and edge-case test injection (app/components/LocaleSwitcher.edge.test.tsx)",
+      "workflow_phase_ref": "Step 6: Adversarial Auditor Subagent & Edge-Case Injection",
+      "tool_intents": ["invoke_subagent"],
+      "verification_criteria": "Subagent completes unbiased audit and writes app/components/LocaleSwitcher.edge.test.tsx without author confirmation bias",
+      "status": "completed"
+    },
+    {
+      "id": 5,
+      "description": "Execute Full Verification Gate (Jest baseline/edge tests, Storybook smoke, and Storybook static build)",
+      "workflow_phase_ref": "Step 7: Verification Gate & Auto-Repair Loop",
+      "tool_intents": ["run_command"],
+      "verification_criteria": "pnpm test passes 100%, pnpm run storybook:smoke succeeds, and pnpm run build-storybook completes with 0 errors",
+      "status": "completed"
+    },
+    {
+      "id": 6,
+      "description": "Document module architecture in app/components/README.modules.md and finalize history plan",
+      "workflow_phase_ref": "Step 8: Verification & Handoff",
+      "tool_intents": ["write_to_file", "replace_file_content"],
+      "verification_criteria": "README.modules.md documented with algorithmic breakdown and plan status marked completed",
+      "status": "completed"
+    }
+  ],
+  "eval_metrics": [
+    "Zero CLS via LocaleSwitcherSkeleton",
+    "Full RTL parity (Globe -> FA -> EN) with logical properties",
+    "100% strict English TSDoc annotations",
+    "Storybook story with 4 dual-theme variants using production tokens",
+    "All unit and adversarial tests pass with 0 errors"
+  ],
+  "risk_factors": [
+    "Mocking next-intl navigation (useRouter, usePathname) and react-transition-progress in Jest environment",
+    "Ensuring non-mirrored globe icon in RTL mode",
+    "Ensuring 44px touch target hitbox while maintaining 36px visual height"
+  ]
+}

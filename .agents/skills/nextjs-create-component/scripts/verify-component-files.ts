@@ -279,43 +279,65 @@ export function auditDirectory(targetDir: string): VerificationSummary {
     const componentNames = new Set<string>();
     const componentLocations = new Map<string, string>();
 
-    // 1. Subdirectories as components (skip hidden directories starting with '.')
-    for (const entry of entries) {
-      if (entry.isDirectory() && !ignoredDirs.has(entry.name) && !entry.name.startsWith(".")) {
-        componentNames.add(entry.name);
-        componentLocations.set(entry.name, path.join(absoluteDir, entry.name));
-      }
-    }
+    // Recursive scan for components up to 3 levels deep (supporting <componentDir>/<pageOrGlobal>/<ComponentName>/)
+    function scanDirForComponents(currentDir: string, depth: number = 0): void {
+      if (depth > 3) return;
+      const subEntries = fs.readdirSync(currentDir, { withFileTypes: true });
+      const currentDirName = path.basename(currentDir);
 
-    // 2. Direct component files in root directory
-    for (const entry of entries) {
-      if (entry.isFile()) {
-        const fileName = entry.name;
-        // Ignore test, skeleton, story, style files when discovering primary components
-        if (
-          !fileName.includes(".test.") &&
-          !fileName.includes(".spec.") &&
-          !fileName.endsWith("Skeleton.tsx") &&
-          !fileName.endsWith("Skeleton.jsx") &&
-          !fileName.endsWith("Skeleton.ts") &&
-          !fileName.endsWith("Skeleton.js") &&
-          !fileName.includes(".stories.") &&
-          !fileName.endsWith(".module.css") &&
-          !fileName.endsWith(".d.ts")
-        ) {
-          const ext = path.extname(fileName);
-          if ([".tsx", ".jsx", ".ts", ".js"].includes(ext)) {
-            const baseName = path.basename(fileName, ext);
-            if (baseName !== "index") {
-              componentNames.add(baseName);
-              if (!componentLocations.has(baseName)) {
-                componentLocations.set(baseName, absoluteDir);
+      // Check if currentDir itself is a dedicated component directory
+      const directSubFiles = subEntries.filter((e) => e.isFile()).map((e) => e.name);
+      const isCurrentComponentDir = directSubFiles.some(
+        (f) =>
+          f === `${currentDirName}.tsx` ||
+          f === `${currentDirName}.jsx` ||
+          (f.startsWith("index.") && (f.endsWith(".tsx") || f.endsWith(".jsx")))
+      );
+
+      if (depth > 0 && isCurrentComponentDir) {
+        componentNames.add(currentDirName);
+        componentLocations.set(currentDirName, currentDir);
+        return;
+      }
+
+      // Check subdirectories (page/global categories or nested component dirs)
+      for (const entry of subEntries) {
+        if (entry.isDirectory() && !ignoredDirs.has(entry.name) && !entry.name.startsWith(".")) {
+          const subPath = path.join(currentDir, entry.name);
+          scanDirForComponents(subPath, depth + 1);
+        }
+      }
+
+      // Direct component files in directory
+      for (const entry of subEntries) {
+        if (entry.isFile()) {
+          const fileName = entry.name;
+          // Ignore test, skeleton, story, style files when discovering primary components
+          if (
+            !fileName.includes(".test.") &&
+            !fileName.includes(".spec.") &&
+            !fileName.endsWith("Skeleton.tsx") &&
+            !fileName.endsWith("Skeleton.jsx") &&
+            !fileName.endsWith("Skeleton.ts") &&
+            !fileName.endsWith("Skeleton.js") &&
+            !fileName.includes(".stories.") &&
+            !fileName.endsWith(".module.css") &&
+            !fileName.endsWith(".d.ts")
+          ) {
+            const ext = path.extname(fileName);
+            if ([".tsx", ".jsx", ".ts", ".js"].includes(ext)) {
+              const baseName = path.basename(fileName, ext);
+              if (baseName !== "index" && !componentNames.has(baseName)) {
+                componentNames.add(baseName);
+                componentLocations.set(baseName, currentDir);
               }
             }
           }
         }
       }
     }
+
+    scanDirForComponents(absoluteDir, 0);
 
     for (const compName of componentNames) {
       const searchLocation = componentLocations.get(compName) || absoluteDir;

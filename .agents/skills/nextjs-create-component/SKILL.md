@@ -1,9 +1,9 @@
 ---
 name: nextjs-create-component
-description: Step-by-step workflow and engineering standards for designing, creating, styling, documenting, and crafting co-located Storybook stories ([ComponentName].stories.tsx with interactive controls and action spies) for Next.js React components (RSC and Client Components). First checks for existing components and performs companion file gap analysis to backfill missing skeletons, unit tests, stories, and adversarial edge tests. Consumes planning artifacts from nextjs-plan (docs/project.json, docs/plan.md, lib/routes.ts, lib/site-config.ts, and docs/design/).
+description: Step-by-step workflow and engineering standards for designing, creating, styling, documenting, and crafting co-located Storybook stories ([ComponentName].stories.tsx with interactive controls and action spies) for Next.js React components (RSC and Client Components). Saves all related files to a dedicated component directory ([ComponentName]/) categorized under a page directory (or global/ for shared layout components like headers, footers, switchers) under the component directory specified in docs/project.json. First checks for existing components and performs companion file gap analysis to backfill missing skeletons, unit tests, stories, and adversarial edge tests. Consumes planning artifacts from nextjs-plan (docs/project.json, docs/plan.md, lib/routes.ts, lib/site-config.ts, and docs/design/).
 metadata:
   author: BIGboss248
-  version: "1.7"
+  version: "1.8"
 ---
 
 # Next.js Component Creation Skill (`nextjs-create-component`)
@@ -77,7 +77,7 @@ The single source of truth for workspace layout and configuration. You MUST read
 - `dictionaries_dir`: `project_context_and_metadata.dictionaries_dir` (e.g. `messages`)
 - `dictionary_file_pattern`: `project_context_and_metadata.dictionary_file_pattern` (e.g. `[locale].json`)
 
-**Do NOT guess or hardcode target paths.** Always read `new_component_dir` from `docs/project.json` to determine where new components and test files must be created.
+**Do NOT guess or hardcode target paths.** Always read `new_component_dir` from `docs/project.json` to determine the base component directory. All files related to a component MUST be saved in a dedicated directory named after the component (`[ComponentName]/`), housed under a category folder representing the specific page (`[page-name]/`) or `global/` for shared components: `<new_component_dir>/<page_or_global>/<ComponentName>/`.
 
 #### 2. Centralized Type-Safe Route Registry: `lib/routes.ts`
 
@@ -138,8 +138,21 @@ _(Reference: [Server & Client Components](../../../node_modules/next/dist/docs/0
 3. **RSC Composition Pattern:**
    - When a Client Component wraps Server Components (e.g. layout containers or animation frames), pass the Server Components as `children` or standard React props.
    - **NEVER** import a Server Component directly inside a `"use client"` file.
-4. **Directory Structure:**
-   - Store components under `PROJECT["project_context_and_metadata"]["new_component_dir"]`, categorized by page/feature module.
+4. **Directory Structure & Dedicated Component Folders:**
+   - **Canonical Path Hierarchy:** Every component and all of its related companion files MUST be stored together in a dedicated directory named after the component (`[ComponentName]/`), located under a category folder representing either the specific **page name** (e.g. `home/`, `about/`, `projects/`, `lab/`, `contact/`) or **`global/`** for shared/global layout components (e.g. headers, footers, navigation drawers, theme toggles, locale switchers), which are all under the base component directory (`new_component_dir`) specified in `docs/project.json`:
+     ```text
+     <new_component_dir>/<page_or_global>/<ComponentName>/
+     ├── [ComponentName].tsx               # Primary component (RSC or Client Component)
+     ├── [ComponentName]Skeleton.tsx       # Suspense fallback skeleton matching layout geometry
+     ├── [ComponentName].stories.tsx       # Co-located Storybook CSF3 story
+     ├── [ComponentName].test.tsx          # Baseline TDD unit tests
+     ├── [ComponentName].edge.test.tsx     # Adversarial edge-case assertions
+     ├── [ComponentName].types.ts          # Extracted TypeScript interfaces/types (if separated)
+     └── index.ts                          # Clean barrel export re-exporting component & skeleton
+     ```
+   - **Categorization Guidelines (`<page_or_global>`):**
+     - **`global/`**: Application-wide layout components and shared chrome: headers (`SiteNavbar`), footers (`SiteFooter`), drawers (`MobileNavDrawer`), theme switchers (`ThemeToggle`), locale switchers (`LocaleSwitcher`), global banners, command palettes, and global dialogs/toast containers.
+     - **`<page-name>/`**: Page-scoped components and sections (e.g. `home/HeroSection`, `about/BioCard`, `projects/ProjectGrid`, `lab/DohProber`).
    - Implement responsive adaptations for mobile, tablet, and desktop viewports directly within a single component using Tailwind CSS breakpoint classes (e.g., `sm:`, `md:`, `lg:`).
 5. **Client Data Fetching & Unified Cache Contracts (`queryOptions`):**
    - When components require client-side dynamic fetching, infinite scroll, polling, or optimistic mutations, implement TanStack Query using a **Unified Cache Contract** (`[feature]-cache.ts`).

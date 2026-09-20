@@ -118,5 +118,17 @@
     "Category": "PROCESS",
     "Instruction": "Always invoke and apply '.agents/skills/codebase-memory' before searching, exploring, reading code, or assessing change impact. Because background watcher re-indexing is disabled ('auto_watch = false') to prevent system stutters, the agent MUST always ensure graph freshness by checking 'index_status' or executing 'index_repository' (with mode='fast' or 'moderate') before issuing search queries, and always prioritize codebase-memory graph tools ('search_graph', 'trace_path', 'get_code_snippet', 'detect_changes') over naive text grep or full-file reading.",
     "Why": "user explicit requirement: create a skill that the agent always invokes and configures agent to use codebase memory mcp to search the codebase and always indexes codebase first since on-watch indexing is disabled"
+  },
+  {
+    "Rule_number": 21,
+    "Category": "ARCH",
+    "Instruction": "In Antigravity global MCP configurations ('~/.gemini/antigravity/mcp_config.json' and '~/.gemini/config/mcp_config.json'), 'agy.exe' does not respect '\"disabled\": true' inside the 'mcpServers' object and will still launch the child processes. To properly disable an MCP server, move it completely out of 'mcpServers' (e.g., into a separate '_disabledMcpServers' object).",
+    "Why": "diagnosed behavior: agy launches all commands defined under mcpServers regardless of disabled flag"
+  },
+  {
+    "Rule_number": 22,
+    "Category": "ARCH",
+    "Instruction": "In the SiteNavbar component, design specifications, and preview artifacts, do not render availability/status badges or version tags in the brand identity lockup; keep the brand lockup clean with the emblem, brand title, and optional systems role.",
+    "Why": "user explicit instruction: remove the availability badge and version in site navbar"
   }
 ]

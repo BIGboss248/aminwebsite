@@ -1,0 +1,31 @@
+{
+  "projectId": "5861112417017823447",
+  "component": "SiteNavbar",
+  "page": "home",
+  "screens": [
+    {
+      "id": "a956f6b3c4ee4157b507c91d99994d6e",
+      "title": "SiteNavbar - Systems Cockpit Navigation Header",
+      "deviceType": "DESKTOP",
+      "type": "BASELINE_SCAFFOLD",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XZvxBhu9vu1d62nHj23bpJfj0FV9ejSAXb16XMvfeb-ksg7AwVaPoksBlPZLxg_MwQZN8Hwiw4N8MiUZROxqh0eyFyPQZN10hDzSigpqmXKYpvZYI0hAIseVD_QZW1qobLwQ9Pk-e9A60T3PaHOVJ1PbpuRc6eZ-leNIFgThM96dC-IvO9N2rbTUc9jHhOeX2GG9HThWTF0MUENqCYBIwpvvO32T-XWOntdyPRnSVeVpIyRLLxhYvWdfc",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzg4MDliYzMwYzU2NzQwYzFiYWVjOWI2ZTRkNjFmNzRiEgsSBxDJ2cTp5RcYAZIBIwoKcHJvamVjdF9pZBIVQhM1ODYxMTEyNDE3MDE3ODIzNDQ3&filename=&opi=96797242"
+    },
+    {
+      "id": "c0a45bdb82424aa6a82af079bfb9676e",
+      "title": "SiteNavbar - Segmented Console Architecture",
+      "deviceType": "DESKTOP",
+      "type": "VARIANT_SEGMENTED",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WCKH-TimJsaVyAfq_UEBOqnID_ZuwnLCf_K7j42h4-H0CtdzjaY_buhd3Uqv2Yej7u3ufCLSyBXz7oor5OFs8LG8sS8cAl_DGi294BTvk6aA4Sg--xs24_vNJVtuqnoOYUUbo7UqRdeYbyB5h1_6wYPceOYqWqFaLIjEf06iLJ-_b2ZPzfE1uBEfAeNF8RVJ3nFKIpCC5adXChhcduvrguBB0p4um1VNGFLz77imCUC7BXCqKQKEDzBj4",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzBhYzliMDBiOTY2YTRkNjBiMmQyMDM0MmI0MDgzNGM1EgsSBxDJ2cTp5RcYAZIBIwoKcHJvamVjdF9pZBIVQhM1ODYxMTEyNDE3MDE3ODIzNDQ3&filename=&opi=96797242"
+    },
+    {
+      "id": "b54c61e006404772b2d9791a84bc9738",
+      "title": "SiteNavbar - Minimalist Telemetry Bar & Command Badge",
+      "deviceType": "DESKTOP",
+      "type": "VARIANT_MINIMALIST_COMMAND",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XG8gPyOwaBx9pp0c1U7RJFRnpN7I6MJuYGTAvxXxdd2_7B-kDohiikLhkE9_s4x50cIo9VHJ8sWdXEvZQTifQVno2mg4QvtftvCkLb3xHBcmYueEs22gXdVrnEQC4BXNGGgklNRxE4aVYufEd4I1OY8Szhge6dnSUEVplXkbR6hTaVsN7v5bb6xjs4zSWE1agmN1ly7sqG00ChoiRR5aG7PE1A2oIKePfL-M1nvu-MvvDgVQ4c1T_1DA",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzY0ZmQ2ZmFiNzRkYTQ0Yzc5Y2NjYTNkYTM1ZGU3MDE5EgsSBxDJ2cTp5RcYAZIBIwoKcHJvamVjdF9pZBIVQhM1ODYxMTEyNDE3MDE3ODIzNDQ3&filename=&opi=96797242"
+    }
+  ]
+}

@@ -1,1149 +1,142 @@
 ---
 name: nextjs-create-component
-description: Step-by-step workflow and engineering standards for designing, creating, styling, documenting, and crafting co-located Storybook stories ([ComponentName].stories.tsx with interactive controls and action spies) for Next.js React components (RSC and Client Components). Saves all related files to a dedicated component directory ([ComponentName]/) categorized under a page directory (or global/ for shared layout components like headers, footers, switchers) under the component directory specified in docs/project.json. First checks for existing components and performs companion file gap analysis to backfill missing skeletons, unit tests, stories, and adversarial edge tests. Consumes planning artifacts from nextjs-plan (docs/project.json, docs/plan.md, lib/routes.ts, lib/site-config.ts, and docs/design/).
+description: Workflow for creating or backfilling Next.js App Router components with TDD unit tests, Suspense skeletons, CSF3 Storybook stories, and adversarial QA audits.
 metadata:
   author: BIGboss248
-  version: "1.8"
+  version: "2.0"
 ---
 
 # Next.js Component Creation Skill (`nextjs-create-component`)
 
-This skill provides step-by-step instructions, architectural rules, and code standards for creating production-ready React components in a Next.js App Router application.
+Step-by-step workflow, architectural rules, and engineering standards for creating or backfilling production-ready React components (RSC and Client Components) in Next.js App Router applications.
 
----
-
-## Local Next.js Documentation References
-
-When deployed in a Next.js repository, official Next.js documentation is accessible locally via `node_modules`. Read and reference these local files for authoritative Next.js behavior:
-
-- **RSC & Client Boundaries:**
-  - [Server and Client Components](../../../node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md)
-  - [`'use client'` Directive Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-client.md)
-  - [`'use server'` Directive Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-server.md)
-- **Navigation & Links:**
-  - [Linking and Navigating](../../../node_modules/next/dist/docs/01-app/01-getting-started/04-linking-and-navigating.md)
-  - [`<Link>` Component API Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/link.md)
-  - [Prefetching Guide](../../../node_modules/next/dist/docs/01-app/02-guides/prefetching.md)
-  - [Instant Navigation Guide](../../../node_modules/next/dist/docs/01-app/02-guides/instant-navigation.md)
-- **Images & Fonts:**
-  - [Image Optimization Guide](../../../node_modules/next/dist/docs/01-app/01-getting-started/12-images.md)
-  - [`<Image>` Component API Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/image.md)
-  - [Font Optimization Guide](../../../node_modules/next/dist/docs/01-app/01-getting-started/13-fonts.md)
-  - [`next/font` API Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/font.md)
-- **Styling & CSS:**
-  - [CSS & Tailwind Guide](../../../node_modules/next/dist/docs/01-app/01-getting-started/11-css.md)
-  - [Tailwind CSS v3 Guide](../../../node_modules/next/dist/docs/01-app/02-guides/tailwind-v3-css.md)
-- **Streaming & Loading States:**
-  - [Streaming & Suspense Guide](../../../node_modules/next/dist/docs/01-app/02-guides/streaming.md)
-- **i18n & SEO / Structured Data:**
-  - [Internationalization (i18n) Guide](../../../node_modules/next/dist/docs/01-app/02-guides/internationalization.md)
-  - [JSON-LD Structured Data Guide](../../../node_modules/next/dist/docs/01-app/02-guides/json-ld.md)
-  - [Metadata and OG Images Guide](../../../node_modules/next/dist/docs/01-app/01-getting-started/14-metadata-and-og-images.md)
-- **Data Fetching, Forms & Server Actions:**
-  - [Fetching Data Guide](../../../node_modules/next/dist/docs/01-app/01-getting-started/06-fetching-data.md)
-  - [Mutating Data Guide](../../../node_modules/next/dist/docs/01-app/01-getting-started/07-mutating-data.md)
-  - [Forms & Mutations Guide](../../../node_modules/next/dist/docs/01-app/02-guides/forms.md)
-  - [Server Actions Guide](../../../node_modules/next/dist/docs/01-app/02-guides/server-actions.md)
-  - [`<Form>` Component API Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/form.md)
-- **Client-Side Data Fetching & Cache Coordination:**
-  - [TanStack Query & Next.js App Router Guide](../../../docs/tanstack-query-nextjs-guide.md)
-  - [`use cache` Directive Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-cache.md)
-  - [`updateTag` API Reference](../../../node_modules/next/dist/docs/01-app/03-api-reference/04-functions/updateTag.md)
+> [!TIP]
+> **Modular Assets Available:**
+>
+> - Reference implementations (RSC & TanStack Query): [`examples/`](./examples/)
+> - Comprehensive anti-patterns & pitfalls: [`references/pitfalls.md`](./references/pitfalls.md)
+> - JSON Plan Schema: [`resources/plan-schema.json`](./resources/plan-schema.json)
+> - File Verification Script: [`scripts/verify-component-files.ts`](./scripts/verify-component-files.ts)
 
 ---
 
 ## Architectural Rules & Core Constraints
 
-Before and during step execution, you MUST follow these core architectural rules and constraints:
+### 1. Planning Context & Single Source of Truth
 
-### 1. Planning Architecture & Context Artifacts (Generated by `nextjs-plan`)
+Before creating or modifying components, read the planning artifacts created by `nextjs-plan`:
 
-> [!IMPORTANT]
-> **MANDATORY FIRST ACTION:** Before executing any component creation, design, or test steps, you MUST consult the core project files created and maintained by the `nextjs-plan` skill. These files establish the single source of truth for component target directories, style files, type-safe routes, author profiles, and design tokens.
+- **`docs/project.json`**: Read via `view_file` to determine `package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, and `supported_languages`. **Never guess paths.**
+- **`lib/routes.ts`**: All internal links, redirects, and action targets MUST use `ROUTES` from `@/lib/routes`.
+- **`lib/site-config.ts`**: All author bio, contacts, socials, and base metadata MUST use `SITE_CONFIG` from `@/lib/site-config`.
+- **`docs/design/`**: Consult `02-sitemap-and-routes.md` (SSG/ISR/SSR rendering matrix) and `03-ui-design-tokens.md` (OKLCH palette, font pairings, radii).
+- **`docs/plan.md`**: Identify active milestones (Reusable Components, Layout Shell, Pages).
 
-The files generated by `nextjs-plan` and how `nextjs-create-component` consumes them:
+### 2. RSC Placement, Boundaries & Folder Hierarchy
 
-#### 1. Canonical Project Specifications: `docs/project.json`
+1. **Default to Server Components (RSC):** Keep components server-rendered by default. Push `"use client"` down to micro leaf components (interactive buttons, input handlers).
+2. **RSC Composition:** Pass Server Components as `children` or props into Client wrappers. Never import Server Components inside `"use client"` files.
+3. **Dedicated Folder Structure:** Every component and its companion files MUST reside in a dedicated folder under `<new_component_dir>/<page_or_global>/<ComponentName>/`:
 
-The single source of truth for workspace layout and configuration. You MUST read this file using `view_file` before writing any tests or components:
+   ```text
+   <new_component_dir>/<page_or_global>/<ComponentName>/
+   ├── [ComponentName].tsx               # Primary component (RSC or Client Component)
+   ├── [ComponentName]Skeleton.tsx       # Suspense fallback skeleton matching geometry
+   ├── [ComponentName].stories.tsx       # Co-located Storybook CSF3 story (main components only)
+   ├── [ComponentName].test.tsx          # Baseline TDD unit tests
+   ├── [ComponentName].edge.test.tsx     # Adversarial edge-case test suite
+   ├── [ComponentName].types.ts          # Extracted TypeScript interfaces (if complex)
+   └── index.ts                          # Clean barrel export
+   ```
 
-- `package_manager`: `project_context_and_metadata.package_manager` (e.g. `pnpm`, `npm`, `yarn`, `bun`)
-- `components_dir`: `project_context_and_metadata.new_component_dir` (e.g. `app/components` or `src/components`)
-- `style_file`: `project_context_and_metadata.style_file_dir` (e.g. `app/globals.css` or `src/app/globals.css`)
-- `component_library`: `project_context_and_metadata.component_library` (e.g. `shadcn/ui`)
-- `animation_library`: `project_context_and_metadata.animation_library` (e.g. `gsap`, `motion`)
-- `testing_library`: `project_context_and_metadata.testing_library` (e.g. `jest`, `playwright`)
-- `supported_languages`: `project_context_and_metadata.supported_languages` (array of locale metadata: `language_code`, `direction`, `native_name`, etc.)
-- `dictionaries_dir`: `project_context_and_metadata.dictionaries_dir` (e.g. `messages`)
-- `dictionary_file_pattern`: `project_context_and_metadata.dictionary_file_pattern` (e.g. `[locale].json`)
+   - Category folder: `global/` for shared layout chrome (headers, footers, switchers, drawers); `<page-name>/` (e.g. `home/`, `about/`, `lab/`) for page-scoped sections.
+   - Handle responsive viewports directly within the component using Tailwind CSS breakpoint classes (`sm:`, `md:`, `lg:`).
 
-**Do NOT guess or hardcode target paths.** Always read `new_component_dir` from `docs/project.json` to determine the base component directory. All files related to a component MUST be saved in a dedicated directory named after the component (`[ComponentName]/`), housed under a category folder representing the specific page (`[page-name]/`) or `global/` for shared components: `<new_component_dir>/<page_or_global>/<ComponentName>/`.
+### 3. Styling, Links & Logical Properties
 
-#### 2. Centralized Type-Safe Route Registry: `lib/routes.ts`
+- **Theme Tokens:** Exclusively use semantic CSS variables from `app/globals.css` (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`). Hardcoded hex/color scales (`bg-blue-500`, `#FAFAFA`) are strictly FORBIDDEN.
+- **Class Merging:** Always merge classes using `cn(...)` (`clsx` + `tailwind-merge`).
+- **BiDi RTL/LTR:** Exclusively use Tailwind logical properties (`ms-`, `pe-`, `ps-`, `me-`, `start`, `end`). Physical properties (`ml-`, `mr-`, `pl-`, `pr-`, `left-`, `right-`) are FORBIDDEN.
+- **Progress-Aware Links:** Use `<Link>` from `@vercel/react-transition-progress` for primary navigation, hero CTAs, and interactive cards; use standard `next/link` for static footers/utility links. Raw `<a>` tags are forbidden.
+- **Images:** Always use `next/image` with explicit dimensions or `fill`, responsive `sizes`, and `priority` for above-the-fold LCP assets.
 
-All internal links, redirects, action targets, and dynamic route builders MUST import and use `ROUTES` from `@/lib/routes`. Hardcoding route strings (e.g. `href="/about"` or `href="/lab/doh"`) inside components is strictly FORBIDDEN.
-Example:
+### 4. Storybook CSF3 Component Standards (`[ComponentName].stories.tsx`)
 
-```tsx
-import { ROUTES } from "@/lib/routes";
+- **Main Component Scope Only:** Interactive client logic is pushed down to leaf Client Components. Do NOT create stories for micro leaf helpers. Create stories ONLY for the main composite component.
+- **Interactive Controls & Spies:** Map props to `argTypes` controls and bind `fn()` from `storybook/test` to all callback props in default `args` so interactions log to the Actions panel.
+- **Comprehensive Docs (`parameters.docs`):** Document overview, RSC/Client boundaries, interactions, and accessibility in `meta.parameters.docs.description.component`.
+- **Four Canonical Story Variants (Zero Hardcoding):** Export strictly four variants wrapped in semantic token containers (`bg-background text-foreground border-border`) with scoped `.light` and `.dark` classes:
+  1. `Light`: `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` with `.light` wrapper and `"Light Mode"` label.
+  2. `Dark`: `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` with `.dark` wrapper and `"Dark Mode"` label.
+  3. `SkeletonLight`: `render: () => <[ComponentName]Skeleton />` with `.light` wrapper and `"Skeleton (Light)"` label.
+  4. `SkeletonDark`: `render: () => <[ComponentName]Skeleton />` with `.dark` wrapper and `"Skeleton (Dark)"` label.
 
-// In component:
-<Link href={ROUTES.about}>About</Link>
-<Link href={ROUTES.projects.detail(project.slug)}>View Case Study</Link>
-<Link href={ROUTES.lab.doh}>Launch DoH Prober</Link>
-```
+### 5. TanStack Query & Server Prefetching
 
-#### 3. Centralized Site Configuration & Profile: `lib/site-config.ts`
+- **Unified Cache Contract:** Define `key`, `tag`, and `queryOptions` with explicit `staleTime` (e.g. `30_000` ms).
+- **Server Prefetch:** Instantiate `new QueryClient()` per request. Trigger prefetch without awaiting (`void queryClient.prefetchQuery(...)`) calling internal DB functions directly (zero relative fetch on server). Dehydrate with `<HydrationBoundary>`.
+- **Streamed Components:** Use `useSuspenseQuery` inside `<Suspense fallback={<Skeleton />}>`.
+- **Optimistic Mutations:** Use `useMutation` with `onMutate` cache snapshots and `onError` rollbacks; trigger Server Actions calling `updateTag(cache.tag)`.
 
-All components presenting author bio, emails, phone numbers, social URLs, verified credentials, DOIs, ORCID, or base URLs MUST import and use `SITE_CONFIG` from `@/lib/site-config`. Never duplicate or hardcode client/author metadata in UI components, headers, or footers.
-Example:
+### 6. i18n, SEO & English TSDoc
 
-```tsx
-import { SITE_CONFIG } from "@/lib/site-config";
-
-// In component:
-<span>{SITE_CONFIG.author.name}</span>
-<p>{SITE_CONFIG.author.role}</p>
-<a href={`mailto:${SITE_CONFIG.contact.email}`}>{SITE_CONFIG.contact.email}</a>
-<a href={SITE_CONFIG.social.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-```
-
-#### 4. Design & Strategy Documentation: `docs/design/`
-
-Before designing or styling components, consult the design specifications created by `nextjs-plan` to guarantee visual and architectural alignment:
-
-- **`docs/design/01-strategy-brief.md`**: Target audience personas, product value proposition, and quantifiable KPIs (Lighthouse $\ge 95$, sub-second LCP, zero CLS) to guide component complexity and performance budgets.
-- **`docs/design/02-sitemap-and-routes.md`**: Information architecture, page section hierarchy (Hero, Features, Trust signals, Lab showcase, Footer), and the **Next.js Route Rendering Matrix** (SSG, ISR, SSR, CSR) determining whether the component should be a Server Component (RSC), Client Component, or streamed Suspense leaf.
-- **`docs/design/03-ui-design-tokens.md`**: Brand narrative, OKLCH semantic color token matrix, typography pairing (`Geist Sans`, `Geist Mono`, and `Vazirmatn` for Persian RTL), corner radius/elevation scales, and iconography standards (`lucide-react` with 1.75px stroke).
-
-#### 5. Master Implementation Checklist: `docs/plan.md`
-
-Consult `docs/plan.md` to identify which project milestone the component belongs to:
-
-- **Step 8: Develop Reusable Components** (UI primitives, buttons, cards, dialogs)
-- **Step 9: Website Layout Shell** (`SiteHeader`, `SiteFooter`, navigation drawer, locale/theme switchers)
-- **Step 11: Design Website Pages** (Page-level feature sections, case study views, lab tool visualizers)
+- **i18n:** Extract strings into root dictionaries (`messages/[locale].json`). Wrap internal routes with `localizePath(...)`. Use native `Intl` for currencies/dates.
+- **SEO & JSON-LD:** Inject typed JSON-LD using `schema-dts` in `@graph` array format with interlinked `@id` references.
+- **TSDoc:** Document all exported functions, components, props, generics, and return types in **strict English TSDoc** (`@param`, `@defaultValue`, `@returns`).
 
 ---
 
-### 2. Architectural Placement & RSC Boundaries
+## Existing Component Detection & Companion Gap Analysis
 
-_(Reference: [Server & Client Components](../../../node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md) and [`'use client'`](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-client.md))_
+Before generating files, always audit whether the component already exists:
 
-1. **Default to React Server Components (RSC):**
-   - Make components cacheable Server Components by default. Fetch data, resolve metadata, and render layout on the server.
-2. **Isolate Client Components ("use client"):**
-   - Push the `"use client"` directive as far down the component tree as possible (to leaf components).
-   - Extract interactive elements (click handlers, state managers, GSAP timelines, form inputs) into small dedicated Client Components.
-3. **RSC Composition Pattern:**
-   - When a Client Component wraps Server Components (e.g. layout containers or animation frames), pass the Server Components as `children` or standard React props.
-   - **NEVER** import a Server Component directly inside a `"use client"` file.
-4. **Directory Structure & Dedicated Component Folders:**
-   - **Canonical Path Hierarchy:** Every component and all of its related companion files MUST be stored together in a dedicated directory named after the component (`[ComponentName]/`), located under a category folder representing either the specific **page name** (e.g. `home/`, `about/`, `projects/`, `lab/`, `contact/`) or **`global/`** for shared/global layout components (e.g. headers, footers, navigation drawers, theme toggles, locale switchers), which are all under the base component directory (`new_component_dir`) specified in `docs/project.json`:
-     ```text
-     <new_component_dir>/<page_or_global>/<ComponentName>/
-     ├── [ComponentName].tsx               # Primary component (RSC or Client Component)
-     ├── [ComponentName]Skeleton.tsx       # Suspense fallback skeleton matching layout geometry
-     ├── [ComponentName].stories.tsx       # Co-located Storybook CSF3 story
-     ├── [ComponentName].test.tsx          # Baseline TDD unit tests
-     ├── [ComponentName].edge.test.tsx     # Adversarial edge-case assertions
-     ├── [ComponentName].types.ts          # Extracted TypeScript interfaces/types (if separated)
-     └── index.ts                          # Clean barrel export re-exporting component & skeleton
-     ```
-   - **Categorization Guidelines (`<page_or_global>`):**
-     - **`global/`**: Application-wide layout components and shared chrome: headers (`SiteNavbar`), footers (`SiteFooter`), drawers (`MobileNavDrawer`), theme switchers (`ThemeToggle`), locale switchers (`LocaleSwitcher`), global banners, command palettes, and global dialogs/toast containers.
-     - **`<page-name>/`**: Page-scoped components and sections (e.g. `home/HeroSection`, `about/BioCard`, `projects/ProjectGrid`, `lab/DohProber`).
-   - Implement responsive adaptations for mobile, tablet, and desktop viewports directly within a single component using Tailwind CSS breakpoint classes (e.g., `sm:`, `md:`, `lg:`).
-5. **Client Data Fetching & Unified Cache Contracts (`queryOptions`):**
-   - When components require client-side dynamic fetching, infinite scroll, polling, or optimistic mutations, implement TanStack Query using a **Unified Cache Contract** (`[feature]-cache.ts`).
-   - Define a single contract object with `key` (typed tuple), `tag` (server cache tag for `updateTag`), and `options` (`queryOptions(...)`) with an explicit `staleTime` (e.g. `30_000` ms).
-   - **Zero Direct Relative Fetching on Server:** In Server Components, calling relative URLs (`fetch('/api/...')`) is strictly FORBIDDEN because Node.js lacks origin context and relative fetch introduces loopback overhead. Server prefetching MUST call internal database or service functions directly (e.g. `getProduct(id)`), overriding the contract's `queryFn`. Client components fetch from Route Handlers via the contract's default `queryFn`.
-
-### 3. Next.js Optimized Components & Styling Rules
-
-_(Reference: [Linking & Navigating](../../../node_modules/next/dist/docs/01-app/01-getting-started/04-linking-and-navigating.md), [`<Link>` API](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/link.md), [Image Optimization](../../../node_modules/next/dist/docs/01-app/01-getting-started/12-images.md), and [`<Image>` API](../../../node_modules/next/dist/docs/01-app/03-api-reference/02-components/image.md))_
-
-1. **Framework Components & Navigation Links:**
-   - **Progress-Aware Links (`@vercel/react-transition-progress`):** Use `<Link>` from `@vercel/react-transition-progress` for primary navigation menus, header links, hero CTAs, and interactive cards where immediate visual feedback during server data fetching and route streaming is critical for UX.
-   - **Standard Links (`next/link`):** Use standard `<Link>` from `next/link` for static footer links, utility links, or simple inline text links where top progress bar tracking is unnecessary.
-   - **Never Use Raw Anchors:** Raw `<a>` tags for internal navigation are FORBIDDEN.
-   - **Images (`next/image`):** Use `<Image>` from `next/image` with explicit `width`/`height` or `fill` and `alt` text. Use `priority` for LCP images above the fold.
-2. **Semantic Theme Tokens:**
-   - Exclusively use CSS variables and semantic theme tokens defined in `PROJECT["project_context_and_metadata"]["style_file_dir"]` (e.g., `bg-background`, `text-foreground`, `border-border`).
-   - Hardcoded color scales (e.g., `bg-blue-500`) are strictly forbidden.
-3. **Strict Class Merging:**
-   - Always merge Tailwind classes using `cn(...)` (wrapping `clsx` and `tailwind-merge`). Never use string concatenation.
-4. **Tailwind Logical Properties (BiDi RTL/LTR):**
-   - You MUST use logical directional properties (`ms-`, `pe-`, `ps-`, `me-`, `start`, `end`).
-   - Physical directional classes (`ml-`, `mr-`, `pl-`, `pr-`, `left-`, `right-`) are FORBIDDEN.
-5. **Animations:**
-   - Simple hover/focus interactions: Tailwind CSS transitions (e.g. `transition-all hover:scale-105`).
-   - Complex timelines/scroll triggers: GSAP wrapped in `@gsap/react` `useGSAP()` hook with scoped DOM refs.
-
-### 4. Loading States & Route Transitions
-
-_(Reference: [Streaming & Suspense](../../../node_modules/next/dist/docs/01-app/02-guides/streaming.md) and [Instant Navigation](../../../node_modules/next/dist/docs/01-app/02-guides/instant-navigation.md))_
-
-1. **Suspense & Skeleton Fallbacks:**
-   - Wrap slow data-fetching components in React `<Suspense>` boundaries.
-   - Provide accurate `<Skeleton>` fallbacks matching the exact dimensions of loaded content to eliminate Cumulative Layout Shift (CLS).
-   - Name skeletons `[ComponentName]Skeleton`. Use Tailwind CSS responsive breakpoint classes within the skeleton component to mirror layout changes across viewports instead of creating separate skeleton files.
-2. **Route Transition Progress:**
-   - Use `<Link>` from `@vercel/react-transition-progress` to trigger top-bar progress on high-priority navigation points (primary menus, header links, hero CTAs, and interactive cards).
-   - Ensure the top progress bar is fixed (`fixed top-0 left-0 right-0 z-[9999] h-1 pointer-events-none`) with theme primary colors.
-3. **TanStack Query Suspense Integration (`useSuspenseQuery` vs `useQuery`):**
-   - **Streamed Components:** Use `useSuspenseQuery(cache.options(...))` for components rendered inside `<Suspense fallback={<[ComponentName]Skeleton />}>`. It guarantees defined `data`, streams the skeleton fallback on initial fetch, and prevents layout shift or skeleton flashing on subsequent background refetches.
-   - **Interactive Shells:** Use standard `useQuery` with `enabled: boolean` when building interactive shells (such as search autocompletes, filter drawers, or command palettes) where the input shell must remain interactive and visible while queries resolve.
-
-### 5. Server Prefetching, Cache Coordination & Cache Component Safety
-
-_(Reference: [TanStack Query Integration Guide](../../../docs/tanstack-query-nextjs-guide.md), [`use cache`](../../../node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-cache.md), and [`updateTag`](../../../node_modules/next/dist/docs/01-app/03-api-reference/04-functions/updateTag.md))_
-
-1. **Non-Blocking Server Prefetch Pattern:**
-   - On the server, instantiate `new QueryClient()` per request (never a shared singleton).
-   - Trigger prefetching without awaiting: `void queryClient.prefetchQuery(...)`. This allows Next.js to stream the component shell and `<Skeleton>` fallback immediately without blocking on database queries.
-   - Dehydrate pending queries: wrap the Client Component in `<HydrationBoundary state={dehydrate(queryClient, { shouldDehydrateQuery: (q) => defaultShouldDehydrateQuery(q) || q.state.status === 'pending' })}>`.
-2. **Cache Coordination & Optimistic Mutations:**
-   - In mutating Client Components, use `useMutation` with `onMutate` to immediately apply optimistic UI updates via `queryClient.setQueryData(...)` and snapshot previous state.
-   - In `onError`, restore `context.previous`.
-   - The invoked Server Action performs the database write and calls `updateTag(cache.tag(...))` from `next/cache` to invalidate cached server reads for subsequent navigations.
-3. **Cache Components Safety (Next.js 15+):**
-   - With `cacheComponents: true` enabled in `next.config.ts`, `dehydrate()` calling `Date.now()` during static prerendering throws a blocking build error.
-   - Use the safe hydration helper pattern: wrap the timestamp lookup in an isolated `'use cache'` function tagged with the same `cacheTag`, ensuring the timestamp is deterministically cached alongside the data.
-4. **Explicit `staleTime` Standard:**
-   - Always set an explicit `staleTime` (e.g. `30_000` ms) in `queryOptions`. A `staleTime` of `0` causes the browser to trigger an instant redundant HTTP refetch upon client hydration.
-
-### 6. i18n & SEO Integration Rules
-
-_(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/02-guides/internationalization.md), [JSON-LD](../../../node_modules/next/dist/docs/01-app/02-guides/json-ld.md), and [Metadata & OG Images](../../../node_modules/next/dist/docs/01-app/01-getting-started/14-metadata-and-og-images.md))_
-
-1. **Internationalization (i18n):**
-   - Extract UI text into dictionary files formatted as `dictionaries_dir/[language code].json` (e.g., `src/dictionaries/en.json`, `src/dictionaries/fa.json`) for each locale in `supported_languages`.
-   - Wrap internal links with `localizePath(href, locale)`.
-   - Format currencies, numbers, and dates using the native `Intl` API (`Intl.NumberFormat`, `Intl.DateTimeFormat`).
-2. **SEO & Structured Data (schema-dts):**
-   - Use semantic HTML tags (`<article>`, `<section>`, `<nav>`) and correct heading hierarchy (single `<h1>`, sequential `<h2>`–`<h6>`).
-   - Inject strictly typed JSON-LD schema using `schema-dts` in `@graph` array format for new NextJS pages:
-     - Analyze the page context and dynamically incorporate as many applicable Schema.org entity formats as appropriate for the page content (e.g., combining `WebPage`, `Organization`/`Corporation`/`Store`, `BreadcrumbList`, `Article`, `Product`, `SoftwareApplication`, `FAQPage`, `Event`, `Course`, `VideoObject`, `Service`, `ItemPage`, etc., matching all relevant schemas rather than being restricted to a fixed list).
-     - Interlink entities via `@id` references (e.g., `${pageUrl}#webpage`, `${siteUrl}/#organization`, `${pageUrl}#primary-entity`).
-     - Convert CMS rich text trees to plain strings using `lexicalToPlainText(...)` before schema assignment.
-     - Mark schema script with `<!-- TODO: Validate on https://validator.schema.org/ -->`.
-
-### 7. TSDoc & Module Mapping Rules
-
-1. **Strict English TSDoc (MANDATORY):**
-   - All exported functions, props, generics, and components MUST be annotated in **English** using strict TSDoc syntax.
-   - Include `@typeParam` for generics, `@param` for every input, `@defaultValue` for optionals, `@returns` for outputs, and `@throws` for errors. Focus on the "Why".
-2. **Module & System Architecture Mapping:**
-   - Create or append to `README.modules.md` in the component folder detailing algorithmic breakdown, internal state Mermaid diagram, consumer file references, and integration flowchart.
-   - Update root `ARCHITECTURE.md` if data flow, module boundaries, or Payload CMS schemas are altered.
-
-### 8. Storybook Component Story Standard (`[ComponentName].stories.tsx`)
-
-Every newly created main component MUST include a co-located Storybook story file (`[ComponentName].stories.tsx`) in Component Story Format 3 (CSF3) so developers can preview, inspect, and interact with the component in an isolated environment.
-
-1. **Main Component Scope Rule (Pushing Client Components Down):**
-   - In Next.js App Router applications, interactive client logic is pushed down the tree to small, focused leaf Client Components (e.g. isolated button click handlers, drawer toggles, or icon animation wrappers).
-   - **DO NOT** create standalone stories for internal, micro leaf client helpers that exist solely to serve the main component.
-   - **ONLY the main component** (the primary feature section, composite UI block, or page component) requires a Storybook story.
-   - The main component's story serves as the holistic playground where developers can interact with the complete component, change props, and test actions.
-2. **Interactive Controls (`argTypes` & `args`):**
-   - Map component TypeScript props to Storybook controls (`control: "select"`, `"text"`, `"boolean"`, `"color"`, `"number"`) in `meta.argTypes`.
-   - Provide realistic default prop values in `args` so the component renders immediately without missing prop warnings.
-3. **Action Spies & Event Handlers (`fn()` from `'storybook/test'`):**
-   - For all callback and mutation props (e.g., `onClick`, `onToggle`, `onSubmit`, `onSelect`), bind `fn()` from `'storybook/test'` in default `args`.
-   - When users interact with buttons or inputs in Storybook, events and parameters will log directly to the Actions panel.
-4. **Storybook Documentation Standards (`parameters.docs`):**
-   - Provide comprehensive, structured markdown documentation in `meta.parameters.docs.description.component`:
-     - **Overview & Purpose**: What the component is and why it exists.
-     - **Architecture & Boundaries**: RSC vs. leaf Client Component (`"use client"`), data fetching/caching strategy, and hooks.
-     - **Key Interactions**: Click handlers, state toggles, View Transitions, and animations.
-     - **Accessibility & Motion**: ARIA roles/labels, keyboard shortcuts, and `prefers-reduced-motion` compliance.
-   - Annotate every story with strict TSDoc and `parameters.docs.description.story` describing the preview state.
-5. **Docs Page Dual-Theme Presentation & Background Isolation (MANDATORY):**
-   - In Storybook's auto-generated Docs page (`tags: ["autodocs"]`), all component stories are displayed sequentially on a shared canvas. Without isolated backgrounds, light-themed elements can lose contrast or appear washed out.
-   - To guarantee complete visibility and allow developers to inspect both themes and both skeleton states side-by-side in the Docs page without needing to toggle the global toolbar, export strictly four story variants:
-     1. **`Light`**: Configured with `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` and wrapped in a dedicated light canvas card using production semantic tokens (`light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) with a `"Light Mode"` label (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`).
-     2. **`Dark`**: Configured with `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` and wrapped in a dedicated dark canvas card using production semantic tokens (`dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) with a `"Dark Mode"` label (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`).
-     3. **`SkeletonLight`**: Configured with `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` and wrapped in a dedicated light canvas card using production semantic tokens (`light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) with a `"Skeleton (Light)"` label (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`) to preview the loading fallback in Light Mode.
-     4. **`SkeletonDark`**: Configured with `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` and wrapped in a dedicated dark canvas card using production semantic tokens (`dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) with a `"Skeleton (Dark)"` label (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`) to preview the loading fallback in Dark Mode.
-6. **Production Theme Token Standard for Storybook (CRITICAL ZERO-HARDCODING RULE):**
-   - **Zero Hardcoded Colors**: Under NO circumstances use arbitrary hex values (e.g. `#FAFAFA`, `#050505`) or non-token palette colors (e.g. `border-zinc-200`, `text-zinc-500`) in Storybook decorators, stories, or preview configs.
-   - **Semantic Production Tokens Only**: Always use the exact theme tokens defined in `app/globals.css` (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, etc.).
-   - Dark mode contrast in Storybook stories is achieved by adding the scoped `.dark` class alongside production tokens (`dark bg-background text-foreground border-border`), while light mode is scoped with `.light bg-background text-foreground border-border`.
-
-### 9. Common Edge Cases & Pitfalls
-
-| Edge Case / Anti-Pattern                                             | Correct Pattern                                                                                                                                                                 |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Direct import of RSC inside `"use client"` file                      | Pass RSC as `children` or React props into Client wrapper                                                                                                                       |
-| Hardcoded colors (e.g., `text-gray-600`)                             | Use semantic design tokens (`text-muted-foreground`)                                                                                                                            |
-| Physical directional margins (`ml-4`, `pr-2`)                        | Use logical properties (`ms-4`, `pe-2`)                                                                                                                                         |
-| Standard `<img>` tag                                                 | Use Next.js `<Image src="..." width={...} height={...} alt="..." />`                                                                                                            |
-| Writing component code before unit tests                             | Follow TDD: Write unit tests first ([ComponentName].test.tsx), establish contract, and code until tests pass                                                                    |
-| Self-certifying quality without adversarial testing                  | Spawn Adversarial Auditor subagent in Step 6 to inject edge-case tests ([ComponentName].edge.test.tsx) without author confirmation bias                                         |
-| Guessing unspecific or vague requirements                            | Interview user (suggest /grill-me) to clarify props, layout & behavior before writing tests                                                                                     |
-| Keeping JSON plan transient in chat memory only                      | Save plan to `.agents/history/plan-[component-name].json` and update subtask statuses to `"completed"` as work finishes                                                         |
-| Using standard `next/link` everywhere indiscriminately               | Use `@vercel/react-transition-progress` `Link` for primary menus, headers, hero CTAs, and interactive cards; reserve `next/link` for static footers and minor inline text links |
-| Naked internal links (`<Link href="/about">`)                        | Use localized paths (`<Link href={localizePath("/about", locale)}>`)                                                                                                            |
-| Manual date/currency formatting strings                              | Use native `Intl.DateTimeFormat` or `Intl.NumberFormat`                                                                                                                         |
-| Skipping `@param` tags or writing non-English TSDoc                  | Write strict English TSDoc for every single prop & parameter                                                                                                                    |
-| Shared singleton `QueryClient` on server                             | Instantiate `new QueryClient()` per request on server; reuse singleton only in browser (`browserQueryClient ??= new QueryClient()`)                                             |
-| Awaiting `prefetchQuery` in RSC                                      | Use non-blocking prefetch `void queryClient.prefetchQuery(...)` inside `<Suspense>` to stream `<Skeleton>` immediately                                                          |
-| Relative URLs in server prefetch                                     | Call internal service or direct DB function in server prefetch `queryFn`; reserve relative URLs for browser fetches                                                             |
-| Missing `staleTime` on hydrated queries                              | Set explicit `staleTime: 30_000` in `queryOptions` to prevent instant duplicate network refetch on client hydration                                                             |
-| Calling `Date.now()` during Cache Components build                   | Wrap dehydration timestamp in `'use cache'` helper with matching `cacheTag`s to prevent prerender build failures                                                                |
-| Sequential `useSuspenseQuery` waterfalls                             | Split independent queries into sibling components or use `useSuspenseQueries`                                                                                                   |
-| Hardcoding internal navigation URLs (`href="/about"`)                | Import route constants/builders from `@/lib/routes` (`ROUTES.about`)                                                                                                            |
-| Hardcoding author bio, contact, or credentials in UI                 | Import canonical details from `@/lib/site-config` (`SITE_CONFIG`)                                                                                                               |
-| Designing UI without consulting design tokens                        | Review `docs/design/03-ui-design-tokens.md` and `docs/design/02-sitemap-and-routes.md`                                                                                          |
-| Creating stories for internal leaf client helpers                    | Only create stories for main components; test leaf components via main component story or unit tests                                                                            |
-| Hardcoded callback stubs instead of `fn()` in stories                | Import `fn` from `'storybook/test'` so user interactions trigger visual events in the Storybook Actions panel                                                                   |
-| Skipping Storybook tests in verification gate                        | Execute Storybook smoke (`pnpm run storybook:smoke`) and static build (`pnpm run build-storybook`) in Step 7 to catch syntax, indexing, and bundle errors                       |
-| Recreating pre-existing component / ignoring missing companion files | Check if component exists first; run gap analysis and backfill missing companion files (skeleton, tests, stories, edge tests) without overwriting existing component code       |
-
----
-
-### 10. Existing Component Detection & Companion File Gap Audit Architecture
-
-Every production-grade Next.js component in the codebase requires a complete, cohesive set of companion artifacts:
-
-1. **Component File (`[ComponentName].tsx`):** The primary UI implementation (RSC or Client Component).
-2. **Skeleton Fallback (`[ComponentName]Skeleton.tsx` or inline export):** Suspense loading placeholder matching layout geometry to eliminate cumulative layout shift (CLS).
-3. **Baseline Unit Tests (`[ComponentName].test.tsx`):** TDD unit tests verifying default props, callbacks, rendering, and ARIA accessibility roles.
-4. **Storybook CSF3 Story (`[ComponentName].stories.tsx`):** Interactive playground with `argTypes` controls and `fn()` action spies (for main components; leaf client micro-helpers are excluded).
-5. **Adversarial Edge-Case Tests (`[ComponentName].edge.test.tsx`):** Independent subagent-injected edge-case assertions (boundary values, nulls, long strings, RTL, keyboard).
-6. **Documentation & English TSDoc:** English TSDoc annotations on all props/parameters and coverage in `README.modules.md`.
-
-When prompted to create or work on any component:
-
-- **Mandatory Existence Scan:** Search `new_component_dir`, `component_library`, `components/ui/`, and root `components/` before creating files.
-- **Component Missing:** Follow standard workflow from scratch (Steps 2 through 8).
-- **Component Exists:**
-  - **Preserve Existing Code:** DO NOT delete, re-create, or overwrite the existing component file unless extending optional props without breaking changes is explicitly needed.
-  - **Run Companion File Gap Analysis:** Audit which companion files exist and which are missing.
-  - **All Present & Passing:** If all companion files exist and pass tests, report completion and show how to view the story in Storybook.
-  - **Missing Files Detected -> Enter Companion File Backfill Mode:**
-    - Formulate a targeted Pre-Flight Plan in Step 3 for the missing companion files only.
-    - Generate missing skeletons, baseline tests, Storybook stories, and adversarial edge tests.
-    - Verify with `run_command` in Step 7 and summarize backfilled artifacts in Step 8.
+1. **Mandatory Scan:** Check `new_component_dir`, `component_library`, `components/ui/`, and root `components/`.
+2. **If Component Exists -> ENTER COMPANION BACKFILL MODE:**
+   - **Preserve Code:** DO NOT delete, re-create, or overwrite `[ComponentName].tsx`.
+   - **Audit Missing Companion Files:** Check for missing `[ComponentName]Skeleton.tsx`, `[ComponentName].test.tsx`, `[ComponentName].stories.tsx`, `[ComponentName].edge.test.tsx`, or TSDoc.
+   - **Backfill:** Generate only the missing companion artifacts matching the existing component contract.
+3. **If Component is Missing:** Execute standard workflow from scratch (Steps 2–8).
 
 ---
 
 ## Step-by-Step Implementation Workflow
 
-- [ ] **Step 0: Load Project Configuration & Design Context (Mandatory First Action)**
-  - Read `docs/project.json` (or `docs/PROJECT.JSON`) at the workspace root using `view_file`.
-  - Parse `project_context_and_metadata.package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, and `supported_languages`.
-  - Read `docs/design/03-ui-design-tokens.md` and `docs/design/02-sitemap-and-routes.md` using `view_file` to determine visual tokens (OKLCH palette, font pairings, border radii), layout section hierarchy, and the route rendering matrix (SSG vs SSR vs CSR).
-  - Verify and import type-safe routes from `lib/routes.ts` (`ROUTES`) and canonical client/author metadata from `lib/site-config.ts` (`SITE_CONFIG`) for all links, author profiles, and metadata schemas.
-  - Review `docs/plan.md` to identify the active project step (Step 8 Reusable Components, Step 9 Layout Shell, Step 11 Pages).
-  - Use `new_component_dir` as the target directory for all component, skeleton, test, and documentation files created in subsequent steps.
-
-- [ ] **Step 1: Mandatory Component Existence Check & Companion File Gap Analysis**
-  - Search `new_component_dir` (read from `docs/project.json`), `component_library` (e.g. `components/ui` or `shadcn/ui`), and common component paths (`components/`, `app/components/`) for the requested component.
-  - **Branch A: Component Does NOT Exist:**
-    - Proceed to **Step 2 (Requirement Alignment & User Interview)** and **Step 3 (Pre-Flight Plan)** for standard component creation from scratch.
-  - **Branch B: Component ALREADY Exists:**
-    - Strictly forbid blindly overwriting or re-creating the existing component if it can fulfill the capability or be extended (e.g., adding optional props or CSS classes without breaking existing consumers).
-    - **Perform Companion File Gap Analysis:** Inspect the directory housing the existing component for missing companion artifacts:
-      1. **Skeleton Fallback:** Does `[ComponentName]Skeleton.tsx` exist (or is `<[ComponentName]Skeleton>` exported within the component file)?
-      2. **Baseline Unit Tests:** Does `[ComponentName].test.tsx` (or `[ComponentName].spec.tsx`) exist?
-      3. **Storybook CSF3 Story:** Does `[ComponentName].stories.tsx` exist? (Mandatory for main/composite components; excluded for internal leaf client micro-helpers).
-      4. **Adversarial Edge Tests:** Does `[ComponentName].edge.test.tsx` exist?
-      5. **TSDoc / English Module Documentation:** Are prop interfaces documented with English TSDoc annotations (`@param`, `@defaultValue`, `@returns`) and does `README.modules.md` cover the component?
-    - **Determine Execution Mode:**
-      - **All Companion Files Exist & Verified:** If all companion files are present and pass tests, report to the user that the component is complete, fully tested, and documented.
-      - **Missing Companion Files Detected -> Enter Companion File Backfill Mode:**
-        - Formulate a tailored Pre-Flight Plan in Step 3 specifically focusing on generating the **missing companion files only**.
-        - **Preserve Existing Code:** Retain the existing `[ComponentName].tsx` implementation without breaking changes.
-        - **Backfill Sequence:**
-          - If Skeleton is missing -> Generate `[ComponentName]Skeleton.tsx` matching the component layout geometry.
-          - If Baseline Tests are missing -> Generate `[ComponentName].test.tsx` based on the component's existing public contract and behavior (Step 4).
-          - If Storybook Story is missing -> Generate `[ComponentName].stories.tsx` with CSF3 controls and `fn()` action spies (Step 5b).
-          - If Adversarial Tests are missing -> Spawn Adversarial Auditor Subagent to generate `[ComponentName].edge.test.tsx` (Step 6).
-        - Execute full verification via `run_command` (Step 7) and present the backfilled artifacts summary (Step 8).
-
-- [ ] **Step 2: Requirement Alignment & User Interview (Mandatory for Vague Prompts)**
-  - **Check Clarity:** If the user prompt is vague, incomplete, or unspecific regarding component props, interactive states, styling, or accessibility requirements, you MUST interview the user before writing tests or code.
-  - **Interviewing User:** Ask specific clarifying questions to establish an exact specification. Suggest using the `/grill-me` slash command if deep interactive design alignment is needed.
-  - **Prohibition:** Guessing or assuming missing requirements for unspecific prompts is strictly forbidden. Align on specifications first, then begin Test-Driven Development (TDD).
-
-- [ ] **Step 3: Mandatory Pre-Flight JSON Plan & History Persistence**
-      Before executing any task, you MUST generate your own tailored JSON plan for the component and persist it into `.agents/history/` directory.
-
-  > [!IMPORTANT]
-  > **EXAMPLE FORMAT SCHEMA ONLY:** The JSON structure below is an **example layout**. You MUST generate a comprehensive plan tailored to your specific task that includes subtasks for all steps (including Builder contract definition & TDD tests in Step 4, component creation in Step 5, Adversarial Auditor subagent in Step 6, and **executing the full test suite via `run_command` in Step 7**).
-  1. **History Directory:** Ensure `.agents/history/` directory exists (create it if missing).
-  2. **File Saving:** Save the initial JSON plan to `.agents/history/plan-[component-name].json`.
-  3. **Sequential Task Execution & Crossing Off:** As each subtask is executed and completed:
-     - Update the subtask's `"status"` field in `.agents/history/plan-[component-name].json` from `"pending"` to `"completed"`.
-     - Output a progress update crossing off the completed task (e.g. `[x] Subtask 4: Execute full test suite`).
-
-  ```json
-  {
-    "goal": "Create [ComponentName] in Next.js App Router",
-    "history_file": ".agents/history/plan-[component-name].json",
-    "sources_audited": [
-      {
-        "path": ".agents/skills/nextjs-create-component/SKILL.md",
-        "scope_summary": "Extracted RSC boundary strategy, styling, i18n, TSDoc, Storybook CSF3 rules, and adversarial audit rules"
-      }
-    ],
-    "subtasks": [
-      {
-        "id": 1,
-        "description": "TypeScript contract definition and baseline TDD unit test creation ([ComponentName].test.tsx)",
-        "workflow_phase_ref": "Step 4: Builder TDD & Contract Definition",
-        "tool_intents": ["write_to_file"],
-        "verification_criteria": "TypeScript prop types and baseline unit test suite written matching component specification",
-        "status": "pending"
-      },
-      {
-        "id": 2,
-        "description": "Component placement, skeleton, and responsive layout implementation",
-        "workflow_phase_ref": "Step 5a: Builder Component & Responsive Development",
-        "tool_intents": ["write_to_file"],
-        "verification_criteria": "Component and skeleton fallbacks created without lint or type errors",
-        "status": "pending"
-      },
-      {
-        "id": 3,
-        "description": "Co-located Storybook story creation with interactive controls and action spies ([ComponentName].stories.tsx)",
-        "workflow_phase_ref": "Step 5b: Builder Storybook Story Creation",
-        "tool_intents": ["write_to_file"],
-        "verification_criteria": "CSF3 story created for main component with controls, action spies, and theme variations",
-        "status": "pending"
-      },
-      {
-        "id": 4,
-        "description": "Spawn Adversarial Auditor Subagent for Independent Code Review & Edge-Case Test Injection",
-        "workflow_phase_ref": "Step 6: Adversarial Auditor Subagent & Edge-Case Injection",
-        "tool_intents": ["invoke_subagent"],
-        "verification_criteria": "Subagent completes unbiased audit and writes [ComponentName].edge.test.tsx without author bias",
-        "status": "pending"
-      },
-      {
-        "id": 5,
-        "description": "Execute Full Test Suite (Baseline + Adversarial) & Auto-Repair",
-        "workflow_phase_ref": "Step 7: Two-Tier Verification & Auto-Repair Loop",
-        "tool_intents": ["run_command"],
-        "verification_criteria": "All unit and adversarial tests pass with 0 errors via run_command tool",
-        "status": "pending"
-      }
-    ],
-    "eval_metrics": [
-      "Zero CLS, full RTL support, 100% English TSDoc, clean build, Storybook story with controls, baseline and adversarial tests pass"
-    ],
-    "risk_factors": [
-      "Hydration mismatch, layout shift during data streaming, unhandled boundary cases, leaf component story over-generation"
-    ]
-  }
-  ```
-
-  ```json
-  // COMPANION FILE BACKFILL MODE PLAN EXAMPLE (when component pre-exists):
-  {
-    "goal": "Audit and backfill missing companion files for existing component [ComponentName]",
-    "mode": "companion_backfill",
-    "existing_component_path": "app/components/[ComponentName].tsx",
-    "missing_files_detected": [
-      "[ComponentName]Skeleton.tsx",
-      "[ComponentName].test.tsx",
-      "[ComponentName].stories.tsx",
-      "[ComponentName].edge.test.tsx"
-    ],
-    "history_file": ".agents/history/plan-[component-name].json",
-    "sources_audited": [
-      {
-        "path": ".agents/skills/nextjs-create-component/SKILL.md",
-        "scope_summary": "Extracted companion file gap analysis, Storybook CSF3 rules, and adversarial edge test requirements"
-      }
-    ],
-    "subtasks": [
-      {
-        "id": 1,
-        "description": "Create missing Skeleton fallback [ComponentName]Skeleton.tsx matching existing component geometry",
-        "workflow_phase_ref": "Step 5a: Companion Backfill: Skeleton Generation",
-        "tool_intents": ["write_to_file"],
-        "verification_criteria": "Skeleton component exported and matches existing layout classes",
-        "status": "pending"
-      },
-      {
-        "id": 2,
-        "description": "Create missing baseline unit tests [ComponentName].test.tsx covering existing contract and behaviors",
-        "workflow_phase_ref": "Step 4: Contract Baseline TDD",
-        "tool_intents": ["write_to_file"],
-        "verification_criteria": "Unit tests verify default props, callbacks, ARIA roles, and loading fallbacks",
-        "status": "pending"
-      },
-      {
-        "id": 3,
-        "description": "Create missing Storybook story [ComponentName].stories.tsx with controls & action spies",
-        "workflow_phase_ref": "Step 5b: Builder Storybook Story Creation",
-        "tool_intents": ["write_to_file"],
-        "verification_criteria": "CSF3 story created for main component with controls, action spies, and theme variations",
-        "status": "pending"
-      },
-      {
-        "id": 4,
-        "description": "Spawn Adversarial Auditor Subagent for edge-case test injection ([ComponentName].edge.test.tsx)",
-        "workflow_phase_ref": "Step 6: Adversarial Auditor Subagent",
-        "tool_intents": ["invoke_subagent"],
-        "verification_criteria": "Subagent completes unbiased audit and writes [ComponentName].edge.test.tsx",
-        "status": "pending"
-      },
-      {
-        "id": 5,
-        "description": "Execute Full Test Suite (Baseline + Adversarial) & Verification Script",
-        "workflow_phase_ref": "Step 7: Two-Tier Verification & Auto-Repair Loop",
-        "tool_intents": ["run_command"],
-        "verification_criteria": "All unit and adversarial tests pass with 0 errors via run_command tool",
-        "status": "pending"
-      }
-    ],
-    "eval_metrics": [
-      "All companion files exist, Storybook story renders with controls, baseline and adversarial tests pass"
-    ],
-    "risk_factors": [
-      "Existing component contract regression, missing event spy coverage, broken accessibility tags"
-    ]
-  }
-  ```
-
-- [ ] **Step 4: Builder Phase: TypeScript Contract Definition & Baseline TDD**
-
-  > [!NOTE]
-  > **COMPANION FILE BACKFILL MODE:** If `[ComponentName].tsx` already exists but `[ComponentName].test.tsx` is missing:
-  > Inspect the existing component file and its exported prop interfaces. Formulate baseline unit tests that cover its established contract, default props, callbacks, ARIA roles, and loading fallbacks without modifying the existing component code.
-  1. **Define TypeScript Contract:**
-     - The Builder agent begins by defining the component's complete TypeScript interface and types (either at the top of the component file or in `[ComponentName].types.ts` for complex components).
-     - Annotate all props, generic parameters, and return types in **English** using strict TSDoc syntax (`@param`, `@defaultValue`, `@returns`).
-     - Specify exact callback signatures (e.g. `(id: string, selected: boolean) => void`) rather than ambiguous `Function` or `any`.
-  2. **Write Baseline Unit Tests First (`[ComponentName].test.tsx`):**
-     - In `new_component_dir` (read from `docs/project.json`), write the baseline unit test file BEFORE implementing the component.
-     - Scope of Baseline Tests:
-       - Default prop values (`@defaultValue`) and core rendering behavior.
-       - Interactive client callbacks and event handlers.
-       - Loading states: Suspense & `<Skeleton>` rendering.
-       - Core accessibility: verify semantic roles and basic ARIA labels.
-       - BiDi / RTL text orientation expectations.
-  3. **Testing TanStack Query Components:**
-     - When testing components using `useQuery` or `useSuspenseQuery`, use a test harness with `QueryClientProvider` configured with `retry: false` and `gcTime: Infinity`.
-     - Seed mock data directly into the test cache using `queryClient.setQueryData(cache.key(...), mockData)` to verify loaded data rendering, or leave unseeded inside `<Suspense fallback={<[ComponentName]Skeleton />}>` to verify fallback rendering without real network requests.
-  4. **TDD Red-Green Loop:**
-     - Write baseline tests defining the contract (Red).
-     - Implement component and skeleton fallbacks (Green) until baseline tests pass.
-
-- [ ] **Step 5a: Builder Phase: Component & Responsive Development**
-
-  > [!NOTE]
-  > **COMPANION FILE BACKFILL MODE:** Skip re-creating `[ComponentName].tsx` if it already exists. If the companion gap analysis showed that the skeleton is missing, generate `[ComponentName]Skeleton.tsx` matching the geometry and layout classes of the existing component.
-
-  Develop the component (`[ComponentName].tsx`) and its skeleton fallback `[ComponentName]Skeleton.tsx` using Tailwind CSS responsive classes (e.g. `sm:`, `md:`, `lg:`) to handle mobile, tablet, and desktop layouts within a single file according to architectural guidelines and baseline test requirements.
-
-- [ ] **Step 5b: Builder Phase: Co-Located Storybook Story Creation (`[ComponentName].stories.tsx`)**
-      Create a co-located Storybook story file (`[ComponentName].stories.tsx`) directly alongside the component.
-
-  > [!NOTE]
-  > **COMPANION FILE BACKFILL MODE:** If `[ComponentName].stories.tsx` is missing for an existing main component, inspect its props, interactive handlers, and visual states. Generate `[ComponentName].stories.tsx` with CSF3 metadata, `parameters.docs` markdown documentation, `argTypes` controls, `fn()` action spies, and the standard high-contrast story variants: `Light`, `Dark`, `SkeletonLight`, and `SkeletonDark`.
-
-  > [!IMPORTANT]
-  > **MAIN COMPONENT SCOPE ONLY (LEAF CLIENT COMPONENT EXCLUSION):**
-  > When interactive client behavior is pushed down the tree into micro leaf Client Components (e.g., isolated toggle buttons, click listeners, or drawer toggles), **DO NOT** create separate stories for those internal sub-elements.
-  > **Create a Storybook story ONLY for the main component.** The main component's story serves as the complete, integrated playground for modifying props and observing interactions.
-  1. **CSF3 Story Structure & Comprehensive Docs:**
-     - Use Component Story Format 3 (CSF3) with `Meta<typeof ComponentName>` and `StoryObj<typeof ComponentName>`.
-     - Include tags: `tags: ["autodocs", "ai-generated"]`.
-     - **Write Structured Storybook Docs (`parameters.docs`)**:
-       - In `meta.parameters.docs.description.component`, write a rich markdown overview including:
-         - **Overview**: Purpose and use case of the component.
-         - **Architecture**: RSC vs leaf Client Component (`"use client"`), hooks, and caching contracts.
-         - **Interactivity & State**: Click handlers, state toggles, and View Transition animations.
-         - **Accessibility & Motion**: ARIA labels/roles, keyboard accessibility, and `prefers-reduced-motion` compliance.
-       - In each story, provide `parameters.docs.description.story` describing the specific state.
-  2. **Interactive Controls (`argTypes`):**
-     - Map component props to interactive controls (`select`, `text`, `boolean`, `number`) in `meta.argTypes` so users can dynamically tweak properties in Storybook.
-  3. **Action Spies (`fn()` from `'storybook/test'`):**
-     - For all event callbacks (e.g., `onClick`, `onToggle`, `onSubmit`, `onSelect`), bind `fn()` from `'storybook/test'` in default args so user interactions log cleanly to the Storybook Actions panel.
-  4. **Docs Page Dual-Theme Presentation & Background Isolation (MANDATORY):**
-     - Because Storybook's documentation page displays all stories on a shared canvas, light-themed components can appear invisible or washed out on default white backgrounds.
-     - To guarantee optimal contrast and immediate inspection of both themes side-by-side in the Docs page without needing to toggle the global toolbar, export strictly:
-       - **`Light`**: Configured with `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` and wrapped in a dedicated light canvas card using production semantic tokens (`light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) labeled `"Light Mode"` (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`).
-       - **`Dark`**: Configured with `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` and wrapped in a dedicated dark canvas card using production semantic tokens (`dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) labeled `"Dark Mode"` (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`).
-       - **`SkeletonLight`**: Configured with `parameters: { themes: { themeOverride: "light" }, backgrounds: { default: "light" } }` and wrapped in a dedicated light canvas card using production semantic tokens (`light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) labeled `"Skeleton (Light)"` (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`) to preview the loading fallback in Light Mode.
-       - **`SkeletonDark`**: Configured with `parameters: { themes: { themeOverride: "dark" }, backgrounds: { default: "dark" } }` and wrapped in a dedicated dark canvas card using production semantic tokens (`dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]`) labeled `"Skeleton (Dark)"` (`text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground`) to preview the loading fallback in Dark Mode.
-  5. **Zero Hardcoded Colors Rule:**
-     - Under NO circumstances use arbitrary hex values (e.g. `#FAFAFA`, `#050505`) or non-token palette colors (e.g. `border-zinc-200`, `text-zinc-500`) in Storybook decorators or stories.
-     - Strictly use the production semantic tokens from `app/globals.css` (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, etc.).
-
-- [ ] **Step 6: Adversarial Auditor Subagent & Edge-Case Injection (MANDATORY UNBIASED LOOP)**
-
-  > [!NOTE]
-  > **COMPANION FILE BACKFILL MODE:** If `[ComponentName].edge.test.tsx` is missing, pass the existing component file, its skeleton, baseline tests, and Storybook story to the independent subagent so it injects comprehensive adversarial edge-case tests against the pre-existing component.
-
-  > [!IMPORTANT]
-  > **Unbiased Verification Architecture:** To eliminate author confirmation bias and prevent self-grading, the primary Builder agent MUST NOT perform self-certification. Instead, you MUST invoke an independent subagent using the `invoke_subagent` tool.
-  1. **Spawn Adversarial Auditor Subagent:**
-     - Call `invoke_subagent` with:
-       - `TypeName`: `"self"`
-       - `Role`: `"Adversarial Code & QA Auditor"`
-       - `Model`: `"inherit"`
-       - `Prompt`: Provide a rigorous auditing instruction containing:
-         - The path to the component file (`[ComponentName].tsx`), skeleton file, baseline tests, and Storybook story (`[ComponentName].stories.tsx`).
-         - The requirement to audit against core architectural rules: RSC boundary isolation, leaf client push-down, Storybook story completeness (only main component, controls configured, `fn()` action spies present), Tailwind logical properties (`ms-`, `pe-`, `start`, `end`), semantic OKLCH tokens, TSDoc completeness, and TanStack Query cache contracts.
-         - **Mandatory Adversarial Test Generation:** The subagent MUST write a dedicated edge-case test suite (`[ComponentName].edge.test.tsx` in `new_component_dir`) targeting edge cases the Builder might have overlooked:
-           - Boundary values: empty strings, null/undefined inputs, extremely long text, special characters / RTL Persian glyphs.
-           - Unhandled optional prop combinations.
-           - Async rejection / error state handling / broken API responses.
-           - Accessibility depth: keyboard navigation (`Enter`, `Space`, `Tab`), `aria-expanded`, `aria-busy`, focus management.
-           - Stress testing: rapid re-renders, unmount lifecycle cleanup.
-  2. **Audit Report Reception:**
-     - When the subagent completes its task, review its structured audit findings and confirm that `[ComponentName].edge.test.tsx` has been generated on the local filesystem.
-
-- [ ] **Step 7: Verification Gate & Auto-Repair Loop (MANDATORY SHELL EXECUTION)**
-
-  > [!CRITICAL]
-  > You MUST physically execute the full verification gate (companion constraints, baseline/adversarial test suites, AND Storybook tests) using the `run_command` tool before declaring completion or proceeding to Step 8. Do NOT skip this step, omit it from your plan, or present final handoff without calling `run_command`.
-
-  > [!NOTE]
-  > **COMPANION FILE BACKFILL AUTO-REPAIR:** In backfill mode, if tests or Storybook checks reveal bugs, syntax collisions, or unhandled edge cases in the component or stories, patch them to satisfy assertions while preserving external public API contracts and existing prop types.
-  1. **Tier 1: Companion Constraint Verification Script:**
-     - Run `npx tsx .agents/skills/nextjs-create-component/scripts/verify-component-files.ts [target_component_dir]` to verify component file, skeleton file, test file, and Storybook story exist.
-  2. **Tier 2: Baseline & Adversarial Test Suite:**
-     - Execute project test runner (`bun test`, `npm test`, `pnpm test`, or `jest`) via `run_command`.
-     - All baseline unit tests (`[ComponentName].test.tsx`) and adversarial edge-case tests (`[ComponentName].edge.test.tsx`) must pass with 0 failures.
-  3. **Tier 3: Storybook Verification Suite (Smoke & Static Build):**
-     - **Storybook Smoke & Indexing Test:**
-       - Execute `pnpm run storybook:smoke` (or `pnpm exec storybook dev --smoke-test`) via `run_command`.
-       - Verifies that Storybook starts cleanly and parses/indexes all component stories without syntax errors, AST collisions, or missing export errors.
-     - **Storybook Production Build Test:**
-       - Execute `pnpm run build-storybook` (or `pnpm exec storybook build`) via `run_command`.
-       - Verifies that all stories, CSF3 metadata, controls (`argTypes`), action spies, and Docs renderers compile and bundle into static production assets without bundling or module directive errors.
-  4. **Strict Auto-Repair Rules (The Immutable Adversarial Tests Principle):**
-     - **Modifying Adversarial Tests is Strictly FORBIDDEN:** The Builder agent is NOT permitted to delete, comment out, or soften the assertions in `[ComponentName].edge.test.tsx`.
-     - **Component & Story Fix Loop:** If any adversarial test, baseline test, or Storybook verification test fails, modify the component code (`[ComponentName].tsx`) or story (`[ComponentName].stories.tsx`) to properly handle the error (e.g., adding fallback guards, null checks, ARIA attributes, fixing CSF3 exports, or resolving syntax errors).
-     - **Re-Run Verification:** Re-execute the verification gate until ALL tiers (constraints, tests, and Storybook) pass cleanly with 0 errors.
-     - **Contract Dispute Exception:** If an adversarial test objectively violates the frozen TypeScript contract established in Step 4, document the contract mismatch in `.agents/history/plan-[component-name].json` and reconcile with the auditor rather than silently deleting the test.
-
-- [ ] **Step 8: Verification & Handoff**
-
-  > [!NOTE]
-  > **COMPANION FILE BACKFILL MODE HANDOFF:** When completing a backfill task, clearly summarize:
-  >
-  > - Pre-existing Component detected & retained: `[ComponentName].tsx`
-  > - Backfilled companion files created: Skeleton (`[ComponentName]Skeleton.tsx`), Unit Tests (`[ComponentName].test.tsx`), Storybook Story (`[ComponentName].stories.tsx`), Edge Tests (`[ComponentName].edge.test.tsx`)
-  > - Full verification gate results: Constraint script, Jest unit/edge tests (`pnpm test`), and Storybook tests (`pnpm run storybook:smoke`, `pnpm run build-storybook`)
-  > - Story preview instruction (`pnpm storybook`)
-  1. **Code Cleanup:** Mark debug code or temporary mock data with `// TODO: REMOVE BEFORE PRODUCTION`.
-  2. **History Persistence Finalization:** Ensure all subtasks in `.agents/history/plan-[component-name].json` are updated with `"status": "completed"`.
-  3. **Handoff Output:** Present completed work summary:
-     - Component Name & File Path
-     - Storybook Story Path (`[ComponentName].stories.tsx`) & Preview Instruction (`pnpm storybook`)
-     - Rendering & Caching Strategy (RSC / Client / ISR / TanStack Query Hydrated)
-     - Dependencies & Imports
-     - Props, Interactive Controls & Action Spies
-  4. **Git Operations:** Leave all git staging and committing entirely to the user. You may suggest conventional commit messages (e.g. `feat: add [ComponentName] UI component and stories`).
-
----
-
-## Reference Implementation Template
-
-### Reference 1: Pure Server Component (`FeatureCard`)
-
-#### 1. TDD Unit Test Contract (`FeatureCard.test.tsx`) - Written First
-
-```tsx
-import { render, screen } from "@testing-library/react";
-import { FeatureCard, FeatureCardSkeleton } from "./FeatureCard";
-
-describe("FeatureCard (TDD)", () => {
-  const mockProps = {
-    title: "Awesome Next.js Feature",
-    description: "Build robust server components effortlessly.",
-    imageUrl: "/images/feature.webp",
-    href: "/features/nextjs",
-    locale: "fa",
-  };
-
-  it("renders card title and description correctly", () => {
-    render(<FeatureCard {...mockProps} />);
-    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-      "Awesome Next.js Feature",
-    );
-    expect(
-      screen.getByText("Build robust server components effortlessly."),
-    ).toBeInTheDocument();
-  });
-
-  it("renders localized link attribute", () => {
-    render(<FeatureCard {...mockProps} />);
-    const link = screen.getByRole("link", { name: /read more/i });
-    expect(link).toHaveAttribute("href", "/fa/features/nextjs");
-  });
-
-  it("renders Skeleton fallback matching layout", () => {
-    const { container } = render(<FeatureCardSkeleton />);
-    expect(container.firstChild).toHaveClass("animate-pulse");
-  });
-});
-```
-
-#### 2. Component Implementation (`FeatureCard.tsx`) - Implemented to Pass Tests
-
-```tsx
-import React, { Suspense } from "react";
-import Image from "next/image";
-import { Link } from "@vercel/react-transition-progress"; // Progress-aware Link for interactive cards & primary navigation
-import { Graph } from "schema-dts";
-import { cn } from "@/lib/utils";
-import { ROUTES } from "@/lib/routes";
-import { SITE_CONFIG } from "@/lib/site-config";
-
-/**
- * Props for the FeatureCard component.
- */
-export interface FeatureCardProps {
-  /** Title of the feature card */
-  title: string;
-  /** Detailed description text */
-  description: string;
-  /** Image source URL relative or absolute */
-  imageUrl: string;
-  /** Navigation target path */
-  href: string;
-  /** Active user locale (e.g. 'fa' or 'en') */
-  locale: string;
-  /** Optional container class names @defaultValue `""` */
-  className?: string;
-}
-
-/**
- * Renders a server-side cacheable feature card with responsive styling,
- * localized navigation, and schema.org structured data.
- *
- * @param props - Configuration properties for FeatureCard.
- * @returns A React Server Component rendering the localized feature card.
- */
-export function FeatureCard({
-  title,
-  description,
-  imageUrl,
-  href,
-  locale,
-  className = "",
-}: FeatureCardProps): React.JSX.Element {
-  const localizedUrl = localizePath(href, locale);
-
-  const jsonLd: Graph = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "@id": `${localizedUrl}#webpage`,
-        url: localizedUrl,
-        name: title,
-        description: description,
-      },
-    ],
-  };
-
-  return (
-    <>
-      {/* TODO: Validate this JSON-LD schema on https://validator.schema.org/ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <article
-        className={cn(
-          "flex flex-col gap-4 p-6 rounded-lg border border-border bg-card text-card-foreground shadow-sm ms-0 pe-0 transition-all hover:shadow-md",
-          className,
-        )}
-      >
-        <div className="relative w-full h-48 overflow-hidden rounded-md">
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        </div>
-        <h2 className="text-xl font-bold tracking-tight text-foreground">
-          {title}
-        </h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {description}
-        </p>
-        <Link
-          href={localizedUrl}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline ms-auto"
-        >
-          Read More
-        </Link>
-      </article>
-    </>
-  );
-}
-
-/**
- * Skeleton fallback matching FeatureCard dimensions to prevent CLS.
- */
-export function FeatureCardSkeleton(): React.JSX.Element {
-  return (
-    <div className="flex flex-col gap-4 p-6 rounded-lg border border-border bg-muted/40 animate-pulse">
-      <div className="w-full h-48 bg-muted rounded-md" />
-      <div className="h-6 w-3/4 bg-muted rounded" />
-      <div className="h-4 w-full bg-muted rounded" />
-      <div className="h-4 w-1/4 bg-muted rounded ms-auto" />
-    </div>
-  );
-}
-```
-
-#### 3. Storybook Story Implementation (`FeatureCard.stories.tsx`)
-
-```tsx
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { FeatureCard, FeatureCardSkeleton } from "./FeatureCard";
-
-const meta: Meta<typeof FeatureCard> = {
-  title: "Features/FeatureCard",
-  component: FeatureCard,
-  tags: ["autodocs", "ai-generated"],
-  argTypes: {
-    title: {
-      control: "text",
-      description: "Title of the feature card",
-    },
-    description: {
-      control: "text",
-      description: "Detailed body description",
-    },
-    imageUrl: {
-      control: "text",
-      description: "Card image source path",
-    },
-    href: {
-      control: "text",
-      description: "Navigation destination route",
-    },
-    locale: {
-      control: "select",
-      options: ["en", "fa"],
-      description: "Language locale determining text direction and formatting",
-    },
-  },
-  args: {
-    title: "Production Next.js Architecture",
-    description:
-      "Engineered with React Server Components, OKLCH design tokens, and strict streaming boundaries.",
-    imageUrl: "/images/feature.webp",
-    href: "/features/architecture",
-    locale: "en",
-  },
-};
-
-export default meta;
-type Story = StoryObj<typeof FeatureCard>;
-
-export const Default: Story = {};
-export const Light: Story = {
-  parameters: {
-    themes: { themeOverride: "light" },
-    backgrounds: { default: "light" },
-  },
-  decorators: [
-    (Story) => (
-      <div className="bg-[#FAFAFA] text-[#0A0A0A] p-6 rounded-xl border border-zinc-200 shadow-sm flex flex-col items-center justify-center">
-        <Story />
-      </div>
-    ),
-  ],
-};
-
-export const Dark: Story = {
-  parameters: {
-    themes: { themeOverride: "dark" },
-    backgrounds: { default: "dark" },
-  },
-  decorators: [
-    (Story) => (
-      <div className="dark bg-[#050505] text-[#FAFAFA] p-6 rounded-xl border border-zinc-800 shadow-sm flex flex-col items-center justify-center">
-        <Story />
-      </div>
-    ),
-  ],
-};
-
-export const Skeleton: Story = {
-  render: () => <FeatureCardSkeleton />,
-  decorators: [
-    (Story) => (
-      <div className="bg-muted/20 text-foreground p-6 rounded-xl border border-border shadow-sm flex flex-col items-center justify-center">
-        <Story />
-      </div>
-    ),
-  ],
-};
-```
-
----
-
-### Reference 2: Dynamic Client Component with TanStack Query & Optimistic Mutations
-
-#### 1. Shared Cache Contract (`product-cache.ts`)
-
-```ts
-import { queryOptions } from "@tanstack/react-query";
-
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  isFavorite: boolean;
-}
-
-export const productCache = {
-  key: (id: string) => ["product", id] as const,
-  tag: (id: string) => `product:${id}`,
-  options: (id: string) =>
-    queryOptions({
-      queryKey: productCache.key(id),
-      queryFn: async (): Promise<Product> => {
-        const res = await fetch(`/api/products/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch product");
-        return res.json();
-      },
-      staleTime: 30_000,
-    }),
-};
-```
-
-#### 2. TDD Unit Test Contract (`ProductCard.test.tsx`) - Written First
-
-```tsx
-import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { Suspense } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render } from "@testing-library/react";
-import { ProductCard, ProductCardSkeleton } from "./ProductCard";
-import { productCache } from "./product-cache";
-
-function renderWithClient(ui: React.ReactElement, client: QueryClient) {
-  return render(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
-  );
-}
-
-describe("ProductCard (TDD with useSuspenseQuery)", () => {
-  it("renders cached product data when available", () => {
-    const testClient = new QueryClient({
-      defaultOptions: { queries: { retry: false, gcTime: Infinity } },
-    });
-
-    testClient.setQueryData(productCache.key("prod-1"), {
-      id: "prod-1",
-      name: "Ergonomic Chair",
-      price: 299,
-      isFavorite: false,
-    });
-
-    renderWithClient(
-      <Suspense fallback={<ProductCardSkeleton />}>
-        <ProductCard id="prod-1" onToggleFavorite={jest.fn()} />
-      </Suspense>,
-      testClient,
-    );
-
-    expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent(
-      "Ergonomic Chair",
-    );
-    expect(screen.getByText("$299")).toBeInTheDocument();
-  });
-
-  it("renders Skeleton matching component dimensions during fallback", () => {
-    const { container } = render(<ProductCardSkeleton />);
-    expect(container.firstChild).toHaveClass("animate-pulse");
-  });
-});
-```
-
-#### 3. Client Component with `useSuspenseQuery` & Optimistic Mutation (`ProductCard.tsx`)
-
-```tsx
-"use client";
-
-import React from "react";
-import {
-  useSuspenseQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
-import { productCache, type Product } from "./product-cache";
-
-export interface ProductCardProps {
-  id: string;
-  onToggleFavorite: (id: string, nextStatus: boolean) => Promise<void>;
-  className?: string;
-}
-
-export function ProductCard({
-  id,
-  onToggleFavorite,
-  className = "",
-}: ProductCardProps): React.JSX.Element {
-  const queryClient = useQueryClient();
-  const { data: product } = useSuspenseQuery(productCache.options(id));
-  const queryKey = productCache.key(id);
-
-  const mutation = useMutation({
-    mutationFn: (nextStatus: boolean) => onToggleFavorite(id, nextStatus),
-    onMutate: async (nextStatus) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Product>(queryKey);
-      if (previous) {
-        queryClient.setQueryData<Product>(queryKey, {
-          ...previous,
-          isFavorite: nextStatus,
-        });
-      }
-      return { previous };
-    },
-    onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
-      }
-    },
-  });
-
-  return (
-    <article
-      className={cn(
-        "flex flex-col gap-3 p-5 rounded-lg border border-border bg-card text-card-foreground shadow-sm",
-        className,
-      )}
-    >
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-foreground">
-          {product.name}
-        </h3>
-        <button
-          type="button"
-          aria-label={product.isFavorite ? "Remove favorite" : "Add favorite"}
-          onClick={() => mutation.mutate(!product.isFavorite)}
-          className="text-sm font-medium text-primary hover:underline ms-2"
-        >
-          {product.isFavorite ? "★ Favorited" : "☆ Favorite"}
-        </button>
-      </div>
-      <p className="text-sm font-medium text-muted-foreground">
-        ${product.price}
-      </p>
-    </article>
-  );
-}
-
-export function ProductCardSkeleton(): React.JSX.Element {
-  return (
-    <div className="flex flex-col gap-3 p-5 rounded-lg border border-border bg-muted/40 animate-pulse">
-      <div className="h-6 w-2/3 bg-muted rounded" />
-      <div className="h-4 w-1/4 bg-muted rounded" />
-    </div>
-  );
-}
-```
-
-#### 4. Server Prefetch Wrapper (`ProductSection.tsx`)
-
-```tsx
-import { Suspense } from "react";
-import {
-  defaultShouldDehydrateQuery,
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
-import { ProductCard, ProductCardSkeleton } from "./ProductCard";
-import { productCache } from "./product-cache";
-import { getProductFromDb } from "@/lib/db/products"; // Direct server function (no relative fetch)
-import { toggleFavoriteAction } from "@/app/actions/product";
-
-interface ProductSectionProps {
-  id: string;
-}
-
-export function ProductSection({ id }: ProductSectionProps): React.JSX.Element {
-  return (
-    <Suspense fallback={<ProductCardSkeleton />}>
-      <ProductSectionData id={id} />
-    </Suspense>
-  );
-}
-
-async function ProductSectionData({
-  id,
-}: {
-  id: string;
-}): Promise<React.JSX.Element> {
-  const queryClient = new QueryClient();
-
-  // Non-blocking server prefetch (unawaited to allow route streaming)
-  void queryClient.prefetchQuery({
-    ...productCache.options(id),
-    queryFn: () => getProductFromDb(id), // Direct DB call on server
-  });
-
-  return (
-    <HydrationBoundary
-      state={dehydrate(queryClient, {
-        shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === "pending",
-      })}
-    >
-      <ProductCard id={id} onToggleFavorite={toggleFavoriteAction} />
-    </HydrationBoundary>
-  );
-}
-```
-
-#### 5. Storybook Story Implementation with Action Spies (`ProductCard.stories.tsx`)
-
-```tsx
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { fn } from "storybook/test";
-import { ProductCard, ProductCardSkeleton } from "./ProductCard";
-
-const meta: Meta<typeof ProductCard> = {
-  title: "Shop/ProductCard",
-  component: ProductCard,
-  tags: ["autodocs", "ai-generated"],
-  argTypes: {
-    id: {
-      control: "text",
-      description: "Unique product identifier",
-    },
-    onToggleFavorite: {
-      description: "Async favorite mutation callback spy",
-    },
-  },
-  args: {
-    id: "prod-1",
-    // Action spy binds to Storybook Actions panel to inspect clicks:
-    onToggleFavorite: fn(),
-  },
-};
-
-export default meta;
-type Story = StoryObj<typeof ProductCard>;
-
-export const Default: Story = {};
-
-export const Skeleton: Story = {
-  render: () => <ProductCardSkeleton />,
-};
-```
+- [ ] **Step 0: Load Project Context & Design Specifications**
+  - Read `docs/project.json` using `view_file` to resolve paths, package manager, and libraries.
+  - Read `docs/design/03-ui-design-tokens.md` and `docs/design/02-sitemap-and-routes.md`.
+  - Verify routes from `lib/routes.ts` and author metadata from `lib/site-config.ts`.
+
+- [ ] **Step 1: Check Component Existence & Audit Gap**
+  - Search target directories. If component exists, audit missing companion files and set mode to `companion_backfill`; otherwise, set mode to `scratch`.
+
+- [ ] **Step 2: Requirement Alignment & Clarification**
+  - If requirements, props, or behaviors are underspecified, interview the user (suggest `/grill-me`). Never guess missing requirements.
+
+- [ ] **Step 3: Pre-Flight JSON Plan & History Persistence**
+  - Create `.agents/history/plan-[component-name].json` following schema in [`resources/plan-schema.json`](./resources/plan-schema.json).
+  - Update subtask statuses from `"pending"` to `"completed"` as steps finish.
+
+- [ ] **Step 4: TypeScript Contract Definition & Baseline TDD**
+  - Define prop types with English TSDoc annotations.
+  - Write baseline unit tests in `[ComponentName].test.tsx` (or generate them against existing contract in backfill mode) before component code.
+  - Cover default props, callbacks, Suspense skeletons, ARIA accessibility, and RTL orientation.
+
+- [ ] **Step 5a: Component & Responsive Development**
+  - Develop `[ComponentName].tsx` and `[ComponentName]Skeleton.tsx` using Tailwind responsive breakpoint classes (`sm:`, `md:`, `lg:`). Skip `.tsx` creation if in backfill mode.
+
+- [ ] **Step 5b: Co-Located Storybook Story Creation (`[ComponentName].stories.tsx`)**
+  - Create CSF3 story with `parameters.docs` markdown, `argTypes` controls, `fn()` action spies, and the 4 canonical high-contrast theme variants (`Light`, `Dark`, `SkeletonLight`, `SkeletonDark`).
+
+- [ ] **Step 6: Adversarial Auditor Subagent & Edge-Case Injection**
+  - Spawn independent subagent via `invoke_subagent` (`Role: "Adversarial Code & QA Auditor"`).
+  - The subagent reviews RSC boundaries, tokens, and Storybook setup, then generates `[ComponentName].edge.test.tsx` covering boundary values, empty states, Persian/RTL text, and keyboard navigation.
+
+- [ ] **Step 7: Verification Gate & Auto-Repair Loop (Mandatory Shell Execution)**
+  - **Tier 1 (Constraints):** Run `npx tsx .agents/skills/nextjs-create-component/scripts/verify-component-files.ts <target_dir>` via `run_command`.
+  - **Tier 2 (Tests):** Run unit and adversarial test suites (`pnpm test`) via `run_command`.
+  - **Tier 3 (Storybook Smoke & Build):** Run `pnpm run storybook:smoke` (or `storybook dev --smoke-test`) and `pnpm run build-storybook` via `run_command`.
+  - **Auto-Repair:** If any test fails, fix component or story code (adversarial tests are immutable). Re-run until all tiers pass with 0 errors.
+
+- [ ] **Step 8: Final Handoff & Plan Completion**
+  - Update `.agents/history/plan-[component-name].json` statuses to `"completed"`.
+  - Present summary: file paths, Storybook preview command (`pnpm storybook`), rendering strategy, and props/controls overview.

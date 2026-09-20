@@ -112,5 +112,11 @@
     "Category": "PROCESS",
     "Instruction": "When using the 'codebase-memory-mcp' code intelligence server, always maintain a root '.cbmignore' file excluding high-churn files ('.agents/', 'docs/', build caches, test reports, and '.codebase-memory/') and configure 'auto_watch = false' (via 'codebase-memory-mcp config set auto_watch false') to prevent system stutters and constant background re-indexing during file editing.",
     "Why": "diagnosed performance issue: codebase-memory background git watcher triggers reindexing and zstd artifact rewrites on every save, causing system stutters"
+  },
+  {
+    "Rule_number": 20,
+    "Category": "PROCESS",
+    "Instruction": "Always invoke and apply '.agents/skills/codebase-memory' before searching, exploring, reading code, or assessing change impact. Because background watcher re-indexing is disabled ('auto_watch = false') to prevent system stutters, the agent MUST always ensure graph freshness by checking 'index_status' or executing 'index_repository' (with mode='fast' or 'moderate') before issuing search queries, and always prioritize codebase-memory graph tools ('search_graph', 'trace_path', 'get_code_snippet', 'detect_changes') over naive text grep or full-file reading.",
+    "Why": "user explicit requirement: create a skill that the agent always invokes and configures agent to use codebase memory mcp to search the codebase and always indexes codebase first since on-watch indexing is disabled"
   }
 ]

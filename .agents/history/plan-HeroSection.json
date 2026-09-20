@@ -1,0 +1,62 @@
+{
+  "goal": "Create HeroSection component in Next.js App Router from design-spec.md",
+  "history_file": ".agents/history/plan-HeroSection.json",
+  "sources_audited": [
+    {
+      "path": "docs/design/components/home/hero/design-spec.md",
+      "scope_summary": "Extracted Editorial Minimalist architecture, focal points, design tokens, multilingual typography, interaction states, BiDi guidelines, and actions"
+    },
+    {
+      "path": ".agents/skills/nextjs-create-component/SKILL.md",
+      "scope_summary": "Extracted RSC boundary strategy, styling, i18n, TSDoc, Storybook CSF3 rules, and adversarial audit rules"
+    }
+  ],
+  "subtasks": [
+    {
+      "id": 1,
+      "description": "TypeScript contract definition and baseline TDD unit test creation (HeroSection.test.tsx)",
+      "workflow_phase_ref": "Step 4: Builder TDD & Contract Definition",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "TypeScript prop types and baseline unit test suite written matching design specification",
+      "status": "completed"
+    },
+    {
+      "id": 2,
+      "description": "Component placement, skeleton, and responsive layout implementation (HeroSection.tsx, HeroSectionSkeleton.tsx, index.ts)",
+      "workflow_phase_ref": "Step 5a: Builder Component & Responsive Development",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "HeroSection and skeleton fallbacks created without lint or type errors",
+      "status": "completed"
+    },
+    {
+      "id": 3,
+      "description": "Co-located Storybook story creation with interactive controls and action spies (HeroSection.stories.tsx)",
+      "workflow_phase_ref": "Step 5b: Builder Storybook Story Creation",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "CSF3 story created for HeroSection with controls, action spies, and theme variations",
+      "status": "completed"
+    },
+    {
+      "id": 4,
+      "description": "Spawn Adversarial Auditor Subagent for Independent Code Review & Edge-Case Test Injection",
+      "workflow_phase_ref": "Step 6: Adversarial Auditor Subagent & Edge-Case Injection",
+      "tool_intents": ["invoke_subagent"],
+      "verification_criteria": "Subagent completes unbiased audit and writes HeroSection.edge.test.tsx without author bias",
+      "status": "completed"
+    },
+    {
+      "id": 5,
+      "description": "Execute Full Test Suite (Baseline + Adversarial) & Storybook Verification via run_command",
+      "workflow_phase_ref": "Step 7: Two-Tier Verification & Auto-Repair Loop",
+      "tool_intents": ["run_command"],
+      "verification_criteria": "All unit and adversarial tests pass with 0 errors via run_command tool",
+      "status": "completed"
+    }
+  ],
+  "eval_metrics": [
+    "Zero CLS, full RTL support, 100% English TSDoc, clean build, Storybook story with controls, baseline and adversarial tests pass"
+  ],
+  "risk_factors": [
+    "Hydration mismatch, layout shift during data streaming, unhandled boundary cases, leaf component story over-generation"
+  ]
+}

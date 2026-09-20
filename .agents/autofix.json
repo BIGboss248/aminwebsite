@@ -154,5 +154,11 @@
     "Category": "ARCH",
     "Instruction": "When generating or creating a Next.js page component that is nested under a '[locale]' dynamic route segment and the project defines more than one locale in 'docs/project.json', always export 'generateStaticParams()' returning '{ locale }' for all supported locales (from '@/'i18n/routing' or 'supported_languages') to enable static pre-rendering across all locales.",
     "Why": "user explicit requirement: configure nextjs-create-component to generate locale routes if generating a nextjs page and if there is more than one locale and the page is nested under locale dynamic route"
+  },
+  {
+    "Rule_number": 27,
+    "Category": "ARCH",
+    "Instruction": "In Storybook configurations and component stories that render components using Next.js localized navigation or 'next-intl' ('Link', 'useRouter', 'useTranslations'), always wrap stories with 'NextIntlClientProvider' (supplying 'locale' and translation dictionaries from 'messages/[locale].json') and 'ProgressBarProvider' (both globally in '.storybook/preview.tsx' and within story decorators) to prevent 'No intl context found' runtime errors in Storybook.",
+    "Why": "diagnosed error: Storybook threw 'No intl context found' because Link component calls useRouter from next-intl which requires NextIntlClientProvider in context"
   }
 ]

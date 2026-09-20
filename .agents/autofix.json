@@ -142,5 +142,11 @@
     "Category": "PROCESS",
     "Instruction": "NEVER use 'read_url_content' to download binary files (images, raw HTML exports, or any non-text binary). It is a text-only fetcher that corrupts binary data and mangles file content. Always use 'run_command' with PowerShell 'Invoke-WebRequest -Uri <url> -OutFile <path>' to download any binary or raw file directly to disk.",
     "Why": "diagnosed mistake: used read_url_content to download Stitch JPG and HTML files — JPGs were corrupted (unreadable), HTML was not the raw source. Fix: always use Invoke-WebRequest for binary downloads."
+  },
+  {
+    "Rule_number": 25,
+    "Category": "PROCESS",
+    "Instruction": "In design skills and workflows, do not call 'generate_image' or generate images directly to produce image assets. Instead, output the structured image prompt (including prompt description, aspect ratio, suggested filename, and target directory) directly to the user so the user can generate the image externally and place it in the project files, reducing token consumption.",
+    "Why": "user explicit requirement: do not generate images directly in design skills; output image prompts to user so user can generate externally and place in project files to reduce token consumption"
   }
 ]

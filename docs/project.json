@@ -55,6 +55,10 @@
         "status_warning": "#F59E0B",
         "status_error": "#EF4444",
         "status_info": "#06B6D4"
+        "status_info": "#06B6D4",
+        "skeleton": "#E4E4E7",
+        "skeleton_shimmer": "#D4D4D8",
+        "skeleton_border": "#D1D5DB"
       },
       "dark": {
         "canvas_background": "#050505",
@@ -72,6 +76,10 @@
         "status_warning": "#F59E0B",
         "status_error": "#F87171",
         "status_info": "#38BDF8"
+        "status_info": "#38BDF8",
+        "skeleton": "#1F1F24",
+        "skeleton_shimmer": "#303038",
+        "skeleton_border": "#3F3F46"
       }
     },
     "typography": {

@@ -27,18 +27,18 @@ export function LocaleSwitcherSkeleton({
     <div
       aria-hidden="true"
       className={cn(
-        "inline-flex items-center h-9 p-[3px] rounded-full border border-border/60 bg-muted/40 animate-pulse select-none",
+        "inline-flex items-center h-9 p-[3px] rounded-full border border-border/60 bg-skeleton/40 animate-pulse select-none motion-reduce:animate-none motion-reduce:opacity-80 forced-colors:outline forced-colors:outline-1",
         className,
       )}
     >
       {/* Globe glyph placeholder */}
-      <div className="size-4 rounded-full bg-muted-foreground/20 ms-2 me-1" />
+      <div className="size-4 rounded-full bg-skeleton-shimmer ms-2 me-1" />
 
       {/* Segment 1 placeholder (EN) */}
-      <div className="h-7 w-9 rounded-full bg-muted-foreground/20 mx-[1px]" />
+      <div className="h-7 w-9 rounded-full bg-skeleton-shimmer mx-[1px]" />
 
       {/* Segment 2 placeholder (FA) */}
-      <div className="h-7 w-14 rounded-full bg-muted-foreground/15 mx-[1px]" />
+      <div className="h-7 w-14 rounded-full bg-skeleton-shimmer mx-[1px]" />
     </div>
   );
 }

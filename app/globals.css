@@ -44,6 +44,9 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-skeleton: var(--skeleton);
+  --color-skeleton-shimmer: var(--skeleton-shimmer);
+  --color-skeleton-border: var(--skeleton-border);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -93,6 +96,9 @@ body {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --skeleton: oklch(0.922 0 0);
+  --skeleton-shimmer: oklch(0.87 0 0);
+  --skeleton-border: oklch(0.88 0 0);
 }
 
 .dark {
@@ -127,6 +133,9 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --skeleton: oklch(0.24 0 0);
+  --skeleton-shimmer: oklch(0.32 0 0);
+  --skeleton-border: oklch(0.32 0 0 / 60%);
 }
 
 @layer base {
@@ -154,4 +163,19 @@ body {
 
 ::view-transition-new(root) {
   z-index: 9999;
+}
+
+/* Accessibility: Skeletons & Animated Loading States */
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="skeleton"],
+  .animate-pulse {
+    animation: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  [data-slot="skeleton"] {
+    outline: 1px solid transparent;
+    border: 1px solid ButtonBorder;
+  }
 }

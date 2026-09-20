@@ -332,7 +332,7 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
       expect(skeleton).toHaveClass("h-8");
       expect(skeleton).toHaveClass("w-8");
       expect(skeleton).toHaveClass("rounded-lg");
-      expect(skeleton).toHaveClass("bg-muted/50");
+      expect(skeleton).toHaveClass("bg-skeleton");
       expect(skeleton).toHaveClass("animate-pulse");
       expect(skeleton).toHaveClass("border");
       expect(skeleton).toHaveClass("border-primary");

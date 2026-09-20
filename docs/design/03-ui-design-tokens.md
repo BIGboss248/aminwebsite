@@ -91,6 +91,15 @@ The color palette is built using modern **OKLCH color space** in `app/globals.cs
 | `--destructive`        | `oklch(0.577 0.245 27.325)`        | `oklch(0.577 0.245 27.325)`         | Errors, leak warnings, alerts                |
 | `--status-success`     | `oklch(0.65 0.18 145)` (Emerald)   | `oklch(0.72 0.18 145)` (Emerald)    | Secure probe, healthy container              |
 | `--status-warning`     | `oklch(0.75 0.16 75)` (Amber)      | `oklch(0.78 0.16 75)` (Amber)       | Warning, degraded latency                    |
+| `--skeleton`           | `oklch(0.922 0 0)` (Zinc-200)      | `oklch(0.240 0 0)` (Obsidian Slate) | Base loading placeholder background          |
+| `--skeleton-shimmer`   | `oklch(0.870 0 0)` (Zinc-300)      | `oklch(0.320 0 0)` (Elevated Tint)  | Pulse / shimmer animation highlight          |
+| `--skeleton-border`    | `oklch(0.880 0 0)`                 | `oklch(0.320 0 0 / 60%)`            | Accessible non-text contrast outline/border  |
+
+### Accessible Loading States & WCAG Compliance
+- **Non-Text Contrast (WCAG 2.1 SC 1.4.11)**: Skeletons feature calibrated OKLCH lightness values and subtle boundary delineation (`--skeleton-border`) ensuring loading placeholders are distinguishable from both viewport canvas and elevated card surfaces across themes.
+- **Motion & Vestibular Safety (WCAG 2.1 SC 2.2.2)**: Pulse animations strictly respect `@media (prefers-reduced-motion: reduce)`. When enabled, animations are halted to prevent nausea or distraction, falling back to static placeholders with high clarity.
+- **High Contrast / Forced Colors**: Supports Windows High Contrast Mode (`@media (forced-colors: active)`) using fallback system outlines (`outline: 1px solid transparent` / `outline-current`) preventing invisible elements when custom backgrounds are stripped.
+- **Screen Reader Semantics**: By default, skeletons are marked with `aria-hidden="true"` so assistive technologies focus on semantic content, while supporting optional standalone `role="status"` and accessible labels when appropriate.
 
 ---
 

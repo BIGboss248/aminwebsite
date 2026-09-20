@@ -1,0 +1,37 @@
+{
+  "projectId": "5861112417017823447",
+  "projectTitle": "Amin Jamali Systems Portfolio & Lab",
+  "screens": [
+    {
+      "id": "9953763aeda44773a1602562f2e47a22",
+      "title": "Systems Developer Portfolio Header - Segmented Locale Switcher (Baseline)",
+      "type": "BASELINE",
+      "deviceType": "DESKTOP",
+      "width": 2560,
+      "height": 2048,
+      "prompt": "High-precision systems developer portfolio website header with a compact segmented Locale Switcher pill (EN | FA) co-located in the right utility cluster alongside a theme toggle button. Void black background (#050505), elevated slate surfaces (#111115), structural borders (#27272A), and electric cyan (#06B6D4) telemetry active accents. Segmented pill button showing 'EN' and 'FA' with subtle globe icon and native script labels ('English' / 'فارسی'). Left side brand mark 'AMIN JAMALI // SYSTEMS LAB'. Clean Geist Sans and JetBrains Mono typography.",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UaQX9WocI_S_ChuEmjRbr8vqIqxpLrK_aKOWN5paglazK2FNtvdNr9SCgb1W9cG7X-TiT_gei0WPvHAhJDGdG6rV5yATRKJK-6TMIIhyg7fQA-VDg8RtWBEsMhv0rXh4GRD2Zer1Emduyd_S-tTTk_EYz1kS6jNKfWZwT6yKWeqTL2MLraydOCdWWvlBMqKGJMsIS0VSoOxkeQqjxYFNpX_y_13LfvEKtpNY7XjtSQrUnlsr-wrUe-BQ"
+    },
+    {
+      "id": "2c56193553534ab1b9a626f9f1668f6a",
+      "title": "Systems Portfolio Header - Inline Capsule Locale Switcher (Variant 1)",
+      "type": "VARIANT_INLINE_CAPSULE",
+      "deviceType": "DESKTOP",
+      "width": 2560,
+      "height": 2048,
+      "prompt": "Monolithic inline telemetry capsule layout. Restructure the locale switcher layout into a unified inline capsule with an integrated live radar/status pulse alongside the globe icon, followed by an inline sliding indicator segment for 'EN · English' and 'FA · فارسی'.",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1VoiIdXeIegseJqdZ6S6izN3AIOVSG10-0w5sNbeyj8PjPFQaT4Mj67AX04nndJKWlTXkC9n0TLkvrgFjXCbU0kA3rOLfzBwzjKSrAeg6h17FSicg5KxKp8WC7GDD8xR9QbZAqk2aObqxHo2O4h0TCvjIhZ1QjAlyhJAVR1ae8dUZJtTq6IwyDKPmKG1am2s5ZXCLYg-bMwAvw2hOezBjIXnULCebnYXQ_bq-kaE7dz3idWRwV0WIY3K3A"
+    },
+    {
+      "id": "fc16fa224d0e4867bf21092066e2e714",
+      "title": "Systems Portfolio Header - Micro-Docked Locale Switcher (Variant 2)",
+      "type": "VARIANT_MICRO_DOCKED",
+      "deviceType": "DESKTOP",
+      "width": 2560,
+      "height": 2048,
+      "prompt": "Ultra-compact integrated telemetry layout. Restructure the segmented pill into a micro-docked monospace cluster: Place the micro-globe icon inside an enclosed mini-badge/icon tab on the left, with tight segmented buttons 'EN' and 'FA' (compact uppercase pills) where the active locale 'EN' features a sleek glowing electric cyan border.",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1VKvo0R47QSs66WHGDsb53wnVwJKJsHxCx0ZCaM2yTkNzBMvUqhJZaa4TA9-DV4VG4ykYJsZ1fHKX_hk1QNJMFTgOfzqvResxd5fpHscFEICE83XccU4lq28y2TFeWKtomcNlC2nrDjlwW4ufuRhyja-gIMXhPo6SAx_6bT4z8Vz_AzYnP1OsUC_Az8GEmHHIOZ39fv7GgtxhBzu_Vlbc-NOLF_waAmMEYmOqaBwE7gTXt7F7KZGzolRm0"
+    }
+  ]
+}
+

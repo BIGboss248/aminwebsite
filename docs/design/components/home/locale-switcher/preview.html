@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Locale Switcher — Component Design Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --canvas: #050505;
+      --surface: #111115;
+      --surface-elevated: #111115;
+      --surface-alternate: #0a0a0c;
+      --border: #27272a;
+      --text: #fafafa;
+      --text-muted: #94a3b8;
+      --accent-cyan: #06b6d4;
+      --accent-cyan-glow: rgba(6, 182, 212, 0.25);
+      --accent-violet: #8b5cf6;
+      --radius: 0.5rem;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--canvas);
+      color: var(--text);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Preview Control Header */
+    .preview-toolbar {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .component-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.25rem 0.6rem;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--accent-cyan);
+      border-radius: 9999px;
+      letter-spacing: 0.04em;
+    }
+
+    .toolbar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .toolbar-center {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #0a0a0c;
+      padding: 0.25rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .viewport-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.35rem 0.65rem;
+      border-radius: 0.35rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .viewport-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .viewport-btn.active {
+      color: #050505;
+      background: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .control-btn {
+      background: #0a0a0c;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+
+    .control-btn:hover {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+    }
+
+    /* Preview Stage */
+    .preview-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+      background: radial-gradient(circle at top, rgba(6, 182, 212, 0.04) 0%, transparent 70%);
+    }
+
+    .viewport-indicator {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .iframe-wrapper {
+      width: 100%;
+      max-width: 100%;
+      height: 680px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      background: var(--canvas);
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Preview Toolbar -->
+  <header class="preview-toolbar">
+    <div class="toolbar-left">
+      <span class="component-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+        I18N_TELEMETRY
+      </span>
+      <h1 class="toolbar-title">LocaleSwitcher — Segmented Cockpit Pill</h1>
+    </div>
+
+    <!-- Viewport Switcher -->
+    <div class="toolbar-center">
+      <button class="viewport-btn active" data-width="1280px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+        Desktop 1280px
+      </button>
+      <button class="viewport-btn" data-width="768px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg>
+        Tablet 768px
+      </button>
+      <button class="viewport-btn" data-width="375px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>
+        Mobile 375px
+      </button>
+    </div>
+
+    <!-- Global Preview Toggles -->
+    <div class="toolbar-right">
+      <button id="themeToggleBtn" class="control-btn" title="Toggle Light / Dark Mode">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <span id="themeLabel">Dark</span>
+      </button>
+      <button id="dirToggleBtn" class="control-btn" title="Toggle LTR / RTL Direction">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 6 4-4 4 4"/><path d="M12 2v10.3a4 4 0 0 1-1.17 2.83L6 20"/><path d="m16 18 4 4 4-4"/></svg>
+        <span id="dirLabel">LTR (EN)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Responsive Stage -->
+  <main class="preview-stage">
+    <div class="viewport-indicator">
+      <span>ACTIVE VIEWPORT:</span>
+      <strong id="activeWidthLabel">1280px</strong>
+      <span>·</span>
+      <span>DIRECTION:</span>
+      <strong id="activeDirIndicator">LTR</strong>
+      <span>·</span>
+      <span>THEME:</span>
+      <strong id="activeThemeIndicator">DARK</strong>
+    </div>
+
+    <div class="iframe-wrapper" id="iframeWrapper" style="width: 1280px; max-width: 100%;">
+      <iframe id="previewIframe" title="Locale Switcher Component Preview"></iframe>
+    </div>
+  </main>
+
+  <script>
+    // Iframe inner document definition
+    const iframeHtml = `<!DOCTYPE html>
+<html lang="en" dir="ltr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Tokens strictly matching docs/project.json */
+    :root {
+      --canvas: #fafafa;
+      --canvas-fg: #0a0a0a;
+      --surface: #ffffff;
+      --surface-fg: #0a0a0a;
+      --surface-elevated: #f4f4f5;
+      --border: #e4e4e7;
+      --text-muted: #71717a;
+      --primary-accent: #0891b2;
+      --primary-accent-glow: rgba(8, 145, 178, 0.2);
+      --secondary-accent: #7c3aed;
+      --font-family: 'Geist Sans', Inter, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-fa: 'Vazirmatn', sans-serif;
+    }
+
+    html.dark {
+      --canvas: #050505;
+      --canvas-fg: #fafafa;
+      --surface: #111115;
+      --surface-fg: #fafafa;
+      --surface-elevated: #111115;
+      --border: #27272a;
+      --text-muted: #94a3b8;
+      --primary-accent: #06b6d4;
+      --primary-accent-glow: rgba(6, 182, 212, 0.25);
+      --secondary-accent: #8b5cf6;
+    }
+
+    html[dir="rtl"] {
+      font-family: var(--font-fa);
+    }
+
+    html[dir="ltr"] {
+      font-family: var(--font-family);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--canvas);
+      color: var(--canvas-fg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Simulation Header Bar */
+    .mock-header {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    /* Brand Logo */
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: var(--canvas-fg);
+    }
+
+    .brand-logo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--primary-accent) 0%, var(--secondary-accent) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px var(--primary-accent-glow);
+    }
+
+    .brand-logo-icon svg {
+      color: #050505;
+    }
+
+    .brand-text-cluster {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--primary-accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Navigation Links (Desktop) */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-accent);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* Header Right Utility Cluster */
+    .utility-cluster {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    /* ============================================================
+       CORE COMPONENT: Segmented Cockpit Locale Switcher
+       ============================================================ */
+    .locale-switcher-pill {
+      display: inline-flex;
+      align-items: center;
+      background-color: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      height: 36px;
+      padding: 2px;
+      position: relative;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      user-select: none;
+    }
+
+    .locale-switcher-pill:hover {
+      border-color: var(--primary-accent);
+      box-shadow: 0 0 14px var(--primary-accent-glow);
+    }
+
+    /* Leading Globe Icon Container */
+    .locale-globe-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0.45rem 0 0.55rem;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+
+    html[dir="rtl"] .locale-globe-icon-wrap {
+      padding: 0 0.55rem 0 0.45rem;
+      order: 0;
+    }
+
+    html[dir="rtl"] #btnLocaleFa {
+      order: 1;
+    }
+
+    html[dir="rtl"] #btnLocaleEn {
+      order: 2;
+    }
+
+    .locale-switcher-pill:hover .locale-globe-icon-wrap {
+      color: var(--primary-accent);
+    }
+
+    /* Segment Option Button */
+    .locale-segment-btn {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.35rem 0.65rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      position: relative;
+      z-index: 2;
+      transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+    }
+
+    .locale-segment-btn:focus-visible {
+      box-shadow: 0 0 0 2px var(--primary-accent);
+    }
+
+    .locale-segment-btn .native-script {
+      font-family: var(--font-fa);
+      font-size: 0.7rem;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+
+    /* Active Segment State */
+    .locale-segment-btn.active {
+      color: #ffffff;
+      background-color: var(--primary-accent);
+      box-shadow: 0 1px 6px var(--primary-accent-glow);
+    }
+
+    html.dark .locale-segment-btn.active {
+      color: #050505;
+      background-color: var(--primary-accent);
+      font-weight: 700;
+    }
+
+    .locale-segment-btn:not(.active):hover {
+      color: var(--canvas-fg);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Active indicator dot for telemetry feel */
+    .locale-segment-btn.active::after {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 6px currentColor;
+    }
+
+    /* Companion Theme Toggle Icon Button */
+    .theme-toggle-mock {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--canvas-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-mock:hover {
+      border-color: var(--primary-accent);
+      color: var(--primary-accent);
+      box-shadow: 0 0 12px var(--primary-accent-glow);
+    }
+
+    /* Main Showcase Content */
+    .content-container {
+      max-width: 960px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .hero-spec-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .spec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--primary-accent);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(6, 182, 212, 0.25);
+    }
+
+    .hero-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 680px;
+      margin-bottom: 1.5rem;
+    }
+
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .telemetry-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+    }
+
+    .telemetry-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .telemetry-val {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--canvas-fg);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.6; transform: scale(0.95); }
+    }
+
+    /* Localized Dynamic Text Targets */
+    .translatable {
+      transition: opacity 0.2s ease;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="mock-header">
+    <a href="#" class="brand-mark">
+      <div class="brand-logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <div class="brand-text-cluster">
+        <span class="brand-name">Amin Jamali</span>
+        <span class="brand-subtitle" id="transSubtitle">Systems Lab // Observatory</span>
+      </div>
+    </a>
+
+    <!-- Navigation -->
+    <ul class="nav-links">
+      <li><a href="#" class="nav-link translatable" id="navHome">Home</a></li>
+      <li><a href="#" class="nav-link translatable" id="navProjects">Projects</a></li>
+      <li><a href="#" class="nav-link translatable" id="navLab">Diagnostic Lab</a></li>
+      <li><a href="#" class="nav-link translatable" id="navAbout">About</a></li>
+      <li><a href="#" class="nav-link translatable" id="navContact">Contact</a></li>
+    </ul>
+
+    <!-- Utility Cluster: Locale Switcher + Theme Toggle -->
+    <div class="utility-cluster">
+      <!-- CORE COMPONENT: Segmented Locale Switcher Pill -->
+      <div class="locale-switcher-pill" role="radiogroup" aria-label="Language Selector">
+        <div class="locale-globe-icon-wrap" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+            <path d="M2 12h20"/>
+          </svg>
+        </div>
+
+        <button type="button" class="locale-segment-btn active" id="btnLocaleEn" role="radio" aria-checked="true" data-locale="en">
+          <span>EN</span>
+        </button>
+
+        <button type="button" class="locale-segment-btn" id="btnLocaleFa" role="radio" aria-checked="false" data-locale="fa">
+          <span>FA</span>
+          <span class="native-script">(فارسی)</span>
+        </button>
+      </div>
+
+      <!-- Theme Toggle Icon Button -->
+      <button type="button" class="theme-toggle-mock" id="innerThemeToggle" aria-label="Toggle Theme">
+        <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Content Demonstration Area -->
+  <main class="content-container">
+    <section class="hero-spec-card">
+      <div class="spec-badge">
+        <span class="pulse-dot"></span>
+        <span id="transEngineBadge">I18N_ENGINE // NEXT-INTL BIPARTITE ROUTING</span>
+      </div>
+
+      <h2 class="hero-title translatable" id="transHeadline">High-Precision Systems Engineering & Observability</h2>
+      <p class="hero-description translatable" id="transBody">
+        Architecting distributed networks, low-latency microservices, and cryptographic inspection utilities. Engineered with bidirectional typography matching English (Geist Sans) and Persian (Vazirmatn).
+      </p>
+
+      <div class="telemetry-grid">
+        <div class="telemetry-card">
+          <div class="telemetry-label" id="transLblDir">Script Layout Direction</div>
+          <div class="telemetry-val" id="transValDir">LTR (Left-to-Right)</div>
+        </div>
+        <div class="telemetry-card">
+          <div class="telemetry-label" id="transLblFont">Primary Font Stack</div>
+          <div class="telemetry-val" id="transValFont">Geist Sans (Latin)</div>
+        </div>
+        <div class="telemetry-card">
+          <div class="telemetry-label" id="transLblLatency">Network Round-Trip</div>
+          <div class="telemetry-val">9.4 ms · Live</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Copy catalogs for live preview simulation
+    const i18nCopy = {
+      en: {
+        subtitle: 'Systems Lab // Observatory',
+        navHome: 'Home',
+        navProjects: 'Projects',
+        navLab: 'Diagnostic Lab',
+        navAbout: 'About',
+        navContact: 'Contact',
+        engineBadge: 'I18N_ENGINE // NEXT-INTL BIPARTITE ROUTING',
+        headline: 'High-Precision Systems Engineering & Observability',
+        body: 'Architecting distributed networks, low-latency microservices, and cryptographic inspection utilities. Engineered with bidirectional typography matching English (Geist Sans) and Persian (Vazirmatn).',
+        lblDir: 'Script Layout Direction',
+        valDir: 'LTR (Left-to-Right)',
+        lblFont: 'Primary Font Stack',
+        valFont: 'Geist Sans (Latin)'
+      },
+      fa: {
+        subtitle: 'آزمایشگاه سیستم‌ها و رصدخانه توزیع‌شده',
+        navHome: 'خانه',
+        navProjects: 'پروژه‌ها',
+        navLab: 'آزمایشگاه تشخیصی',
+        navAbout: 'درباره من',
+        navContact: 'تماس',
+        engineBadge: 'موتور چندزبانه // مسیریابی دوطرفه با پشتیبانی کامل راست‌چین',
+        headline: 'مهندسی سیستم‌های توزیع‌شده و ابزارهای تحلیل شبکه',
+        body: 'طراحی و توسعه زیرساخت‌های پایدار، میکروسرویس‌های با تاخیر کم و ابزارهای تشخیصی بلادرنگ. توسعه‌یافته با تایپوگرافی اختصاصی و سازگار با رسم‌الخط فارسی (وزیرمتن).',
+        lblDir: 'جهت چینش سند',
+        valDir: 'راست‌به‌چپ (RTL)',
+        lblFont: 'مجموعه تایپوگرافی',
+        valFont: 'وزیرمتن (Vazirmatn)'
+      }
+    };
+
+    function applyLocale(locale) {
+      const html = document.documentElement;
+      const isFa = (locale === 'fa');
+
+      html.setAttribute('lang', locale);
+      html.setAttribute('dir', isFa ? 'rtl' : 'ltr');
+
+      // Update Segment Buttons
+      const btnEn = document.getElementById('btnLocaleEn');
+      const btnFa = document.getElementById('btnLocaleFa');
+      if (btnEn && btnFa) {
+        btnEn.classList.toggle('active', !isFa);
+        btnEn.setAttribute('aria-checked', !isFa ? 'true' : 'false');
+        btnFa.classList.toggle('active', isFa);
+        btnFa.setAttribute('aria-checked', isFa ? 'true' : 'false');
+      }
+
+      // Update Copy
+      const copy = i18nCopy[locale] || i18nCopy.en;
+      document.getElementById('transSubtitle').textContent = copy.subtitle;
+      document.getElementById('navHome').textContent = copy.navHome;
+      document.getElementById('navProjects').textContent = copy.navProjects;
+      document.getElementById('navLab').textContent = copy.navLab;
+      document.getElementById('navAbout').textContent = copy.navAbout;
+      document.getElementById('navContact').textContent = copy.navContact;
+      document.getElementById('transEngineBadge').textContent = copy.engineBadge;
+      document.getElementById('transHeadline').textContent = copy.headline;
+      document.getElementById('transBody').textContent = copy.body;
+      document.getElementById('transLblDir').textContent = copy.lblDir;
+      document.getElementById('transValDir').textContent = copy.valDir;
+      document.getElementById('transLblFont').textContent = copy.lblFont;
+      document.getElementById('transValFont').textContent = copy.valFont;
+
+      // Notify parent window if embedded
+      if (window.parent && window.parent.onIframeStateChange) {
+        window.parent.onIframeStateChange(locale, html.classList.contains('dark') ? 'dark' : 'light');
+      }
+    }
+
+    // Attach click listeners to segment buttons inside iframe
+    document.getElementById('btnLocaleEn').addEventListener('click', () => applyLocale('en'));
+    document.getElementById('btnLocaleFa').addEventListener('click', () => applyLocale('fa'));
+
+    // Inner theme toggle
+    document.getElementById('innerThemeToggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      if (window.parent && window.parent.onIframeStateChange) {
+        window.parent.onIframeStateChange(
+          document.documentElement.getAttribute('lang') || 'en',
+          document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+        );
+      }
+    });
+
+    // Global hook for parent control
+    window.setIframeLocale = applyLocale;
+    window.setIframeTheme = (theme) => {
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    };
+  <\/script>
+</body>
+</html>`;
+
+    // Initialize Iframe
+    const iframe = document.getElementById('previewIframe');
+    const iframeDoc = iframe.contentWindow.document;
+    iframeDoc.open();
+    iframeDoc.write(iframeHtml);
+    iframeDoc.close();
+
+    // Viewport Resizing Logic
+    const viewportBtns = document.querySelectorAll('.viewport-btn');
+    const iframeWrapper = document.getElementById('iframeWrapper');
+    const activeWidthLabel = document.getElementById('activeWidthLabel');
+
+    viewportBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        viewportBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const targetWidth = btn.dataset.width;
+        iframeWrapper.style.width = targetWidth;
+        activeWidthLabel.textContent = targetWidth;
+      });
+    });
+
+    // Parent Theme Toggle Control
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeLabel = document.getElementById('themeLabel');
+    const activeThemeIndicator = document.getElementById('activeThemeIndicator');
+    let currentTheme = 'dark';
+
+    themeToggleBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+      themeLabel.textContent = currentTheme === 'dark' ? 'Dark' : 'Light';
+      activeThemeIndicator.textContent = currentTheme.toUpperCase();
+      if (iframe.contentWindow && iframe.contentWindow.setIframeTheme) {
+        iframe.contentWindow.setIframeTheme(currentTheme);
+      }
+    });
+
+    // Parent Direction / Locale Toggle Control
+    const dirToggleBtn = document.getElementById('dirToggleBtn');
+    const dirLabel = document.getElementById('dirLabel');
+    const activeDirIndicator = document.getElementById('activeDirIndicator');
+    let currentLocale = 'en';
+
+    dirToggleBtn.addEventListener('click', () => {
+      currentLocale = currentLocale === 'en' ? 'fa' : 'en';
+      dirLabel.textContent = currentLocale === 'en' ? 'LTR (EN)' : 'RTL (FA)';
+      activeDirIndicator.textContent = currentLocale === 'en' ? 'LTR' : 'RTL';
+      if (iframe.contentWindow && iframe.contentWindow.setIframeLocale) {
+        iframe.contentWindow.setIframeLocale(currentLocale);
+      }
+    });
+
+    // Callback when inner iframe toggles state
+    window.onIframeStateChange = (locale, theme) => {
+      currentLocale = locale;
+      currentTheme = theme;
+      dirLabel.textContent = currentLocale === 'en' ? 'LTR (EN)' : 'RTL (FA)';
+      activeDirIndicator.textContent = currentLocale === 'en' ? 'LTR' : 'RTL';
+      themeLabel.textContent = currentTheme === 'dark' ? 'Dark' : 'Light';
+      activeThemeIndicator.textContent = currentTheme.toUpperCase();
+      document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+    };
+  </script>
+</body>
+</html>
+

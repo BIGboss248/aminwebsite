@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Amin Jamali — Systems Engineer &amp; Developer // Archive Observatory</title>
+<!-- Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#030712",
+            "surface": "#070d1e",
+            "surface-container": "#0b132b",
+            "surface-container-low": "#070e22",
+            "surface-container-lowest": "#02050e",
+            "surface-container-high": "#111b3d",
+            "surface-container-highest": "#17234e",
+            "outline": "#4b556b",
+            "outline-variant": "#1e293b",
+            "primary": "#06b6d4",
+            "primary-container": "#0891b2",
+            "secondary": "#a855f7",
+            "secondary-container": "#6366f1",
+            "tertiary": "#10b981",
+            "violet-electric": "#8b5cf6",
+            "cyan-electric": "#06b6d4",
+            "on-surface": "#e2e8f0",
+            "on-surface-variant": "#94a3b8",
+            "on-background": "#f8fafc"
+          },
+          fontFamily: {
+            "label-sm": ["JetBrains Mono"],
+            "label-md": ["JetBrains Mono"],
+            "label-lg": ["JetBrains Mono"],
+            "body-sm": ["Geist"],
+            "body-md": ["Geist"],
+            "body-lg": ["Geist"],
+            "headline-sm": ["Geist"],
+            "headline-md": ["Geist"],
+            "headline-lg": ["Geist"],
+            "headline-xl": ["Geist"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .quantum-grid-bg {
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 60%, rgba(6, 182, 212, 0.07) 0%, transparent 55%),
+        linear-gradient(to right, rgba(99, 102, 241, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 0.95; transform: scale(1.02); }
+    }
+    .animate-quantum-glow {
+      animation: pulse-glow 5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md selection:bg-violet-electric selection:text-white antialiased">
+<!-- ================= TOP TELEMETRY COCKPIT BAR ================= -->
+<header class="w-full max-w-full px-6 md:px-12 py-3 flex items-center justify-between z-50 sticky top-0 backdrop-blur-md bg-surface/85 border-b border-outline-variant shadow-[0_4px_20px_rgba(3,7,18,0.8)]">
+<!-- Brand / Observatory Node -->
+<div class="flex items-center gap-3">
+<div class="relative flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-cyan-electric shadow-[0_0_10px_rgba(6,182,212,0.9)] animate-ping absolute"></div>
+<div class="w-2 h-2 rounded-full bg-cyan-electric shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
+</div>
+<span class="font-label-lg text-xs md:text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-electric via-violet-electric to-secondary tracking-widest cursor-pointer select-none">
+      AMIN JAMALI // ARCHIVE.OBSERVATORY
+    </span>
+</div>
+<!-- Cockpit Navigation Links -->
+<nav class="hidden lg:flex items-center gap-7">
+<a class="text-on-surface-variant hover:text-cyan-electric transition-colors pb-1 font-label-md text-xs tracking-wider" href="#telemetry">TELEMETRY</a>
+<a class="text-cyan-electric border-b-2 border-cyan-electric pb-1 font-label-md text-xs tracking-wider font-semibold" href="#systems">SYSTEMS</a>
+<a class="text-on-surface-variant hover:text-cyan-electric transition-colors pb-1 font-label-md text-xs tracking-wider" href="#benchmarks">BENCHMARKS</a>
+<a class="text-on-surface-variant hover:text-cyan-electric transition-colors pb-1 font-label-md text-xs tracking-wider" href="#schematics">SCHEMATICS</a>
+<a class="text-on-surface-variant hover:text-cyan-electric transition-colors pb-1 font-label-md text-xs tracking-wider" href="#kernel">KERNEL</a>
+</nav>
+<!-- Cockpit Status & Tactical Triggers -->
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_6px_rgba(16,185,129,0.8)]"></span>
+<span class="font-label-sm text-[11px] text-tertiary tracking-wider font-semibold">SYS_STATUS: OPTIMAL</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<button class="p-1.5 hover:text-cyan-electric hover:bg-surface-container rounded transition-colors" title="Terminal Interface">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</button>
+<button class="p-1.5 hover:text-violet-electric hover:bg-surface-container rounded transition-colors" title="Live Sensors">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+</button>
+<button class="p-1.5 hover:text-cyan-electric hover:bg-surface-container rounded transition-colors" title="Engine Tuning">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+</div>
+<button class="hidden md:flex items-center gap-2 px-3.5 py-1.5 bg-gradient-to-r from-violet-electric to-secondary-container hover:from-purple-500 hover:to-indigo-500 text-white font-label-sm text-xs font-bold tracking-widest rounded transition-all shadow-[0_0_16px_rgba(139,92,246,0.35)]">
+<span>INIT_SESSION</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</header>
+<!-- ================= HERO SECTION (Asymmetric Split Command Console) ================= -->
+<main class="flex-1 relative overflow-hidden quantum-grid-bg">
+<!-- Precision Spatial Coordinates -->
+<div class="absolute top-8 left-12 font-label-sm text-[10px] text-outline select-none hidden lg:block tracking-widest opacity-60">
+    LOC_ORIGIN // LAT_37.7749_LON_-122.4194 [OBSV_ALPHA_01]
+  </div>
+<div class="absolute top-8 right-12 font-label-sm text-[10px] text-outline select-none hidden lg:block tracking-widest opacity-60">
+    KERNEL_CORE // 0x7FFD2B8A_QUANTUM_V4
+  </div>
+<section class="max-w-7xl mx-auto px-6 md:px-12 py-16 lg:py-24 relative z-10 flex flex-col lg:flex-row items-stretch justify-between gap-12 lg:gap-14">
+<!-- LEFT COLUMN: Architectural Telemetry Frame with Portrait (42%) -->
+<div class="w-full lg:w-[42%] flex flex-col justify-between">
+<!-- Main Sensor Frame Box -->
+<div class="relative bg-surface-container/70 border border-outline-variant rounded-lg p-5 lg:p-6 backdrop-blur-md shadow-[0_0_35px_rgba(11,19,43,0.9)] flex flex-col">
+<!-- Top Frame Diagnostics Bar -->
+<div class="flex items-center justify-between border-b border-outline-variant/80 pb-3 mb-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded bg-cyan-electric shadow-[0_0_8px_#06b6d4]"></span>
+<span class="font-label-sm text-xs text-cyan-electric font-semibold tracking-wider">NODE_01: ARCHITECT_TELEMETRY</span>
+</div>
+<span class="font-label-sm text-[10px] px-2 py-0.5 rounded bg-violet-electric/10 border border-violet-electric/30 text-violet-electric font-medium">LIVE_FEED</span>
+</div>
+<!-- Portrait Container with Tactical Geometry -->
+<div class="relative w-full aspect-square max-w-sm mx-auto my-2 flex items-center justify-center">
+<!-- Background Glow Halo -->
+<div class="absolute -inset-2 bg-gradient-to-tr from-cyan-electric/20 via-violet-electric/25 to-indigo-600/20 rounded-xl blur-xl animate-quantum-glow pointer-events-none"></div>
+<!-- Outer Telemetry Reticle Corner Notches -->
+<div class="absolute -top-2 -left-2 w-5 h-5 border-t-2 border-l-2 border-cyan-electric"></div>
+<div class="absolute -top-2 -right-2 w-5 h-5 border-t-2 border-r-2 border-violet-electric"></div>
+<div class="absolute -bottom-2 -left-2 w-5 h-5 border-b-2 border-l-2 border-cyan-electric"></div>
+<div class="absolute -bottom-2 -right-2 w-5 h-5 border-b-2 border-r-2 border-violet-electric"></div>
+<!-- Cryptographic Corner Stamp Badges -->
+<div class="absolute -top-3 left-6 z-20 px-2 py-0.5 bg-background border border-cyan-electric/40 rounded font-label-sm text-[9px] text-cyan-electric tracking-widest shadow-md">
+            BIO_SPEC: 99.98% MATCH
+          </div>
+<div class="absolute -bottom-3 right-6 z-20 px-2.5 py-0.5 bg-background border border-violet-electric/50 rounded font-label-sm text-[9px] text-violet-electric tracking-widest shadow-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">enhanced_encryption</span>
+<span>ED25519 // 0x489F</span>
+</div>
+<!-- Image Wrapper with Dual Rim Lighting Borders -->
+<div class="relative w-full h-full rounded-md p-1 bg-gradient-to-tr from-cyan-electric/80 via-surface-container to-violet-electric/80 shadow-[0_0_25px_rgba(6,182,212,0.2)] overflow-hidden">
+<img alt="Amin Jamali - Systems Engineer &amp; Developer" class="w-full h-full object-cover object-center rounded transition-all duration-700 hover:scale-105" src="https://lh3.googleusercontent.com/aida/AEtjO1Xgq0y7en1kudE7fzqhgN1fBpjswYh08GbSY63WaDw1WQohl0j4YrTQcWNMNt4voDPkSCAGKEuewu_2bfb180Hm1pf6N-JsOP_zfF5cn1wBDalHHHaW2-Aen4MJhDgCvfYtH3DetcjSLy5q8PkFDnrKjKX6gu6Q-TQSiWlEz5p1xwCunje2t2MpkqGMqSCQcUvIAUBrHw6YzNIi4P11NMyR9IyUuMM3RwgPkzSolq2HVIhCgxoJgmd5jsM"/>
+<!-- Scanline & Gradient Overlays -->
+<div class="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent pointer-events-none"></div>
+<!-- Floating Verified Identity Strip -->
+<div class="absolute bottom-3 left-3 right-3 py-1.5 px-3 bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/60 rounded flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_6px_#10b981]"></span>
+<span class="font-label-sm text-[10px] text-on-surface font-semibold tracking-wide">SECURE_ID: AJ-8921-SYS</span>
+</div>
+<span class="font-label-sm text-[9px] text-cyan-electric font-bold tracking-widest">OBSV // PRIMARY</span>
+</div>
+</div>
+</div>
+<!-- Frame Lower Diagnostic Telemetry Grid -->
+<div class="mt-4 pt-3 border-t border-outline-variant/60 grid grid-cols-2 gap-2 text-xs font-label-sm">
+<div class="p-2 rounded bg-surface-container-low border border-outline-variant/40 flex flex-col gap-0.5">
+<span class="text-[10px] text-on-surface-variant">HOST_TARGET</span>
+<span class="text-cyan-electric font-semibold">x86_64 // ARM64 NEON</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low border border-outline-variant/40 flex flex-col gap-0.5">
+<span class="text-[10px] text-on-surface-variant">SECURITY_LEVEL</span>
+<span class="text-violet-electric font-semibold">RING-0 ZERO-TRUST</span>
+</div>
+</div>
+</div>
+<!-- Docked Engine Telemetry Signature Bar -->
+<div class="mt-4 p-3 bg-surface-container-low border border-outline-variant/70 rounded-md flex items-center justify-between font-label-sm text-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px] text-cyan-electric">lock</span>
+<span class="text-on-surface-variant">PGP_FINGERPRINT:</span>
+</div>
+<span class="text-violet-electric font-mono text-[11px] font-semibold tracking-wider">3BA9 78CF 0411 D98B</span>
+</div>
+</div>
+<!-- RIGHT COLUMN: Primary Identity, Dossier, CTAs & Metrics Dashboard (58%) -->
+<div class="w-full lg:w-[58%] flex flex-col justify-between">
+<div>
+<!-- Profile Classification Header -->
+<div class="flex flex-wrap items-center gap-2.5 mb-4">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-surface-container-high border border-outline-variant text-xs font-label-md">
+<span class="w-2 h-2 rounded-full bg-violet-electric shadow-[0_0_6px_#8b5cf6] animate-pulse"></span>
+<span class="text-cyan-electric font-bold">[ CORE_SPEC // OBSERVATORY_LEAD ]</span>
+</div>
+<div class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant/60 text-xs font-label-sm text-on-surface-variant">
+<span>EPOCH: 1713580400</span>
+</div>
+<div class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant/60 text-xs font-label-sm text-tertiary">
+<span>ZONE: US-WEST-2 // FRA-01</span>
+</div>
+</div>
+<!-- Name Headline -->
+<h1 class="text-4xl sm:text-6xl lg:text-7xl font-black font-headline-xl tracking-tight text-white leading-none mb-3">
+          Amin Jamali
+        </h1>
+<!-- Sub-spec Designation -->
+<div class="flex flex-wrap items-center gap-2 sm:gap-3 text-lg sm:text-xl font-headline-md font-medium mb-6">
+<span class="text-cyan-electric font-semibold tracking-wide">Distributed Systems &amp; Kernel Architect</span>
+<span class="text-outline hidden sm:inline">/</span>
+<span class="text-violet-electric font-label-md text-xs sm:text-sm tracking-wider uppercase">High-Concurrency Specialist</span>
+</div>
+<!-- Prominent Quote Callout with Quotation Telemetry Bracket -->
+<div class="relative w-full my-6 p-4 sm:p-5 bg-gradient-to-r from-surface-container-high/90 via-surface-container to-surface-container-low border-l-4 border-cyan-electric rounded-r-md backdrop-blur-md shadow-lg">
+<div class="absolute top-2 right-3 font-label-sm text-[10px] text-outline-variant select-none tracking-widest">
+            PARADIGM // 01
+          </div>
+<div class="flex items-start gap-3">
+<span class="font-mono text-2xl text-cyan-electric font-bold select-none leading-none">“</span>
+<p class="text-base sm:text-lg lg:text-xl font-body-lg text-on-background font-medium tracking-normal leading-snug">
+              I build systems that don't fail — obsidian reliability, zero compromise.
+            </p>
+<span class="font-mono text-2xl text-violet-electric font-bold select-none leading-none self-end">”</span>
+</div>
+</div>
+<!-- Expanded Technical Dossier / Bio -->
+<p class="text-sm sm:text-base text-on-surface-variant font-body-md leading-relaxed mb-6">
+          Specializing in zero-allocation network runtimes, lock-free ring buffer orchestration, and Raft consensus engines resilient to partition chaos. Bridging low-overhead Linux eBPF telemetry with resilient multi-region infrastructure subjected to relentless production workloads.
+        </p>
+<!-- Tactical Actions Cluster -->
+<div class="flex flex-wrap items-center gap-3.5 mb-8">
+<a class="px-5 py-3 bg-gradient-to-r from-cyan-electric to-primary-container hover:from-cyan-400 hover:to-cyan-600 text-surface-container-lowest font-body-md font-bold rounded flex items-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.35)] transition-all duration-150" href="#case-studies">
+<span>View Case Studies</span>
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</a>
+<a class="px-5 py-3 border border-violet-electric/60 hover:border-violet-electric text-on-surface bg-violet-electric/10 hover:bg-violet-electric/20 rounded flex items-center gap-2 font-label-md text-xs sm:text-sm tracking-wider transition-all duration-150 shadow-[0_0_15px_rgba(139,92,246,0.15)]" href="#lab">
+<span class="material-symbols-outlined text-[17px] text-violet-electric">science</span>
+<span>Explore the Lab</span>
+</a>
+</div>
+</div>
+<!-- Multi-Column Metrics Dashboard -->
+<div class="mt-2 pt-5 border-t border-outline-variant/80">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2 font-label-sm text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px] text-cyan-electric">speed</span>
+<span class="font-semibold tracking-wider text-cyan-electric">CORE_METRICS // BENCHMARK_OBSERVATORY</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">INTERVAL: 100ms</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+<!-- Metric 1: Uptime -->
+<div class="p-3 bg-surface-container border border-outline-variant/70 rounded flex flex-col justify-between">
+<span class="font-label-sm text-[10px] text-on-surface-variant">SYS_UPTIME</span>
+<span class="font-label-md text-sm sm:text-base font-bold text-tertiary">99.999%</span>
+<span class="font-label-sm text-[9px] text-outline mt-1">SLA_HONORED</span>
+</div>
+<!-- Metric 2: Latency -->
+<div class="p-3 bg-surface-container border border-outline-variant/70 rounded flex flex-col justify-between">
+<span class="font-label-sm text-[10px] text-on-surface-variant">P99_LATENCY</span>
+<span class="font-label-md text-sm sm:text-base font-bold text-cyan-electric">&lt;12ms</span>
+<span class="font-label-sm text-[9px] text-outline mt-1">KERNEL_BPF</span>
+</div>
+<!-- Metric 3: Concurrency -->
+<div class="p-3 bg-surface-container border border-outline-variant/70 rounded flex flex-col justify-between">
+<span class="font-label-sm text-[10px] text-on-surface-variant">THROUGHPUT</span>
+<span class="font-label-md text-sm sm:text-base font-bold text-violet-electric">4.2M req/s</span>
+<span class="font-label-sm text-[9px] text-outline mt-1">PEAK_STRESS</span>
+</div>
+<!-- Metric 4: Raft Consensus -->
+<div class="p-3 bg-surface-container border border-outline-variant/70 rounded flex flex-col justify-between">
+<span class="font-label-sm text-[10px] text-on-surface-variant">RAFT_CONSENSUS</span>
+<span class="font-label-md text-sm sm:text-base font-bold text-cyan-electric">0ms DESYNC</span>
+<span class="font-label-sm text-[9px] text-outline mt-1">QUORUM_SYNC</span>
+</div>
+<!-- Metric 5: Ring Buffer -->
+<div class="p-3 bg-surface-container border border-outline-variant/70 rounded flex flex-col justify-between col-span-2 sm:col-span-1">
+<span class="font-label-sm text-[10px] text-on-surface-variant">RING_BUFFER</span>
+<span class="font-label-md text-sm sm:text-base font-bold text-secondary">ZERO_ALLOC</span>
+<span class="font-label-sm text-[9px] text-outline mt-1">LOCK_FREE</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Crisp Baseline Horizontal Separator with Coordinate Pip -->
+<div class="w-full border-b border-outline-variant/80 relative">
+<div class="absolute left-1/2 -translate-x-1/2 -top-1.5 w-3 h-3 bg-background border border-cyan-electric rotate-45 flex items-center justify-center">
+<div class="w-1 h-1 bg-violet-electric"></div>
+</div>
+</div>
+</main>
+<!-- ================= TERMINAL FOOTER ================= -->
+<footer class="w-full px-6 md:px-12 py-4 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-3 bg-surface-container-lowest">
+<!-- Archival Core Copyright -->
+<div class="text-xs font-label-sm text-on-surface-variant flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-cyan-electric shadow-[0_0_6px_#06b6d4]"></span>
+<span>SYS.VER 4.19.0-LTS // AMIN JAMALI ARCHIVAL CORE // ALL NODES SYNCHRONIZED</span>
+</div>
+<!-- Archival Telemetry Links -->
+<div class="flex flex-wrap items-center gap-5 text-xs font-label-sm">
+<a class="text-on-surface-variant hover:text-cyan-electric hover:underline transition-colors" href="#status">STATUS_PAGE</a>
+<a class="text-on-surface-variant hover:text-cyan-electric hover:underline transition-colors" href="#rfc">RFC_ARCHIVE</a>
+<a class="text-on-surface-variant hover:text-violet-electric hover:underline transition-colors" href="#ssh">SSH_GATEWAY</a>
+<a class="text-on-surface-variant hover:text-violet-electric hover:underline transition-colors" href="#pgp">PGP_KEYS</a>
+<a class="text-on-surface-variant hover:text-cyan-electric hover:underline transition-colors" href="#github">GITHUB_TELEMETRY</a>
+</div>
+</footer>
+</body></html>

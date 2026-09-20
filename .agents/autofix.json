@@ -136,5 +136,11 @@
     "Category": "ARCH",
     "Instruction": "In navigation components (SiteNavbar, MobileNavDrawer), design specifications, and preview artifacts, do not render 'COCKPIT TOPOLOGY', uptime badges (such as '99.9%'), or availability/status badges; keep the brand lockup and navigation links clean without extraneous telemetry badges.",
     "Why": "user explicit instruction: remove cockpit topology, uptime, and availability badge"
+  },
+  {
+    "Rule_number": 24,
+    "Category": "PROCESS",
+    "Instruction": "NEVER use 'read_url_content' to download binary files (images, raw HTML exports, or any non-text binary). It is a text-only fetcher that corrupts binary data and mangles file content. Always use 'run_command' with PowerShell 'Invoke-WebRequest -Uri <url> -OutFile <path>' to download any binary or raw file directly to disk.",
+    "Why": "diagnosed mistake: used read_url_content to download Stitch JPG and HTML files — JPGs were corrupted (unreadable), HTML was not the raw source. Fix: always use Invoke-WebRequest for binary downloads."
   }
 ]

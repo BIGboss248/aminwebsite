@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Amin Jamali — Systems Engineer &amp; Developer // Archive Observatory</title>
+<!-- Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#d4e4fa",
+            "surface-container-lowest": "#010f1f",
+            "surface-tint": "#4cd7f6",
+            "secondary": "#d0bcff",
+            "tertiary-container": "#1bbd85",
+            "surface-container-highest": "#273647",
+            "surface-container": "#122131",
+            "on-tertiary": "#003824",
+            "surface-dim": "#051424",
+            "outline": "#869397",
+            "surface": "#051424",
+            "outline-variant": "#3d494c",
+            "on-surface-variant": "#bcc9cd",
+            "on-error-container": "#ffdad6",
+            "primary-fixed": "#acedff",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface-container-low": "#0d1c2d",
+            "error": "#ffb4ab",
+            "surface-container-high": "#1c2b3c",
+            "secondary-container": "#571bc1",
+            "inverse-on-surface": "#233143",
+            "on-primary-container": "#00424f",
+            "tertiary": "#4edea3",
+            "on-background": "#d4e4fa",
+            "secondary-fixed-dim": "#d0bcff",
+            "surface-bright": "#2c3a4c",
+            "on-primary-fixed": "#001f26",
+            "background": "#051424",
+            "on-secondary-container": "#c4abff",
+            "on-error": "#690005",
+            "on-primary-fixed-variant": "#004e5c",
+            "inverse-primary": "#00687a",
+            "surface-variant": "#273647",
+            "primary-container": "#06b6d4",
+            "on-tertiary-fixed": "#002113",
+            "error-container": "#93000a",
+            "primary": "#4cd7f6",
+            "inverse-surface": "#d4e4fa",
+            "on-tertiary-container": "#00452e",
+            "on-secondary-fixed": "#23005c",
+            "on-secondary": "#3c0091",
+            "secondary-fixed": "#e9ddff",
+            "on-primary": "#003640",
+            "primary-fixed-dim": "#4cd7f6",
+            "on-secondary-fixed-variant": "#5516be",
+            "on-tertiary-fixed-variant": "#005236",
+            "tertiary-fixed": "#6ffbbe"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "gutter-desktop": "1.5rem",
+            "space-lg": "1.5rem",
+            "margin-desktop": "3rem",
+            "space-md": "1rem",
+            "space-xl": "2.5rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "label-lg": ["JetBrains Mono"],
+            "headline-xl": ["Geist"],
+            "label-sm": ["JetBrains Mono"],
+            "headline-xl-mobile": ["Geist"],
+            "headline-sm": ["Geist"],
+            "headline-lg-mobile": ["Geist"],
+            "body-md": ["Geist"],
+            "body-sm": ["Geist"],
+            "body-lg": ["Geist"],
+            "headline-lg": ["Geist"],
+            "label-md": ["JetBrains Mono"],
+            "headline-md": ["Geist"]
+          },
+          "fontSize": {
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+            "headline-xl-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "label-md": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-grid-bg {
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 80%),
+        linear-gradient(to right, rgba(61, 73, 76, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(61, 73, 76, 0.15) 1px, transparent 1px);
+      background-size: 100% 100%, 48px 48px, 48px 48px;
+    }
+    @keyframes pulse-halo {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.03); opacity: 1; }
+    }
+    .animate-halo {
+      animation: pulse-halo 6s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md selection:bg-primary-container selection:text-on-primary-container antialiased">
+<!-- ================= TOP TELEMETRY COCKPIT BAR ================= -->
+<header class="w-full max-w-full px-margin md:px-margin-desktop py-space-sm flex items-center justify-between z-50 sticky top-0 backdrop-blur-md bg-surface border-b border-outline-variant">
+<!-- Brand / Observatory Node -->
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(78,222,163,0.8)] animate-pulse"></div>
+<span class="text-label-lg font-label-lg font-bold text-primary tracking-widest cursor-pointer select-none">
+        AMIN JAMALI // ARCHIVE.OBSERVATORY
+      </span>
+</div>
+<!-- Cockpit Navigation Links -->
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 font-label-md" href="#telemetry">TELEMETRY</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-label-md" href="#systems">SYSTEMS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 font-label-md" href="#benchmarks">BENCHMARKS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 font-label-md" href="#schematics">SCHEMATICS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 font-label-md" href="#kernel">KERNEL</a>
+</nav>
+<!-- Cockpit Status & Tactical Triggers -->
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2 px-2.5 py-1 bg-surface-container-low border border-outline-variant rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="font-label-sm text-label-sm text-tertiary tracking-wider font-semibold">SYS_STATUS: NOMINAL</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<button class="p-1.5 hover:text-primary transition-colors" title="Terminal Interface">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</button>
+<button class="p-1.5 hover:text-primary transition-colors" title="Live Sensors">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+</button>
+<button class="p-1.5 hover:text-primary transition-colors" title="Engine Tuning">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+</div>
+<button class="hidden md:flex items-center gap-2 px-3.5 py-1.5 bg-primary-container hover:bg-surface-tint text-on-primary-container font-label-sm text-label-sm font-bold tracking-widest rounded transition-all shadow-[0_0_12px_rgba(6,182,212,0.3)]">
+<span>INIT_SESSION</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</header>
+<!-- ================= HERO SECTION ================= -->
+<main class="flex-1 relative overflow-hidden custom-grid-bg">
+<!-- Precision Background Markers -->
+<div class="absolute top-12 left-12 font-label-sm text-label-sm text-outline select-none hidden lg:block opacity-40">
+      LOC_ORIGIN // LAT_37.7749_LON_-122.4194
+    </div>
+<div class="absolute top-12 right-12 font-label-sm text-label-sm text-outline select-none hidden lg:block opacity-40">
+      NODE_CORE // 0x7FFD2B8A
+    </div>
+<section class="max-w-7xl mx-auto px-6 md:px-12 py-32 md:py-40 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-12">
+<!-- Left Column: Systems Architect Telemetry & Narrative (60%) -->
+<div class="w-full lg:w-[60%] flex flex-col items-start">
+<!-- System Classification Micro-Badge -->
+<div class="flex items-center gap-3 px-3 py-1 rounded bg-surface-container border border-outline-variant text-on-surface-variant font-label-md text-label-md tracking-wider mb-6">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="text-primary font-bold">[ SYS_PROFILE // LEAD_ARCHITECT_CORE ]</span>
+</div>
+<span class="text-outline">|</span>
+<span class="text-on-surface-variant hidden sm:inline">UTC 00:00:00.00</span>
+<span class="text-outline hidden sm:inline">|</span>
+<span class="text-tertiary hidden sm:inline">REGION: US-WEST-2</span>
+</div>
+<!-- Primary Name Headline -->
+<h1 class="text-5xl md:text-7xl lg:text-8xl font-black font-headline-xl tracking-tight text-white leading-none mb-3">
+          Amin Jamali
+        </h1>
+<!-- Role Designation -->
+<div class="flex items-center gap-3 text-xl md:text-2xl text-on-surface font-headline-md font-medium tracking-normal">
+<span>Systems Engineer &amp; Full-Stack Developer</span>
+<span class="text-outline-variant font-light hidden sm:inline">/</span>
+<span class="text-secondary font-label-lg text-label-lg font-normal tracking-wide hidden sm:inline">DISTRIBUTED KERNEL ARCHITECT</span>
+</div>
+<!-- Architectural Philosophy Statement Callout -->
+<div class="w-full my-7 p-4 bg-primary-container/10 border-l-2 border-primary-container rounded-r backdrop-blur-sm">
+<p class="text-lg md:text-xl font-label-lg text-primary-container font-medium tracking-tight">
+            "I build systems that don't fail — obsidian reliability, zero compromise."
+          </p>
+</div>
+<!-- Secondary Narrative Micro-Copy -->
+<p class="text-base md:text-lg text-on-surface-variant font-body-lg max-w-2xl leading-relaxed mb-8">
+          Architecting zero-allocation kernel pipelines, distributed Raft consensus engines, and resilient multi-region infrastructure under relentless production load.
+        </p>
+<!-- Tactical Actions Cluster -->
+<div class="flex flex-wrap items-center gap-4 w-full sm:w-auto mb-10">
+<a class="px-6 py-3.5 bg-primary-container hover:bg-surface-tint text-surface-container-lowest font-body-md font-bold rounded flex items-center gap-2.5 shadow-[0_0_24px_rgba(6,182,212,0.35)] transition-all duration-150" href="#case-studies">
+<span>View Case Studies</span>
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</a>
+<a class="px-6 py-3.5 border border-outline-variant hover:border-secondary hover:text-secondary text-on-surface bg-surface-container-lowest/50 hover:bg-secondary/10 rounded flex items-center gap-2.5 font-label-md text-label-md tracking-wider transition-all duration-150" href="#lab">
+<span class="material-symbols-outlined text-[16px]">science</span>
+<span>Explore the Lab</span>
+</a>
+</div>
+<!-- Micro-Telemetry Metrics Bar -->
+<div class="w-full pt-6 border-t border-outline-variant/60 flex flex-wrap items-center gap-y-3 gap-x-6 text-on-surface-variant font-label-md text-label-md">
+<div class="flex items-center gap-2">
+<span class="text-outline">UPTIME:</span>
+<span class="text-tertiary font-bold tracking-wider">99.999%</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-2">
+<span class="text-outline">LATENCY:</span>
+<span class="text-primary font-bold tracking-wider">&lt;12ms</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-2">
+<span class="text-outline">CONCURRENCY:</span>
+<span class="text-secondary font-bold tracking-wider">4.2M req/s</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Author Portrait & Telemetry Radar Cage (40%) -->
+<div class="w-full lg:w-[40%] flex flex-col items-center justify-center relative">
+<!-- Interactive Radar Rings & Outer Glow Cage -->
+<div class="relative w-72 h-72 sm:w-88 sm:h-88 md:w-96 md:h-96 flex items-center justify-center">
+<!-- Dual Rim Glow Atmospheric Backdrop -->
+<div class="absolute inset-0 rounded-full bg-gradient-to-r from-primary-container/20 via-transparent to-secondary/20 filter blur-2xl animate-halo pointer-events-none"></div>
+<!-- Radar Outer Coordinate Circle -->
+<div class="absolute inset-0 rounded-full border border-outline-variant/50 border-dashed animate-[spin_60s_linear_infinite]"></div>
+<!-- Radial Micro Ticks -->
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 font-label-sm text-label-sm text-outline px-1 bg-background">000° N</div>
+<div class="absolute -bottom-3 left-1/2 -translate-x-1/2 font-label-sm text-label-sm text-outline px-1 bg-background">180° S</div>
+<div class="absolute -left-4 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-outline px-1 bg-background">270° W</div>
+<div class="absolute -right-4 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-outline px-1 bg-background">090° E</div>
+<!-- Inner Radar Boundary -->
+<div class="absolute inset-3 sm:inset-4 rounded-full border border-outline-variant/40"></div>
+<!-- Author Portrait Wrapper with Dual Rim Lighting -->
+<div class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full p-1 bg-gradient-to-tr from-primary-container via-surface-variant to-secondary shadow-[0_0_40px_rgba(6,182,212,0.15)] overflow-hidden">
+<div class="w-full h-full rounded-full overflow-hidden bg-surface-container-lowest">
+<img alt="Amin Jamali — Lead Systems Architect" class="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-500 scale-105 hover:scale-100" src="../portrait.jpg"/>
+</div>
+</div>
+<!-- Active Telemetry Pill Overlay -->
+<div class="absolute top-2 left-1/2 -translate-x-1/2 z-20 px-3 py-1 bg-surface-dim/90 backdrop-blur-md border border-outline-variant rounded-full flex items-center gap-2 shadow-lg">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold tracking-wider">IDENTITY: VERIFIED</span>
+</div>
+<!-- Key Tag Floating Micro-Badge -->
+<div class="absolute bottom-4 left-0 z-20 px-2.5 py-1 bg-surface-dim/90 border border-outline-variant rounded font-label-sm text-label-sm text-primary shadow-lg hidden sm:flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[12px]">key</span>
+<span>ARCHITECT_KEY_4096</span>
+</div>
+</div>
+<!-- Docked Engineering Specs Telemetry Micro-Card -->
+<div class="w-full max-w-sm mt-8 p-4 bg-surface-container-low/90 backdrop-blur border border-outline-variant rounded">
+<div class="flex items-center justify-between border-b border-outline-variant pb-2 mb-2.5">
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-primary tracking-wider">
+<span class="material-symbols-outlined text-[14px]">memory</span>
+<span>CORE_ENGINEERING_SPEC</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">x86_64 // BPF_JIT</span>
+</div>
+<div class="font-label-md text-label-md text-on-surface flex items-center justify-between">
+<span class="text-outline">RUNTIME_STACK:</span>
+<span class="text-secondary font-semibold">Rust / Go / eBPF / Raft</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Crisp Baseline Horizontal Separator -->
+<div class="w-full border-b border-outline-variant relative">
+<div class="absolute left-1/2 -translate-x-1/2 -top-1.5 w-3 h-3 bg-background border border-primary rotate-45 flex items-center justify-center">
+<div class="w-1 h-1 bg-primary"></div>
+</div>
+</div>
+</main>
+<!-- ================= TERMINAL FOOTER ================= -->
+<footer class="w-full px-margin md:px-margin-desktop py-space-md border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-space-sm bg-surface-container-lowest">
+<div class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>SYS.VER 4.19.0-LTS // AMIN JAMALI ARCHIVAL CORE // ALL NODES SYNCHRONIZED</span>
+</div>
+<div class="flex flex-wrap items-center gap-6">
+<a class="text-on-surface-variant font-label-sm hover:text-primary hover:underline transition-all" href="#status">STATUS_PAGE</a>
+<a class="text-on-surface-variant font-label-sm hover:text-primary hover:underline transition-all" href="#rfc">RFC_ARCHIVE</a>
+<a class="text-on-surface-variant font-label-sm hover:text-primary hover:underline transition-all" href="#ssh">SSH_GATEWAY</a>
+<a class="text-on-surface-variant font-label-sm hover:text-primary hover:underline transition-all" href="#pgp">PGP_KEYS</a>
+<a class="text-on-surface-variant font-label-sm hover:text-primary hover:underline transition-all" href="#github">GITHUB_TELEMETRY</a>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,18 @@
+{
+  "projectId": "5861112417017823447",
+  "screenId": "2f3803573ec94b65a959e4789db39f41",
+  "screenName": "projects/5861112417017823447/screens/2f3803573ec94b65a959e4789db39f41",
+  "deviceType": "DESKTOP",
+  "screenTitle": "About Hero Section - Amin Jamali Systems Engineer",
+  "generationPrompt": "About page Hero section for a senior systems engineer personal portfolio called 'Amin Jamali — Systems Engineer & Developer'. Design: Full-bleed asymmetric two-column hero. Left column (60% width): XL bold engineer name as primary headline in Geist Sans font, followed by role title 'Systems Engineer & Full-Stack Developer' in medium weight, then a one-line philosophy statement highlighted in cyan/teal accent color '#06B6D4', then two CTA buttons (primary teal 'View Case Studies', secondary ghost 'Explore the Lab'). Right column (40% width): A circular high-contrast author portrait with teal+violet studio rim lighting on a dark card surface. Canvas background: deep obsidian '#050505'. Section has generous vertical padding 160px top and bottom.",
+  "variantIds": [
+    "03c61a009cf94a64a53e949112ddc5a9",
+    "adf28de36a49490a9bd63f22071d09bd"
+  ],
+  "variantTitles": [
+    "About Hero - Asymmetric Split & Deep Violet Console",
+    "About Hero - Centered Radar HUD & Tactical Deck"
+  ],
+  "designSystemId": "assets/d3e01f6648cc4fc59ede780d25310b69",
+  "designSystemName": "Cockpit Systems Observatory"
+}

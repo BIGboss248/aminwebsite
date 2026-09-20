@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Amin Jamali — Systems Engineer &amp; Architect // Mission Control HUD</title>
+<!-- Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "background": "#080c10",
+            "surface": "#0d1117",
+            "surface-container": "#111720",
+            "surface-container-high": "#16202c",
+            "surface-container-lowest": "#05070a",
+            "outline-variant": "#222f3e",
+            "outline": "#3e4f63",
+            "primary": "#06b6d4",
+            "primary-container": "#0891b2",
+            "on-primary-container": "#cffafe",
+            "tertiary": "#10b981",
+            "amber-tactical": "#f59e0b",
+            "amber-muted": "#78350f",
+            "on-surface": "#e2e8f0",
+            "on-surface-variant": "#94a3b8"
+          },
+          "fontFamily": {
+            "headline-xl": ["Geist", "sans-serif"],
+            "headline-md": ["Geist", "sans-serif"],
+            "body-md": ["Geist", "sans-serif"],
+            "body-lg": ["Geist", "sans-serif"],
+            "label-lg": ["JetBrains Mono", "monospace"],
+            "label-md": ["JetBrains Mono", "monospace"],
+            "label-sm": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .hud-grid-bg {
+      background-color: #080c10;
+      background-image: 
+        radial-gradient(ellipse at 50% 18%, rgba(6, 182, 212, 0.08) 0%, transparent 65%),
+        linear-gradient(to right, rgba(34, 47, 62, 0.35) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(34, 47, 62, 0.35) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+    }
+    @keyframes radar-sweep {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-radar-sweep {
+      animation: radar-sweep 12s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md selection:bg-primary selection:text-background antialiased">
+<!-- ================= TOP TELEMETRY COCKPIT BAR ================= -->
+<header class="w-full px-4 md:px-8 py-2.5 flex items-center justify-between z-50 sticky top-0 backdrop-blur-md bg-surface/90 border-b border-outline-variant">
+<!-- Brand / Observatory Node -->
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse"></div>
+<span class="text-xs font-label-lg font-bold text-primary tracking-widest cursor-pointer select-none">
+      AMIN JAMALI // ARCHIVE.OBSERVATORY
+    </span>
+<span class="hidden sm:inline-block px-1.5 py-0.5 rounded bg-amber-tactical/10 border border-amber-tactical/40 font-label-sm text-[10px] text-amber-tactical font-semibold tracking-wider">
+      HUD: MK_VI
+    </span>
+</div>
+<!-- Cockpit Navigation Links -->
+<nav class="hidden lg:flex items-center gap-8 font-label-md text-xs">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#telemetry">TELEMETRY</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold" href="#systems">SYSTEMS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#benchmarks">BENCHMARKS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#schematics">SCHEMATICS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#kernel">KERNEL</a>
+</nav>
+<!-- Cockpit Status & Tactical Triggers -->
+<div class="flex items-center gap-3.5">
+<div class="hidden sm:flex items-center gap-2 px-2.5 py-1 bg-surface-container border border-outline-variant rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="font-label-sm text-[10px] text-tertiary tracking-wider font-semibold">SYS_STATUS: NOMINAL</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<button class="p-1 hover:text-primary transition-colors" title="Terminal Interface">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</button>
+<button class="p-1 hover:text-amber-tactical transition-colors" title="Telemetry Feed">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+</button>
+<button class="p-1 hover:text-primary transition-colors" title="Engine Tuning">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+</div>
+<button class="hidden md:flex items-center gap-2 px-3.5 py-1.5 bg-primary hover:bg-cyan-400 text-background font-label-sm text-xs font-bold tracking-widest rounded transition-all shadow-[0_0_14px_rgba(6,182,212,0.35)]">
+<span>INIT_SESSION</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</header>
+<!-- ================= HERO SECTION: CENTER-WEIGHTED RADAR HUD & MODULAR TELEMETRY DECK ================= -->
+<main class="flex-1 relative overflow-hidden hud-grid-bg py-10 md:py-16">
+<!-- Precision Mission Control Calibration Markers -->
+<div class="absolute top-4 left-6 font-label-sm text-[10px] text-outline select-none hidden md:block opacity-60">
+    CTRL_NODE // OBS-37.7749 // SEC_LOCK: ACTIVE
+  </div>
+<div class="absolute top-4 right-6 font-label-sm text-[10px] text-amber-tactical/80 select-none hidden md:block">
+    TACTICAL_FEED // FLIGHT_DECK_REV_04
+  </div>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center">
+<!-- Micro Metadata Status Deck (Top Header Pip) -->
+<div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-3.5 py-1 rounded bg-surface-container/90 border border-outline-variant font-label-sm text-xs tracking-wider mb-8 shadow-lg">
+<div class="flex items-center gap-1.5 text-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span>
+<span class="font-bold">[ TARGET_LOCK: NOMINAL ]</span>
+</div>
+<span class="text-outline">|</span>
+<span class="text-amber-tactical font-mono">LAT: 37°46'29"N</span>
+<span class="text-outline hidden sm:inline">|</span>
+<span class="text-primary font-mono hidden sm:inline">LON: 122°25'10"W</span>
+<span class="text-outline hidden sm:inline">|</span>
+<span class="text-on-surface-variant font-mono hidden md:inline">FREQ: 1420.405 MHz</span>
+</div>
+<!-- Center Radar Sonar Reticle & High-Impact Portrait HUD -->
+<div class="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 flex items-center justify-center mb-8">
+<!-- Exterior Sonar Conic Sweep Ray -->
+<div class="absolute inset-0 rounded-full border border-dashed border-outline-variant/60 animate-[spin_60s_linear_infinite]"></div>
+<!-- Outer Sonar Radar Calibration Rings -->
+<div class="absolute -inset-4 rounded-full border border-outline-variant/30 pointer-events-none"></div>
+<div class="absolute -inset-8 rounded-full border border-outline-variant/15 pointer-events-none hidden sm:block"></div>
+<!-- Live Radar Sweep Beam (Emerald/Cyan gradient line) -->
+<div class="absolute inset-0 rounded-full overflow-hidden pointer-events-none animate-radar-sweep">
+<div class="w-1/2 h-1/2 bg-gradient-to-br from-primary/25 via-tertiary/10 to-transparent origin-bottom-right"></div>
+</div>
+<!-- Radar Crosshairs & Degree Cardinal Pips -->
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-1.5 bg-background font-label-sm text-[10px] text-amber-tactical border border-amber-tactical/30 rounded">000° // NOR</div>
+<div class="absolute -bottom-3 left-1/2 -translate-x-1/2 px-1.5 bg-background font-label-sm text-[10px] text-outline border border-outline-variant rounded">180° // SOU</div>
+<div class="absolute -left-3.5 top-1/2 -translate-y-1/2 px-1.5 bg-background font-label-sm text-[10px] text-outline border border-outline-variant rounded">270°</div>
+<div class="absolute -right-3.5 top-1/2 -translate-y-1/2 px-1.5 bg-background font-label-sm text-[10px] text-outline border border-outline-variant rounded">090°</div>
+<!-- Targeting Reticle Crosshair Hairlines -->
+<div class="absolute inset-x-0 top-1/2 h-px bg-primary/20 pointer-events-none"></div>
+<div class="absolute inset-y-0 left-1/2 w-px bg-primary/20 pointer-events-none"></div>
+<!-- Corner HUD brackets around portrait -->
+<div class="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-primary"></div>
+<div class="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-primary"></div>
+<div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-primary"></div>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-primary"></div>
+<!-- Centered Portrait Container -->
+<div class="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-full p-1.5 bg-gradient-to-b from-primary via-surface-container to-amber-tactical shadow-[0_0_50px_rgba(6,182,212,0.2)]">
+<div class="w-full h-full rounded-full overflow-hidden bg-surface-container-lowest relative">
+<img alt="Amin Jamali - Systems Architect" class="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 scale-105" src="https://lh3.googleusercontent.com/aida/AEtjO1Xgq0y7en1kudE7fzqhgN1fBpjswYh08GbSY63WaDw1WQohl0j4YrTQcWNMNt4voDPkSCAGKEuewu_2bfb180Hm1pf6N-JsOP_zfF5cn1wBDalHHHaW2-Aen4MJhDgCvfYtH3DetcjSLy5q8PkFDnrKjKX6gu6Q-TQSiWlEz5p1xwCunje2t2MpkqGMqSCQcUvIAUBrHw6YzNIi4P11NMyR9IyUuMM3RwgPkzSolq2HVIhCgxoJgmd5jsM"/>
+<!-- Scanline Overlay Simulation -->
+<div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none"></div>
+</div>
+</div>
+<!-- Dynamic Targeting Badges -->
+<div class="absolute top-2 right-2 z-20 px-2 py-0.5 bg-surface-container-lowest/90 border border-tertiary/70 rounded flex items-center gap-1.5 shadow-md">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span>
+<span class="font-label-sm text-[10px] text-tertiary font-bold tracking-wider">RETICLE_LOCKED</span>
+</div>
+<div class="absolute bottom-2 left-2 z-20 px-2 py-0.5 bg-surface-container-lowest/90 border border-amber-tactical/70 rounded flex items-center gap-1.5 shadow-md font-label-sm text-[10px] text-amber-tactical">
+<span class="material-symbols-outlined text-[12px]">security</span>
+<span>ID // AJ-884-OPS</span>
+</div>
+</div>
+<!-- Centered Identity & Designations -->
+<div class="text-center max-w-3xl flex flex-col items-center">
+<div class="flex items-center gap-2 font-label-sm text-xs text-amber-tactical tracking-widest uppercase mb-2">
+<span class="material-symbols-outlined text-[14px]">radar</span>
+<span>TACTICAL TELEMETRY PROFILE // CORE NODE</span>
+</div>
+<h1 class="text-4xl sm:text-6xl md:text-7xl font-black font-headline-xl tracking-tight text-white leading-none mb-2">
+        Amin Jamali
+      </h1>
+<div class="font-label-lg text-sm sm:text-base text-primary font-bold tracking-widest mb-4 flex items-center gap-2">
+<span>// SYSTEMS ARCHITECT</span>
+<span class="text-outline">·</span>
+<span class="text-on-surface-variant font-normal">DISTRIBUTED KERNEL ENGINEER</span>
+</div>
+<!-- Tactical Architectural Quote Callout Banner -->
+<div class="w-full max-w-2xl px-5 py-3.5 bg-surface-container/90 border-y border-r border-l-4 border-l-amber-tactical border-outline-variant rounded-r backdrop-blur-sm mb-6 text-left sm:text-center shadow-lg">
+<p class="font-label-md text-sm sm:text-base text-amber-tactical font-medium leading-snug">
+          "I build systems that don't fail — obsidian reliability, zero compromise."
+        </p>
+</div>
+<p class="text-sm sm:text-base text-on-surface-variant font-body-lg max-w-2xl leading-relaxed mb-8">
+        Engineering mission-critical distributed consensus networks, zero-allocation eBPF observation pipelines, and fault-tolerant cloud backbones designed to withstand sustained high-concurrency production load.
+      </p>
+<!-- Tactical Quick Action Triggers -->
+<div class="flex flex-wrap items-center justify-center gap-3.5 mb-12">
+<a class="px-5 py-2.5 bg-primary hover:bg-cyan-400 text-surface-container-lowest font-label-md text-xs font-bold tracking-wider rounded flex items-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all" href="#case-studies">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+<span>EXECUTE_CASE_STUDIES</span>
+</a>
+<a class="px-5 py-2.5 bg-surface-container border border-amber-tactical/50 hover:border-amber-tactical text-amber-tactical hover:bg-amber-tactical/10 rounded flex items-center gap-2 font-label-md text-xs tracking-wider transition-all" href="#lab">
+<span class="material-symbols-outlined text-[16px]">science</span>
+<span>EXPLORE_KERNEL_LAB</span>
+</a>
+<a class="px-4 py-2.5 bg-surface-container-lowest border border-outline-variant hover:border-tertiary text-on-surface-variant hover:text-tertiary rounded flex items-center gap-2 font-label-md text-xs tracking-wider transition-all" href="#telemetry">
+<span class="material-symbols-outlined text-[16px]">analytics</span>
+<span>DIAGNOSTICS</span>
+</a>
+</div>
+</div>
+<!-- ================= TRI-PANEL MODULAR INSTRUMENTATION DECK ================= -->
+<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mt-2">
+<!-- Panel 1: Core Philosophy & Architecture Scope -->
+<div class="bg-surface-container/90 border border-outline-variant hover:border-primary/60 transition-all rounded p-5 relative flex flex-col justify-between group shadow-lg">
+<div class="absolute top-0 right-0 px-2 py-0.5 bg-surface-container-high border-b border-l border-outline-variant font-label-sm text-[10px] text-primary">
+          DECK_MOD_01
+        </div>
+<div>
+<div class="flex items-center gap-2.5 mb-3">
+<span class="material-symbols-outlined text-primary text-[20px]">architecture</span>
+<h3 class="font-label-lg text-xs font-bold tracking-wider text-white">CORE PHILOSOPHY &amp; SCOPE</h3>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed mb-4">
+            Zero-tolerance for unhandled edge-cases. Deterministic failover via verified Raft state machines and asynchronous, lock-free concurrency models.
+          </p>
+<div class="space-y-2 font-label-sm text-[11px] pt-3 border-t border-outline-variant/60">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">DESIGN PRINCIPLE:</span>
+<span class="text-primary font-semibold">Zero-Allocation Path</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">FAULT TOLERANCE:</span>
+<span class="text-tertiary font-semibold">Byzantine Resilient</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">ISOLATION:</span>
+<span class="text-on-surface">Namespace Sandbox</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[10px] font-label-sm text-outline">
+<span>PARADIGM // OBSIDIAN</span>
+<span class="text-tertiary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> VERIFIED
+          </span>
+</div>
+</div>
+<!-- Panel 2: Live Kernel Stack & eBPF Telemetry -->
+<div class="bg-surface-container/90 border border-outline-variant hover:border-amber-tactical/60 transition-all rounded p-5 relative flex flex-col justify-between group shadow-lg">
+<div class="absolute top-0 right-0 px-2 py-0.5 bg-surface-container-high border-b border-l border-outline-variant font-label-sm text-[10px] text-amber-tactical">
+          DECK_MOD_02
+        </div>
+<div>
+<div class="flex items-center gap-2.5 mb-3">
+<span class="material-symbols-outlined text-amber-tactical text-[20px]">memory</span>
+<h3 class="font-label-lg text-xs font-bold tracking-wider text-white">LIVE KERNEL &amp; eBPF STACK</h3>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed mb-4">
+            In-kernel observability via LLVM-compiled BPF bytecode. Direct packet processing with XDP hook filters and zero ring-buffer drop rates.
+          </p>
+<div class="space-y-2 font-label-sm text-[11px] pt-3 border-t border-outline-variant/60">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">PROBE STATUS:</span>
+<span class="text-amber-tactical font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-tactical animate-pulse"></span> ATTACHED (kprobe)
+              </span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">CORE RUNTIME:</span>
+<span class="text-primary font-semibold">Rust / Go / BPF-JIT</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">KERNEL VER:</span>
+<span class="text-on-surface">6.8.4-edge-hardened</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[10px] font-label-sm text-outline">
+<span>XDP FILTER // BYPASS_NIC</span>
+<span class="text-amber-tactical font-semibold">WARN_THRESH: &gt;95%</span>
+</div>
+</div>
+<!-- Panel 3: Empirical Benchmarks & Node Metrics -->
+<div class="bg-surface-container/90 border border-outline-variant hover:border-tertiary/60 transition-all rounded p-5 relative flex flex-col justify-between group shadow-lg">
+<div class="absolute top-0 right-0 px-2 py-0.5 bg-surface-container-high border-b border-l border-outline-variant font-label-sm text-[10px] text-tertiary">
+          DECK_MOD_03
+        </div>
+<div>
+<div class="flex items-center gap-2.5 mb-3">
+<span class="material-symbols-outlined text-tertiary text-[20px]">speed</span>
+<h3 class="font-label-lg text-xs font-bold tracking-wider text-white">EMPIRICAL NODE BENCHMARKS</h3>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed mb-4">
+            Stress-tested metrics measured across multi-region quorum nodes under artificial partition injections and sustained stress vectors.
+          </p>
+<div class="space-y-2 font-label-sm text-[11px] pt-3 border-t border-outline-variant/60">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">CLUSTER UPTIME:</span>
+<span class="text-tertiary font-bold tracking-wider">99.999% SLA</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">P99 LATENCY:</span>
+<span class="text-primary font-bold">&lt; 11.4 ms</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">THROUGHPUT:</span>
+<span class="text-amber-tactical font-bold">4.2M req/s</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[10px] font-label-sm text-outline">
+<span>QUORUM NODES: 7/7 ACTIVE</span>
+<span class="text-tertiary font-semibold">STATE: SYNCHRONIZED</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Crisp Baseline Center Crosshair Coordinate Marker -->
+<div class="w-full border-b border-outline-variant relative mt-12">
+<div class="absolute left-1/2 -translate-x-1/2 -top-1.5 w-3 h-3 bg-background border border-amber-tactical rotate-45 flex items-center justify-center">
+<div class="w-1 h-1 bg-amber-tactical"></div>
+</div>
+</div>
+</main>
+<!-- ================= TERMINAL FOOTER ================= -->
+<footer class="w-full px-4 md:px-8 py-4 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-3 bg-surface-container-lowest">
+<!-- Archival Core Copyright -->
+<div class="text-label-sm text-xs text-on-surface-variant flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>SYS.VER 4.19.0-LTS // AMIN JAMALI ARCHIVAL CORE // ALL NODES SYNCHRONIZED</span>
+</div>
+<!-- Archival Telemetry Links -->
+<div class="flex flex-wrap items-center gap-5 text-xs font-label-sm">
+<a class="text-on-surface-variant hover:text-amber-tactical transition-colors" href="#status">STATUS_PAGE</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#rfc">RFC_ARCHIVE</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#ssh">SSH_GATEWAY</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#pgp">PGP_KEYS</a>
+<a class="text-on-surface-variant hover:text-tertiary transition-colors" href="#github">GITHUB_TELEMETRY</a>
+</div>
+</footer>
+</body></html>

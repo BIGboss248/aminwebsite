@@ -1,6 +1,6 @@
 ---
 name: component-design
-description: Pure UX and UI design workflow for web and app components, sections, and pages. First enforces a Design Token Verification Gate to centralize and verify all global tokens in docs/project.json (grilling user on missing tokens), then grills on component intent, leverages Google Stitch (StitchMCP) for AI screen scaffolding, layout generation, and variant exploration while persisting Stitch project properties in docs/project.json to prevent duplicate projects, produces bespoke visual assets via proactive image generation (generate_image), outputs a dedicated folder at docs/design/components/[page name]/[component name]/ with an authentic responsive iframe preview and comprehensive design specification markdown, and invokes an independent subagent to rigorously audit design fidelity, token compliance, and zero-coding guardrails. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
+description: Pure UX and UI design workflow for web and app components, sections, and pages. First enforces a Design Token Verification Gate to centralize and verify all global tokens in docs/project.json (grilling user on missing tokens), then grills on component intent, leverages Google Stitch (StitchMCP) for AI screen scaffolding, layout generation, and variant exploration while persisting Stitch project properties in docs/project.json to prevent duplicate projects, downloads and saves Stitch-generated JPG and HTML design files into the codebase, produces bespoke visual assets via proactive image generation (generate_image), outputs a dedicated folder at docs/design/components/[page name]/[component name]/ with a comprehensive design specification markdown, and invokes an independent subagent to rigorously audit design fidelity, token compliance, and zero-coding guardrails. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
 metadata:
   author: BIGboss248
   version: "2.0"
@@ -8,11 +8,11 @@ metadata:
 
 # Component & UI Design Skill (`component-design`)
 
-This skill defines the complete, repeatable workflow for designing web and app components, sections, and full pages in any project. It focuses strictly on **User Experience (UX), User Interface (UI), layout architecture, visual aesthetics, typography, color tokens, Google Stitch AI screen scaffolding and variant exploration, proactive asset generation, and interactive previews**.
+This skill defines the complete, repeatable workflow for designing web and app components, sections, and full pages in any project. It focuses strictly on **User Experience (UX), User Interface (UI), layout architecture, visual aesthetics, typography, color tokens, Google Stitch AI screen scaffolding and variant exploration, proactive asset generation, and saving Stitch design files (JPG + HTML) into the codebase**.
 
 > [!IMPORTANT]
 > **Pure Design Scope (Zero Coding Guardrail):**
-> This skill is strictly concerned with design, layout, visual hierarchy, aesthetic tokens, and previewing. It does **NOT** generate React components, Next.js code, TypeScript props interfaces, component library installation commands (no shadcn/Radix commands), or backend logic. Code implementation is handled in downstream development workflows.
+> This skill is strictly concerned with design, layout, visual hierarchy, aesthetic tokens, and design asset generation. It does **NOT** generate React components, Next.js code, TypeScript props interfaces, component library installation commands (no shadcn/Radix commands), or backend logic. Code implementation is handled in downstream development workflows.
 
 > [!CAUTION]
 > **Design Tokens Prerequisite Gate (Tokens First Rule):**
@@ -31,9 +31,9 @@ flowchart TD
     SaveTokens --> Step2
     CheckTokens -- "Yes / Verified" --> Step2["Step 2: Structured Component Grilling<br/>(Interview user with 3 context-driven choices based on docs)"]
     Step2 --> Step3["Step 3: Google Stitch Scaffolding & Asset Generation<br/>(StitchMCP screen/variant generation + proactive generate_image)"]
-    Step3 --> Step4["Step 4: Generate Component Design Folder<br/>(docs/design/components/[page]/[component]/preview.html + design-spec.md)"]
-    Step4 --> Step5["Step 5: Independent Subagent Quality & Design Audit<br/>(invoke_subagent checks guardrails, tokens, iframe & spec)"]
-    Step5 --> Finish["Review & Visual Approval<br/>(Authentic iframe responsive preview in browser/IDE)"]
+    Step3 --> Step4["Step 4: Download & Save Stitch Designs + Generate Design Folder<br/>(Download Stitch JPG + HTML → docs/design/components/[page]/[component]/stitch/ + design-spec.md)"]
+    Step4 --> Step5["Step 5: Independent Subagent Quality & Design Audit<br/>(invoke_subagent checks guardrails, tokens, Stitch files & spec)"]
+    Step5 --> Finish["Review & Visual Approval<br/>(Stitch JPG designs + design-spec.md in codebase)"]
 ```
 
 ### Deliverable 1: Canonical Design Tokens in `docs/project.json`
@@ -46,9 +46,13 @@ Every designed component or section must be saved in a dedicated path structured
 
 ```text
 docs/design/components/[page name]/[component name]/
-├── preview.html            # Responsive iframe preview shell with theme/locale/viewport controls
 ├── design-spec.md          # Comprehensive UX/UI design specification (citing Stitch layout benchmarks)
-├── stitch/                 # Exported Google Stitch screen layouts, JSON metadata, or variant specs
+├── stitch/                 # Downloaded Google Stitch design files
+│   ├── screen.jpg          # Stitch-generated JPG screenshot of the primary screen
+│   ├── screen.html         # Stitch-generated HTML design export of the primary screen
+│   ├── variant-N.jpg       # Variant JPG screenshots (variant-1.jpg, variant-2.jpg, …)
+│   ├── variant-N.html      # Variant HTML design exports (variant-1.html, variant-2.html, …)
+│   └── stitch-meta.json    # Stitch project ID, screen ID, variant IDs, and generation prompt
 └── [generated assets...]   # Bespoke images, portraits, backdrops, or icons created via generate_image
 ```
 
@@ -174,8 +178,9 @@ To defeat the "Curse of the White Page" and ground every design in professional 
 1. **Explore Spatial & Visual Variations:**
    - Call `generate_variants` on `StitchMCP` for the generated screen to explore alternative arrangements (e.g. data-dense vs. narrative-focused, card-based vs. full-bleed, symmetric vs. asymmetric).
    - Evaluate the returned variants and select the strongest composition that best achieves the component's emotional and functional goals.
-2. **Export Stitch Artifacts (`stitch/`):**
-   - Save the selected Stitch layout structure, prompt, or JSON metadata into `docs/design/components/[page]/[component]/stitch/` for transparent traceability.
+2. **Prepare for Download (Step 4):**
+   - Note the selected screen ID and any chosen variant IDs — these will be fetched and saved to the `stitch/` folder in Step 4.
+   - Record the selected screen name (format: `projects/{projectId}/screens/{screenId}`) for traceability.
 
 #### 4. Proactive Visual Asset Generation (`generate_image`)
 
@@ -188,42 +193,75 @@ To defeat the "Curse of the White Page" and ground every design in professional 
 > - **Brand Marks & Favicons:** Vector monogram logos, geometric badges.
 > - **Diagrams & Data Illustrations:** Flow diagrams, architecture visualizations, security shields, or domain-specific graphics.
 > - **Aspect Ratios:** Use `16:9` for section backdrops/banners, `1:1` for badges/avatars/logos, `4:3` or `3:2` for feature cards.
-> - **Asset Storage:** Save generated images directly into the component's design folder (`docs/design/components/[page]/[component]/`) so the preview and spec are self-contained.
+> - **Asset Storage:** Save generated images directly into the component's design folder (`docs/design/components/[page]/[component]/`) so the spec is self-contained.
 
 ---
 
-### Step 4: Generate Component Folder (`docs/design/components/[page]/[component]/`)
+### Step 4: Download Stitch Design Files & Generate Component Folder
 
-Generate the two required core files inside the standardized directory:
+Generate the component design folder and populate it with the Stitch-generated designs and the design specification.
 
-#### File 1: `preview.html` (Interactive Responsive Iframe Preview)
+#### File 1: Stitch Design Downloads (`stitch/`)
 
 > [!IMPORTANT]
-> **Authentic Responsive Viewport Simulation Rule:**
-> Standard CSS media queries (`@media (min-width: ...)` and Tailwind classes like `sm:`, `md:`, `lg:`) evaluate against the **browser window viewport**, not a wrapping `div`'s `max-width`.
-> Therefore, `preview.html` MUST use an **`<iframe>` container** for the component content:
->
-> - The parent document houses the interactive control bar (Theme Toggle, Direction/Locale Toggle, Viewport Width Buttons).
-> - When the user clicks **Desktop (100%)**, **Tablet (768px)**, or **Mobile (375px)**, the script adjusts the `iframe.style.width`.
-> - Because an `<iframe>` has its own isolated `window` context, resizing its width triggers responsive breakpoint classes (`sm:`, `md:`, `lg:`) **authentically and seamlessly**, exactly as if resizing browser dev tools!
-> - The component HTML/CSS/JS is rendered cleanly inside the iframe (via `srcdoc` or seamless inline document).
+> **Mandatory Stitch Asset Download Rule:**
+> After generating and selecting the best Stitch screen, you MUST download and save both the JPG and HTML outputs from the Stitch API response directly into the component's `stitch/` subfolder. These files are the primary visual design artifacts for the component and must live in the codebase for traceability and review.
 
-The preview controls must include:
-
-- **Theme Toggle:** Toggles Dark (`.dark`) and Light mode across the preview.
-- **Direction / Locale Toggle:** Toggles active locale and layout direction (`ltr` vs `rtl`) according to the project's supported languages, updating copy to real localized text.
-- **Viewport Buttons:** Desktop (`100%`), Tablet (`768px`), Mobile (`375px`) resizing the iframe smoothly with real media query evaluation.
+**Download Protocol:**
 
 > [!CAUTION]
-> **Escaping Script Tags in Template Literals & DOM Mutation Architecture:**
-> When defining the component HTML inside a JavaScript template string, **always escape all closing script tags** (write `<\/script>`). An unescaped `</script>` causes the browser's HTML parser to immediately terminate the outer script block, preventing JavaScript execution and dumping template code as raw text. Furthermore, implement theme and locale toggling by directly mutating the iframe's `contentDocument` (e.g., `classList.toggle('dark')`, `setAttribute('dir', ...)`, and targeted `textContent` updates) rather than re-assigning string literals to `srcdoc`.
+> **Binary Download Rule — NEVER use `read_url_content` for images or HTML files:**
+> `read_url_content` is a text-only tool that converts responses to markdown, **corrupting binary image data** (producing unreadable files) and mangling raw HTML structure. ALL Stitch file downloads MUST use `run_command` with PowerShell `Invoke-WebRequest -OutFile` to fetch binary-safe files directly to disk.
+> HTML download URLs from `contribution.usercontent.google.com` are **short-lived signed URLs** — download immediately after receiving the Stitch response before they expire.
+
+1. **Download Primary Screen JPG:**
+   - Extract `screenshot.downloadUrl` from the `generate_screen_from_text` / `get_screen` response.
+   - Run:
+     ```
+     Invoke-WebRequest -Uri '<screenshot.downloadUrl>' -OutFile 'docs/design/components/[page]/[component]/stitch/screen.jpg'
+     ```
+   - Verify file size is non-zero (> 10KB).
+
+2. **Download Primary Screen HTML:**
+   - Extract `htmlCode.downloadUrl` from the `generate_screen_from_text` / `get_screen` response.
+   - Run:
+     ```
+     Invoke-WebRequest -Uri '<htmlCode.downloadUrl>' -OutFile 'docs/design/components/[page]/[component]/stitch/screen.html'
+     ```
+
+3. **Download Variant JPGs (for each variant from `generate_variants`):**
+   - Extract `screenshot.downloadUrl` from each variant object in the response.
+   - Run for each variant (N = 1, 2, …):
+     ```
+     Invoke-WebRequest -Uri '<variant.screenshot.downloadUrl>' -OutFile 'docs/design/components/[page]/[component]/stitch/variant-N.jpg'
+     ```
+
+4. **Download Variant HTMLs (for each variant from `generate_variants`):**
+   - Extract `htmlCode.downloadUrl` from each variant object in the response.
+   - Run for each variant (N = 1, 2, …):
+     ```
+     Invoke-WebRequest -Uri '<variant.htmlCode.downloadUrl>' -OutFile 'docs/design/components/[page]/[component]/stitch/variant-N.html'
+     ```
+
+5. **Save Stitch Metadata:**
+   - Write a `docs/design/components/[page]/[component]/stitch/stitch-meta.json` file containing:
+     ```json
+     {
+       "projectId": "<stitchProjectId>",
+       "screenId": "<screenId>",
+       "screenName": "projects/<projectId>/screens/<screenId>",
+       "deviceType": "<DESKTOP|TABLET|MOBILE>",
+       "generationPrompt": "<the prompt used for generate_screen_from_text>",
+       "variantIds": ["<variantScreenId1>", "<variantScreenId2>"]
+     }
+     ```
 
 #### File 2: `design-spec.md` (Design Specification Document)
 
 A comprehensive specification documenting:
 
 1. **Executive Summary & Story:** Component identifier, section type, target persona, emotional message.
-2. **Google Stitch Layout Architecture & Screen Benchmarks:** Screen generation prompts, Stitch project and screen IDs, layout composition rationale, and variant comparisons.
+2. **Google Stitch Layout Architecture & Screen Benchmarks:** Screen generation prompts, Stitch project and screen IDs, layout composition rationale, and variant comparisons. Embed the downloaded `stitch/screen.jpg` directly in the spec: `![Screen Design](stitch/screen.jpg)`.
 3. **Visual Hierarchy & Spatial Flow:** 1st, 2nd, and 3rd focal points.
 4. **Layout Grid & Breakpoints:** Stacking behavior for mobile (<768px), tablet (768-1024px), desktop (>=1024px).
 5. **Design Tokens & Color Mapping:** Light and dark values from `docs/project.json`.
@@ -259,17 +297,18 @@ CANONICAL PROJECT TOKENS:
 docs/project.json (under "design_system")
 
 Deliverables to Audit:
-1. docs/design/components/[page name]/[component name]/preview.html
-2. docs/design/components/[page name]/[component name]/design-spec.md
-3. docs/design/components/[page name]/[component name]/stitch/ (if generated)
-4. docs/design/components/[page name]/[component name]/ (generated images/assets)
+1. docs/design/components/[page name]/[component name]/stitch/screen.jpg
+2. docs/design/components/[page name]/[component name]/stitch/screen.html
+3. docs/design/components/[page name]/[component name]/stitch/stitch-meta.json
+4. docs/design/components/[page name]/[component name]/design-spec.md
+5. docs/design/components/[page name]/[component name]/ (generated images/assets)
 
 Audit against these strict criteria:
-1. Zero Coding Guardrail: Confirm that NO React components, Next.js directives ('use client'/'use server'), TypeScript prop interfaces, or package installation commands (no shadcn/Radix CLI commands) leaked into design-spec.md or preview.html. Code implementation belongs strictly downstream.
-2. Design System & Token Compliance: Verify that colors (light/dark canvas, surfaces, accents, status), typography (headings, body, code per locale), border radii, and elevation shadows used in preview.html and design-spec.md strictly align with docs/project.json without arbitrary or hallucinated values.
-3. Interactive Iframe Viewport Architecture: Verify preview.html renders the component within an <iframe> so Desktop (100%), Tablet (768px), and Mobile (375px) controls resize the iframe's isolated window context and trigger genuine CSS media queries. Verify that closing script tags in template literals are safely escaped (<\/script>).
-4. Bilingual & Directional Fidelity: If the project supports RTL languages (e.g. Persian 'fa'), verify preview.html includes a functional LTR/RTL toggle and that design-spec.md provides clear bidirectional mirroring guidelines.
-5. Specification Completeness: Verify design-spec.md documents all 9 required sections: Executive Summary, Google Stitch benchmarks, Visual Hierarchy, Breakpoints Grid, Design Tokens, Typography Scale, Interaction States Matrix, BiDi Adaptations, and Accessibility (contrast & >= 44px touch targets).
+1. Zero Coding Guardrail: Confirm that NO React components, Next.js directives ('use client'/'use server'), TypeScript prop interfaces, or package installation commands (no shadcn/Radix CLI commands) leaked into design-spec.md. Code implementation belongs strictly downstream.
+2. Design System & Token Compliance: Verify that colors (light/dark canvas, surfaces, accents, status), typography (headings, body, code per locale), border radii, and elevation shadows used in design-spec.md strictly align with docs/project.json without arbitrary or hallucinated values.
+3. Stitch JPG & HTML Download Integrity: Verify that stitch/screen.jpg exists as a real downloaded file (non-zero size), stitch/screen.html exists as the Stitch-generated HTML layout, and stitch/stitch-meta.json contains valid projectId, screenId, and generationPrompt fields. If variants were generated, verify variant-N.jpg files are present.
+4. Bilingual & Directional Fidelity: If the project supports RTL languages (e.g. Persian 'fa'), verify design-spec.md provides clear bidirectional mirroring guidelines.
+5. Specification Completeness: Verify design-spec.md documents all 9 required sections: Executive Summary, Google Stitch benchmarks (with embedded stitch/screen.jpg), Visual Hierarchy, Breakpoints Grid, Design Tokens, Typography Scale, Interaction States Matrix, BiDi Adaptations, and Accessibility (contrast & >= 44px touch targets).
 6. Asset & Stitch Integrity: Verify any proactive visual assets (generate_image) are saved locally in the folder, and that Stitch project properties are persisted in docs/project.json.
 
 Respond in this exact format:
@@ -287,7 +326,7 @@ SUMMARY: {brief overall evaluation}
 
 1. **Evaluate Subagent Verdict:**
    - **PASS**: The reviewer found no issues. Proceed directly to presenting the completed deliverables to the user.
-   - **ISSUES_FOUND**: The primary design agent MUST immediately resolve all flagged issues in `preview.html` and `design-spec.md` (e.g., removing leaked code snippets, correcting mismatched token hex values, fixing unescaped script tags, or filling missing spec sections) before completing execution.
+   - **ISSUES_FOUND**: The primary design agent MUST immediately resolve all flagged issues in `stitch/` and `design-spec.md` (e.g., re-downloading missing Stitch JPG/HTML, correcting mismatched token values, or filling missing spec sections) before completing execution.
 2. **Sanity Check**: Confirm all auditor corrections are applied and clean.
 
 ---
@@ -302,7 +341,8 @@ Before presenting the design to the user, ensure:
 - [ ] **Google Stitch (`StitchMCP`) was used to scaffold the screen layout, explore variants, and guide the spatial hierarchy.**
 - [ ] **Google Stitch project properties (`project_id`, `title`) were saved/verified in `docs/project.json` to prevent duplicate project creation.**
 - [ ] All grilling options and choices were generated dynamically from the active project's documentation, with zero hardcoded repository assumptions.
-- [ ] `preview.html` uses an `<iframe>` viewport wrapper so Desktop/Tablet/Mobile buttons trigger real CSS media queries.
+- [ ] **Stitch JPG (`stitch/screen.jpg`) and HTML (`stitch/screen.html`) were downloaded and saved into the codebase from the Stitch API response.**
+- [ ] **`stitch/stitch-meta.json` was written with valid `projectId`, `screenId`, and `generationPrompt` fields.**
 - [ ] Proactive visual assets were generated via `generate_image` if beneficial for the component.
-- [ ] `design-spec.md` details Stitch layout benchmarks, visual hierarchy, tokens, per-locale typography, and states.
+- [ ] `design-spec.md` details Stitch layout benchmarks (with embedded `stitch/screen.jpg`), visual hierarchy, tokens, per-locale typography, and states.
 - [ ] **Independent subagent design audit was invoked via `invoke_subagent`, and all flagged issues were resolved.**

@@ -148,5 +148,11 @@
     "Category": "PROCESS",
     "Instruction": "In design skills and workflows, do not call 'generate_image' or generate images directly to produce image assets. Instead, output the structured image prompt (including prompt description, aspect ratio, suggested filename, and target directory) directly to the user so the user can generate the image externally and place it in the project files, reducing token consumption.",
     "Why": "user explicit requirement: do not generate images directly in design skills; output image prompts to user so user can generate externally and place in project files to reduce token consumption"
+  },
+  {
+    "Rule_number": 26,
+    "Category": "ARCH",
+    "Instruction": "When generating or creating a Next.js page component that is nested under a '[locale]' dynamic route segment and the project defines more than one locale in 'docs/project.json', always export 'generateStaticParams()' returning '{ locale }' for all supported locales (from '@/'i18n/routing' or 'supported_languages') to enable static pre-rendering across all locales.",
+    "Why": "user explicit requirement: configure nextjs-create-component to generate locale routes if generating a nextjs page and if there is more than one locale and the page is nested under locale dynamic route"
   }
 ]

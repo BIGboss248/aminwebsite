@@ -1,9 +1,9 @@
 ---
 name: nextjs-create-component
-description: Step-by-step workflow and engineering standards for designing, creating, styling, documenting, and crafting co-located Storybook stories ([ComponentName].stories.tsx with interactive controls and action spies) for Next.js React components (RSC and Client Components). Saves all related files to a dedicated component directory ([ComponentName]/) categorized under a page directory (or global/ for shared layout components like headers, footers, switchers) under the component directory specified in docs/project.json. First checks for existing components and performs companion file gap analysis to backfill missing skeletons, unit tests, stories, and adversarial edge tests. Consumes planning artifacts from nextjs-plan (docs/project.json, docs/plan.md, lib/routes.ts, lib/site-config.ts, and docs/design/).
+description: Step-by-step workflow and engineering standards for designing, creating, styling, documenting, and crafting co-located Storybook stories ([ComponentName].stories.tsx with interactive controls and action spies) for Next.js React components (RSC and Client Components), including static locale route generation (generateStaticParams) for Next.js pages nested under [locale] dynamic routes when multiple locales exist. Saves all related files to a dedicated component directory ([ComponentName]/) categorized under a page directory (or global/ for shared layout components like headers, footers, switchers) under the component directory specified in docs/project.json. First checks for existing components and performs companion file gap analysis to backfill missing skeletons, unit tests, stories, and adversarial edge tests. Consumes planning artifacts from nextjs-plan (docs/project.json, docs/plan.md, lib/routes.ts, lib/site-config.ts, and docs/design/).
 metadata:
   author: BIGboss248
-  version: "1.8"
+  version: "1.9"
 ---
 
 # Next.js Component Creation Skill (`nextjs-create-component`)
@@ -228,6 +228,65 @@ _(Reference: [Internationalization](../../../node_modules/next/dist/docs/01-app/
      - Interlink entities via `@id` references (e.g., `${pageUrl}#webpage`, `${siteUrl}/#organization`, `${pageUrl}#primary-entity`).
      - Convert CMS rich text trees to plain strings using `lexicalToPlainText(...)` before schema assignment.
      - Mark schema script with `<!-- TODO: Validate on https://validator.schema.org/ -->`.
+3. **Static Locale Route Generation (`generateStaticParams`) for Next.js Pages:**
+   - **Condition:** When generating or scaffolding a Next.js page component (e.g. `page.tsx` or a page route component):
+     1. Check `supported_languages` in `docs/project.json`.
+     2. If `supported_languages.length > 1` (more than one locale configured) AND the page is nested under a `[locale]` dynamic route segment (e.g., `app/[locale]/...` or `src/app/[locale]/...`):
+   - **Mandatory `generateStaticParams()`:** The page component MUST export `generateStaticParams()` returning `{ locale }` for every supported locale to enable static pre-rendering (SSG/ISR) across all locales:
+
+     ```tsx
+     import { routing } from "@/i18n/routing";
+
+     export function generateStaticParams() {
+       return routing.locales.map((locale) => ({ locale }));
+     }
+     ```
+
+     _(If `@/i18n/routing` is not used, read directly from `supported_languages` in `docs/project.json`: e.g. `return [{ locale: 'en' }, { locale: 'fa' }];`)_
+
+   - **Multi-Segment Dynamic Routes (`[locale]/[slug]`):**
+     - **Bottom-Up Approach:** Generate segments for both `[locale]` and child dynamic segments:
+       ```tsx
+       export async function generateStaticParams() {
+         const projects = await getProjects();
+         return routing.locales.flatMap((locale) =>
+           projects.map((project) => ({
+             locale,
+             slug: project.slug,
+           })),
+         );
+       }
+       ```
+     - **Top-Down Approach (Parent Segment Inheritance):** When parent `app/[locale]/layout.tsx` already exports `generateStaticParams()`, Next.js executes child `generateStaticParams` once for each parent param. Note that `params` in `generateStaticParams` is accessed **synchronously** (unlike in `Page` where it is a `Promise`):
+       ```tsx
+       export async function generateStaticParams({
+         params: { locale },
+       }: {
+         params: { locale: string };
+       }) {
+         const projects = await getProjects(locale);
+         return projects.map((project) => ({ slug: project.slug }));
+       }
+       ```
+   - **Async Page & Metadata Props (Next.js 15+ / 16+):** In Next.js 15+, page `params` is a Promise and must be accessed via await:
+
+     ```tsx
+     interface PageProps {
+       params: Promise<{
+         locale: string;
+         [key: string]: string | string[] | undefined;
+       }>;
+     }
+
+     export default async function Page({ params }: PageProps) {
+       const { locale } = await params;
+       // ...
+     }
+     ```
+
+   - **Localized Metadata:** Export `generateMetadata({ params }: PageProps): Promise<Metadata>` to provide localized title, description, OpenGraph, and language alternates (`alternates.languages`).
+   - **Cache Components Compliance:** When Cache Components are enabled, `generateStaticParams` must return at least one param; empty arrays (`[]`) cause build errors.
+   - **Strict Path Control (`dynamicParams`):** Set `export const dynamicParams = false` if non-generated paths should return 404 instead of falling back to on-demand SSR.
 
 ### 7. TSDoc & Module Mapping Rules
 
@@ -274,33 +333,34 @@ Every newly created main component MUST include a co-located Storybook story fil
 
 ### 9. Common Edge Cases & Pitfalls
 
-| Edge Case / Anti-Pattern                                             | Correct Pattern                                                                                                                                                                 |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Direct import of RSC inside `"use client"` file                      | Pass RSC as `children` or React props into Client wrapper                                                                                                                       |
-| Hardcoded colors (e.g., `text-gray-600`)                             | Use semantic design tokens (`text-muted-foreground`)                                                                                                                            |
-| Physical directional margins (`ml-4`, `pr-2`)                        | Use logical properties (`ms-4`, `pe-2`)                                                                                                                                         |
-| Standard `<img>` tag                                                 | Use Next.js `<Image src="..." width={...} height={...} alt="..." />`                                                                                                            |
-| Writing component code before unit tests                             | Follow TDD: Write unit tests first ([ComponentName].test.tsx), establish contract, and code until tests pass                                                                    |
-| Self-certifying quality without adversarial testing                  | Spawn Adversarial Auditor subagent in Step 6 to inject edge-case tests ([ComponentName].edge.test.tsx) without author confirmation bias                                         |
-| Guessing unspecific or vague requirements                            | Interview user (suggest /grill-me) to clarify props, layout & behavior before writing tests                                                                                     |
-| Keeping JSON plan transient in chat memory only                      | Save plan to `.agents/history/plan-[component-name].json` and update subtask statuses to `"completed"` as work finishes                                                         |
-| Using standard `next/link` everywhere indiscriminately               | Use `@vercel/react-transition-progress` `Link` for primary menus, headers, hero CTAs, and interactive cards; reserve `next/link` for static footers and minor inline text links |
-| Naked internal links (`<Link href="/about">`)                        | Use localized paths (`<Link href={localizePath("/about", locale)}>`)                                                                                                            |
-| Manual date/currency formatting strings                              | Use native `Intl.DateTimeFormat` or `Intl.NumberFormat`                                                                                                                         |
-| Skipping `@param` tags or writing non-English TSDoc                  | Write strict English TSDoc for every single prop & parameter                                                                                                                    |
-| Shared singleton `QueryClient` on server                             | Instantiate `new QueryClient()` per request on server; reuse singleton only in browser (`browserQueryClient ??= new QueryClient()`)                                             |
-| Awaiting `prefetchQuery` in RSC                                      | Use non-blocking prefetch `void queryClient.prefetchQuery(...)` inside `<Suspense>` to stream `<Skeleton>` immediately                                                          |
-| Relative URLs in server prefetch                                     | Call internal service or direct DB function in server prefetch `queryFn`; reserve relative URLs for browser fetches                                                             |
-| Missing `staleTime` on hydrated queries                              | Set explicit `staleTime: 30_000` in `queryOptions` to prevent instant duplicate network refetch on client hydration                                                             |
-| Calling `Date.now()` during Cache Components build                   | Wrap dehydration timestamp in `'use cache'` helper with matching `cacheTag`s to prevent prerender build failures                                                                |
-| Sequential `useSuspenseQuery` waterfalls                             | Split independent queries into sibling components or use `useSuspenseQueries`                                                                                                   |
-| Hardcoding internal navigation URLs (`href="/about"`)                | Import route constants/builders from `@/lib/routes` (`ROUTES.about`)                                                                                                            |
-| Hardcoding author bio, contact, or credentials in UI                 | Import canonical details from `@/lib/site-config` (`SITE_CONFIG`)                                                                                                               |
-| Designing UI without consulting design tokens                        | Review `docs/design/03-ui-design-tokens.md` and `docs/design/02-sitemap-and-routes.md`                                                                                          |
-| Creating stories for internal leaf client helpers                    | Only create stories for main components; test leaf components via main component story or unit tests                                                                            |
-| Hardcoded callback stubs instead of `fn()` in stories                | Import `fn` from `'storybook/test'` so user interactions trigger visual events in the Storybook Actions panel                                                                   |
-| Skipping Storybook tests in verification gate                        | Execute Storybook smoke (`pnpm run storybook:smoke`) and static build (`pnpm run build-storybook`) in Step 7 to catch syntax, indexing, and bundle errors                       |
-| Recreating pre-existing component / ignoring missing companion files | Check if component exists first; run gap analysis and backfill missing companion files (skeleton, tests, stories, edge tests) without overwriting existing component code       |
+| Edge Case / Anti-Pattern                                                                            | Correct Pattern                                                                                                                                                                 |
+| :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Direct import of RSC inside `"use client"` file                                                     | Pass RSC as `children` or React props into Client wrapper                                                                                                                       |
+| Hardcoded colors (e.g., `text-gray-600`)                                                            | Use semantic design tokens (`text-muted-foreground`)                                                                                                                            |
+| Physical directional margins (`ml-4`, `pr-2`)                                                       | Use logical properties (`ms-4`, `pe-2`)                                                                                                                                         |
+| Standard `<img>` tag                                                                                | Use Next.js `<Image src="..." width={...} height={...} alt="..." />`                                                                                                            |
+| Writing component code before unit tests                                                            | Follow TDD: Write unit tests first ([ComponentName].test.tsx), establish contract, and code until tests pass                                                                    |
+| Self-certifying quality without adversarial testing                                                 | Spawn Adversarial Auditor subagent in Step 6 to inject edge-case tests ([ComponentName].edge.test.tsx) without author confirmation bias                                         |
+| Guessing unspecific or vague requirements                                                           | Interview user (suggest /grill-me) to clarify props, layout & behavior before writing tests                                                                                     |
+| Keeping JSON plan transient in chat memory only                                                     | Save plan to `.agents/history/plan-[component-name].json` and update subtask statuses to `"completed"` as work finishes                                                         |
+| Using standard `next/link` everywhere indiscriminately                                              | Use `@vercel/react-transition-progress` `Link` for primary menus, headers, hero CTAs, and interactive cards; reserve `next/link` for static footers and minor inline text links |
+| Naked internal links (`<Link href="/about">`)                                                       | Use localized paths (`<Link href={localizePath("/about", locale)}>`)                                                                                                            |
+| Manual date/currency formatting strings                                                             | Use native `Intl.DateTimeFormat` or `Intl.NumberFormat`                                                                                                                         |
+| Skipping `@param` tags or writing non-English TSDoc                                                 | Write strict English TSDoc for every single prop & parameter                                                                                                                    |
+| Shared singleton `QueryClient` on server                                                            | Instantiate `new QueryClient()` per request on server; reuse singleton only in browser (`browserQueryClient ??= new QueryClient()`)                                             |
+| Awaiting `prefetchQuery` in RSC                                                                     | Use non-blocking prefetch `void queryClient.prefetchQuery(...)` inside `<Suspense>` to stream `<Skeleton>` immediately                                                          |
+| Relative URLs in server prefetch                                                                    | Call internal service or direct DB function in server prefetch `queryFn`; reserve relative URLs for browser fetches                                                             |
+| Missing `staleTime` on hydrated queries                                                             | Set explicit `staleTime: 30_000` in `queryOptions` to prevent instant duplicate network refetch on client hydration                                                             |
+| Calling `Date.now()` during Cache Components build                                                  | Wrap dehydration timestamp in `'use cache'` helper with matching `cacheTag`s to prevent prerender build failures                                                                |
+| Sequential `useSuspenseQuery` waterfalls                                                            | Split independent queries into sibling components or use `useSuspenseQueries`                                                                                                   |
+| Hardcoding internal navigation URLs (`href="/about"`)                                               | Import route constants/builders from `@/lib/routes` (`ROUTES.about`)                                                                                                            |
+| Hardcoding author bio, contact, or credentials in UI                                                | Import canonical details from `@/lib/site-config` (`SITE_CONFIG`)                                                                                                               |
+| Designing UI without consulting design tokens                                                       | Review `docs/design/03-ui-design-tokens.md` and `docs/design/02-sitemap-and-routes.md`                                                                                          |
+| Creating stories for internal leaf client helpers                                                   | Only create stories for main components; test leaf components via main component story or unit tests                                                                            |
+| Hardcoded callback stubs instead of `fn()` in stories                                               | Import `fn` from `'storybook/test'` so user interactions trigger visual events in the Storybook Actions panel                                                                   |
+| Skipping Storybook tests in verification gate                                                       | Execute Storybook smoke (`pnpm run storybook:smoke`) and static build (`pnpm run build-storybook`) in Step 7 to catch syntax, indexing, and bundle errors                       |
+| Recreating pre-existing component / ignoring missing companion files                                | Check if component exists first; run gap analysis and backfill missing companion files (skeleton, tests, stories, edge tests) without overwriting existing component code       |
+| Generating Next.js page under `[locale]` without `generateStaticParams` when multiple locales exist | Export `generateStaticParams()` returning `{ locale }` for all supported locales from `@/i18n/routing` or `docs/project.json` to enable static pre-rendering across all locales |
 
 ---
 
@@ -541,6 +601,15 @@ When prompted to create or work on any component:
   > **COMPANION FILE BACKFILL MODE:** Skip re-creating `[ComponentName].tsx` if it already exists. If the companion gap analysis showed that the skeleton is missing, generate `[ComponentName]Skeleton.tsx` matching the geometry and layout classes of the existing component.
 
   Develop the component (`[ComponentName].tsx`) and its skeleton fallback `[ComponentName]Skeleton.tsx` using Tailwind CSS responsive classes (e.g. `sm:`, `md:`, `lg:`) to handle mobile, tablet, and desktop layouts within a single file according to architectural guidelines and baseline test requirements.
+
+  > [!IMPORTANT]
+  > **Next.js Page & Dynamic Locale Route Generation (`generateStaticParams`):**
+  > If the component being created is a Next.js **page** (e.g. `page.tsx` or a page route component):
+  >
+  > 1. **Check Locales & Route Path:** Inspect `supported_languages` in `docs/project.json` and the target file path. If `supported_languages.length > 1` (more than one locale configured) AND the page is nested under a `[locale]` dynamic route segment (e.g. `app/[locale]/...` or `src/app/[locale]/...`):
+  > 2. **Export `generateStaticParams()`:** Always export `generateStaticParams()` returning `{ locale }` for all supported locales (from `@/i18n/routing` or `docs/project.json`) to guarantee static pre-rendering across all locales.
+  > 3. **Handle Dynamic Segments:** If nested with other dynamic segments (e.g. `[slug]`), return combinations of `{ locale, slug }`.
+  > 4. **Await Async `params`:** Type page props as `params: Promise<{ locale: string }>` and `await params` in both the page component and `generateMetadata`.
 
 - [ ] **Step 5b: Builder Phase: Co-Located Storybook Story Creation (`[ComponentName].stories.tsx`)**
       Create a co-located Storybook story file (`[ComponentName].stories.tsx`) directly alongside the component.
@@ -1146,4 +1215,135 @@ export const Default: Story = {};
 export const Skeleton: Story = {
   render: () => <ProductCardSkeleton />,
 };
+```
+
+---
+
+### Reference 3: Localized Next.js Page under Dynamic Route (`app/[locale]/about/page.tsx`)
+
+#### 1. Page Implementation with `generateStaticParams` & Async `params`
+
+```tsx
+import React from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Graph } from "schema-dts";
+import { routing, type Locale } from "@/i18n/routing";
+import { SITE_CONFIG } from "@/lib/site-config";
+import { ROUTES } from "@/lib/routes";
+
+interface PageProps {
+  params: Promise<{
+    locale: string;
+  }>;
+}
+
+/**
+ * Generate static params for all supported locales at build time.
+ * Required when multiple locales are configured in docs/project.json
+ * and the page is nested under the [locale] dynamic segment.
+ */
+export function generateStaticParams(): Array<{ locale: Locale }> {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+/**
+ * Generate localized metadata for SEO and social sharing.
+ */
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as Locale)) {
+    return {};
+  }
+
+  const title =
+    locale === "fa"
+      ? `درباره | ${SITE_CONFIG.author.name}`
+      : `About | ${SITE_CONFIG.author.name}`;
+  const description =
+    locale === "fa"
+      ? "بیوگرافی، مهارت‌ها و تجربیات حرفه‌ای معمار سیستم و مهندس نرم‌افزار."
+      : "Biography, technical skills, and background of the software architect.";
+
+  const canonicalUrl = `${SITE_CONFIG.siteUrl}/${locale}/about`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+      languages: Object.fromEntries(
+        routing.locales.map((loc) => [
+          loc,
+          `${SITE_CONFIG.siteUrl}/${loc}/about`,
+        ]),
+      ),
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: SITE_CONFIG.author.name,
+      locale,
+      type: "profile",
+    },
+  };
+}
+
+/**
+ * Localized About Page (Server Component).
+ */
+export default async function AboutPage({
+  params,
+}: PageProps): Promise<React.JSX.Element> {
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as Locale)) {
+    notFound();
+  }
+
+  const pageUrl = `${SITE_CONFIG.siteUrl}/${locale}/about`;
+
+  const jsonLd: Graph = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfilePage",
+        "@id": `${pageUrl}#profilepage`,
+        url: pageUrl,
+        name: `About ${SITE_CONFIG.author.name}`,
+        mainEntity: {
+          "@type": "Person",
+          "@id": `${SITE_CONFIG.siteUrl}/#person`,
+          name: SITE_CONFIG.author.name,
+          jobTitle: SITE_CONFIG.author.role,
+          url: SITE_CONFIG.siteUrl,
+        },
+      },
+    ],
+  };
+
+  return (
+    <>
+      {/* TODO: Validate on https://validator.schema.org/ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <main className="container mx-auto px-4 py-12 max-w-5xl">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+          {locale === "fa" ? "درباره من" : "About Me"}
+        </h1>
+        <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
+          {locale === "fa"
+            ? "معمار سیستم‌های مقیاس‌پذیر و توسعه‌دهنده متعهد به استانداردهای بالای مهندسی."
+            : "Architecting resilient, scalable systems with modern full-stack technologies."}
+        </p>
+      </main>
+    </>
+  );
+}
 ```

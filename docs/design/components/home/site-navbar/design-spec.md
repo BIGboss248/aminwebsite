@@ -17,6 +17,7 @@ The `SiteNavbar` serves as the primary navigation landmark and identity beacon f
 ```
 +---------------------------------------------------------------------------------------------------------+
 | [EMBLEM] AMIN JAMALI // LAB                 |  [Home] [About] [Projects] [Lab Hub 99.9%] [Contact]  | [EN] [Theme] [=] |
+| [EMBLEM] AMIN JAMALI // LAB                 |  [Home] [About] [Projects] [Lab Hub] [Contact]        | [EN] [Theme] [=] |
 +---------------------------------------------------------------------------------------------------------+
   ^ Left Cluster (Brand Identity)               ^ Center Cluster (Route Links with Brackets)          ^ Right (Utilities)
 ```
@@ -27,6 +28,7 @@ The `SiteNavbar` serves as the primary navigation landmark and identity beacon f
    - **Engineered Minimalism**: Clean lockup without distracting status beacons or version noise.
 2. **Route Navigation Cluster (Center)**:
    - Balanced route navigation pill links: **Home**, **About**, **Projects**, **Lab Hub** (with cyan `99.9%` uptime micro-badge), and **Contact**.
+   - Balanced route navigation pill links: **Home**, **About**, **Projects**, **Lab Hub**, and **Contact**.
    - **Bracket Micro-Interactions**: Hovering or focusing reveals subtle cyan monospace indicator brackets (`[ ]`).
 3. **Utility Cluster (End / Trailing)**:
    - **Locale Switcher**: Compact trigger displaying active locale (`EN` / `FA`) with globe icon.

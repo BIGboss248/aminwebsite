@@ -130,5 +130,11 @@
     "Category": "ARCH",
     "Instruction": "In the SiteNavbar component, design specifications, and preview artifacts, do not render availability/status badges or version tags in the brand identity lockup; keep the brand lockup clean with the emblem, brand title, and optional systems role.",
     "Why": "user explicit instruction: remove the availability badge and version in site navbar"
+  },
+  {
+    "Rule_number": 23,
+    "Category": "ARCH",
+    "Instruction": "In navigation components (SiteNavbar, MobileNavDrawer), design specifications, and preview artifacts, do not render 'COCKPIT TOPOLOGY', uptime badges (such as '99.9%'), or availability/status badges; keep the brand lockup and navigation links clean without extraneous telemetry badges.",
+    "Why": "user explicit instruction: remove cockpit topology, uptime, and availability badge"
   }
 ]

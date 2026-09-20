@@ -8,6 +8,7 @@ import { Link } from "@/app/components/Link";
 import { LocaleSwitcher } from "@/app/components/LocaleSwitcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SiteNavbarSkeleton } from "@/app/components/SiteNavbarSkeleton";
+import { MobileNavDrawer } from "@/app/components/MobileNavDrawer";
 import { ROUTES } from "@/lib/routes";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
@@ -149,6 +150,7 @@ export function SiteNavbar({
       label: tNav("lab") || "Lab Hub",
       href: ROUTES.lab.root,
       badge: showUptimeBadge ? "99.9%" : null,
+      badge: null,
     },
     {
       id: "contact",
@@ -345,6 +347,16 @@ export function SiteNavbar({
           </div>
         </div>
       )}
+      <MobileNavDrawer
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        brandName={brandName}
+        currentPath={effectivePathname}
+        activeLocale={effectiveLocale}
+        showUptimeBadge={showUptimeBadge}
+        onLocaleChange={onLocaleChange}
+        onThemeToggle={onThemeToggle}
+      />
     </header>
   );
 }

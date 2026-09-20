@@ -34,11 +34,10 @@ A comprehensive, chronological checklist tracking all milestones from empty work
 
   > [!IMPORTANT]
   > **Page Completion Rule**: A page checklist item is ticked off (`- [x]`) **IF AND ONLY WHEN all of its individual component sub-checklist items are designed**.
-
   - [ ] **Page: Home (`/`)**
-    - [ ] **Section: Global Navigation / Header**
+    - [x] **Section: Global Navigation / Header**
       - [x] `SiteNavbar` - Brand header with desktop route links
-      - [ ] `MobileNavDrawer` - Slide-out navigation menu for mobile viewports
+      - [x] `MobileNavDrawer` - Slide-out navigation menu for mobile viewports
       - [x] `LocaleSwitcher` - Language selector dropdown (EN / FA)
       - [x] `ThemeToggle` - Dark / light mode switcher
     - [ ] **Section: Hero**

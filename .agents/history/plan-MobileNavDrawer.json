@@ -1,0 +1,79 @@
+{
+  "goal": "Design and create MobileNavDrawer in Next.js App Router with shadcn, Storybook CSF3, and test suites",
+  "history_file": ".agents/history/plan-MobileNavDrawer.json",
+  "sources_audited": [
+    {
+      "path": ".agents/skills/component-design/SKILL.md",
+      "scope_summary": "Token verification, Google Stitch AI screen scaffolding, interactive iframe preview, design spec, independent subagent audit"
+    },
+    {
+      "path": ".agents/skills/nextjs-create-component/SKILL.md",
+      "scope_summary": "RSC/Client boundaries, shadcn sheet composition, TDD baseline tests, Storybook dual-theme isolation, adversarial auditor subagent, test verification"
+    },
+    {
+      "path": ".agents/skills/shadcn/SKILL.md",
+      "scope_summary": "Base-nova style with Base UI / Radix Dialog primitive, semantic tokens, size-*, gap-*, logical directional properties"
+    }
+  ],
+  "subtasks": [
+    {
+      "id": 1,
+      "description": "Component Design Phase: Stitch layout exploration, bespoke emblem asset generation, responsive iframe preview, design specification, and independent UX audit",
+      "workflow_phase_ref": "component-design: Steps 1-5",
+      "tool_intents": [
+        "call_mcp_tool",
+        "generate_image",
+        "write_to_file",
+        "invoke_subagent"
+      ],
+      "verification_criteria": "docs/design/components/home/mobile-nav-drawer/ deliverables complete and audited with PASS verdict",
+      "status": "in_progress"
+    },
+    {
+      "id": 2,
+      "description": "Install or compose shadcn sheet component (Base UI dialog primitive) and write baseline TDD unit tests (MobileNavDrawer.test.tsx)",
+      "workflow_phase_ref": "nextjs-create-component: Step 4 (Builder TDD & Contract Definition)",
+      "tool_intents": ["write_to_file", "run_command"],
+      "verification_criteria": "Unit test suite written covering opening/closing, focus trapping, Escape dismiss, backdrop dismiss, route selection, and RTL layout",
+      "status": "completed"
+    },
+    {
+      "id": 3,
+      "description": "Implement MobileNavDrawer.tsx and MobileNavDrawerSkeleton.tsx with English TSDoc and semantic theme tokens",
+      "workflow_phase_ref": "nextjs-create-component: Step 5a (Builder Component Development)",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "Client Component and skeleton created adhering to shadcn rules, logical properties, and token mapping",
+      "status": "completed"
+    },
+    {
+      "id": 4,
+      "description": "Create co-located Storybook CSF3 story (MobileNavDrawer.stories.tsx) exporting strictly 4 dual-theme isolated variants (Light, Dark, SkeletonLight, SkeletonDark) with controls and fn() action spies",
+      "workflow_phase_ref": "nextjs-create-component: Step 5b (Builder Storybook Story Creation)",
+      "tool_intents": ["write_to_file"],
+      "verification_criteria": "Storybook story exports all 4 required variants with production semantic tokens and documentation",
+      "status": "completed"
+    },
+    {
+      "id": 5,
+      "description": "Spawn Adversarial Auditor Subagent for independent edge-case test injection (MobileNavDrawer.edge.test.tsx)",
+      "workflow_phase_ref": "nextjs-create-component: Step 6 (Adversarial Auditor Subagent)",
+      "tool_intents": ["invoke_subagent"],
+      "verification_criteria": "Subagent completes unbiased audit and writes MobileNavDrawer.edge.test.tsx",
+      "status": "completed"
+    },
+    {
+      "id": 6,
+      "description": "Integrate MobileNavDrawer into SiteNavbar.tsx, update docs/plan.md, and execute full test verification (Jest + Storybook smoke & build)",
+      "workflow_phase_ref": "nextjs-create-component: Step 7 (Two-Tier Verification & Auto-Repair Loop)",
+      "tool_intents": ["replace_file_content", "run_command"],
+      "verification_criteria": "All unit & adversarial tests pass, storybook smoke test passes, storybook builds cleanly",
+      "status": "completed"
+    }
+  ],
+  "eval_metrics": [
+    "Zero CLS, full RTL support, 100% English TSDoc, Storybook dual-theme isolation, baseline and adversarial tests pass, clean build"
+  ],
+  "risk_factors": [
+    "Focus trap trapping in test environment, z-index fighting with header blur, translation context availability in isolated storybook"
+  ]
+}

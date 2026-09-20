@@ -136,12 +136,10 @@ describe("SiteNavbar Baseline Unit Tests (TDD)", () => {
     expect(homeLink).not.toHaveAttribute("aria-current");
   });
 
-  it("renders the Lab Hub telemetry uptime badge by default and supports hiding it", () => {
-    const { rerender } = render(<SiteNavbar showUptimeBadge={true} />);
-    expect(screen.getByText("99.9%")).toBeInTheDocument();
-
-    rerender(<SiteNavbar showUptimeBadge={false} />);
+  it("does not render the 99.9% uptime badge or availability badge", () => {
+    render(<SiteNavbar />);
     expect(screen.queryByText("99.9%")).not.toBeInTheDocument();
+    expect(screen.queryByText(/available for/i)).not.toBeInTheDocument();
   });
 
   it("renders the utility cluster containing LocaleSwitcher and ThemeToggle", () => {

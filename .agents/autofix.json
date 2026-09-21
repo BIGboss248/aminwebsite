@@ -178,5 +178,17 @@
     "Category": "PROCESS",
     "Instruction": "Only create Storybook story files ('[ComponentName].stories.tsx') and execute Storybook verification tests when the 'nextjs-storybook-story' skill is specifically invoked or when explicitly requested by the user; do not automatically generate story files or run Storybook smoke/build tests during standard component development workflows ('nextjs-component-dev' / 'nextjs-create-component').",
     "Why": "user explicit instruction: only create story for components if .agents/skills/nextjs-storybook-story is invoked or explicitly asked by user"
+  },
+  {
+    "Rule_number": 31,
+    "Category": "PROCESS",
+    "Instruction": "In the 'component-design' skill and UI discovery workflows, conduct the user interview in progressive adaptive rounds (Round 1: Purpose, Intent & Emotional Tone; Round 2: Spatial Hierarchy, Layout Grid & Focal Flow; Round 3: Interaction Dynamics, Media Accents & Ergonomics) so each subsequent round uses the user's previous answers as context to formulate and adjust targeted follow-up questions.",
+    "Why": "user explicit instruction: configure component-design skill to conduct interview in rounds so subsequent questions adapt based on user answers"
+  },
+  {
+    "Rule_number": 32,
+    "Category": "PROCESS",
+    "Instruction": "In skill definition files ('SKILL.md'), keep the frontmatter 'description' concise and focused strictly on WHAT the skill does and when it triggers, without explaining internal procedural steps, methodology, or implementation mechanics ('how').",
+    "Why": "user explicit correction: limit description front matter to what the skill does, not how it does it"
   }
 ]

@@ -1,9 +1,9 @@
 ---
 name: component-design
-description: Pure UX and UI discovery, token verification gate, dynamic user grilling/interview, and design specification workflow for web and app components, sections, and pages. First enforces a Design Token Verification Gate to centralize and verify all global tokens in docs/project.json (grilling user on missing tokens), then dynamically grills the user on component intent, spatial hierarchy, layout grid, interaction states, and accessibility, proactively outputs structured image generation prompts for the user to generate externally (without calling generate_image to conserve tokens), outputs a dedicated folder at docs/design/components/[page name]/[component name]/ with a comprehensive design specification markdown (design-spec.md) ready to be fed to visual scaffolding skills like /stitch-design or implementation workflows, and invokes an independent subagent to audit design fidelity, token compliance, and zero-coding guardrails. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
+description: Pure UX and UI discovery, design token verification, interactive user design grilling, and comprehensive design specification generation (docs/design/components/[page]/[component]/design-spec.md) for web and app components, sections, and pages. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
 metadata:
   author: BIGboss248
-  version: "2.1"
+  version: "2.3"
 ---
 
 # Component & UI Design Skill (`component-design`)
@@ -32,9 +32,11 @@ flowchart TD
     Step1 --> CheckTokens{"Are ALL Design Tokens<br/>verified in docs/project.json?"}
     CheckTokens -- "No / Missing Tokens" --> GrillTokens["Step 1.1: Dynamic Grilling on Central Tokens<br/>(Formulate 3 relevant choices from scanned project context)"]
     GrillTokens --> SaveTokens["Step 1.2: Persist Canonical Tokens<br/>(Update docs/project.json under 'design_system')"]
-    SaveTokens --> Step2
-    CheckTokens -- "Yes / Verified" --> Step2["Step 2: Structured Component Grilling<br/>(Interview user with 3 context-driven choices based on docs)"]
-    Step2 --> Step3["Step 3: Proactive Asset Prompt Formulation<br/>(Provide ready-to-use prompts to user, NO direct generate_image)"]
+    SaveTokens --> Round1
+    CheckTokens -- "Yes / Verified" --> Round1["Step 2 - Round 1: Intent & Core Story<br/>(Interview user on purpose & tone)"]
+    Round1 --> Round2["Step 2 - Round 2: Spatial Hierarchy & Flow<br/>(Adapt questions based on Round 1 answers)"]
+    Round2 --> Round3["Step 2 - Round 3: Interaction & Media Accents<br/>(Refine dynamics & visual assets based on layout)"]
+    Round3 --> Step3["Step 3: Proactive Asset Prompt Formulation<br/>(Provide ready-to-use prompts to user, NO direct generate_image)"]
     Step3 --> Step4["Step 4: Generate Design Folder & design-spec.md<br/>(Write docs/design/components/[page]/[component]/design-spec.md)"]
     Step4 --> Step5["Step 5: Independent Subagent Quality & Design Audit<br/>(invoke_subagent checks guardrails, tokens, and spec completeness)"]
     Step5 --> Finish["Spec Ready for Downstream Handoff<br/>(Ready for /stitch-design or implementation)"]
@@ -109,22 +111,63 @@ Once established from existing docs or user grilling, update [`docs/project.json
 
 ---
 
-### Step 2: Structured User Grilling on Component Intent
+### Step 2: Progressive Multi-Round Component Grilling (Adaptive Interview)
 
 With all global design tokens verified and recorded, interview the user regarding the specific component, section, or page to be designed.
 
 > [!IMPORTANT]
-> **Context-Driven Component Choices:**
-> For each question below, synthesize **3 relevant choices** derived specifically from the active project's documentation, target user persona, and component purpose. Mark the primary fit as `(Recommended)`:
+> **Multi-Round Adaptive Interview Rule:**
+> NEVER dump all grilling questions in a single monolithic prompt. Conduct the interview iteratively across **2 to 3 distinct conversational rounds** using `ask_question` (or interactive prompts).
+> After each round, pause and ingest the user's answers. Use the user's responses as context to dynamically formulate, narrow, and adjust the choices in the subsequent round.
+>
+> For every question across all rounds:
+>
+> - Dynamically formulate **3 relevant, high-quality choices** derived from scanned project docs and prior round answers.
+> - Mark the single strongest recommendation as `(Recommended)`.
+> - Avoid filler or generic opposite options; provide realistic, project-tailored directions.
 
-1. **Specific Component Purpose & Story:**
-   - What specific task does the visitor accomplish here, and what emotional impression should it leave? Provide 3 relevant options based on component type and project goals.
-2. **Spatial Density & Layout Scale:**
-   - Provide 3 density options appropriate for the component's role (e.g. data density vs. narrative storytelling vs. visual showcase).
+---
+
+#### Round 1: Component Intent, Persona & Emotional Tone
+
+In this initial round, establish the foundational purpose, user job-to-be-done, and tone of the component:
+
+1. **Specific Component Purpose & User Job-to-be-Done:**
+   - What specific task or decision does the visitor accomplish in this section, and why does it matter to their journey? Formulate 3 relevant options based on component type and project goals.
+2. **Emotional Tone & Visual Persona:**
+   - What emotional impression and visual attitude should this component convey (e.g., authoritative technical precision vs. friendly high-trust onboarding vs. bold high-contrast showcase)? Formulate 3 options fitting the brand story.
+
+_-> Submit Round 1 questions to the user and wait for their response before proceeding to Round 2._
+
+---
+
+#### Round 2: Spatial Hierarchy, Layout Grid & Focal Flow (Adapted from Round 1)
+
+Ingest the user's answers from Round 1. Knowing the exact purpose and emotional tone chosen, tailor the spatial layout and visual hierarchy questions:
+
+1. **Layout Structure & Grid Arrangement:**
+   - Tailored to the chosen purpose from Round 1: How should content be structured spatially across the viewport (e.g. asymmetrical split-column with sticky visual anchor, multi-column modular card matrix, or stacked editorial flow)? Formulate 3 tailored layout options.
+2. **Spatial Density & Scale:**
+   - Formulate 3 density scales aligned with the chosen tone (e.g. expansive spacious breathing room, balanced rhythmic content flow, or compact high-information density).
 3. **Visual Focal Point & Eye Flow:**
-   - Sequence of eye navigation: 1st focal point, 2nd focal point, 3rd focal point.
-4. **Media, Accents & Visual Graphics:**
-   - Proactively evaluate what visuals are needed: vector brand marks, ambient backdrops, 3D elements, or diagram graphics.
+   - Sequence of eye navigation tailored to the chosen layout: 1st focal hook (hero graphic / metric / title), 2nd supporting information (cards / benefits / subtext), 3rd action trigger (CTA button / link / form). Formulate 3 structured flow sequences.
+
+_-> Submit Round 2 questions to the user and wait for their response before proceeding to Round 3._
+
+---
+
+#### Round 3: Interaction Dynamics, Media Accents & Ergonomics (Adapted from Rounds 1 & 2)
+
+Ingest the answers from Rounds 1 and 2. Now knowing the purpose, tone, and spatial layout, interview the user on specific interactive behaviors and visual accents:
+
+1. **Interactive Behavior & State Dynamics:**
+   - Based on the selected layout and cards: What hover, focus, and state transitions best elevate the component (e.g. subtle border glow + elevation lift, micro-expand interactive cards, or minimalist static presentation)? Formulate 3 interactive behavior options.
+2. **Media, Accents & Visual Graphics:**
+   - What visual assets are needed to support the primary focal hook (e.g. custom 3D isometric graphic, ambient glow backdrop, vector diagram/iconography, or typography-only layout)? Formulate 3 visual asset options.
+3. **Ergonomic & Locale Nuances:**
+   - If the project supports RTL or specific touch requirements, verify if any component-specific directional adjustments (e.g. asymmetrical alignment flips, mirrored visual paths) or sticky behaviors are required.
+
+_-> Submit Round 3 questions to the user and wait for their response before proceeding to Step 3._
 
 ---
 
@@ -251,6 +294,7 @@ Before declaring completion, ensure:
 - [ ] Central design tokens in [`docs/project.json`](file:///d:/Scripts/aminwebsite/docs/project.json) are verified and up to date.
 - [ ] Output directory follows the exact path: `docs/design/components/[page name]/[component name]/`.
 - [ ] All grilling options and choices were generated dynamically from the active project's documentation, with zero hardcoded repository assumptions.
+- [ ] Component grilling was conducted across progressive adaptive rounds, dynamically adjusting following questions based on user answers.
 - [ ] `generate_image` was NOT invoked directly; recommended image prompts were output for the user.
 - [ ] `design-spec.md` is complete, covering visual hierarchy, tokens, per-locale typography, interaction states, and accessibility.
 - [ ] **Independent subagent design audit was invoked via `invoke_subagent`, and all flagged issues were resolved.**

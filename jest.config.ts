@@ -16,6 +16,7 @@ const config: Config = {
     '<rootDir>/.next/',
     '<rootDir>/e2e/',
     '<rootDir>/tests/',
+    '<rootDir>/.agents/',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',

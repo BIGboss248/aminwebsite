@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.6.0](https://github.com/BIGboss248/aminwebsite/compare/v1.5.0...v1.6.0) (2026-09-21)
+
+
+### Features
+
+* added feature product grid ([ba6c6f1](https://github.com/BIGboss248/aminwebsite/commit/ba6c6f13431ff054fd4d53e134e657d6c2c23985))
+* added trust signals ([df81b06](https://github.com/BIGboss248/aminwebsite/commit/df81b06608d6321ea1a99212120e5a4541a0ec29))
+* lab launcher section ([e57a38a](https://github.com/BIGboss248/aminwebsite/commit/e57a38adb6033e39ca845a97f4983d1316af89c8))
+* website footer ([3185213](https://github.com/BIGboss248/aminwebsite/commit/3185213c18146e523bafc066054f0ebdf5b5a798))
+
+
+### Bug Fixes
+
+* fixed website url ([7ee21b6](https://github.com/BIGboss248/aminwebsite/commit/7ee21b6fa6e04a851a3d29c18081e11fb68b21c3))
+* url fix ([32a2695](https://github.com/BIGboss248/aminwebsite/commit/32a2695ad05fd300958b57bca62a764fa0b3f5ed))
+
 ## [1.5.0](https://github.com/BIGboss248/aminwebsite/compare/v1.4.0...v1.5.0) (2026-09-21)
 
 

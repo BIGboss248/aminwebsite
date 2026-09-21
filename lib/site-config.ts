@@ -11,7 +11,7 @@ export const SITE_CONFIG = {
   title: "Amin Jamali | Full-Stack Engineer & Architect",
   description:
     "Personal portfolio, interactive engineering lab, and digital credentials platform of Amin Jamali.",
-  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "https://aminjamali.com",
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "https://aminjamali79.com",
   author: {
     name: "Amin Jamali",
     role: "Full-Stack Engineer & Systems Architect",

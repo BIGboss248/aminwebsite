@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import { Moon, Sun } from "lucide-react";
 import { flushSync } from "react-dom";
 import { cn } from "cn";
@@ -42,6 +43,8 @@ export function ThemeToggle({
   className = "",
   onToggle,
 }: ThemeToggleProps = {}): React.JSX.Element {
+  const tCommon = useTranslations("common");
+
   const { setTheme, resolvedTheme } = useTheme();
   const mounted = React.useSyncExternalStore(
     emptySubscribe,
@@ -125,12 +128,12 @@ export function ThemeToggle({
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      aria-label="Toggle theme"
+      aria-label={tCommon("theme_toggle")}
       className={cn("relative", className)}
     >
       <Sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <Moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
+      <span className="sr-only">{tCommon("theme_toggle")}</span>
     </Button>
   );
 }

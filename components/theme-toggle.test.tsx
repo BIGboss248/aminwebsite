@@ -5,6 +5,15 @@ import { ThemeToggle, ThemeToggleSkeleton } from "./theme-toggle";
 const mockSetTheme = jest.fn();
 let mockResolvedTheme = "light";
 
+jest.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => {
+    const map: Record<string, string> = {
+      theme_toggle: "Toggle theme",
+    };
+    return map[key] ?? key;
+  },
+}));
+
 jest.mock("next-themes", () => ({
   useTheme: () => ({
     theme: mockResolvedTheme,
@@ -85,7 +94,9 @@ describe("ThemeToggle Baseline Unit Tests", () => {
     const mockTransitionReady = Promise.resolve();
 
     document.documentElement.animate = mockAnimate;
-    (document as unknown as { startViewTransition?: unknown }).startViewTransition = jest.fn().mockImplementation((cb: () => void) => {
+    (
+      document as unknown as { startViewTransition?: unknown }
+    ).startViewTransition = jest.fn().mockImplementation((cb: () => void) => {
       cb();
       return {
         ready: mockTransitionReady,
@@ -130,7 +141,9 @@ describe("ThemeToggle Baseline Unit Tests", () => {
   });
 
   it("bypasses view transition animation when user prefers reduced motion", () => {
-    (document as unknown as { startViewTransition?: unknown }).startViewTransition = jest.fn();
+    (
+      document as unknown as { startViewTransition?: unknown }
+    ).startViewTransition = jest.fn();
 
     // Match media returns true for prefers-reduced-motion
     window.matchMedia = jest.fn().mockImplementation((query: string) => ({
@@ -161,7 +174,9 @@ describe("ThemeToggle Baseline Unit Tests", () => {
   });
 
   it("renders ThemeToggleSkeleton with matching dimensions and pulse animation", () => {
-    const { container } = render(<ThemeToggleSkeleton className="skeleton-custom" />);
+    const { container } = render(
+      <ThemeToggleSkeleton className="skeleton-custom" />,
+    );
 
     const skeleton = container.firstChild as HTMLElement;
     expect(skeleton).toBeInTheDocument();
@@ -170,4 +185,3 @@ describe("ThemeToggle Baseline Unit Tests", () => {
     expect(skeleton).toHaveAttribute("aria-hidden", "true");
   });
 });
-

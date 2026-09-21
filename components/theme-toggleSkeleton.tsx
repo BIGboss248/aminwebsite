@@ -1,5 +1,4 @@
 import * as React from "react";
-import { cn } from "cn";
 import { cn } from "@/lib/utils";
 
 /**
@@ -16,7 +15,6 @@ export function ThemeToggleSkeleton({
   return (
     <div
       aria-hidden="true"
-      className={cn("h-8 w-8 rounded-lg bg-muted/50 animate-pulse", className)}
       className={cn("h-8 w-8 rounded-lg bg-skeleton animate-pulse", className)}
       {...props}
     />
@@ -25,4 +23,3 @@ export function ThemeToggleSkeleton({
 
 export const Skeleton = ThemeToggleSkeleton;
 export default ThemeToggleSkeleton;
-

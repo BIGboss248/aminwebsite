@@ -5,6 +5,15 @@ import { ThemeToggle, ThemeToggleSkeleton } from "./theme-toggle";
 const mockSetTheme = jest.fn();
 let mockResolvedTheme: string | undefined = "light";
 
+jest.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => {
+    const map: Record<string, string> = {
+      theme_toggle: "Toggle theme",
+    };
+    return map[key] ?? key;
+  },
+}));
+
 jest.mock("next-themes", () => ({
   useTheme: () => ({
     theme: mockResolvedTheme,
@@ -57,15 +66,15 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
 
     it("survives rapid click bursts when startViewTransition is active", async () => {
       let activeTransitions = 0;
-      (document as unknown as { startViewTransition?: unknown }).startViewTransition = jest
-        .fn()
-        .mockImplementation((cb: () => void) => {
-          activeTransitions++;
-          cb();
-          return {
-            ready: Promise.resolve(),
-          };
-        });
+      (
+        document as unknown as { startViewTransition?: unknown }
+      ).startViewTransition = jest.fn().mockImplementation((cb: () => void) => {
+        activeTransitions++;
+        cb();
+        return {
+          ready: Promise.resolve(),
+        };
+      });
 
       render(<ThemeToggle />);
       const button = screen.getByRole("button", { name: /toggle theme/i });
@@ -91,14 +100,14 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
       const mockAnimate = jest.fn();
       document.documentElement.animate = mockAnimate;
 
-      (document as unknown as { startViewTransition?: unknown }).startViewTransition = jest
-        .fn()
-        .mockImplementation((cb: () => void) => {
-          cb();
-          return {
-            ready: readyPromise,
-          };
-        });
+      (
+        document as unknown as { startViewTransition?: unknown }
+      ).startViewTransition = jest.fn().mockImplementation((cb: () => void) => {
+        cb();
+        return {
+          ready: readyPromise,
+        };
+      });
 
       const { unmount } = render(<ThemeToggle />);
       const button = screen.getByRole("button", { name: /toggle theme/i });
@@ -125,19 +134,22 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
 
   describe("3. Resiliency against getBoundingClientRect Failures", () => {
     it("handles getBoundingClientRect throwing an exception without crashing", () => {
-      (document as unknown as { startViewTransition?: unknown }).startViewTransition = jest
-        .fn()
-        .mockImplementation((cb: () => void) => {
-          cb();
-          return { ready: Promise.resolve() };
-        });
+      (
+        document as unknown as { startViewTransition?: unknown }
+      ).startViewTransition = jest.fn().mockImplementation((cb: () => void) => {
+        cb();
+        return { ready: Promise.resolve() };
+      });
 
       render(<ThemeToggle />);
       const button = screen.getByRole("button", { name: /toggle theme/i });
 
       // Mock getBoundingClientRect to throw an error (e.g. disconnected node or virtual DOM issue)
       jest.spyOn(button, "getBoundingClientRect").mockImplementation(() => {
-        throw new DOMException("The element is not attached to the DOM", "InvalidStateError");
+        throw new DOMException(
+          "The element is not attached to the DOM",
+          "InvalidStateError",
+        );
       });
 
       expect(() => {
@@ -148,12 +160,12 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
     });
 
     it("handles getBoundingClientRect returning all-zero dimensions safely", () => {
-      (document as unknown as { startViewTransition?: unknown }).startViewTransition = jest
-        .fn()
-        .mockImplementation((cb: () => void) => {
-          cb();
-          return { ready: Promise.resolve() };
-        });
+      (
+        document as unknown as { startViewTransition?: unknown }
+      ).startViewTransition = jest.fn().mockImplementation((cb: () => void) => {
+        cb();
+        return { ready: Promise.resolve() };
+      });
 
       render(<ThemeToggle />);
       const button = screen.getByRole("button", { name: /toggle theme/i });
@@ -180,14 +192,16 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
 
   describe("4. Rejection in transition.ready", () => {
     it("prevents unhandled promise rejections when transition.ready rejects", async () => {
-      const rejectedPromise = Promise.reject(new Error("View transition aborted by browser"));
+      const rejectedPromise = Promise.reject(
+        new Error("View transition aborted by browser"),
+      );
 
-      (document as unknown as { startViewTransition?: unknown }).startViewTransition = jest
-        .fn()
-        .mockImplementation((cb: () => void) => {
-          cb();
-          return { ready: rejectedPromise };
-        });
+      (
+        document as unknown as { startViewTransition?: unknown }
+      ).startViewTransition = jest.fn().mockImplementation((cb: () => void) => {
+        cb();
+        return { ready: rejectedPromise };
+      });
 
       render(<ThemeToggle />);
       const button = screen.getByRole("button", { name: /toggle theme/i });
@@ -318,7 +332,7 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
           className="border border-primary shadow-sm"
           style={{ opacity: 0.75 }}
           onClick={customOnClick}
-        />
+        />,
       );
 
       const skeleton = screen.getByTestId("theme-skeleton");
@@ -346,7 +360,7 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
         <ThemeToggleSkeleton
           data-testid="theme-skeleton"
           className="size-10"
-        />
+        />,
       );
       expect(skeleton).toHaveClass("size-10");
       expect(skeleton).not.toHaveClass("h-8");
@@ -361,7 +375,7 @@ describe("ThemeToggle Adversarial Edge-Case & Stress Tests", () => {
           data-testid="skeleton-visible"
           aria-hidden={false}
           aria-label="Loading theme toggle"
-        />
+        />,
       );
 
       const skeleton = screen.getByTestId("skeleton-visible");

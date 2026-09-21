@@ -44,6 +44,8 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-section-alternate-foreground: var(--section-alternate-foreground);
+  --color-section-alternate: var(--section-alternate);
   --color-skeleton: var(--skeleton);
   --color-skeleton-shimmer: var(--skeleton-shimmer);
   --color-skeleton-border: var(--skeleton-border);
@@ -66,6 +68,8 @@ body {
 .light {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+  --section-alternate: oklch(0.975 0 0);
+  --section-alternate-foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -104,6 +108,8 @@ body {
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
+  --section-alternate: oklch(0.18 0 0);
+  --section-alternate-foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -147,6 +153,14 @@ body {
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  /* Alternating Section Surfaces */
+  section:nth-of-type(even) {
+    background-color: var(--section-alternate);
+    color: var(--section-alternate-foreground);
   }
 }
 

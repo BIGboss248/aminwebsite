@@ -97,10 +97,15 @@ export function SiteNavbar({
   const effectiveLocale = activeLocale ?? contextLocale;
 
   let tNav: (key: string) => string;
+  let tCommon: (key: string) => string;
   try {
-    tNav = useTranslations("navigation");
+    const navT = useTranslations("navigation");
+    const commonT = useTranslations("common");
+    tNav = (key: string) => navT(key as never);
+    tCommon = (key: string) => commonT(key as never);
   } catch {
     tNav = (key: string) => key;
+    tCommon = (key: string) => key;
   }
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -129,32 +134,31 @@ export function SiteNavbar({
   const navItems = [
     {
       id: "home",
-      label: tNav("home") || "Home",
+      label: tNav("home"),
       href: ROUTES.home,
       badge: null,
     },
     {
       id: "about",
-      label: tNav("about") || "About",
+      label: tNav("about"),
       href: ROUTES.about,
       badge: null,
     },
     {
       id: "projects",
-      label: tNav("projects") || "Projects",
+      label: tNav("projects"),
       href: ROUTES.projects.root,
       badge: null,
     },
     {
       id: "lab",
-      label: tNav("lab") || "Lab Hub",
+      label: tNav("lab"),
       href: ROUTES.lab.root,
-      badge: showUptimeBadge ? "99.9%" : null,
       badge: null,
     },
     {
       id: "contact",
-      label: tNav("contact") || "Contact",
+      label: tNav("contact"),
       href: ROUTES.contact,
       badge: null,
     },
@@ -178,14 +182,14 @@ export function SiteNavbar({
     >
       <nav
         role="navigation"
-        aria-label="Main Navigation"
+        aria-label={tNav("main_nav")}
         className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
       >
         {/* 1. Start Cluster: Brand & Live Telemetry Beacon */}
         <Link
           href={ROUTES.home}
           className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md"
-          aria-label={`${brandName} Home`}
+          aria-label={`${brandName} ${tNav("home")}`}
         >
           {/* Circuit Lattice SVG Vector Emblem */}
           <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-[0_0_12px_rgba(6,182,212,0.3)] group-hover:rotate-6">
@@ -217,7 +221,9 @@ export function SiteNavbar({
           <div className="flex items-center gap-1 font-mono text-[13px] font-bold tracking-wider text-foreground">
             <span>{brandName.toUpperCase()}</span>
             <span className="text-primary">//</span>
-            <span className="text-[11px] font-semibold text-primary">LAB</span>
+            <span className="text-[11px] font-semibold text-primary">
+              {tCommon("brand_lab")}
+            </span>
           </div>
         </Link>
 
@@ -292,7 +298,7 @@ export function SiteNavbar({
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            aria-label="Toggle navigation menu"
+            aria-label={tNav("toggle_menu")}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation-drawer"
             className="flex md:hidden h-8 w-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -311,7 +317,7 @@ export function SiteNavbar({
         <div
           id="mobile-navigation-drawer"
           role="region"
-          aria-label="Mobile Navigation"
+          aria-label={tNav("mobile_nav")}
           className="md:hidden border-b border-border bg-background/95 backdrop-blur-xl px-4 py-3 shadow-lg animate-in slide-in-from-top-2 duration-200"
         >
           <div className="flex flex-col gap-1">

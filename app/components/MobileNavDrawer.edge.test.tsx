@@ -27,27 +27,20 @@ beforeAll(() => {
   });
 });
 
+import enMessages from "@/messages/en.json";
+import faMessages from "@/messages/fa.json";
+
 jest.mock("next-intl", () => ({
   useLocale: () => mockCurrentLocale,
-  useTranslations: () => (key: string) => {
-    const translations: Record<string, string> = {
-      home: "Home",
-      about: "About",
-      projects: "Projects",
-      lab: "Lab Hub",
-      contact: "Contact",
-      brand: "Amin Jamali",
-      sys_online: "ONLINE // 9.4ms",
-      switch_language: "Language",
-      theme_toggle: "Toggle Theme",
-      toggle_menu: "Toggle navigation menu",
-      menu_opened: "Navigation menu opened",
-      menu_closed: "Navigation menu closed",
-      close_menu: "Close navigation drawer",
-      route_topology: "ROUTE_TOPOLOGY",
-      system_telemetry: "SYSTEM_TELEMETRY",
-    };
-    return translations[key] ?? key;
+  useTranslations: (namespace?: string) => (key: string) => {
+    const dict = mockCurrentLocale === "fa" ? faMessages : enMessages;
+    if (namespace === "navigation") {
+      return (dict.navigation as Record<string, string>)[key] ?? key;
+    }
+    if (namespace === "common") {
+      return (dict.common as Record<string, string>)[key] ?? key;
+    }
+    return key;
   },
 }));
 
@@ -121,15 +114,20 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
       const brandEl = screen.getByText(longBrand);
       expect(brandEl).toBeInTheDocument();
 
-      const homeLink = screen.getByRole("link", { name: new RegExp(`${longBrand} Home`, "i") });
+      const homeLink = screen.getByRole("link", {
+        name: new RegExp(`${longBrand} Home`, "i"),
+      });
       expect(homeLink).toBeInTheDocument();
     });
 
     it("handles special characters, symbols, and HTML/XSS injection payloads safely as pure text", () => {
-      const maliciousBrand = '<script>alert("XSS")</script> && " \' / \\ <>&%$#@!';
+      const maliciousBrand =
+        '<script>alert("XSS")</script> && " \' / \\ <>&%$#@!';
       render(<MobileNavDrawer {...defaultProps} brandName={maliciousBrand} />);
 
-      expect(screen.getByText(maliciousBrand.toUpperCase())).toBeInTheDocument();
+      expect(
+        screen.getByText(maliciousBrand.toUpperCase()),
+      ).toBeInTheDocument();
       expect(document.querySelector("script")).toBeNull();
     });
 
@@ -159,7 +157,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
   // =========================================================================
   describe("2. Rapid Toggle Cycles & Body Scroll Lock", () => {
     it("locks body scroll on mount and unlocks reliably on toggle", () => {
-      const { rerender } = render(<MobileNavDrawer {...defaultProps} isOpen={true} />);
+      const { rerender } = render(
+        <MobileNavDrawer {...defaultProps} isOpen={true} />,
+      );
       expect(document.body.style.overflow).toBe("hidden");
 
       rerender(<MobileNavDrawer {...defaultProps} isOpen={false} />);
@@ -170,7 +170,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
     });
 
     it("maintains scroll lock integrity through rapid alternating toggle cycles", () => {
-      const { rerender } = render(<MobileNavDrawer {...defaultProps} isOpen={false} />);
+      const { rerender } = render(
+        <MobileNavDrawer {...defaultProps} isOpen={false} />,
+      );
       expect(document.body.style.overflow).toBe("");
 
       for (let i = 0; i < 6; i++) {
@@ -181,7 +183,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
     });
 
     it("unlocks body scroll when unmounted while open", () => {
-      const { unmount } = render(<MobileNavDrawer {...defaultProps} isOpen={true} />);
+      const { unmount } = render(
+        <MobileNavDrawer {...defaultProps} isOpen={true} />,
+      );
       expect(document.body.style.overflow).toBe("hidden");
 
       unmount();
@@ -190,7 +194,13 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
 
     it("does not trigger onClose on Escape when drawer is closed", () => {
       const handleClose = jest.fn();
-      render(<MobileNavDrawer {...defaultProps} isOpen={false} onClose={handleClose} />);
+      render(
+        <MobileNavDrawer
+          {...defaultProps}
+          isOpen={false}
+          onClose={handleClose}
+        />,
+      );
 
       fireEvent.keyDown(window, { key: "Escape" });
       expect(handleClose).not.toHaveBeenCalled();
@@ -198,7 +208,13 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
 
     it("ignores non-Escape keyboard events on window when open", () => {
       const handleClose = jest.fn();
-      render(<MobileNavDrawer {...defaultProps} isOpen={true} onClose={handleClose} />);
+      render(
+        <MobileNavDrawer
+          {...defaultProps}
+          isOpen={true}
+          onClose={handleClose}
+        />,
+      );
 
       fireEvent.keyDown(window, { key: "Enter" });
       fireEvent.keyDown(window, { key: "Tab" });
@@ -221,7 +237,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
         />,
       );
 
-      const nav = screen.getByRole("navigation", { name: "Mobile Route Nodes" });
+      const nav = screen.getByRole("navigation", {
+        name: "Mobile Route Nodes",
+      });
       const links = within(nav).getAllByRole("link");
 
       // Click each navigation route node
@@ -308,6 +326,7 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
   // =========================================================================
   describe("5. Persian (RTL) Mode Parity", () => {
     it("renders slide-in-from-left class and Persian descriptions when activeLocale='fa'", () => {
+      mockCurrentLocale = "fa";
       render(
         <MobileNavDrawer
           {...defaultProps}
@@ -329,6 +348,7 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
     });
 
     it("renders ArrowLeft icon for active item in RTL mode", () => {
+      mockCurrentLocale = "fa";
       const { container } = render(
         <MobileNavDrawer
           {...defaultProps}
@@ -337,8 +357,8 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
         />,
       );
 
-      const nav = screen.getByRole("navigation", { name: "Mobile Route Nodes" });
-      const aboutLink = within(nav).getByRole("link", { name: /about/i });
+      const nav = screen.getByRole("navigation");
+      const aboutLink = within(nav).getByRole("link", { name: /درباره من/i });
       expect(aboutLink).toHaveAttribute("aria-current", "page");
 
       // In RTL mode, ArrowLeft is rendered for active route
@@ -361,7 +381,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
       expect(aside.className).not.toContain("slide-in-from-left");
 
       // English description
-      expect(screen.getByText("Biography & Architecture Philosophy")).toBeInTheDocument();
+      expect(
+        screen.getByText("Biography & Architecture Philosophy"),
+      ).toBeInTheDocument();
 
       // In LTR mode, ArrowRight is rendered for active route
       const arrowRightIcon = container.querySelector(".lucide-arrow-right");
@@ -384,7 +406,8 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
   // =========================================================================
   describe("6. Custom className Merging", () => {
     it("merges custom className cleanly onto the aside drawer panel", () => {
-      const customClass = "adversarial-custom-class border-emerald-500 shadow-none";
+      const customClass =
+        "adversarial-custom-class border-emerald-500 shadow-none";
       render(<MobileNavDrawer {...defaultProps} className={customClass} />);
 
       const aside = screen.getByRole("dialog");
@@ -417,7 +440,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
       expect(skeletonCards.length).toBe(0);
 
       // Header and utility dock skeletons remain intact
-      expect(screen.getByTestId("mobile-nav-drawer-skeleton")).toBeInTheDocument();
+      expect(
+        screen.getByTestId("mobile-nav-drawer-skeleton"),
+      ).toBeInTheDocument();
     });
 
     it("renders high itemCount={12} placeholders gracefully", () => {
@@ -435,7 +460,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
     });
 
     it("merges custom className onto the skeleton container", () => {
-      render(<MobileNavDrawerSkeleton className="custom-skeleton-class border-red-500" />);
+      render(
+        <MobileNavDrawerSkeleton className="custom-skeleton-class border-red-500" />,
+      );
 
       const skeleton = screen.getByTestId("mobile-nav-drawer-skeleton");
       expect(skeleton).toHaveClass("custom-skeleton-class");
@@ -456,7 +483,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
         />,
       );
 
-      const nav = screen.getByRole("navigation", { name: "Mobile Route Nodes" });
+      const nav = screen.getByRole("navigation", {
+        name: "Mobile Route Nodes",
+      });
       const projectsLink = within(nav).getByRole("link", { name: /projects/i });
       expect(projectsLink).toHaveAttribute("aria-current", "page");
 
@@ -472,7 +501,9 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
         />,
       );
 
-      const nav = screen.getByRole("navigation", { name: "Mobile Route Nodes" });
+      const nav = screen.getByRole("navigation", {
+        name: "Mobile Route Nodes",
+      });
       const links = within(nav).getAllByRole("link");
 
       links.forEach((link) => {
@@ -481,14 +512,11 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
     });
 
     it("activates home route when effectivePathname is empty string", () => {
-      render(
-        <MobileNavDrawer
-          {...defaultProps}
-          currentPath=""
-        />,
-      );
+      render(<MobileNavDrawer {...defaultProps} currentPath="" />);
 
-      const nav = screen.getByRole("navigation", { name: "Mobile Route Nodes" });
+      const nav = screen.getByRole("navigation", {
+        name: "Mobile Route Nodes",
+      });
       const homeLink = within(nav).getByRole("link", { name: /home/i });
       expect(homeLink).toHaveAttribute("aria-current", "page");
     });

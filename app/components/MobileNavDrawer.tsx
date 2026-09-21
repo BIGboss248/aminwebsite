@@ -89,7 +89,7 @@ export interface MobileNavDrawerProps {
  *
  * Features:
  * - **Accessible Dialog Landmarks**: Full ARIA modal semantics (`role="dialog"`, `aria-modal="true"`), Escape key dismiss, and backdrop scrim interaction.
- * - **Telemetry-Badged Route Nodes**: Monospace index counters (`01`, `02`...), route descriptions, active indicator glow, and `99.9%` uptime badge.
+ * - **Telemetry-Badged Route Nodes**: Monospace index counters (`01`, `02`...), route descriptions, active indicator glow, and clean layout without clutter.
  * - **Bidirectional (RTL/LTR) Parity**: Automatically mirrors slide-in direction (trailing edge), structural borders, and directional indicator arrows.
  * - **Ergonomic Touch Targets**: Meets or exceeds the WCAG minimum 44px × 44px touch target specification.
  * - **Progress-Aware Navigation**: Composes progress-aware `<Link>` for visual feedback during route transitions.
@@ -116,10 +116,15 @@ export function MobileNavDrawer({
   const isRtl = effectiveLocale === "fa";
 
   let tNav: (key: string) => string;
+  let tCommon: (key: string) => string;
   try {
-    tNav = useTranslations("navigation");
+    const navT = useTranslations("navigation");
+    const commonT = useTranslations("common");
+    tNav = (key: string) => navT(key as never);
+    tCommon = (key: string) => commonT(key as never);
   } catch {
     tNav = (key: string) => key;
+    tCommon = (key: string) => key;
   }
 
   // Handle Escape key dismissal
@@ -155,41 +160,40 @@ export function MobileNavDrawer({
     {
       id: "home",
       index: "01",
-      label: tNav("home") || "Home",
-      desc: isRtl ? "رصدخانه مرکزی سامانه‌ها" : "Root Systems Observatory",
+      label: tNav("home"),
+      desc: tNav("desc_home"),
       href: ROUTES.home,
       badge: null,
     },
     {
       id: "about",
       index: "02",
-      label: tNav("about") || "About",
-      desc: isRtl ? "بیوگرافی و فلسفه معماری" : "Biography & Architecture Philosophy",
+      label: tNav("about"),
+      desc: tNav("desc_about"),
       href: ROUTES.about,
       badge: null,
     },
     {
       id: "projects",
       index: "03",
-      label: tNav("projects") || "Projects",
-      desc: isRtl ? "مطالعات موردی مقیاس‌بالا" : "High-Scale Case Studies",
+      label: tNav("projects"),
+      desc: tNav("desc_projects"),
       href: ROUTES.projects.root,
       badge: null,
     },
     {
       id: "lab",
       index: "04",
-      label: tNav("lab") || "Lab Hub",
-      desc: isRtl ? "ابزارهای برخط تحلیل شبکه" : "Real-Time Network Diagnostics",
+      label: tNav("lab"),
+      desc: tNav("desc_lab"),
       href: ROUTES.lab.root,
-      badge: showUptimeBadge ? "99.9%" : null,
       badge: null,
     },
     {
       id: "contact",
       index: "05",
-      label: tNav("contact") || "Contact",
-      desc: isRtl ? "ارتباط مستقیم و مشاوره" : "Direct Inquiry & Consulting",
+      label: tNav("contact"),
+      desc: tNav("desc_contact"),
       href: ROUTES.contact,
       badge: null,
     },
@@ -210,10 +214,7 @@ export function MobileNavDrawer({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex"
-      role="presentation"
-    >
+    <div className="fixed inset-0 z-50 flex" role="presentation">
       {/* 1. Backdrop Scrim Overlay */}
       <div
         data-testid="mobile-nav-backdrop"
@@ -226,7 +227,7 @@ export function MobileNavDrawer({
       <aside
         role="dialog"
         aria-modal="true"
-        aria-label="Mobile Navigation"
+        aria-label={tNav("mobile_nav")}
         className={cn(
           "relative ms-auto flex flex-col h-full w-[320px] max-w-[85vw] bg-card text-card-foreground border-s border-border shadow-2xl z-10 transition-transform duration-300 ease-out animate-in",
           isRtl ? "slide-in-from-left" : "slide-in-from-right",
@@ -239,7 +240,7 @@ export function MobileNavDrawer({
             href={ROUTES.home}
             onClick={() => handleNodeClick(ROUTES.home)}
             className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
-            aria-label={`${brandName} Home`}
+            aria-label={`${brandName} ${tNav("home")}`}
           >
             {/* Hexagon Lattice Vector Emblem */}
             <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-[0_0_12px_rgba(6,182,212,0.3)]">
@@ -271,7 +272,9 @@ export function MobileNavDrawer({
             <div className="flex items-center gap-1 font-mono text-xs font-bold tracking-wider text-foreground">
               <span>{brandName.toUpperCase()}</span>
               <span className="text-primary">//</span>
-              <span className="text-[11px] font-semibold text-primary">LAB</span>
+              <span className="text-[11px] font-semibold text-primary">
+                {tCommon("brand_lab")}
+              </span>
             </div>
           </Link>
 
@@ -279,7 +282,7 @@ export function MobileNavDrawer({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close navigation drawer"
+            aria-label={tNav("close_drawer")}
             className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
           >
             <X className="h-5 w-5" aria-hidden="true" />
@@ -288,7 +291,11 @@ export function MobileNavDrawer({
 
         {/* Body: Route Navigation Nodes */}
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
-          <nav role="navigation" aria-label="Mobile Route Nodes" className="flex flex-col gap-1.5">
+          <nav
+            role="navigation"
+            aria-label={tNav("mobile_route_nodes")}
+            className="flex flex-col gap-1.5"
+          >
             {navItems.map((item) => {
               const active = isRouteActive(item.href);
               return (
@@ -329,9 +336,15 @@ export function MobileNavDrawer({
                     )}
                     {active ? (
                       isRtl ? (
-                        <ArrowLeft className="h-4 w-4 text-primary" aria-hidden="true" />
+                        <ArrowLeft
+                          className="h-4 w-4 text-primary"
+                          aria-hidden="true"
+                        />
                       ) : (
-                        <ArrowRight className="h-4 w-4 text-primary" aria-hidden="true" />
+                        <ArrowRight
+                          className="h-4 w-4 text-primary"
+                          aria-hidden="true"
+                        />
                       )
                     ) : null}
                   </div>
@@ -345,11 +358,11 @@ export function MobileNavDrawer({
         <div className="p-4 border-t border-border bg-card flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="font-mono text-[11px] text-muted-foreground">
-              // {tNav("system_telemetry") || "SYSTEM_TELEMETRY"}
+              // {tNav("system_telemetry")}
             </span>
             <div className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-500">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-              <span>{tNav("sys_online") || "ONLINE // 9.4ms"}</span>
+              <span>{tNav("sys_online")}</span>
             </div>
           </div>
 
@@ -369,4 +382,3 @@ export function MobileNavDrawer({
 }
 
 export default MobileNavDrawer;
-

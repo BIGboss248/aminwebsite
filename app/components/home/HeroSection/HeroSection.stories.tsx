@@ -94,13 +94,6 @@ The **HeroSection** serves as the flagship opening section of the portfolio home
   args: {
     locale: "en",
     availabilityStatus: "available",
-    availabilityText: "AVAILABLE FOR ARCHITECTURE & CONTRACTS",
-    title: "Architecting Solutions Across Frontend & Infrastructure",
-    description:
-      "Pro frontend engineering backed by deep CI/CD pipelines, edge networking, and resilient systems design.",
-    primaryCtaText: "Book Introductory Call",
-    secondaryCtaText: "Explore Case Studies",
-    labCtaText: "Launch Lab Probers",
   },
 };
 

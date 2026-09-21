@@ -7,27 +7,23 @@ import { ROUTES } from "@/lib/routes";
 const mockReplace = jest.fn();
 const mockPush = jest.fn();
 const mockStartProgress = jest.fn();
+import enMessages from "@/messages/en.json";
+import faMessages from "@/messages/fa.json";
+
 let mockCurrentLocale = "en";
 let mockPathname = "/";
 
 jest.mock("next-intl", () => ({
   useLocale: () => mockCurrentLocale,
-  useTranslations: () => (key: string) => {
-    const translations: Record<string, string> = {
-      home: "Home",
-      about: "About",
-      projects: "Projects",
-      lab: "Lab Hub",
-      contact: "Contact",
-      brand: "Amin Jamali",
-      sys_online: "SYS_ONLINE",
-      switch_language: "Language",
-      theme_toggle: "Toggle Theme",
-      toggle_menu: "Toggle navigation menu",
-      menu_opened: "Navigation menu opened",
-      menu_closed: "Navigation menu closed",
-    };
-    return translations[key] ?? key;
+  useTranslations: (namespace?: string) => (key: string) => {
+    const dict = mockCurrentLocale === "fa" ? faMessages : enMessages;
+    if (namespace === "navigation") {
+      return (dict.navigation as Record<string, string>)[key] ?? key;
+    }
+    if (namespace === "common") {
+      return (dict.common as Record<string, string>)[key] ?? key;
+    }
+    return key;
   },
 }));
 

@@ -105,7 +105,7 @@ export function LocaleSwitcher({
   return (
     <div
       role="radiogroup"
-      aria-label={t("switch_language") || "Language selection"}
+      aria-label={t("switch_language")}
       className={cn(
         "inline-flex items-center h-9 p-[3px] rounded-full border border-border bg-card/60 backdrop-blur-xs transition-colors shadow-xs group hover:border-primary/50 focus-within:ring-2 focus-within:ring-primary/40",
         className,

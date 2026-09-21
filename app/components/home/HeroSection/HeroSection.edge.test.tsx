@@ -2,6 +2,22 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { HeroSection } from "./HeroSection";
 import type { AvailabilityStatus } from "./HeroSection.types";
+import enMessages from "@/messages/en.json";
+import faMessages from "@/messages/fa.json";
+
+let mockLocale = "en";
+
+jest.mock("next-intl", () => ({
+  useLocale: () => mockLocale,
+  useTranslations: (namespace?: string) => (key: string) => {
+    const dict = mockLocale === "fa" ? faMessages : enMessages;
+    if (namespace === "home.hero") {
+      return (dict.home.hero as Record<string, string>)[key] ?? key;
+    }
+    return key;
+  },
+}));
+
 
 // Mock the Link component from @/app/components/Link
 jest.mock("@/app/components/Link", () => {

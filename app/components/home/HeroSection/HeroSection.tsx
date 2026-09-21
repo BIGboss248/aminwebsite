@@ -1,50 +1,11 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/app/components/Link";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
+import enMessages from "@/messages/en.json";
+import faMessages from "@/messages/fa.json";
 import type { HeroSectionProps } from "./HeroSection.types";
-
-/**
- * Default textual content mapped by locale.
- */
-const DEFAULT_CONTENT = {
-  en: {
-    availabilityText: "AVAILABLE FOR ARCHITECTURE & CONTRACTS",
-    title: "Architecting Solutions Across Frontend & Infrastructure",
-    description:
-      "Pro frontend engineering backed by deep CI/CD pipelines, edge networking, and resilient systems design.",
-    primaryCtaText: "Book Introductory Call",
-    secondaryCtaText: "Explore Case Studies",
-    labCtaText: "Launch Lab Probers",
-    telemetryTitle: "SYSTEMS OBSERVATORY // EDGE TELEMETRY",
-    latencyLabel: "EDGE_LATENCY",
-    latencyValue: "18ms",
-    pipelineLabel: "PIPELINE_STATUS",
-    pipelineValue: "PASSING",
-    dohLabel: "DNS_RESOLVER_PROBE",
-    dohValue: "ACTIVE (0.8ms)",
-    infraLabel: "INFRASTRUCTURE",
-    infraValue: "OCI Standalone Container",
-  },
-  fa: {
-    availabilityText: "آماده برای همکاری و مشاوره معماری",
-    title: "معماری راه‌حل‌های جامع از فرانت‌اند تا زیرساخت",
-    description:
-      "توسعه حرفه‌ای فرانت‌اند مبتنی بر خطوط CI/CD، شبکه‌های لبه و طراحی سیستم‌های تاب‌آور.",
-    primaryCtaText: "رزرو جلسه گفتگو",
-    secondaryCtaText: "مشاهده پروژه‌ها",
-    labCtaText: "ابزارهای آزمایشگاه",
-    telemetryTitle: "رصدخانه سیستم‌ها // تله‌متری لبه",
-    latencyLabel: "تأخیر لبه",
-    latencyValue: "۱۸ میلی‌ثانیه",
-    pipelineLabel: "وضعیت پایپ‌لاین",
-    pipelineValue: "تأیید شده",
-    dohLabel: "کاوشگر DNS",
-    dohValue: "فعال (۰.۸ میلی‌ثانیه)",
-    infraLabel: "زیرساخت",
-    infraValue: "کانتینر مستقل OCI",
-  },
-};
 
 /**
  * Editorial Minimalist Hero Section for the Home Page.
@@ -69,21 +30,29 @@ export function HeroSection({
   labCtaHref = ROUTES.lab.root,
   className = "",
 }: HeroSectionProps): React.JSX.Element {
-  const isPersian = locale === "fa";
-  const content = isPersian ? DEFAULT_CONTENT.fa : DEFAULT_CONTENT.en;
+  let tHero: (key: string) => string;
+  try {
+    const t = useTranslations("home.hero");
+    tHero = (key: string) => t(key as never);
+  } catch {
+    const dict = locale === "fa" ? faMessages.home.hero : enMessages.home.hero;
+    tHero = (key: string) => (dict as Record<string, string>)[key] ?? key;
+  }
 
-  const resolvedAvailability = availabilityText ?? content.availabilityText;
-  const resolvedTitle = title ?? content.title;
-  const resolvedDescription = description ?? content.description;
-  const resolvedPrimaryCta = primaryCtaText ?? content.primaryCtaText;
-  const resolvedSecondaryCta = secondaryCtaText ?? content.secondaryCtaText;
-  const resolvedLabCta = labCtaText ?? content.labCtaText;
+  const resolvedAvailability = availabilityText ?? tHero("availability_text");
+  const resolvedTitle = title ?? tHero("title");
+  const resolvedDescription = description ?? tHero("description");
+  const resolvedPrimaryCta = primaryCtaText ?? tHero("primary_cta");
+  const resolvedSecondaryCta = secondaryCtaText ?? tHero("secondary_cta");
+  const resolvedLabCta = labCtaText ?? tHero("lab_cta");
 
   // Status indicator colors
   const statusColorMap = {
-    available: "bg-emerald-500 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
+    available:
+      "bg-emerald-500 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
     busy: "bg-amber-500 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5",
-    offline: "bg-zinc-500 text-zinc-600 dark:text-zinc-400 border-zinc-500/30 bg-zinc-500/5",
+    offline:
+      "bg-zinc-500 text-zinc-600 dark:text-zinc-400 border-zinc-500/30 bg-zinc-500/5",
   };
 
   return (
@@ -114,7 +83,12 @@ export function HeroSection({
               <circle cx="48" cy="48" r="1" className="fill-border" />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" strokeWidth="0" fill="url(#hero-grid)" />
+          <rect
+            width="100%"
+            height="100%"
+            strokeWidth="0"
+            fill="url(#hero-grid)"
+          />
         </svg>
       </div>
 
@@ -193,18 +167,18 @@ export function HeroSection({
             <div
               className="relative rounded-xl border border-border bg-card p-6 shadow-sm dark:shadow-[0_0_24px_-4px_rgba(6,182,212,0.15)] transition-all"
               tabIndex={0}
-              aria-label="Systems telemetry card"
+              aria-label={tHero("telemetry_card_label")}
             >
               {/* Telemetry Header */}
               <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
                 <div className="flex items-center gap-2">
                   <span className="size-2 rounded-full bg-cyan-500 animate-pulse" />
                   <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
-                    {content.telemetryTitle}
+                    {tHero("telemetry_title")}
                   </span>
                 </div>
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-primary/10 text-primary border border-primary/20">
-                  LIVE
+                  {tHero("telemetry_live")}
                 </span>
               </div>
 
@@ -215,37 +189,37 @@ export function HeroSection({
               >
                 <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
                   <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">
-                    {content.latencyLabel}
+                    {tHero("latency_label")}
                   </p>
                   <p className="text-base font-bold text-cyan-600 dark:text-cyan-400">
-                    {content.latencyValue}
+                    {tHero("latency_value")}
                   </p>
                 </div>
 
                 <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
                   <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">
-                    {content.pipelineLabel}
+                    {tHero("pipeline_label")}
                   </p>
                   <p className="text-base font-bold text-emerald-600 dark:text-emerald-400">
-                    {content.pipelineValue}
+                    {tHero("pipeline_value")}
                   </p>
                 </div>
 
                 <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
                   <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">
-                    {content.dohLabel}
+                    {tHero("doh_label")}
                   </p>
                   <p className="text-xs font-semibold text-foreground truncate">
-                    {content.dohValue}
+                    {tHero("doh_value")}
                   </p>
                 </div>
 
                 <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
                   <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">
-                    {content.infraLabel}
+                    {tHero("infra_label")}
                   </p>
                   <p className="text-xs font-semibold text-foreground truncate">
-                    {content.infraValue}
+                    {tHero("infra_value")}
                   </p>
                 </div>
               </div>
@@ -255,8 +229,10 @@ export function HeroSection({
                 dir="ltr"
                 className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-[11px] font-mono text-muted-foreground"
               >
-                <span>LOCALE: {locale.toUpperCase()}</span>
-                <span>STATUS: OPERATIONAL</span>
+                <span>
+                  {tHero("telemetry_locale")}: {locale.toUpperCase()}
+                </span>
+                <span>{tHero("telemetry_status")}</span>
               </div>
             </div>
           </div>
@@ -267,4 +243,3 @@ export function HeroSection({
 }
 
 export default HeroSection;
-

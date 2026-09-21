@@ -10,27 +10,20 @@ const mockStartProgress = jest.fn();
 let mockCurrentLocale = "en";
 let mockPathname = "/";
 
+import enMessages from "@/messages/en.json";
+import faMessages from "@/messages/fa.json";
+
 jest.mock("next-intl", () => ({
   useLocale: () => mockCurrentLocale,
-  useTranslations: () => (key: string) => {
-    const translations: Record<string, string> = {
-      home: "Home",
-      about: "About",
-      projects: "Projects",
-      lab: "Lab Hub",
-      contact: "Contact",
-      brand: "Amin Jamali",
-      sys_online: "ONLINE // 9.4ms",
-      switch_language: "Language",
-      theme_toggle: "Toggle Theme",
-      toggle_menu: "Toggle navigation menu",
-      menu_opened: "Navigation menu opened",
-      menu_closed: "Navigation menu closed",
-      close_menu: "Close navigation drawer",
-      route_topology: "ROUTE_TOPOLOGY",
-      system_telemetry: "SYSTEM_TELEMETRY",
-    };
-    return translations[key] ?? key;
+  useTranslations: (namespace?: string) => (key: string) => {
+    const dict = mockCurrentLocale === "fa" ? faMessages : enMessages;
+    if (namespace === "navigation") {
+      return (dict.navigation as Record<string, string>)[key] ?? key;
+    }
+    if (namespace === "common") {
+      return (dict.common as Record<string, string>)[key] ?? key;
+    }
+    return key;
   },
 }));
 
@@ -109,11 +102,19 @@ describe("MobileNavDrawer Baseline Unit Tests (TDD)", () => {
     render(<MobileNavDrawer {...defaultProps} />);
 
     const nav = screen.getByRole("navigation", { name: "Mobile Route Nodes" });
-    expect(within(nav).getByRole("link", { name: /home/i })).toBeInTheDocument();
-    expect(within(nav).getByRole("link", { name: /about/i })).toBeInTheDocument();
-    expect(within(nav).getByRole("link", { name: /projects/i })).toBeInTheDocument();
+    expect(
+      within(nav).getByRole("link", { name: /home/i }),
+    ).toBeInTheDocument();
+    expect(
+      within(nav).getByRole("link", { name: /about/i }),
+    ).toBeInTheDocument();
+    expect(
+      within(nav).getByRole("link", { name: /projects/i }),
+    ).toBeInTheDocument();
     expect(within(nav).getByRole("link", { name: /lab/i })).toBeInTheDocument();
-    expect(within(nav).getByRole("link", { name: /contact/i })).toBeInTheDocument();
+    expect(
+      within(nav).getByRole("link", { name: /contact/i }),
+    ).toBeInTheDocument();
   });
 
   it("does not render cockpit topology subtitle or 99.9% uptime badge", () => {
@@ -123,7 +124,9 @@ describe("MobileNavDrawer Baseline Unit Tests (TDD)", () => {
   });
 
   it("correctly identifies the active route with aria-current='page'", () => {
-    render(<MobileNavDrawer {...defaultProps} currentPath={ROUTES.projects.root} />);
+    render(
+      <MobileNavDrawer {...defaultProps} currentPath={ROUTES.projects.root} />,
+    );
 
     const nav = screen.getByRole("navigation", { name: "Mobile Route Nodes" });
     const projectsLink = within(nav).getByRole("link", { name: /projects/i });
@@ -137,7 +140,9 @@ describe("MobileNavDrawer Baseline Unit Tests (TDD)", () => {
     const handleClose = jest.fn();
     render(<MobileNavDrawer {...defaultProps} onClose={handleClose} />);
 
-    const closeBtn = screen.getByRole("button", { name: /close navigation drawer/i });
+    const closeBtn = screen.getByRole("button", {
+      name: /close navigation drawer/i,
+    });
     fireEvent.click(closeBtn);
 
     expect(handleClose).toHaveBeenCalledTimes(1);

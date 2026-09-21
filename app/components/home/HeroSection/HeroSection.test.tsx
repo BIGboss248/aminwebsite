@@ -2,6 +2,21 @@ import { render, screen } from "@testing-library/react";
 import { HeroSection } from "./HeroSection";
 import { HeroSectionSkeleton } from "./HeroSectionSkeleton";
 import { ROUTES } from "@/lib/routes";
+import enMessages from "@/messages/en.json";
+import faMessages from "@/messages/fa.json";
+
+let mockLocale = "en";
+
+jest.mock("next-intl", () => ({
+  useLocale: () => mockLocale,
+  useTranslations: (namespace?: string) => (key: string) => {
+    const dict = mockLocale === "fa" ? faMessages : enMessages;
+    if (namespace === "home.hero") {
+      return (dict.home.hero as Record<string, string>)[key] ?? key;
+    }
+    return key;
+  },
+}));
 
 // Mock the Link component from @/app/components/Link
 jest.mock("@/app/components/Link", () => {
@@ -39,7 +54,12 @@ jest.mock("@/app/components/Link", () => {
 });
 
 describe("HeroSection (Baseline TDD)", () => {
+  beforeEach(() => {
+    mockLocale = "en";
+  });
+
   it("renders default English title, description, and status pill", () => {
+    mockLocale = "en";
     render(<HeroSection locale="en" />);
 
     // Primary headline
@@ -64,6 +84,7 @@ describe("HeroSection (Baseline TDD)", () => {
   });
 
   it("renders default Persian title, description, and status pill when locale='fa'", () => {
+    mockLocale = "fa";
     render(<HeroSection locale="fa" />);
 
     expect(
@@ -116,6 +137,7 @@ describe("HeroSection (Baseline TDD)", () => {
   });
 
   it("renders navigation action links pointing to default type-safe ROUTES", () => {
+    mockLocale = "en";
     render(<HeroSection locale="en" />);
 
     const primaryLink = screen.getByRole("link", {
@@ -135,6 +157,7 @@ describe("HeroSection (Baseline TDD)", () => {
   });
 
   it("renders live systems telemetry preview data", () => {
+    mockLocale = "en";
     render(<HeroSection locale="en" />);
 
     expect(screen.getByText(/EDGE_LATENCY/i)).toBeInTheDocument();

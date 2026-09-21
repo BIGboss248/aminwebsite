@@ -104,8 +104,8 @@
   {
     "Rule_number": 18,
     "Category": "PROCESS",
-    "Instruction": "In the '/nextjs-create-component' workflow, the verification gate in Step 7 MUST physically execute Storybook verification tests (both smoke/indexing test via 'pnpm run storybook:smoke' or 'storybook dev --smoke-test' and static production build via 'pnpm run build-storybook') alongside baseline and adversarial test suites to ensure zero syntax errors, AST parsing breaks, or bundle failures before declaring completion.",
-    "Why": "user explicit requirement: add the story book test to verification gate of /nextjs-create-component"
+    "Instruction": "When the 'nextjs-storybook-story' workflow is invoked or when Storybook stories are created/tested, the verification gate MUST physically execute Storybook verification tests (both smoke/indexing test via 'pnpm run storybook:smoke' or 'storybook dev --smoke-test' and static production build via 'pnpm run build-storybook') to ensure zero syntax errors, AST parsing breaks, or bundle failures before declaring completion.",
+    "Why": "user explicit requirement: add the story book test to verification gate of nextjs-storybook-story"
   },
   {
     "Rule_number": 19,
@@ -172,5 +172,11 @@
     "Category": "ARCH",
     "Instruction": "In component development workflows ('nextjs-component-dev' / 'nextjs-create-component'), never add hardcoded text, fallback string placeholders, or in-file mock dictionary objects (e.g. 'DEFAULT_CONTENT') in component code. All user-facing strings, labels, badges, and CTAs must be extracted into the translation dictionary files ('messages/[locale].json') across all supported languages defined in 'docs/project.json', and consumed via next-intl ('getTranslations' in RSC, 'useTranslations' in Client Components).",
     "Why": "user explicit requirement: configure nextjs-component-dev to not add i18n placeholders in components it creates and fill the dictionary files instead"
+  },
+  {
+    "Rule_number": 30,
+    "Category": "PROCESS",
+    "Instruction": "Only create Storybook story files ('[ComponentName].stories.tsx') and execute Storybook verification tests when the 'nextjs-storybook-story' skill is specifically invoked or when explicitly requested by the user; do not automatically generate story files or run Storybook smoke/build tests during standard component development workflows ('nextjs-component-dev' / 'nextjs-create-component').",
+    "Why": "user explicit instruction: only create story for components if .agents/skills/nextjs-storybook-story is invoked or explicitly asked by user"
   }
 ]

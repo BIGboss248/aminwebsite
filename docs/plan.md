@@ -40,14 +40,14 @@ A comprehensive, chronological checklist tracking all milestones from empty work
       - [x] `MobileNavDrawer` - Slide-out navigation menu for mobile viewports
       - [x] `LocaleSwitcher` - Language selector dropdown (EN / FA)
       - [x] `ThemeToggle` - Dark / light mode switcher
-    - [ ] **Section: Hero**
-      - [ ] `HeroHeadline` - Core value proposition and intro copy
-      - [ ] `AvailabilityBadge` - Work status indicator pill
-      - [ ] `HeroMotionGraphic` - Animated systems visual / interactive terminal accent
-      - [ ] `HeroActionButtons` - Primary CTA (Case Studies) & Secondary CTA (Lab Tools)
-    - [ ] **Section: Trust Signals & Credentials**
-      - [ ] `CredentialsBar` - Peer-reviewed research DOIs, ORCID link, and cloud certifications
-      - [ ] `MetricHighlightList` - Key performance callouts (<1.0s LCP, 99.99% Uptime)
+    - [x] **Section: Hero**
+      - [x] `HeroHeadline` - Core value proposition and intro copy
+      - [x] `AvailabilityBadge` - Work status indicator pill
+      - [x] `HeroMotionGraphic` - Animated systems visual / interactive terminal accent
+      - [x] `HeroActionButtons` - Primary CTA (Case Studies) & Secondary CTA (Lab Tools)
+    - [x] **Section: Trust Signals & Credentials**
+      - [x] `CredentialsBar` - Dual academic degrees, Coursera professional certs, and bilingual fluency in Bento Grid
+      - [x] `MetricHighlightList` - Key production performance callouts (<0.8s LCP, 99+ Lighthouse, 0.00 CLS)
     - [ ] **Section: Featured Case Studies**
       - [ ] `FeaturedProjectsGrid` - Responsive card container for top 2-3 engineering projects
       - [ ] `ProjectCard` - Showcase card with visual preview, tech stack tags, and metric improvements

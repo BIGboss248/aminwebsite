@@ -1,8 +1,14 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { HeroSection, HeroSectionSkeleton } from "@/app/components/home/HeroSection";
+import {
+  HeroSection,
+  HeroSectionSkeleton,
+} from "@/app/components/home/HeroSection";
 import { routing } from "@/i18n/routing";
+import TrustSignalsSection, {
+  TrustSignalsSectionSkeleton,
+} from "../components/home/TrustSignalsSection";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -31,6 +37,9 @@ export default async function Home({ params }: HomePageProps) {
     <div className="flex flex-col flex-1 w-full bg-background font-sans">
       <Suspense fallback={<HeroSectionSkeleton />}>
         <HeroSection locale={locale as "en" | "fa"} />
+      </Suspense>
+      <Suspense fallback={<TrustSignalsSectionSkeleton />}>
+        <TrustSignalsSection locale={locale as "en" | "fa"} />
       </Suspense>
     </div>
   );

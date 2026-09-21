@@ -160,5 +160,11 @@
     "Category": "ARCH",
     "Instruction": "In Storybook configurations and component stories that render components using Next.js localized navigation or 'next-intl' ('Link', 'useRouter', 'useTranslations'), always wrap stories with 'NextIntlClientProvider' (supplying 'locale' and translation dictionaries from 'messages/[locale].json') and 'ProgressBarProvider' (both globally in '.storybook/preview.tsx' and within story decorators) to prevent 'No intl context found' runtime errors in Storybook.",
     "Why": "diagnosed error: Storybook threw 'No intl context found' because Link component calls useRouter from next-intl which requires NextIntlClientProvider in context"
+  },
+  {
+    "Rule_number": 28,
+    "Category": "PROCESS",
+    "Instruction": "In component creation workflows, TDD cycles, and verification gates, execute test runner commands targeted strictly to the specific component's test and edge test files (e.g., 'pnpm test <path>/[ComponentName].test.tsx <path>/[ComponentName].edge.test.tsx') rather than running the full project test suite, and suppress verbose command output flags to minimize context token consumption.",
+    "Why": "user explicit requirement: configure skills to use targeted test execution and token optimization"
   }
 ]

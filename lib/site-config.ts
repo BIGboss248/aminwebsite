@@ -26,6 +26,7 @@ export const SITE_CONFIG = {
     github: "https://github.com/BIGboss248",
     linkedin: "https://linkedin.com/in/amin-jamali",
     orcid: "https://orcid.org",
+    twitter: "https://x.com/",
   },
   credentials: {
     orcidId: "",

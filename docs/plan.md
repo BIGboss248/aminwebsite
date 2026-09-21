@@ -58,8 +58,8 @@ A comprehensive, chronological checklist tracking all milestones from empty work
       - [ ] `TechStackMatrix` - Categorized competency tags (Next.js, TypeScript, Go, Docker)
       - [ ] `SkillBadge` - Interactive skill tag with experience context
     - [ ] **Section: Global Footer**
-      - [ ] `SiteFooter` - Author bio, contact links, copyright, and social links
-      - [ ] `SocialLinksBar` - GitHub, LinkedIn, ORCID, Twitter/X links
+      - [x] `SiteFooter` - Author bio, contact links, copyright, and social links
+      - [x] `SocialLinksBar` - GitHub, LinkedIn, ORCID, Twitter/X links
 
   - [ ] **Page: About (`/about`)**
     - [ ] **Section: Narrative Biography**

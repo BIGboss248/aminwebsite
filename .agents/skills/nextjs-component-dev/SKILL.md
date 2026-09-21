@@ -53,10 +53,12 @@ Specialized workflow for creating production-ready React Server Components (RSC)
 ## Workflow Steps
 
 - [ ] **Step 1: Dictionary Population & TypeScript Contract Definition**
-  - Read `docs/project.json` to resolve `dictionaries_dir` (`messages`) and `supported_languages`.
+  - Read `docs/project.json` to resolve `dictionaries_dir` (`messages` is default) and `supported_languages`.
   - Define the component's translation namespace and keys.
   - **Populate all dictionary files** (`messages/en.json`, `messages/fa.json`, etc.) with authentic translations for every supported language before writing JSX.
   - Define prop interfaces with strict **English TSDoc** annotations (`@param`, `@defaultValue`, `@returns`).
+
+**If there are more than one supported language component must fetch the translation first and if failed use fall backs**
 
 - [ ] **Step 2: TDD Baseline Unit Tests (`[ComponentName].test.tsx`)**
   - Write `[ComponentName].test.tsx` BEFORE implementing the component.

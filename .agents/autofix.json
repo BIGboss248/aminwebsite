@@ -190,5 +190,11 @@
     "Category": "PROCESS",
     "Instruction": "In skill definition files ('SKILL.md'), keep the frontmatter 'description' concise and focused strictly on WHAT the skill does and when it triggers, without explaining internal procedural steps, methodology, or implementation mechanics ('how').",
     "Why": "user explicit correction: limit description front matter to what the skill does, not how it does it"
+  },
+  {
+    "Rule_number": 33,
+    "Category": "UI",
+    "Instruction": "In card header sections (such as 'ToolQuickCard' and diagnostic/spec cards), always configure header container rows with 'flex-wrap' and responsive gap spacing (e.g. 'flex flex-wrap items-center justify-between gap-2.5') so protocol tags, live status indicators, and privacy mode badges wrap cleanly across responsive viewports and localized languages without overflowing or truncating.",
+    "Why": "user explicit correction: elements in the header section of each card are overflowing configure them to wrap"
   }
 ]

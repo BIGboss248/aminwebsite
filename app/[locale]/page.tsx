@@ -12,6 +12,9 @@ import TrustSignalsSection, {
 import FeaturedProjectsGrid, {
   FeaturedProjectsGridSkeleton,
 } from "../components/home/FeaturedProjectsGrid";
+import LabLauncherSection, {
+  LabLauncherSectionSkeleton,
+} from "../components/home/LabLauncherSection";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -46,6 +49,9 @@ export default async function Home({ params }: HomePageProps) {
       </Suspense>
       <Suspense fallback={<FeaturedProjectsGridSkeleton />}>
         <FeaturedProjectsGrid locale={locale as "en" | "fa"} />
+      </Suspense>
+      <Suspense fallback={<LabLauncherSectionSkeleton />}>
+        <LabLauncherSection locale={locale as "en" | "fa"} />
       </Suspense>
     </div>
   );

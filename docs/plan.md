@@ -48,9 +48,9 @@ A comprehensive, chronological checklist tracking all milestones from empty work
     - [x] **Section: Trust Signals & Credentials**
       - [x] `CredentialsBar` - Dual academic degrees, Coursera professional certs, and bilingual fluency in Bento Grid
       - [x] `MetricHighlightList` - Key production performance callouts (<0.8s LCP, 99+ Lighthouse, 0.00 CLS)
-    - [ ] **Section: Featured Case Studies**
-      - [ ] `FeaturedProjectsGrid` - Responsive card container for top 2-3 engineering projects
-      - [ ] `ProjectCard` - Showcase card with visual preview, tech stack tags, and metric improvements
+    - [x] **Section: Featured Case Studies**
+      - [x] `FeaturedProjectsGrid` - Responsive card container for top 2-3 engineering projects
+      - [x] `ProjectCard` - Showcase card with visual preview, tech stack tags, and metric improvements
     - [ ] **Section: Interactive Lab Tools Launcher**
       - [ ] `LabLauncherSection` - Interactive launcher container
       - [ ] `ToolQuickCard` - Quick diagnostic tool card with live status indicator & prober launch trigger

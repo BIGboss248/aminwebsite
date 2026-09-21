@@ -9,6 +9,9 @@ import { routing } from "@/i18n/routing";
 import TrustSignalsSection, {
   TrustSignalsSectionSkeleton,
 } from "../components/home/TrustSignalsSection";
+import FeaturedProjectsGrid, {
+  FeaturedProjectsGridSkeleton,
+} from "../components/home/FeaturedProjectsGrid";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -40,6 +43,9 @@ export default async function Home({ params }: HomePageProps) {
       </Suspense>
       <Suspense fallback={<TrustSignalsSectionSkeleton />}>
         <TrustSignalsSection locale={locale as "en" | "fa"} />
+      </Suspense>
+      <Suspense fallback={<FeaturedProjectsGridSkeleton />}>
+        <FeaturedProjectsGrid locale={locale as "en" | "fa"} />
       </Suspense>
     </div>
   );

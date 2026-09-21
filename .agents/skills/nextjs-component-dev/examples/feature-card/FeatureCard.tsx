@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { Link } from "@vercel/react-transition-progress";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/app/components/Link";
 import { Graph } from "schema-dts";
 import { cn } from "@/lib/utils";
 
@@ -8,9 +9,9 @@ import { cn } from "@/lib/utils";
  * Props for the FeatureCard component.
  */
 export interface FeatureCardProps {
-  /** Title of the feature card */
+  /** Translation key for card title or explicit string */
   title: string;
-  /** Detailed description text */
+  /** Translation key for description or explicit string */
   description: string;
   /** Image source URL relative or absolute */
   imageUrl: string;
@@ -24,19 +25,20 @@ export interface FeatureCardProps {
 
 /**
  * Renders a server-side cacheable feature card with responsive styling,
- * localized navigation, and schema.org structured data.
+ * localized navigation, next-intl dictionary translations, and schema.org structured data.
  *
  * @param props - Configuration properties for FeatureCard.
  * @returns A React Server Component rendering the localized feature card.
  */
-export function FeatureCard({
+export async function FeatureCard({
   title,
   description,
   imageUrl,
   href,
   locale,
   className = "",
-}: FeatureCardProps): React.JSX.Element {
+}: FeatureCardProps): Promise<React.JSX.Element> {
+  const t = await getTranslations({ locale, namespace: "feature_card" });
   const localizedUrl = `/${locale}${href.startsWith("/") ? href : `/${href}`}`;
 
   const jsonLd: Graph = {
@@ -54,7 +56,6 @@ export function FeatureCard({
 
   return (
     <>
-      {/* TODO: Validate this JSON-LD schema on https://validator.schema.org/ */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -84,7 +85,7 @@ export function FeatureCard({
           href={localizedUrl}
           className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline ms-auto"
         >
-          Read More
+          {t("read_more")}
         </Link>
       </article>
     </>

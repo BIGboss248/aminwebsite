@@ -49,6 +49,32 @@ if ($missing.Count -gt 0) {
 
 Write-Host "[PASS] Files present: $compName.tsx, ${compName}Skeleton.tsx, $(Split-Path $testFile -Leaf)" -ForegroundColor Green
 
+# Verify zero in-file i18n placeholders / mock translation dictionaries
+if (Test-Path $componentFile) {
+    $content = Get-Content -Path $componentFile -Raw
+    if ($content -match "const\s+DEFAULT_CONTENT\s*=" -or $content -match "const\s+DEFAULT_TRANSLATIONS\s*=") {
+        Write-Host "[FAIL] In-file i18n placeholder dictionary detected in $compName.tsx (e.g., DEFAULT_CONTENT). Extract all strings to messages/[locale].json and consume via next-intl." -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Verify dictionary directory existence
+$dictDir = "messages"
+if (Test-Path "docs/project.json") {
+    try {
+        $projJson = Get-Content -Path "docs/project.json" -Raw | ConvertFrom-Json
+        if ($projJson.project_context_and_metadata.dictionaries_dir) {
+            $dictDir = $projJson.project_context_and_metadata.dictionaries_dir
+        }
+    } catch {}
+}
+
+if (-not (Test-Path $dictDir)) {
+    Write-Host "[WARN] Translation dictionary directory '$dictDir' not found." -ForegroundColor Yellow
+} else {
+    Write-Host "[PASS] Translation dictionary directory verified: $dictDir" -ForegroundColor Green
+}
+
 # Detect package manager
 $pkgManager = "pnpm"
 if (Test-Path "pnpm-lock.yaml") { $pkgManager = "pnpm" }
@@ -69,4 +95,3 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host "[SUCCESS] Dev verification passed for $compName." -ForegroundColor Green
 exit 0
-

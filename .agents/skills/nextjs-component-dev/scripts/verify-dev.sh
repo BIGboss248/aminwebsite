@@ -50,6 +50,14 @@ fi
 
 echo -e "\033[0;32m[PASS] Files present: ${COMP_NAME}.tsx, ${COMP_NAME}Skeleton.tsx, $(basename "$TEST_FILE")\033[0m"
 
+# Verify zero in-file i18n placeholders / mock translation dictionaries
+if [ -f "$COMPONENT_FILE" ]; then
+    if grep -qE "const\s+DEFAULT_CONTENT\s*=|const\s+DEFAULT_TRANSLATIONS\s*=" "$COMPONENT_FILE"; then
+        echo -e "\033[0;31m[FAIL] In-file i18n placeholder dictionary detected in ${COMP_NAME}.tsx (e.g., DEFAULT_CONTENT). Extract all strings to messages/[locale].json and consume via next-intl.\033[0m"
+        exit 1
+    fi
+fi
+
 # Detect package manager
 PKG_MANAGER="pnpm"
 if [ -f "pnpm-lock.yaml" ]; then PKG_MANAGER="pnpm";
@@ -63,4 +71,3 @@ $PKG_MANAGER test -- "$TEST_FILE"
 
 echo -e "\033[0;32m[SUCCESS] Dev verification passed for $COMP_NAME.\033[0m"
 exit 0
-

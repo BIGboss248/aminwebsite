@@ -166,5 +166,11 @@
     "Category": "PROCESS",
     "Instruction": "In component creation workflows, TDD cycles, and verification gates, execute test runner commands targeted strictly to the specific component's test and edge test files (e.g., 'pnpm test <path>/[ComponentName].test.tsx <path>/[ComponentName].edge.test.tsx') rather than running the full project test suite, and suppress verbose command output flags to minimize context token consumption.",
     "Why": "user explicit requirement: configure skills to use targeted test execution and token optimization"
+  },
+  {
+    "Rule_number": 29,
+    "Category": "ARCH",
+    "Instruction": "In component development workflows ('nextjs-component-dev' / 'nextjs-create-component'), never add hardcoded text, fallback string placeholders, or in-file mock dictionary objects (e.g. 'DEFAULT_CONTENT') in component code. All user-facing strings, labels, badges, and CTAs must be extracted into the translation dictionary files ('messages/[locale].json') across all supported languages defined in 'docs/project.json', and consumed via next-intl ('getTranslations' in RSC, 'useTranslations' in Client Components).",
+    "Why": "user explicit requirement: configure nextjs-component-dev to not add i18n placeholders in components it creates and fill the dictionary files instead"
   }
 ]

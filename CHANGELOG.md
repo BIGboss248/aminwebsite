@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0](https://github.com/BIGboss248/aminwebsite/compare/v1.4.0...v1.5.0) (2026-09-21)
+
+
+### Features
+
+* added header to website ([60a3305](https://github.com/BIGboss248/aminwebsite/commit/60a330580fb03aeed6bc70306c0027a5ade57d7d))
+* added home hero section ([e980351](https://github.com/BIGboss248/aminwebsite/commit/e9803518ff5840fb0f07b2bc0d701954990d0577))
+* **nav:** implement MobileNavDrawer and clean navigation telemetry badges ([9cb6f53](https://github.com/BIGboss248/aminwebsite/commit/9cb6f53b3ae7cf5d932f79f2a27ec06d1d4670ec))
+
+
+### Bug Fixes
+
+* dictionary useage fix ([4a1b438](https://github.com/BIGboss248/aminwebsite/commit/4a1b4384b513c4a5aaa33b4d66e6ae529b2d2152))
+* duplicate key ([56ff05f](https://github.com/BIGboss248/aminwebsite/commit/56ff05f4dff556dbed6c34b63bfa82064b55c333))
+* header placement and duplication ([b1de2b9](https://github.com/BIGboss248/aminwebsite/commit/b1de2b903cf84ce0b08dd4df461433a991fa84c8))
+* theme toggle TS fix ([96b60c2](https://github.com/BIGboss248/aminwebsite/commit/96b60c285b8fc20cc328847ad82618b89a3f3d34))
+
 ## [1.4.0](https://github.com/BIGboss248/aminwebsite/compare/v1.3.0...v1.4.0) (2026-09-08)
 
 

@@ -59,17 +59,17 @@ Bootstrap and scaffold **`next-intl`** into an existing Next.js App Router proje
 ```markdown
 ## 🌐 Next.js i18n Setup Execution Report
 
-| Step / Component | Target File(s) | Status | Notes |
-| :--- | :--- | :--- | :--- |
-| **Package** | `package.json` (`next-intl`) | `[IMPLEMENTED]` / `[UNTOUCHED]` | Installed runtime |
-| **Project Config** | `docs/project.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured messages dir |
-| **Routing** | `i18n/routing.ts` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Locales & default |
-| **Request** | `i18n/request.ts` | `[IMPLEMENTED]` / `[UNTOUCHED]` | next/root-params |
-| **Navigation** | `i18n/navigation.ts` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Pure TS helpers |
-| **Plugin** | `next.config.ts` | `[IMPLEMENTED]` / `[UNTOUCHED]` | withNextIntl wrapped |
-| **Interceptor** | `proxy.ts` / `middleware.ts` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Route matcher |
-| **Dictionaries** | `messages/[locale].json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Starter dictionaries |
-| **Layout** | `app/[locale]/layout.tsx` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Static params & provider |
-| **Types** | `global.d.ts` | `[IMPLEMENTED]` / `[UNTOUCHED]` | AppConfig augmentation |
-| **Verification** | `verify-setup.ps1` & build | `[PASSED]` | Clean build |
+| Step / Component   | Target File(s)               | Status                          | Notes                    |
+| :----------------- | :--------------------------- | :------------------------------ | :----------------------- |
+| **Package**        | `package.json` (`next-intl`) | `[IMPLEMENTED]` / `[UNTOUCHED]` | Installed runtime        |
+| **Project Config** | `docs/project.json`          | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured messages dir  |
+| **Routing**        | `i18n/routing.ts`            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Locales & default        |
+| **Request**        | `i18n/request.ts`            | `[IMPLEMENTED]` / `[UNTOUCHED]` | next/root-params         |
+| **Navigation**     | `i18n/navigation.ts`         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Pure TS helpers          |
+| **Plugin**         | `next.config.ts`             | `[IMPLEMENTED]` / `[UNTOUCHED]` | withNextIntl wrapped     |
+| **Interceptor**    | `proxy.ts` / `middleware.ts` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Route matcher            |
+| **Dictionaries**   | `messages/[locale].json`     | `[IMPLEMENTED]` / `[UNTOUCHED]` | Starter dictionaries     |
+| **Layout**         | `app/[locale]/layout.tsx`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Static params & provider |
+| **Types**          | `global.d.ts`                | `[IMPLEMENTED]` / `[UNTOUCHED]` | AppConfig augmentation   |
+| **Verification**   | `verify-setup.ps1` & build   | `[PASSED]`                      | Clean build              |
 ```

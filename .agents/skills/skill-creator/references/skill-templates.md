@@ -1,10 +1,10 @@
 # AI Skill Templates & Boilerplates
 
-Use these ready-to-use templates as starting points for common types of AI skills.
+Use these ready-to-use templates as starting points for common types of AI skills. Notice how all templates maintain **lean descriptions (<150–200 chars)** and offload deep code blocks and boilerplates to `resources/templates/` and `references/`.
 
 ---
 
-## 1. Workflow / Runbook Skill Template
+## 1. Workflow / Setup Runbook Skill Template
 
 Best for multi-step tasks like deployment, migrations, setups, or audits.
 
@@ -12,13 +12,13 @@ Best for multi-step tasks like deployment, migrations, setups, or audits.
 ---
 name: service-migration
 description: >-
-  Migrate database tables and application services from legacy schema to v2 schema.
-  Use when the user asks to "migrate database", "run schema migration", or "upgrade service models".
+  Migrate database tables and services to schema v2. Use when running
+  schema migrations, upgrading models, or executing database transitions.
 ---
 
 # Service Migration Skill
 
-Step-by-step procedure for executing database schema and service migrations safely.
+Step-by-step orchestrator for executing database schema and service migrations safely.
 
 ## Prerequisites & Checklist
 
@@ -29,19 +29,23 @@ Step-by-step procedure for executing database schema and service migrations safe
 
 ### 1. Pre-Migration Audit
 
-1. Run the audit script to check for breaking schema changes:
+1. Run the audit script:
    `powershell -ExecutionPolicy Bypass -File ./scripts/audit_schema.ps1`
-2. Review audit logs in `logs/audit.json`.
+2. Review audit logs in `logs/audit.json`. For audit error codes, consult [audit-codes.md](file:///references/audit-codes.md).
 
-### 2. Apply Migrations
+### 2. Scaffold Migration Scripts
+
+1. Inspect the migration boilerplate in [migration.template.ts](file:///resources/templates/migration.template.ts).
+2. Generate the migration file under `src/migrations/`.
+
+### 3. Apply Migrations
 
 1. Run the migration command: `pnpm run migrate:v2`
 2. Validate foreign key constraints.
 
-## Edge Cases & AI Pitfalls
+## Edge Cases & Pitfalls
 
-- **Soft Deletes**: Always verify queries include `WHERE deleted_at IS NULL`.
-- **Lock Contention**: Never run direct `ALTER TABLE` on tables exceeding 100k rows without batching.
+For complex locking considerations and zero-downtime strategies, read [concurrency-guide.md](file:///references/concurrency-guide.md).
 
 ## Verification & Self-Check
 
@@ -55,11 +59,11 @@ Step-by-step procedure for executing database schema and service migrations safe
 
 Best for teaching an agent how to use a specific CLI tool or library (e.g. Docker, Android CLI, Stitch).
 
-````markdown
+```markdown
 ---
 name: cli-tool-helper
 description: >-
-  Execute and automate workflows with the MyTool CLI. Use when running MyTool commands,
+  Automate workflows with MyTool CLI. Use when running MyTool commands,
   troubleshooting CLI flags, or configuring tool options.
 ---
 
@@ -77,21 +81,9 @@ Runbook for invoking `mytool` commands safely and accurately.
 ## Execution Guidelines
 
 1. Always run commands using single, isolated operations.
-2. Check tool exit code. If non-zero, consult [troubleshooting.md](./references/troubleshooting.md).
-
-## Output Template
-
-Format the summary as:
-
-```text
-[MyTool Execution Report]
-Status: SUCCESS / FAILURE
-Artifacts: <list of generated files>
-Warnings: <list of warnings>
+2. Check tool exit code. If non-zero, consult [troubleshooting.md](file:///references/troubleshooting.md).
+3. Format output following the schema in [output-schema.json](file:///resources/templates/output-schema.json).
 ```
-````
-
-````
 
 ---
 
@@ -103,8 +95,8 @@ Best for design review, spec-driven development, code quality audits, or securit
 ---
 name: security-audit
 description: >-
-  Audit codebase for security vulnerabilities, API key exposure, missing authentication middleware,
-  and improper database permissions. Use when reviewing code for security or conducting a PR security audit.
+  Audit code for security vulnerabilities, secrets, and auth issues. Use
+  when reviewing PRs for security or conducting application security audits.
 ---
 
 # Security Audit Skill
@@ -112,13 +104,15 @@ description: >-
 Guide for conducting comprehensive application security reviews.
 
 ## Top Vulnerability Vectors to Inspect
+
 1. **Exposed Credentials**: Verify no `.env` files or secrets are committed.
 2. **Missing Auth Middleware**: Ensure all private routes check session tokens.
 3. **Database RLS / Permissions**: Verify Row Level Security is enabled.
 4. **Input Sanitization**: Ensure user inputs are validated before database queries.
 
 ## Review Workflow
+
 1. Scan touched files for vulnerability vectors.
-2. Formulate findings using the [Security Report Template](./references/report-template.md).
-3. Provide concrete code diffs to remediate identified issues.
-````
+2. Format findings using the report template in [security-report.template.md](file:///resources/templates/security-report.template.md).
+3. If remediation patterns are needed, consult [remediation-patterns.md](file:///references/remediation-patterns.md).
+```

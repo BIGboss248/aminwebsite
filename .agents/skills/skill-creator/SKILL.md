@@ -101,40 +101,63 @@ Run the platform-appropriate script to generate the folder boilerplate:
 
 Every `SKILL.md` must follow these core structural conventions:
 
-### 1. Frontmatter Contract
+### 1. Ultra-Minimal Frontmatter Contract
 
 ```yaml
 ---
 name: my-specialized-skill
 description: >-
-  1-3 sentences in third-person describing what the skill does and specific trigger phrases/situations.
+  1-2 concise sentences in third-person stating WHAT the skill does and specific trigger phrases.
 ---
 ```
 
-> [!TIP]
-> See [frontmatter-and-triggers.md](./references/frontmatter-and-triggers.md) for trigger optimization patterns and keyword targeting.
+> [!IMPORTANT]
+> **Strict Description Brevity Rule**: Keep the frontmatter `description` strictly to 1–2 concise sentences (under ~150–200 characters). State only **WHAT** the skill accomplishes and **WHEN** it triggers. **NEVER describe internal procedural steps, methodology, or implementation mechanics ("how")** in the frontmatter. See [frontmatter-and-triggers.md](./references/frontmatter-and-triggers.md).
 
-### 2. Operational Checklist Flow
+### 2. Ultra-Lean Orchestration Runbook (100–200 Lines Max)
 
-Format procedural steps as actionable markdown checklists (`- [ ]`) or numbered stages. Instruct the agent to think step-by-step and verify each milestone before advancing.
+`SKILL.md` must serve strictly as an **orchestrator and checklist**, not an encyclopedia:
 
-### 3. Edge Cases & Known AI Pitfalls
+- Target a compact length of **100–200 lines maximum**.
+- Structure operational steps as actionable markdown checklists (`- [ ]`) or high-level numbered stages.
+- Instruct the agent to think step-by-step, executing and verifying each milestone sequentially.
 
-Always include an explicit **"Edge Cases & Common Mistakes"** section detailing nuances that LLMs typically miss (e.g., hidden flags, specific directory structures, timezone bugs).
+### 3. Strict Code Template Offloading (No Inline Code Dumps)
 
-### 4. Output Contract / Templates
+> [!CAUTION]
+> **Never embed large code blocks, configuration boilerplates, Dockerfiles, or CI workflows directly in `SKILL.md`.**
+> Move code templates and config snippets into dedicated files under [`resources/templates/`](./resources/templates/) or [`examples/`](./examples/) and link to them with relative markdown links (e.g., `[Dockerfile template](./resources/templates/Dockerfile.template)` or `[release workflow](./examples/release-please.yml)`).
 
-Provide concrete output templates (Markdown tables, JSON schemas, diff blocks) so the agent formats results consistently without guessing.
+### 4. Edge Cases & Known AI Pitfalls
+
+Always include a focused **"Edge Cases & Common Mistakes"** section detailing domain-specific nuances that LLMs typically miss (e.g., hidden flags, command chaining bans, timezone bugs).
+
+### 5. Output Contract / Templates
+
+Provide a concise output template or reporting schema so the agent formats results consistently without guessing.
 
 ---
 
-## Phase 4: Progressive Disclosure & Modular Content
+## Phase 4: Progressive Disclosure & Modular Content Separation
 
-Keep the main `SKILL.md` concise (under 200-300 lines) to protect the model's active context window:
+Preserve the agent's active context window by separating skill content across four distinct modular layers:
 
-1. **Offload Deep Manuals**: Move bulky API references, form structures, and domain manuals into [`references/`](./references/progressive-disclosure.md). Link to them using relative markdown links (e.g., `[api-guide.md](./references/api-guide.md)`).
-2. **Encapsulate CLI Tasks**: Put non-trivial command sequences into scripts under `scripts/`. Always implement standard `--help` / `-Help` parameters.
-3. **Reference Snippets**: Place reference implementation snippets into `examples/`. Never generate dummy or sample test files in the user workspace.
+```mermaid
+flowchart TD
+    L1["Layer 1: SKILL.md<br/>(Lean Orchestrator & Checklist: 100–200 lines)"]
+    L2["Layer 2: references/<br/>(Deep Technical Specs, Rules, Manuals)"]
+    L3["Layer 3: resources/templates/ & examples/<br/>(Code Templates, Workflows, Snippets)"]
+    L4["Layer 4: scripts/<br/>(Native Executable CLI Helpers: .ps1, .sh)"]
+
+    L1 -->|Links to| L2
+    L1 -->|Links to| L3
+    L1 -->|Executes| L4
+```
+
+1. **Layer 1 (`SKILL.md`)**: High-level workflow, pre-conditions, checklist, and verification gates.
+2. **Layer 2 (`references/`)**: Detailed technical documentation, API specifications, rule matrices, and diagnostic tables. (Link via `[topic.md](./references/topic.md)`).
+3. **Layer 3 (`resources/templates/` & `examples/`)**: Isolated boilerplate code, Dockerfiles, config templates, and snippet references. (Link via `[template.json](./resources/templates/template.json)`).
+4. **Layer 4 (`scripts/`)**: Complex, multi-step CLI automation encapsulated into native cross-platform scripts (`.ps1` and `.sh`) with `--help` flags and exit codes.
 
 > [!NOTE]
 > Review [progressive-disclosure.md](./references/progressive-disclosure.md) for full context management techniques.

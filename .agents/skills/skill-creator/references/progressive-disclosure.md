@@ -12,53 +12,76 @@ Progressive disclosure is an architectural pattern that keeps AI agents fast, pr
 
 ---
 
-## 2. Directory Separation Strategy
+## 2. Directory Separation Strategy & 4-Layer Architecture
 
-Organize your skill repository cleanly across these layers:
+Organize your skill repository cleanly across these modular layers:
 
 ```text
 skills/<skill-name>/
-├── SKILL.md                 # Layer 1: Core Workflow & Orchestration (~100-300 lines)
-├── references/              # Layer 2: On-Demand Technical Manuals & Checklists
+├── SKILL.md                 # Layer 1: Core Orchestrator Runbook (<150–250 lines)
+├── references/              # Layer 2: Deep Technical Manuals & Rule Matrices (<100–200 lines each)
 │   ├── api-reference.md
 │   └── error-handbook.md
-├── scripts/                 # Layer 3: Executable CLI Helpers (.ps1 / .sh)
-│   └── run_checks.ps1
-├── examples/                # Layer 4: Reference Code Snippets
+├── resources/               # Layer 3: Templates, Configs, Schemas, & Boilerplates
+│   └── templates/
+│       ├── config.example.json
+│       └── Component.template.tsx
+├── examples/                # Layer 3: Complete Working Code Snippets & Case Studies
 │   └── good-patterns.ts
-└── resources/               # Layer 5: Assets, JSON Schemas, Templates
-    └── config-template.json
+└── scripts/                 # Layer 4: Deterministic Cross-Platform CLI Helpers
+    ├── run_checks.ps1       # Windows PowerShell
+    └── run_checks.sh        # Linux / macOS Bash
 ```
 
 ---
 
-## 3. How to Structure `SKILL.md` (Layer 1)
+## 3. How to Structure `SKILL.md` (Layer 1: Orchestrator)
 
-The main `SKILL.md` is an **orchestrator and runbook**, not a general encyclopedia:
+The main `SKILL.md` is an **orchestration runbook and high-level checklist**, NOT an encyclopedia or code dump:
 
-- Keep it strictly focused on:
-  1. What prerequisite tools/files are needed.
-  2. The step-by-step checklist of execution.
-  3. Where to find deeper docs when a specific branch or error occurs.
-  4. How to verify that the task is finished.
-- Link to reference files using standard relative markdown links:
+- **Target Size**: Under 150–250 lines.
+- **Strictly No Large Inline Code Fences**: Never paste entire 50+ line configuration files, component boilerplates, or scripts directly into `SKILL.md`.
+- **Reference & Scaffold Pattern**: Link to template files and specify where to copy/scaffold them:
+
   ```markdown
-  If configuring OAuth2 providers, follow the detailed setup in [oauth-setup.md](./references/oauth-setup.md).
+  ### Step 3: Scaffold Test Configuration
+
+  1. Inspect the starter configuration in [jest.config.template.ts](file:///resources/templates/jest.config.template.ts).
+  2. Write the configuration to root `jest.config.ts`, customizing the path aliases if detected.
+  3. If troubleshooting mocking errors, read [mocking-guide.md](file:///references/mocking-guide.md).
   ```
 
 ---
 
-## 4. Authoring Guidelines for `references/` (Layer 2)
+## 4. Offloading Code Templates & Boilerplates (`resources/templates/` & `examples/`)
+
+### Why Offload Code Templates?
+
+1. **Context Window Protection**: Pushing 300 lines of template code into `SKILL.md` wastes agent attention on syntax that may not even be needed for the active task step.
+2. **Deterministic File Operations**: By storing templates as standalone files, agents can use native file-copying operations or view them on demand rather than generating code from memory.
+3. **Syntax Validation & Formatting**: Template files can be formatted with Prettier/ESLint directly.
+
+### Best Practices for Templates:
+
+- Place boilerplate files under `resources/templates/` (e.g. `resources/templates/docker-compose.prod.yml`).
+- Use `.template` or standard extensions (e.g. `Component.template.tsx`, `nginx.conf`).
+- Place working reference implementations under `examples/` (e.g. `examples/custom-hook-usage.tsx`).
+- In `SKILL.md` or `references/*.md`, reference templates using standard markdown links.
+
+---
+
+## 5. Authoring Guidelines for `references/` (Layer 2)
 
 - **Single-Topic Focus**: Keep each reference file dedicated to one specific topic (e.g. `caching-rules.md`, `database-schema.md`, `error-recovery.md`).
+- **Target Size**: 50–200 lines per file.
 - **Concise Tables & Bullet Points**: Prefer structured tables and short checklists over long paragraphs.
 - **No Redundancy**: Avoid repeating instructions already stated in `SKILL.md`.
 
 ---
 
-## 5. Script Design Guidelines (`scripts/`)
+## 6. Script Design Guidelines (`scripts/` - Layer 4)
 
 - Provide native scripts for both major environments: `.ps1` for PowerShell (Windows) and `.sh` for POSIX shells (Linux/macOS).
-- Always support a `--help` / `-Help` flag explaining inputs and expected outputs.
+- Always support a `-Help` / `--help` flag explaining inputs and expected outputs.
 - Write self-contained scripts or clearly fail early with human-readable error messages if dependencies are missing.
 - Ensure scripts return standard exit codes (`0` for success, non-zero for error) so agents can interpret task status unambiguously.

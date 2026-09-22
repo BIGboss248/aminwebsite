@@ -92,9 +92,10 @@ if [[ -n "$VALIDATE" ]]; then
             fi
         fi
 
-        # Check Description
-        if ! grep -q "^description:" "$SKILL_FILE"; then
-            errors+=("Frontmatter is missing required 'description' field.")
+        # Check Line Count Budget
+        LINE_COUNT=$(wc -l < "$SKILL_FILE" || true)
+        if [[ $LINE_COUNT -gt 250 ]]; then
+            echo "WARNING: SKILL.md is $LINE_COUNT lines (recommended: <150-250 lines). Consider offloading technical details to references/ and templates to resources/templates/."
         fi
     fi
 
@@ -138,7 +139,7 @@ echo "Scaffolding skill '$NAME' at: $SKILL_PATH"
 mkdir -p "$SKILL_PATH/references"
 mkdir -p "$SKILL_PATH/scripts"
 mkdir -p "$SKILL_PATH/examples"
-mkdir -p "$SKILL_PATH/resources"
+mkdir -p "$SKILL_PATH/resources/templates"
 
 cat << EOF > "$SKILL_PATH/SKILL.md"
 ---
@@ -149,42 +150,36 @@ description: >-
 
 # $NAME
 
-Comprehensive operational runbook and guidelines for $NAME.
+Orchestration runbook for $NAME procedures.
 
 ---
 
 ## Prerequisites & Preconditions
 - [ ] Required tools and environment variables verified.
-- [ ] Working repository context loaded.
+- [ ] Working workspace context loaded.
 
 ---
 
 ## Step-by-Step Execution Flow
 
-### 1. Step One: Preparation
+### 1. Step One: Inspection & Setup
 1. Inspect input parameters and current workspace state.
 2. If optional configurations are missing, initialize safe defaults.
 
-### 2. Step Two: Core Operation
-1. Perform the core operational workflow.
-2. For detailed technical background, consult [reference.md](./references/reference.md).
+### 2. Step Two: Template Scaffolding
+1. Inspect the starter configuration in [config.template.json](./resources/templates/config.template.json).
+2. Generate target configurations from the template.
+3. For in-depth rules and edge cases, consult [reference.md](./references/reference.md).
+
+### 3. Step Three: Execution & Verification
+1. Run the operational workflow.
+2. Confirm outputs and state integrity.
 
 ---
 
 ## Edge Cases & AI Pitfalls
 - **Common Mistake**: Watch out for subtle assumptions or hallucinated arguments.
 - **State Validation**: Ensure dependencies and directories exist before running modifications.
-
----
-
-## Output Contract & Template
-Format the final report as follows:
-\`\`\`text
-[$NAME Report]
-Status: SUCCESS / FAILURE
-Summary: <Brief summary of actions taken>
-Artifacts: <List of modified or generated files>
-\`\`\`
 
 ---
 
@@ -200,6 +195,14 @@ Detailed technical manual and operational deep-dive for $NAME.
 
 ## Technical Specifications
 - Detailed schemas, parameters, and system behaviors.
+EOF
+
+cat << EOF > "$SKILL_PATH/resources/templates/config.template.json"
+{
+  "\$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "$NAME",
+  "version": "1.0.0"
+}
 EOF
 
 echo "Skill '$NAME' successfully scaffolded at $SKILL_PATH"

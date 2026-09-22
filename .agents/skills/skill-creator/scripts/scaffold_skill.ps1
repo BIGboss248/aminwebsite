@@ -92,9 +92,15 @@ if ($Validate) {
             }
         }
 
+        # Check Line Count Budget
+        $lineCount = ($content -split '\r?\n').Count
+        if ($lineCount -gt 250) {
+            Write-Host "WARNING: SKILL.md is $lineCount lines (recommended: <150-250 lines). Consider offloading technical details to references/ and templates to resources/templates/." -ForegroundColor Yellow
+        }
+
         # Check relative markdown links (strip fenced code blocks and inline code spans first)
         $cleanContent = $content -replace '(?s)```.*?```', '' -replace '`.*?`', ''
-        $linkMatches = [regex]::Matches($cleanContent, '\[.*?\]\(((\./|\.\./|[a-zA-Z0-9_\-\./]+)\.md)\)')
+        $linkMatches = [regex]::Matches($cleanContent, '\[.*?\]\(((\./|\.\./|[a-zA-Z0-9_\-\./]+)\.(md|json|ts|tsx|js|py|sh|ps1|yml|yaml))\)')
         foreach ($link in $linkMatches) {
             $relPath = $link.Groups[1].Value
             $targetPath = Join-Path $Validate $relPath
@@ -140,13 +146,13 @@ if (Test-Path $skillPath) {
 
 Write-Host "Scaffolding skill '$Name' at: $skillPath" -ForegroundColor Cyan
 
-# Create directories
+# Create 4-layer directories
 New-Item -ItemType Directory -Path (Join-Path $skillPath "references") -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $skillPath "scripts") -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $skillPath "examples") -Force | Out-Null
-New-Item -ItemType Directory -Path (Join-Path $skillPath "resources") -Force | Out-Null
+New-Item -ItemType Directory -Path (Join-Path $skillPath "resources/templates") -Force | Out-Null
 
-# Create SKILL.md template
+# Create lean SKILL.md template (<150 lines)
 $skillContent = @"
 ---
 name: $Name
@@ -156,42 +162,36 @@ description: >-
 
 # $Name
 
-Comprehensive operational runbook and guidelines for $Name.
+Orchestration runbook for $Name procedures.
 
 ---
 
 ## Prerequisites & Preconditions
 - [ ] Required tools and environment variables verified.
-- [ ] Working repository context loaded.
+- [ ] Working workspace context loaded.
 
 ---
 
 ## Step-by-Step Execution Flow
 
-### 1. Step One: Preparation
+### 1. Step One: Inspection & Setup
 1. Inspect input parameters and current workspace state.
 2. If optional configurations are missing, initialize safe defaults.
 
-### 2. Step Two: Core Operation
-1. Perform the core operational workflow.
-2. For detailed technical background, consult [reference.md](./references/reference.md).
+### 2. Step Two: Template Scaffolding
+1. Inspect the starter configuration in [config.template.json](./resources/templates/config.template.json).
+2. Generate target configurations from the template.
+3. For in-depth rules and edge cases, consult [reference.md](./references/reference.md).
+
+### 3. Step Three: Execution & Verification
+1. Run the operational workflow.
+2. Confirm outputs and state integrity.
 
 ---
 
 ## Edge Cases & AI Pitfalls
 - **Common Mistake**: Watch out for subtle assumptions or hallucinated arguments.
 - **State Validation**: Ensure dependencies and directories exist before running modifications.
-
----
-
-## Output Contract & Template
-Format the final report as follows:
-```text
-[$Name Report]
-Status: SUCCESS / FAILURE
-Summary: <Brief summary of actions taken>
-Artifacts: <List of modified or generated files>
-```
 
 ---
 
@@ -213,6 +213,17 @@ Detailed technical manual and operational deep-dive for $Name.
 "@
 
 Set-Content -Path (Join-Path $skillPath "references/reference.md") -Value $refContent -Encoding UTF8
+
+# Create starter template file
+$templateContent = @"
+{
+  "`$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "$Name",
+  "version": "1.0.0"
+}
+"@
+
+Set-Content -Path (Join-Path $skillPath "resources/templates/config.template.json") -Value $templateContent -Encoding UTF8
 
 Write-Host "Skill '$Name' successfully scaffolded!" -ForegroundColor Green
 Write-Host "Location: $skillPath" -ForegroundColor Green

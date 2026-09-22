@@ -1,9 +1,9 @@
 ---
 name: nextjs-dev-setup
-description: Use when user wants to setup a dev environment for a NextJS project, configure project settings, setup Jest unit testing and Playwright E2E testing, setup Storybook with themes, accessibility (a11y), and Storybook AI MCP server, setup Next.js and Playwright MCP servers, configure Docker standalone production containerization (Dockerfile, docker-compose.yml, and .dockerignore), setup git hooks and commitlint, or configure Release Please automation with multi-arch (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployment and credit-optimized Next.js CI build caching (.next/cache). Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", "deploy package on release", or when configuring/creating docs/project.json or mcp.json.
+description: Setup dev environment for a NextJS project, configure project settings, setup Jest unit & Playwright E2E testing, setup Storybook with themes & Storybook AI MCP, configure Next.js Dev Server & Playwright & Codebase Memory MCP servers, setup agent-first Tailwind design system linting (@shadcn/lint), configure Docker standalone production containerization, git hooks, commitlint, and Release Please CI/CD with multi-arch GHCR deployment. Triggers on "/NextJS-dev-Setup", "setup my nextjs dev environment", "start a nextJS project", "containerize nextjs app", "deploy package on release", or when configuring/creating docs/project.json or mcp.json.
 metadata:
   author: BIGboss248
-  version: "2.1"
+  version: "2.2"
 ---
 
 # Next.js Development Setup & Project Configuration Skill (`nextjs-dev-setup`)
@@ -118,6 +118,7 @@ Each entry in the `supported_languages` array contains:
 4. **Scan Installed Dependencies (`package.json`):**
    - Check `dependencies` and `devDependencies`:
      - Component libraries: `radix-ui`, `shadcn`, `@headlessui/react`, etc.
+     - Styling & Design System Linters: `@shadcn/lint`, `eslint`, `eslint-config-next`, `eslint-plugin-storybook`.
      - Animation libraries: `gsap`, `@gsap/react`, `framer-motion`, `motion`, `tailwind-animate` (stored as an array of strings in `animation_library`).
      - Testing & Workshop libraries: `jest`, `jest-environment-jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@playwright/test`, `playwright`, `storybook`, `@storybook/nextjs-vite` (stored as an array of strings in `testing_library`).
      - Git hooks & commit standards: `husky`, `@commitlint/cli`, `@commitlint/config-conventional`, `lint-staged`.
@@ -153,6 +154,7 @@ _(If all properties were successfully discovered during Step 1, proceed directly
 1. **Verify Core Tooling with Detected `package_manager`:**
    - React & Next.js versions (e.g. Next.js 15+ / 16+, React 19)
    - Styling tools: Tailwind CSS, `clsx`, `tailwind-merge`
+   - Agent-First Design System Linter: `@shadcn/lint` (ESLint / Oxlint)
    - Route transition progress: `@vercel/react-transition-progress`
    - Animation libraries: configured entries in `animation_library` (e.g. `["gsap", "@gsap/react"]`)
    - SEO / Structured data: `schema-dts`
@@ -337,6 +339,7 @@ Playwright tests the complete running Next.js application across real browser en
 `codebase-memory-mcp` constructs a persistent knowledge graph of functions, classes, Next.js App Router routes, and components (162 languages, Tree-sitter AST, Hybrid LSP semantic type resolution) allowing AI coding agents to navigate the architecture with 99% fewer tokens than raw grep cycles.
 
 #### 1. Binary Installation:
+
 - **Windows (PowerShell)**:
   ```powershell
   Invoke-WebRequest -Uri https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.ps1 -OutFile install.ps1
@@ -350,19 +353,23 @@ Playwright tests the complete running Next.js application across real browser en
   ```
 
 #### 2. Dual MCP Registration (Workspace & AGY Global Only):
+
 - **Workspace (`mcp.json`)**: Add `"codebase-memory": { "command": "codebase-memory-mcp", "args": [] }`.
 - **AGY Host Global (`~/.gemini/antigravity/mcp_config.json` & `~/.gemini/config/mcp_config.json`)**: Add the same block strictly for Antigravity. (Never register globally for other coding agents per Rule 14).
 
 #### 3. Crucial Stutter Prevention Gate (`auto_watch = false`):
+
 > [!CAUTION]
 > **Eliminate Editor Stutters On Save:**
 > By default, `codebase-memory-mcp` automatically registers connected workspaces with its background git watcher (`auto_watch = true`). Whenever a file is edited, the watcher detects file changes, spawns an `index.supervisor` worker process, and compresses `.codebase-memory/graph.db.zst` via zstd on every single keystroke/save, leading to severe editor and window manager micro-stutters.
 > **Always disable automatic session watching globally during dev setup:**
+
 ```bash
 codebase-memory-mcp config set auto_watch false
 ```
 
 #### 4. Configure Root Exclusions (`.cbmignore`):
+
 `codebase-memory-mcp` reads `.cbmignore` strictly at the repository root (`<repo>/.cbmignore`) at discovery time. Create `.cbmignore` to prevent non-code documentation, test outputs, and Next.js build caches from bloating the graph or triggering reindexing:
 
 ```gitignore
@@ -418,9 +425,11 @@ pnpm-lock.yaml
 ```
 
 #### 5. Git Hygiene:
+
 - Add `.codebase-memory/` to `.gitignore` so local binary graph caches never dirty git status or trigger Git diff calculations.
 
 #### 6. On-Demand Indexing:
+
 - Index on-demand without background polling penalty:
   ```bash
   codebase-memory-mcp cli index_repository --repo-path . --mode moderate
@@ -786,11 +795,107 @@ export const CssCheck: Story = {
 
 ---
 
-### Step 9: Setup Docker Containerization (Standalone Production Container)
+### Step 9: Setup Agent-First Tailwind Design System Linter (`@shadcn/lint`)
+
+`@shadcn/lint` is an agent-first linter for Tailwind CSS (v4) design systems. It enables teams to define component styling boundaries and design token constraints that AI coding agents can automatically verify, understand, and fix in a single round.
+
+#### 9.1. Install Dev Dependency
+
+Install `@shadcn/lint` using the detected package manager:
+
+```bash
+# pnpm:
+pnpm add -D @shadcn/lint
+
+# npm:
+npm install -D @shadcn/lint
+
+# yarn:
+yarn add -D @shadcn/lint
+
+# bun:
+bun add -D @shadcn/lint
+```
+
+#### 9.2. Configure ESLint Flat Config (`eslint.config.mjs`)
+
+Register the `@shadcn/lint` plugin and configure rules and component file overrides in `eslint.config.mjs`:
+
+```javascript
+import storybook from "eslint-plugin-storybook";
+import shadcn from "@shadcn/lint";
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "storybook-static/**",
+  ]),
+  ...storybook.configs["flat/recommended"],
+  {
+    plugins: {
+      shadcn,
+    },
+    rules: {
+      "shadcn/no-restyle": ["error", { allow: ["layout"] }],
+      "shadcn/no-arbitrary-values": "error",
+      "shadcn/no-raw-colors": "error",
+      "shadcn/no-inline-styles": "error",
+      "shadcn/no-unknown-classes": "error",
+    },
+  },
+  {
+    // Turn off restyle & arbitrary value rules in primitive UI directories so components can style themselves
+    files: ["app/components/ui/**", "components/ui/**", "src/components/ui/**"],
+    rules: {
+      "shadcn/no-restyle": "off",
+      "shadcn/no-arbitrary-values": "off",
+    },
+  },
+]);
+
+export default eslintConfig;
+```
+
+#### 9.3. Core Rules & Policy Specification
+
+| Rule                         | What it Checks                                          | Agent Guidance                                                                                                                                                                                |
+| :--------------------------- | :------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shadcn/no-restyle`          | Component style overrides passed via `className`        | Forbids changing internal component geometry (padding, radius, typography). Directs the agent to use predefined component variants (`variant`, `size`) or container layout (`gap`, `margin`). |
+| `shadcn/no-arbitrary-values` | Arbitrary bracket values (e.g. `p-[13px]`, `w-[320px]`) | Forces agents to use standard spacing/sizing theme scales. Suggests nearest standard theme scale tokens.                                                                                      |
+| `shadcn/no-raw-colors`       | Raw palette colors (`bg-zinc-100`) & undeclared tokens  | Enforces declared CSS variable tokens (`bg-primary`, `text-muted-foreground`) from `globals.css` `@theme`.                                                                                    |
+| `shadcn/no-inline-styles`    | `style={{ ... }}` props and `<style>` blocks            | Flags inline style leaks and guides agents back to Tailwind utility classes.                                                                                                                  |
+| `shadcn/no-unknown-classes`  | Invalid or typo Tailwind classes                        | Uses Tailwind v4 loader to verify classes and catches typos (e.g. `hovr:flex`).                                                                                                               |
+
+#### 9.4. Component Contracts Configuration
+
+Use contracts to define granular styling permissions for specific components:
+
+```javascript
+"shadcn/no-restyle": ["error", {
+  allow: ["layout"],
+  contracts: [
+    { pattern: "^Button$", allow: ["w-full", "mt-*", "mb-*"] },
+    { pattern: "^CardTitle$", allow: ["layout", "typography"], deny: ["font-*"] },
+    { pattern: "^CardContent$", allow: ["layout", "spacing"] },
+  ],
+}]
+```
+
+---
+
+### Step 10: Setup Docker Containerization (Standalone Production Container)
 
 Containerizing Next.js using **Standalone Mode** packages only the traced production `node_modules` and compiled assets into a minimal, secure, non-root Node.js container (`server.js`). Local development runs directly on the host machine using the project package manager (`pnpm run dev`), while Docker is configured strictly for production builds and deployments.
 
-#### 9.1. Enable Standalone Output in Next.js (`next.config.ts` / `next.config.js`)
+#### 10.1. Enable Standalone Output in Next.js (`next.config.ts` / `next.config.js`)
 
 Ensure `output: "standalone"` is enabled in `next.config.ts` (or `next.config.js`):
 
@@ -804,7 +909,7 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 ```
 
-#### 9.2. Configure Docker Ignore File (`.dockerignore`)
+#### 10.2. Configure Docker Ignore File (`.dockerignore`)
 
 Create or update `.dockerignore` at the repository root to exclude local build artifacts, secrets, and caches:
 
@@ -866,7 +971,7 @@ docs/
 .github/
 ```
 
-#### 9.3. Production Multi-Stage `Dockerfile` (Standalone Mode)
+#### 10.3. Production Multi-Stage `Dockerfile` (Standalone Mode)
 
 Create `Dockerfile` at the repository root using a 3-stage multi-stage build (`dependencies` -> `builder` -> `runner`):
 
@@ -961,7 +1066,7 @@ EXPOSE ${PORT}
 CMD ["node", "server.js"]
 ```
 
-#### 9.4. Local Build Stack (`docker-compose.yml`)
+#### 10.4. Local Build Stack (`docker-compose.yml`)
 
 Create `docker-compose.yml` at the repository root for building and running standalone production containers directly from local source:
 
@@ -983,7 +1088,7 @@ services:
       - PORT=${PORT:-3000}
 ```
 
-#### 9.5. GHCR Package Deployment Stack (`docker-compose.prod.yml`)
+#### 10.5. GHCR Package Deployment Stack (`docker-compose.prod.yml`)
 
 Create `docker-compose.prod.yml` at the repository root for lightweight production deployments pulling pre-built multi-arch images directly from GitHub Container Registry (GHCR) without needing local source code or build tooling:
 
@@ -1000,7 +1105,7 @@ services:
       - PORT=${PORT:-3000}
 ```
 
-#### 9.6. Container Commands Reference
+#### 10.6. Container Commands Reference
 
 - **Local Build & Run (Direct Docker)**:
   ```bash
@@ -1026,7 +1131,7 @@ services:
 
 ---
 
-### Step 10: Setup Git Hooks with Husky & Commitlint (Dual-Suite Pre-Push Enforcement)
+### Step 11: Setup Git Hooks with Husky & Commitlint (Dual-Suite Pre-Push Enforcement)
 
 1. **Install Husky & Commitlint:**
    - Install `husky`, `@commitlint/cli`, and `@commitlint/config-conventional` as dev dependencies using the detected package manager:
@@ -1075,7 +1180,7 @@ services:
 
 ---
 
-### Step 11: Setup Credit-Optimized CI/CD, Release Automation & Multi-Arch GHCR Container Packaging
+### Step 12: Setup Credit-Optimized CI/CD, Release Automation & Multi-Arch GHCR Container Packaging
 
 To minimize GitHub Actions minutes, consume as few billing credits as possible, and automate both semantic releases and multi-platform (AMD64 & ARM64) GitHub Container Registry (GHCR) package deployments:
 
@@ -1403,34 +1508,34 @@ To minimize GitHub Actions minutes, consume as few billing credits as possible, 
 
 ---
 
-### Step 12: Verify Project Configuration & Sanity Check
+### Step 13: Verify Project Configuration & Sanity Check
 
-1. Run the project configuration verification script:
-   ```bash
-   npx tsx .agents/skills/nextjs-dev-setup/scripts/verify-project-config.ts
-   pnpm exec ts-node --esm .agents/skills/nextjs-dev-setup/scripts/verify-project-config.ts
-   ```
+1. Run the platform-appropriate project configuration verification script:
+   - **Windows (PowerShell)**:
+     ```powershell
+     powershell -ExecutionPolicy Bypass -File .agents/skills/nextjs-dev-setup/scripts/verify-project-config.ps1
+     ```
+   - **Linux / macOS (Bash)**:
+     ```bash
+     bash .agents/skills/nextjs-dev-setup/scripts/verify-project-config.sh
+     ```
 2. The verification script will:
    - Verify `docs/project.json` exists.
    - Verify valid JSON structure.
    - Verify all required properties (`package_manager`, `new_component_dir`, `style_file_dir`, `component_library`, `animation_library`, `testing_library`, `supported_languages`) are present and non-empty.
    - Validate each locale object in `supported_languages` array.
    - Verify presence and configuration of testing suites (Jest, Playwright, and Storybook).
-   - Audit both workspace MCP configuration (`mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `.vscode/mcp.json`) AND Antigravity global system MCP configuration (`~/.gemini/antigravity/mcp_config.json`, `~/.gemini/config/mcp_config.json`) for `next-devtools`, `playwright`, and `storybook` MCP servers (since AG only recognizes MCP servers configured globally on the host system).
+   - Audit both workspace MCP configuration (`mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `.vscode/mcp.json`) AND Antigravity global system MCP configuration (`~/.gemini/antigravity/mcp_config.json`, `~/.gemini/config/mcp_config.json`) for `next-devtools`, `codebase-memory`, `playwright`, and `storybook` MCP servers (since AG only recognizes MCP servers configured globally on the host system).
+   - Audit root `.cbmignore` and verify `codebase-memory-mcp config get auto_watch` returns `false` (to guarantee stutter-free editing).
+   - Audit `@shadcn/lint` installation in `package.json` devDependencies and registration in `eslint.config.mjs` / linter configs.
    - Audit Storybook configuration (`.storybook/main.ts`, `.storybook/preview.tsx`).
    - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`, and standalone output).
    - Audit `.github/workflows/release-please.yml` for credit-optimized Next.js CI build caching (`.next/cache`), package manager setup, SemVer release automation, and multi-arch GHCR publishing.
-3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `~/.gemini/antigravity/mcp_config.json`, or Docker files and re-run until all checks pass.
-    - Audit both workspace MCP configuration (`mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `.vscode/mcp.json`) AND Antigravity global system MCP configuration (`~/.gemini/antigravity/mcp_config.json`, `~/.gemini/config/mcp_config.json`) for `next-devtools`, `codebase-memory`, `playwright`, and `storybook` MCP servers (since AG only recognizes MCP servers configured globally on the host system).
-    - Audit root `.cbmignore` and verify `codebase-memory-mcp config get auto_watch` returns `false` (to guarantee stutter-free editing).
-    - Audit Storybook configuration (`.storybook/main.ts`, `.storybook/preview.tsx`).
-    - Audit Docker containerization configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`, and standalone output).
-    - Audit `.github/workflows/release-please.yml` for credit-optimized Next.js CI build caching (`.next/cache`), package manager setup, SemVer release automation, and multi-arch GHCR publishing.
-3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `~/.gemini/antigravity/mcp_config.json`, `.cbmignore`, or Docker files and re-run until all checks pass.
+3. If the script reports any errors, fix the configuration in `docs/project.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json`, `~/.gemini/antigravity/mcp_config.json`, `.cbmignore`, `eslint.config.mjs`, or Docker files and re-run until all checks pass.
 
 ---
 
-### Step 13: Generate Dev Setup Execution Report
+### Step 14: Generate Dev Setup Execution Report
 
 Upon completing the verification, the agent MUST output a clear and concise execution report summarizing the status of every step and artifact, explicitly distinguishing between what was freshly implemented vs. what was already configured (and left untouched).
 
@@ -1439,27 +1544,21 @@ Upon completing the verification, the agent MUST output a clear and concise exec
 ```markdown
 ## 🛠️ Next.js Dev Setup Execution Report
 
-| Step / Component                   | Target File(s) / Resource                                                                              | Status                          | Notes / Details                                                                  |
-| :--------------------------------- | :----------------------------------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------------------- |
-| **1. Project Metadata**            | `docs/project.json`                                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.              |
-| **2. Core Dependencies**           | `package.json`, Lockfile                                                                               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                          |
-| **3. Next.js Dev Server MCP**      | `~/.gemini/antigravity/mcp_config.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) globally for AG & in workspace.  |
-| **4. Playwright & Playwright MCP** | `playwright.config.ts`, `~/.gemini/antigravity/mcp_config.json`, `mcp.json`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP globally & in workspace. |
-| **5. Jest Unit Testing**           | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
-| **6. Storybook & Storybook MCP**   | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |
-| **7. Docker Containerization**     | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks.  |
-| **8. Husky Git Hooks**             | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
-| **9. Commitlint Config**           | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
-| **10. Release & CI Build Caching** | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
-| **11. Environment Verification**   | `scripts/verify-project-config.ts`                                                                     | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
-| **5. Codebase Memory & Stutter Fix**| `.cbmignore`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`, `auto_watch=false`                   | `[IMPLEMENTED]` / `[UNTOUCHED]` | Registered MCP, configured .cbmignore exclusions, and disabled session watcher.  |
-| **6. Jest Unit Testing**           | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
-| **7. Storybook & Storybook MCP**   | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |
-| **8. Docker Containerization**     | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks.  |
-| **9. Husky Git Hooks**             | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
-| **10. Commitlint Config**          | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
-| **11. Release & CI Build Caching** | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
-| **12. Environment Verification**   | `scripts/verify-project-config.ts`                                                                     | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
+| Step / Component                     | Target File(s) / Resource                                                                              | Status                          | Notes / Details                                                                  |
+| :----------------------------------- | :----------------------------------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------------------- |
+| **1. Project Metadata**              | `docs/project.json`                                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.              |
+| **2. Core Dependencies**             | `package.json`, Lockfile                                                                               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                          |
+| **3. Next.js Dev Server MCP**        | `~/.gemini/antigravity/mcp_config.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) globally for AG & in workspace.  |
+| **4. Playwright & Playwright MCP**   | `playwright.config.ts`, `~/.gemini/antigravity/mcp_config.json`, `mcp.json`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP globally & in workspace. |
+| **5. Codebase Memory & Stutter Fix** | `.cbmignore`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`, `auto_watch=false`                  | `[IMPLEMENTED]` / `[UNTOUCHED]` | Registered MCP, configured .cbmignore exclusions, and disabled session watcher.  |
+| **6. Jest Unit Testing**             | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
+| **7. Storybook & Storybook MCP**     | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |
+| **8. Agent-First Tailwind Linter**   | `eslint.config.mjs`, `package.json`                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@shadcn/lint` for agent verification of design tokens and contracts. |
+| **9. Docker Containerization**       | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks.  |
+| **10. Husky Git Hooks**              | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
+| **11. Commitlint Config**            | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
+| **12. Release & CI Build Caching**   | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
+| **13. Environment Verification**     | `scripts/verify-project-config.ps1` / `.sh`                                                            | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
 
 #### Status Definitions:
 

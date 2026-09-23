@@ -3,7 +3,7 @@ name: nextjs-component-dev
 description: Step-by-step TDD workflow for designing and building Next.js App Router React components (RSC and Client Components) with Suspense skeletons, semantic OKLCH tokens, and Tailwind logical styling.
 metadata:
   author: BIGboss248
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Next.js Component & Skeleton Development (`nextjs-component-dev`)
@@ -43,14 +43,36 @@ Specialized workflow for creating production-ready React Server Components (RSC)
 - **Images:** Always use `next/image` with explicit dimensions or `fill`, responsive `sizes`, and `priority` for above-the-fold LCP assets.
 
 ### 4. TanStack Query & Server Prefetching
-* **Unified Cache Contract:** Define `key`, `tag`, and `queryOptions` with explicit `staleTime` (e.g. `30_000` ms).
-* **Server Prefetch:** Trigger unawaited prefetch (`void queryClient.prefetchQuery(...)`) calling internal DB functions directly (zero relative fetch on server). Dehydrate with `<HydrationBoundary>`.
-* **Streamed Components:** Use `useSuspenseQuery` inside `<Suspense fallback={<[ComponentName]Skeleton />}>`.
-* **Optimistic Mutations:** Use `useMutation` with `onMutate` cache snapshots and `onError` rollbacks; call Server Actions with `updateTag(cache.tag)`.
+
+- **Unified Cache Contract:** Define `key`, `tag`, and `queryOptions` with explicit `staleTime` (e.g. `30_000` ms).
+- **Server Prefetch:** Trigger unawaited prefetch (`void queryClient.prefetchQuery(...)`) calling internal DB functions directly (zero relative fetch on server). Dehydrate with `<HydrationBoundary>`.
+- **Streamed Components:** Use `useSuspenseQuery` inside `<Suspense fallback={<[ComponentName]Skeleton />}>`.
+- **Optimistic Mutations:** Use `useMutation` with `onMutate` cache snapshots and `onError` rollbacks; call Server Actions with `updateTag(cache.tag)`.
+
+---
+
+## Phase 0: Implementation Plan & Approval Gate
+
+> [!IMPORTANT]
+> **Plan Before Execution:** Always generate and present an `implementation_plan.md` artifact detailing all planned file creations, modifications, TypeScript contracts, translation dictionary additions, and TDD test cases before executing any write operations, modifying dictionaries, or creating components in the repository. Wait for user confirmation/approval before proceeding with execution.
+
+The implementation plan must cover:
+
+1. **Target Architecture & Path**: Full target directory (`<new_component_dir>/<page_or_global>/<ComponentName>/`) and classification (RSC vs. Client leaf component).
+2. **TypeScript Contracts**: Prop interfaces and types with strict English TSDoc annotations.
+3. **Dictionary Strategy**: Explicit translation namespaces and keys to add to `messages/[locale].json` across all `supported_languages` in `docs/project.json` (zero hardcoded strings or in-file mock dictionaries).
+4. **Theme Tokens & Styling**: Identified semantic OKLCH CSS variables and logical layout classes.
+5. **Testing Strategy**: Baseline unit test cases (`[ComponentName].test.tsx`), Suspense skeleton fallback assertions, and BiDi / RTL tests.
+6. **Verification Gate**: Exact verification commands to run (`verify-dev.ps1` / targeted test suite).
 
 ---
 
 ## Workflow Steps
+
+- [ ] **Step 0: Implementation Plan Generation & Approval Gate**
+  - Synthesize component requirements, scan `docs/project.json`, and generate `implementation_plan.md`.
+  - Set `request_feedback = true` and `user_facing = true` on the artifact.
+  - Wait for user review and explicit approval before writing any code.
 
 - [ ] **Step 1: Dictionary Population & TypeScript Contract Definition**
   - Read `docs/project.json` to resolve `dictionaries_dir` (`messages` is default) and `supported_languages`.

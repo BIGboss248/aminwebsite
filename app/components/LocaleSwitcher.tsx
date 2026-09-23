@@ -107,7 +107,7 @@ export function LocaleSwitcher({
       role="radiogroup"
       aria-label={t("switch_language")}
       className={cn(
-        "inline-flex items-center h-9 p-[3px] rounded-full border border-border bg-card/60 backdrop-blur-xs transition-colors shadow-xs group hover:border-primary/50 focus-within:ring-2 focus-within:ring-primary/40",
+        "inline-flex items-center h-9 p-1 rounded-full border border-border bg-card/60 backdrop-blur-xs transition-colors shadow-xs group hover:border-primary/50 focus-within:ring-2 focus-within:ring-primary/40",
         className,
       )}
     >
@@ -116,7 +116,7 @@ export function LocaleSwitcher({
         aria-hidden="true"
         className="flex items-center justify-center ps-2 pe-1 text-muted-foreground transition-colors group-hover:text-primary order-0"
       >
-        <Globe className="size-4 shrink-0 [transform:none]" />
+        <Globe className="size-4 shrink-0 transform-none" />
       </div>
 
       {/* English Segment Button */}
@@ -129,7 +129,7 @@ export function LocaleSwitcher({
         onClick={() => handleSelectLocale("en")}
         onKeyDown={(e) => handleKeyDown(e, "en")}
         className={cn(
-          "inline-flex items-center justify-center gap-1.5 min-h-[28px] px-2.5 rounded-full font-mono text-xs font-semibold select-none transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary order-1 rtl:order-2",
+          "inline-flex items-center justify-center gap-1.5 min-h-7 px-2.5 rounded-full font-mono text-xs font-semibold select-none transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary order-1 rtl:order-2",
           isEnActive
             ? "bg-background text-foreground shadow-xs ring-1 ring-primary/40 font-bold"
             : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
@@ -154,7 +154,7 @@ export function LocaleSwitcher({
         onClick={() => handleSelectLocale("fa")}
         onKeyDown={(e) => handleKeyDown(e, "fa")}
         className={cn(
-          "inline-flex items-center justify-center gap-1.5 min-h-[28px] px-2.5 rounded-full font-mono text-xs font-semibold select-none transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary order-2 rtl:order-1",
+          "inline-flex items-center justify-center gap-1.5 min-h-7 px-2.5 rounded-full font-mono text-xs font-semibold select-none transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary order-2 rtl:order-1",
           isFaActive
             ? "bg-background text-foreground shadow-xs ring-1 ring-primary/40 font-bold"
             : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
@@ -162,7 +162,7 @@ export function LocaleSwitcher({
       >
         <span>FA</span>
         {showAutonyms && (
-          <span className="font-sans text-[11px] font-normal opacity-85 ms-0.5">
+          <span className="font-sans text-xs font-normal opacity-85 ms-0.5">
             (فارسی)
           </span>
         )}

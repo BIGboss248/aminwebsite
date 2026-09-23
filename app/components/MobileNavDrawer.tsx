@@ -103,7 +103,6 @@ export function MobileNavDrawer({
   brandName = SITE_CONFIG.author.name,
   currentPath,
   activeLocale,
-  showUptimeBadge = true,
   onLocaleChange,
   onThemeToggle,
   onNavigate,
@@ -115,17 +114,10 @@ export function MobileNavDrawer({
   const effectiveLocale = activeLocale ?? contextLocale;
   const isRtl = effectiveLocale === "fa";
 
-  let tNav: (key: string) => string;
-  let tCommon: (key: string) => string;
-  try {
-    const navT = useTranslations("navigation");
-    const commonT = useTranslations("common");
-    tNav = (key: string) => navT(key as never);
-    tCommon = (key: string) => commonT(key as never);
-  } catch {
-    tNav = (key: string) => key;
-    tCommon = (key: string) => key;
-  }
+  const navT = useTranslations("navigation");
+  const commonT = useTranslations("common");
+  const tNav = (key: string) => navT(key as never);
+  const tCommon = (key: string) => commonT(key as never);
 
   // Handle Escape key dismissal
   const handleKeyDown = useCallback(
@@ -229,7 +221,7 @@ export function MobileNavDrawer({
         aria-modal="true"
         aria-label={tNav("mobile_nav")}
         className={cn(
-          "relative ms-auto flex flex-col h-full w-[320px] max-w-[85vw] bg-card text-card-foreground border-s border-border shadow-2xl z-10 transition-transform duration-300 ease-out animate-in",
+          "relative ms-auto flex flex-col h-full w-80 max-w-full bg-card text-card-foreground border-s border-border shadow-2xl z-10 transition-transform duration-300 ease-out animate-in",
           isRtl ? "slide-in-from-left" : "slide-in-from-right",
           className,
         )}
@@ -243,7 +235,7 @@ export function MobileNavDrawer({
             aria-label={`${brandName} ${tNav("home")}`}
           >
             {/* Hexagon Lattice Vector Emblem */}
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-[0_0_12px_rgba(6,182,212,0.3)]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-md group-hover:shadow-primary/20">
               <svg
                 className="h-5 w-5 text-primary"
                 viewBox="0 0 24 24"
@@ -261,7 +253,7 @@ export function MobileNavDrawer({
                   y1="2"
                   x2="12"
                   y2="22"
-                  className="stroke-emerald-500"
+                  className="stroke-status-success"
                   strokeWidth="1.5"
                   strokeDasharray="2 2"
                 />
@@ -271,8 +263,8 @@ export function MobileNavDrawer({
             {/* Brand Title */}
             <div className="flex items-center gap-1 font-mono text-xs font-bold tracking-wider text-foreground">
               <span>{brandName.toUpperCase()}</span>
-              <span className="text-primary">//</span>
-              <span className="text-[11px] font-semibold text-primary">
+              <span className="text-primary">{"//"}</span>
+              <span className="text-xs font-semibold text-primary">
                 {tCommon("brand_lab")}
               </span>
             </div>
@@ -283,7 +275,7 @@ export function MobileNavDrawer({
             type="button"
             onClick={onClose}
             aria-label={tNav("close_drawer")}
-            className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
+            className="flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-md border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -305,9 +297,9 @@ export function MobileNavDrawer({
                   aria-current={active ? "page" : undefined}
                   onClick={() => handleNodeClick(item.href)}
                   className={cn(
-                    "group flex items-center justify-between min-h-[48px] px-3.5 py-2.5 rounded-lg border text-sm transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                    "group flex items-center justify-between min-h-12 px-3.5 py-2.5 rounded-lg border text-sm transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary",
                     active
-                      ? "border-primary/40 bg-primary/10 text-primary font-semibold shadow-[inset_0_0_12px_rgba(6,182,212,0.15)]"
+                      ? "border-primary/40 bg-primary/10 text-primary font-semibold shadow-inner"
                       : "border-transparent text-muted-foreground hover:bg-muted/40 hover:text-foreground hover:border-border",
                   )}
                 >
@@ -319,7 +311,7 @@ export function MobileNavDrawer({
                       <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                         {item.label}
                       </span>
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         {item.desc}
                       </span>
                     </div>
@@ -329,7 +321,7 @@ export function MobileNavDrawer({
                     {item.badge && (
                       <span
                         aria-hidden="true"
-                        className="font-mono text-[10px] font-medium px-2 py-0.5 rounded-full border border-primary/40 bg-primary/15 text-primary shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                        className="font-mono text-xs font-medium px-2 py-0.5 rounded-full border border-primary/40 bg-primary/15 text-primary shadow-sm shadow-primary/20"
                       >
                         {item.badge}
                       </span>
@@ -357,11 +349,11 @@ export function MobileNavDrawer({
         {/* Footer: Utilities and Live Telemetry Dock */}
         <div className="p-4 border-t border-border bg-card flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-[11px] text-muted-foreground">
-              // {tNav("system_telemetry")}
+            <span className="font-mono text-xs text-muted-foreground">
+              {"// " + tNav("system_telemetry")}
             </span>
-            <div className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-500">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+            <div className="flex items-center gap-1.5 font-mono text-xs text-status-success">
+              <span className="h-1.5 w-1.5 rounded-full bg-status-success shadow-xs shadow-status-success/50" />
               <span>{tNav("sys_online")}</span>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { TrustSignalsSection } from "./TrustSignalsSection";
 import enMessages from "@/messages/en.json";
 import faMessages from "@/messages/fa.json";
 
-let mockLocale = "en";
+const mockLocale = "en" as string;
 
 jest.mock("next-intl", () => ({
   useLocale: () => mockLocale,

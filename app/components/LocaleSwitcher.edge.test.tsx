@@ -71,7 +71,9 @@ describe("LocaleSwitcher Adversarial Edge-Case Suite", () => {
     });
 
     it("allows switching to 'fa' even when current state was recovered from an invalid locale", () => {
-      render(<LocaleSwitcher currentLocale={"invalid" as unknown as "en" | "fa"} />);
+      render(
+        <LocaleSwitcher currentLocale={"invalid" as unknown as "en" | "fa"} />,
+      );
 
       const faRadio = screen.getByRole("radio", { name: /fa/i });
       fireEvent.click(faRadio);
@@ -125,7 +127,7 @@ describe("LocaleSwitcher Adversarial Edge-Case Suite", () => {
       const onLocaleChange = jest.fn();
       mockCurrentLocale = "en";
       const { rerender } = render(
-        <LocaleSwitcher currentLocale="en" onLocaleChange={onLocaleChange} />
+        <LocaleSwitcher currentLocale="en" onLocaleChange={onLocaleChange} />,
       );
 
       const faRadio = screen.getByRole("radio", { name: /fa/i });
@@ -137,7 +139,9 @@ describe("LocaleSwitcher Adversarial Edge-Case Suite", () => {
       expect(mockReplace).toHaveBeenCalledWith("/test-route", { locale: "fa" });
 
       // State updates to FA
-      rerender(<LocaleSwitcher currentLocale="fa" onLocaleChange={onLocaleChange} />);
+      rerender(
+        <LocaleSwitcher currentLocale="fa" onLocaleChange={onLocaleChange} />,
+      );
 
       // Redundant click on FA while active should be ignored
       fireEvent.click(faRadio);
@@ -147,7 +151,9 @@ describe("LocaleSwitcher Adversarial Edge-Case Suite", () => {
       fireEvent.click(enRadio);
       expect(onLocaleChange).toHaveBeenCalledTimes(2);
       expect(onLocaleChange).toHaveBeenLastCalledWith("en");
-      expect(mockReplace).toHaveBeenLastCalledWith("/test-route", { locale: "en" });
+      expect(mockReplace).toHaveBeenLastCalledWith("/test-route", {
+        locale: "en",
+      });
     });
   });
 
@@ -225,7 +231,7 @@ describe("LocaleSwitcher Adversarial Edge-Case Suite", () => {
       render(
         <div onClick={containerClickHandler}>
           <LocaleSwitcher />
-        </div>
+        </div>,
       );
 
       const faRadio = screen.getByRole("radio", { name: /fa/i });
@@ -254,7 +260,8 @@ describe("LocaleSwitcher Adversarial Edge-Case Suite", () => {
 
   describe("5. Complex className Combinations & Style Merging", () => {
     it("preserves core structural classes while merging custom utility classes", () => {
-      const customClasses = "custom-cockpit-pos absolute top-4 end-4 z-50 shadow-2xl";
+      const customClasses =
+        "custom-cockpit-pos absolute top-4 end-4 z-50 shadow-2xl";
       render(<LocaleSwitcher className={customClasses} />);
 
       const container = screen.getByRole("radiogroup");
@@ -295,7 +302,7 @@ describe("LocaleSwitcher Adversarial Edge-Case Suite", () => {
 
       const globeSvg = iconWrap?.querySelector("svg");
       expect(globeSvg).toBeInTheDocument();
-      expect(globeSvg).toHaveClass("[transform:none]");
+      expect(globeSvg).toHaveClass("transform-none");
       expect(globeSvg).toHaveClass("shrink-0");
     });
 
@@ -343,7 +350,7 @@ describe("LocaleSwitcher Adversarial Edge-Case Suite", () => {
 
     it("merges custom className without stripping core skeleton layout", () => {
       const { container } = render(
-        <LocaleSwitcherSkeleton className="opacity-75 scale-95" />
+        <LocaleSwitcherSkeleton className="opacity-75 scale-95" />,
       );
 
       const skeleton = container.firstChild as HTMLElement;

@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowUpRight, ArrowRight, Smartphone, Globe } from "lucide-react";
+import { ArrowRight, Smartphone, Globe } from "lucide-react";
 import { Link } from "@/app/components/Link";
 import { cn } from "@/lib/utils";
 import type { ProjectCardProps } from "./FeaturedProjectsGrid.types";
@@ -40,7 +40,7 @@ export function ProjectCard({
       aria-describedby={`project-summary-${id}`}
       className={cn(
         "group relative flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all duration-300",
-        "hover:border-cyan-500/50 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_24px_-4px_rgba(6,182,212,0.18)]",
+        "hover:border-primary/50 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-md dark:hover:shadow-primary/10",
         className,
       )}
       {...rest}
@@ -48,21 +48,21 @@ export function ProjectCard({
       <div>
         {/* Spec Header: Index Tag & Status Indicator */}
         <div className="flex items-center justify-between gap-3 border-b border-border/60 pb-3.5 mb-5">
-          <div className="inline-flex items-center gap-2 font-mono text-xs font-medium text-cyan-600 dark:text-cyan-400 tracking-wider">
+          <div className="inline-flex items-center gap-2 font-mono text-xs font-medium text-primary tracking-wider">
             <span
-              className="size-2 rounded-full bg-cyan-500 animate-pulse"
+              className="size-2 rounded-full bg-primary animate-pulse"
               aria-hidden="true"
             />
             <span>{tag}</span>
           </div>
           {frameType === "mobile" ? (
             <Smartphone
-              className="size-4 text-muted-foreground group-hover:text-cyan-500 transition-colors"
+              className="size-4 text-muted-foreground group-hover:text-primary transition-colors"
               aria-hidden="true"
             />
           ) : (
             <Globe
-              className="size-4 text-muted-foreground group-hover:text-cyan-500 transition-colors"
+              className="size-4 text-muted-foreground group-hover:text-primary transition-colors"
               aria-hidden="true"
             />
           )}
@@ -72,7 +72,7 @@ export function ProjectCard({
         <div className="mb-3">
           <h3
             id={`project-title-${id}`}
-            className="text-lg sm:text-xl font-bold tracking-tight text-foreground group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
+            className="text-lg sm:text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors"
           >
             {title}
           </h3>
@@ -102,8 +102,8 @@ export function ProjectCard({
           ))}
         </div>
 
-        {/* 16:10 Micro-Preview Viewport Frame */}
-        <div className="relative aspect-[16/10] w-full rounded-lg border border-border/80 bg-background/80 overflow-hidden mb-6 flex flex-col transition-colors group-hover:border-cyan-500/30">
+        {/* Micro-Preview Viewport Frame */}
+        <div className="relative aspect-video w-full rounded-lg border border-border/80 bg-background/80 overflow-hidden mb-6 flex flex-col transition-colors group-hover:border-primary/30">
           {/* Frame Chrome Header */}
           <div className="h-6 w-full border-b border-border/60 bg-muted/50 px-3 flex items-center justify-between select-none">
             {frameType === "mobile" ? (
@@ -118,21 +118,24 @@ export function ProjectCard({
                 <div className="size-2 rounded-full bg-border" />
               </div>
             )}
-            <span className="text-[10px] font-mono text-muted-foreground/70 truncate max-w-[120px]" dir="ltr">
+            <span
+              className="text-xs font-mono text-muted-foreground/70 truncate max-w-30"
+              dir="ltr"
+            >
               {id}.sys
             </span>
           </div>
 
           {/* Frame Inner Mockup Canvas */}
           <div className="flex-1 p-3 flex flex-col justify-center items-center text-center bg-gradient-to-b from-card/40 to-background">
-            <div className="p-2.5 rounded-full border border-border/60 bg-muted/40 mb-2 group-hover:border-cyan-500/40 group-hover:bg-cyan-500/5 transition-colors">
+            <div className="p-2.5 rounded-full border border-border/60 bg-muted/40 mb-2 group-hover:border-primary/40 group-hover:bg-primary/5 transition-colors">
               {frameType === "mobile" ? (
-                <Smartphone className="size-5 text-cyan-600 dark:text-cyan-400" />
+                <Smartphone className="size-5 text-primary" />
               ) : (
-                <Globe className="size-5 text-cyan-600 dark:text-cyan-400" />
+                <Globe className="size-5 text-primary" />
               )}
             </div>
-            <span className="text-[11px] font-mono text-muted-foreground font-medium">
+            <span className="text-xs font-mono text-muted-foreground font-medium">
               {title}
             </span>
           </div>
@@ -143,7 +146,7 @@ export function ProjectCard({
       <div className="pt-2 border-t border-border/40">
         <Link
           href={href}
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-cyan-500 rounded"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded"
         >
           <span>{actionLabel}</span>
           <ArrowRight
@@ -160,4 +163,3 @@ export function ProjectCard({
 }
 
 export default ProjectCard;
-

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { NextIntlClientProvider } from "next-intl";
 import { ProgressBarProvider } from "react-transition-progress";
 import { HeroSection } from "./HeroSection";
@@ -117,7 +117,7 @@ export const Light: Story = {
   decorators: [
     (Story) => (
       <div className="light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 w-full">
-        <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
           Light Mode
         </span>
         <Story />
@@ -143,7 +143,7 @@ export const Dark: Story = {
   decorators: [
     (Story) => (
       <div className="dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 w-full">
-        <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
           Dark Mode
         </span>
         <Story />
@@ -170,7 +170,7 @@ export const SkeletonLight: Story = {
   decorators: [
     (Story) => (
       <div className="light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 w-full">
-        <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
           Skeleton (Light)
         </span>
         <Story />
@@ -197,7 +197,7 @@ export const SkeletonDark: Story = {
   decorators: [
     (Story) => (
       <div className="dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 w-full">
-        <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
           Skeleton (Dark)
         </span>
         <Story />

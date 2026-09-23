@@ -42,7 +42,7 @@ export function TrustSignalsSectionSkeleton({
         {/* Bento Grid Skeleton */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-stretch">
           {/* Cell 1: Web Vitals Skeleton (6 Cols) */}
-          <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 min-h-[320px]">
+          <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 min-h-80">
             <div>
               <div className="flex items-center justify-between border-b border-border/60 pb-4 mb-6">
                 <div className="h-6 w-36 rounded-full bg-skeleton" />
@@ -74,7 +74,7 @@ export function TrustSignalsSectionSkeleton({
           </div>
 
           {/* Cell 2: Dual Degrees Skeleton (6 Cols) */}
-          <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 min-h-[320px]">
+          <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 min-h-80">
             <div>
               <div className="flex items-center justify-between border-b border-border/60 pb-4 mb-6">
                 <div className="h-6 w-36 rounded-full bg-skeleton" />
@@ -99,7 +99,7 @@ export function TrustSignalsSectionSkeleton({
           </div>
 
           {/* Cell 3: Professional Certifications Skeleton (7 Cols) */}
-          <div className="md:col-span-2 lg:col-span-7 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 min-h-[260px]">
+          <div className="md:col-span-2 lg:col-span-7 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 min-h-65">
             <div>
               <div className="flex items-center justify-between border-b border-border/60 pb-4 mb-6">
                 <div className="h-6 w-44 rounded-full bg-skeleton" />
@@ -132,7 +132,7 @@ export function TrustSignalsSectionSkeleton({
           </div>
 
           {/* Cell 4: Bilingual Fluency Skeleton (5 Cols) */}
-          <div className="md:col-span-2 lg:col-span-5 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 min-h-[260px]">
+          <div className="md:col-span-2 lg:col-span-5 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 min-h-65">
             <div>
               <div className="flex items-center justify-between border-b border-border/60 pb-4 mb-6">
                 <div className="h-6 w-36 rounded-full bg-skeleton" />

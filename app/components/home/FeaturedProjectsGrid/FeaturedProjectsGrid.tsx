@@ -1,11 +1,9 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight, Layers } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "@/app/components/Link";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
-import enMessages from "@/messages/en.json";
-import faMessages from "@/messages/fa.json";
 import { ProjectCard } from "./ProjectCard";
 import type {
   FeaturedProjectsGridProps,
@@ -32,17 +30,8 @@ export function FeaturedProjectsGrid({
   className = "",
   ...rest
 }: FeaturedProjectsGridProps): React.JSX.Element {
-  let tProj: (key: string) => string;
-  try {
-    const t = useTranslations("home.featured_projects");
-    tProj = (key: string) => t(key as never);
-  } catch {
-    const dict =
-      locale === "fa"
-        ? faMessages.home.featured_projects
-        : enMessages.home.featured_projects;
-    tProj = (key: string) => (dict as Record<string, string>)[key] ?? key;
-  }
+  const t = useTranslations("home.featured_projects");
+  const tProj = (key: string) => t(key as never);
 
   const resolvedEyebrow = eyebrow ?? tProj("eyebrow");
   const resolvedTitle = title ?? tProj("title");
@@ -118,7 +107,7 @@ export function FeaturedProjectsGrid({
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-16">
           <div className="max-w-2xl">
-            <p className="text-xs font-mono font-semibold uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-3">
+            <p className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
               {resolvedEyebrow}
             </p>
             <h2
@@ -136,12 +125,12 @@ export function FeaturedProjectsGrid({
           <div className="hidden md:flex shrink-0">
             <Link
               href={viewAllHref}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold border border-border bg-card hover:bg-muted hover:border-cyan-500/40 text-foreground transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-cyan-500"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold border border-border bg-card hover:bg-muted hover:border-primary/40 text-foreground transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
             >
               <span>{resolvedViewAll}</span>
               <ArrowRight
                 className={cn(
-                  "size-4 text-cyan-600 dark:text-cyan-400 transition-transform",
+                  "size-4 text-primary transition-transform",
                   isRtl && "rotate-180",
                 )}
                 aria-hidden="true"
@@ -153,11 +142,7 @@ export function FeaturedProjectsGrid({
         {/* 3-Column Responsive Spec Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           {resolvedProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              locale={locale}
-            />
+            <ProjectCard key={project.id} project={project} locale={locale} />
           ))}
         </div>
 
@@ -169,10 +154,7 @@ export function FeaturedProjectsGrid({
           >
             <span>{resolvedViewAll}</span>
             <ArrowRight
-              className={cn(
-                "size-4 text-cyan-600 dark:text-cyan-400",
-                isRtl && "rotate-180",
-              )}
+              className={cn("size-4 text-primary", isRtl && "rotate-180")}
               aria-hidden="true"
             />
           </Link>
@@ -183,4 +165,3 @@ export function FeaturedProjectsGrid({
 }
 
 export default FeaturedProjectsGrid;
-

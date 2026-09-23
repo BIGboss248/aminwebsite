@@ -1,5 +1,5 @@
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { fn } from "@storybook/test";
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "next-themes";
@@ -66,11 +66,13 @@ It slides in from the trailing edge (right in LTR, left in RTL) on mobile and ta
     },
     brandName: {
       control: "text",
-      description: "Brand name in the cockpit identity lockup. Defaults to SITE_CONFIG.author.name.",
+      description:
+        "Brand name in the cockpit identity lockup. Defaults to SITE_CONFIG.author.name.",
     },
     currentPath: {
       control: "text",
-      description: "Active route pathname override for visual testing ('/', '/about', '/projects', '/lab', '/contact').",
+      description:
+        "Active route pathname override for visual testing ('/', '/about', '/projects', '/lab', '/contact').",
     },
     activeLocale: {
       control: "select",
@@ -79,7 +81,8 @@ It slides in from the trailing edge (right in LTR, left in RTL) on mobile and ta
     },
     showUptimeBadge: {
       control: "boolean",
-      description: "Controls visibility of the 99.9% telemetry uptime badge on the Lab Hub node.",
+      description:
+        "Controls visibility of the 99.9% telemetry uptime badge on the Lab Hub node.",
     },
     onClose: {
       action: "close",
@@ -124,13 +127,14 @@ export const Light: Story = {
     backgrounds: { default: "light" },
     docs: {
       description: {
-        story: "MobileNavDrawer previewed in Light Mode with high-contrast slate surfaces and semantic borders.",
+        story:
+          "MobileNavDrawer previewed in Light Mode with high-contrast slate surfaces and semantic borders.",
       },
     },
   },
   render: (args) => (
     <div className="light bg-background text-foreground p-6 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 w-full min-h-[640px] relative overflow-hidden">
-      <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
+      <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
         Light Mode
       </span>
       <div className="relative w-full h-[580px] overflow-hidden rounded-lg border border-border bg-muted/20">
@@ -150,13 +154,14 @@ export const Dark: Story = {
     backgrounds: { default: "dark" },
     docs: {
       description: {
-        story: "MobileNavDrawer previewed in Dark Mode with telemetry indicators and electric cyan borders.",
+        story:
+          "MobileNavDrawer previewed in Dark Mode with telemetry indicators and electric cyan borders.",
       },
     },
   },
   render: (args) => (
     <div className="dark bg-background text-foreground p-6 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 w-full min-h-[640px] relative overflow-hidden">
-      <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
+      <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
         Dark Mode
       </span>
       <div className="relative w-full h-[580px] overflow-hidden rounded-lg border border-border bg-muted/20">
@@ -175,13 +180,14 @@ export const SkeletonLight: Story = {
     backgrounds: { default: "light" },
     docs: {
       description: {
-        story: "MobileNavDrawerSkeleton loading fallback previewed in Light Mode with subtle shimmer pulses.",
+        story:
+          "MobileNavDrawerSkeleton loading fallback previewed in Light Mode with subtle shimmer pulses.",
       },
     },
   },
   render: () => (
     <div className="light bg-background text-foreground p-6 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 w-full min-h-[640px] relative overflow-hidden">
-      <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
+      <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
         Skeleton (Light)
       </span>
       <div className="relative w-full h-[580px] overflow-hidden rounded-lg border border-border bg-muted/20 flex justify-end">
@@ -200,13 +206,14 @@ export const SkeletonDark: Story = {
     backgrounds: { default: "dark" },
     docs: {
       description: {
-        story: "MobileNavDrawerSkeleton loading fallback previewed in Dark Mode with dark obsidian pulses.",
+        story:
+          "MobileNavDrawerSkeleton loading fallback previewed in Dark Mode with dark obsidian pulses.",
       },
     },
   },
   render: () => (
     <div className="dark bg-background text-foreground p-6 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 w-full min-h-[640px] relative overflow-hidden">
-      <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
+      <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground self-start">
         Skeleton (Dark)
       </span>
       <div className="relative w-full h-[580px] overflow-hidden rounded-lg border border-border bg-muted/20 flex justify-end">
@@ -215,4 +222,3 @@ export const SkeletonDark: Story = {
     </div>
   ),
 };
-

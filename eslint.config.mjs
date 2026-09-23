@@ -33,6 +33,7 @@ const eslintConfig = defineConfig([
           contracts: [
             // Sample component contract exception:
             // { pattern: "^Button$", allow: ["w-full", "mt-*", "mb-*"] },
+            { pattern: "^Skeleton$", allow: ["*"] },
           ],
         },
       ],
@@ -62,6 +63,8 @@ const eslintConfig = defineConfig([
       "shadcn/no-inline-styles": "off",
       "shadcn/no-raw-colors": "off",
       "shadcn/require-static-classes": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
 ]);

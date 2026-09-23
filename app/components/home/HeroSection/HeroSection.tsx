@@ -3,8 +3,6 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/app/components/Link";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
-import enMessages from "@/messages/en.json";
-import faMessages from "@/messages/fa.json";
 import type { HeroSectionProps } from "./HeroSection.types";
 
 /**
@@ -30,14 +28,8 @@ export function HeroSection({
   labCtaHref = ROUTES.lab.root,
   className = "",
 }: HeroSectionProps): React.JSX.Element {
-  let tHero: (key: string) => string;
-  try {
-    const t = useTranslations("home.hero");
-    tHero = (key: string) => t(key as never);
-  } catch {
-    const dict = locale === "fa" ? faMessages.home.hero : enMessages.home.hero;
-    tHero = (key: string) => (dict as Record<string, string>)[key] ?? key;
-  }
+  const t = useTranslations("home.hero");
+  const tHero = (key: string) => t(key as never);
 
   const resolvedAvailability = availabilityText ?? tHero("availability_text");
   const resolvedTitle = title ?? tHero("title");
@@ -49,10 +41,9 @@ export function HeroSection({
   // Status indicator colors
   const statusColorMap = {
     available:
-      "bg-emerald-500 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
-    busy: "bg-amber-500 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5",
-    offline:
-      "bg-zinc-500 text-zinc-600 dark:text-zinc-400 border-zinc-500/30 bg-zinc-500/5",
+      "bg-status-success/10 text-status-success border-status-success/30",
+    busy: "bg-status-warning/10 text-status-warning border-status-warning/30",
+    offline: "bg-muted text-muted-foreground border-border",
   };
 
   return (
@@ -66,7 +57,7 @@ export function HeroSection({
       {/* Background Subtle Topology Grid Overlay */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 opacity-30 dark:opacity-20 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-30 dark:opacity-20 mask-radial-hero"
       >
         <svg
           className="h-full w-full stroke-border"
@@ -107,10 +98,10 @@ export function HeroSection({
                 className={cn(
                   "size-2 rounded-full animate-pulse",
                   availabilityStatus === "available"
-                    ? "bg-emerald-500"
+                    ? "bg-status-success"
                     : availabilityStatus === "busy"
-                      ? "bg-amber-500"
-                      : "bg-zinc-400",
+                      ? "bg-status-warning"
+                      : "bg-muted-foreground",
                 )}
                 aria-hidden="true"
               />
@@ -120,7 +111,7 @@ export function HeroSection({
             {/* Main Editorial Headline */}
             <h1
               id="hero-heading"
-              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1] max-w-2xl"
+              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-tight max-w-2xl"
             >
               {resolvedTitle}
             </h1>
@@ -135,7 +126,7 @@ export function HeroSection({
               <Link
                 href={primaryCtaHref}
                 locale={locale}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm shadow-xs transition-all hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 min-h-[44px] min-w-[140px]"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm shadow-xs transition-all hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 min-h-11 min-w-35"
               >
                 <span>{resolvedPrimaryCta}</span>
                 <span aria-hidden="true" className="ms-1 rtl:rotate-180">
@@ -146,7 +137,7 @@ export function HeroSection({
               <Link
                 href={secondaryCtaHref}
                 locale={locale}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-background text-foreground font-medium text-sm transition-all hover:bg-muted hover:border-border/80 focus-visible:ring-2 focus-visible:ring-primary min-h-[44px]"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-background text-foreground font-medium text-sm transition-all hover:bg-muted hover:border-border/80 focus-visible:ring-2 focus-visible:ring-primary min-h-11"
               >
                 <span>{resolvedSecondaryCta}</span>
               </Link>
@@ -154,9 +145,9 @@ export function HeroSection({
               <Link
                 href={labCtaHref}
                 locale={locale}
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground font-medium transition-colors min-h-[44px]"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground font-medium transition-colors min-h-11"
               >
-                <span className="size-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400" />
+                <span className="size-1.5 rounded-full bg-primary" />
                 <span>{resolvedLabCta}</span>
               </Link>
             </div>
@@ -165,19 +156,19 @@ export function HeroSection({
           {/* End Column: Interactive Telemetry HUD Card (5 Cols) */}
           <div className="lg:col-span-5 w-full">
             <div
-              className="relative rounded-xl border border-border bg-card p-6 shadow-sm dark:shadow-[0_0_24px_-4px_rgba(6,182,212,0.15)] transition-all"
+              className="relative rounded-xl border border-border bg-card p-6 shadow-sm dark:shadow-md dark:shadow-primary/10 transition-all"
               tabIndex={0}
               aria-label={tHero("telemetry_card_label")}
             >
               {/* Telemetry Header */}
               <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="size-2 rounded-full bg-cyan-500 animate-pulse" />
-                  <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+                  <span className="size-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
                     {tHero("telemetry_title")}
                   </span>
                 </div>
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-primary/10 text-primary border border-primary/20">
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-primary/10 text-primary border border-primary/20">
                   {tHero("telemetry_live")}
                 </span>
               </div>
@@ -188,25 +179,25 @@ export function HeroSection({
                 className="grid grid-cols-2 gap-4 font-mono text-xs text-start"
               >
                 <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
-                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">
+                  <p className="text-xs uppercase text-muted-foreground tracking-wider mb-1">
                     {tHero("latency_label")}
                   </p>
-                  <p className="text-base font-bold text-cyan-600 dark:text-cyan-400">
+                  <p className="text-base font-bold text-primary">
                     {tHero("latency_value")}
                   </p>
                 </div>
 
                 <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
-                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">
+                  <p className="text-xs uppercase text-muted-foreground tracking-wider mb-1">
                     {tHero("pipeline_label")}
                   </p>
-                  <p className="text-base font-bold text-emerald-600 dark:text-emerald-400">
+                  <p className="text-base font-bold text-status-success">
                     {tHero("pipeline_value")}
                   </p>
                 </div>
 
                 <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
-                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">
+                  <p className="text-xs uppercase text-muted-foreground tracking-wider mb-1">
                     {tHero("doh_label")}
                   </p>
                   <p className="text-xs font-semibold text-foreground truncate">
@@ -215,7 +206,7 @@ export function HeroSection({
                 </div>
 
                 <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
-                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">
+                  <p className="text-xs uppercase text-muted-foreground tracking-wider mb-1">
                     {tHero("infra_label")}
                   </p>
                   <p className="text-xs font-semibold text-foreground truncate">
@@ -227,7 +218,7 @@ export function HeroSection({
               {/* Telemetry Status Bar */}
               <div
                 dir="ltr"
-                className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-[11px] font-mono text-muted-foreground"
+                className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs font-mono text-muted-foreground"
               >
                 <span>
                   {tHero("telemetry_locale")}: {locale.toUpperCase()}

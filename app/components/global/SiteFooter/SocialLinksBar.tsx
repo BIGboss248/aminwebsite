@@ -107,7 +107,7 @@ export function SocialLinksBar({
           target="_blank"
           rel="noopener noreferrer"
           aria-label={link.label}
-          className="group inline-flex items-center justify-center min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg border border-border bg-card/60 text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-card hover:-translate-y-0.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="group inline-flex items-center justify-center min-w-11 min-h-11 w-11 h-11 rounded-lg border border-border bg-card/60 text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-card hover:-translate-y-0.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           <span className="sr-only">{link.label}</span>
           <span className="transition-transform duration-200 group-hover:scale-110">
@@ -118,4 +118,3 @@ export function SocialLinksBar({
     </div>
   );
 }
-

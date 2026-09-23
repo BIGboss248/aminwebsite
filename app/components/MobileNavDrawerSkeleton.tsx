@@ -39,7 +39,7 @@ export function MobileNavDrawerSkeleton({
       aria-busy="true"
       aria-label="Loading mobile navigation drawer"
       className={cn(
-        "flex flex-col w-[320px] max-w-[85vw] h-full bg-card border-s border-border shadow-2xl p-4 gap-4 animate-in fade-in duration-150",
+        "flex flex-col w-80 max-w-full h-full bg-card border-s border-border shadow-2xl p-4 gap-4 animate-in fade-in duration-150",
         className,
       )}
     >
@@ -90,4 +90,3 @@ export function MobileNavDrawerSkeleton({
 }
 
 export default MobileNavDrawerSkeleton;
-

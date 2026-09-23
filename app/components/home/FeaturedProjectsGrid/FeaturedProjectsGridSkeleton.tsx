@@ -78,8 +78,8 @@ export function FeaturedProjectsGridSkeleton({
                   <div className="h-5 w-14 rounded-md bg-muted animate-pulse" />
                 </div>
 
-                {/* 16:10 Frame Preview */}
-                <div className="relative aspect-[16/10] w-full rounded-lg border border-border/60 bg-muted/30 mb-6 flex flex-col overflow-hidden">
+                {/* Frame Preview */}
+                <div className="relative aspect-video w-full rounded-lg border border-border/60 bg-muted/30 mb-6 flex flex-col overflow-hidden">
                   <div className="h-6 w-full border-b border-border/40 bg-muted/50 px-3 flex items-center">
                     <div className="flex gap-1.5">
                       <div className="size-2 rounded-full bg-border" />
@@ -107,4 +107,3 @@ export function FeaturedProjectsGridSkeleton({
 }
 
 export default FeaturedProjectsGridSkeleton;
-

@@ -63,10 +63,10 @@ export function ContactActionBanner({
             <span className="font-mono text-xs font-semibold tracking-wider text-primary uppercase">
               {t("eyebrow")}
             </span>
-            <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-500 dark:text-emerald-400">
+            <div className="flex items-center gap-1.5 rounded-full border border-status-success/20 bg-status-success/10 px-2.5 py-0.5 text-xs font-medium text-status-success">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-status-success opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-status-success" />
               </span>
               <span>{t("status_available")}</span>
             </div>
@@ -86,11 +86,14 @@ export function ContactActionBanner({
           {/* Primary Mailto Action */}
           <a
             href={`mailto:${email}`}
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <Mail className="h-4 w-4" aria-hidden="true" />
             <span>{t("email_cta")}</span>
-            <ArrowUpRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+            <ArrowUpRight
+              className="h-4 w-4 rtl:rotate-180"
+              aria-hidden="true"
+            />
           </a>
 
           {/* Direct Copy Email Action */}
@@ -98,18 +101,27 @@ export function ContactActionBanner({
             type="button"
             onClick={handleCopy}
             aria-label={t("copy_email")}
-            className="group inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-border bg-background/80 px-4 py-2.5 font-mono text-xs font-medium text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border bg-background/80 px-4 py-2.5 font-mono text-xs font-medium text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             {isCopied ? (
               <>
-                <Check className="h-4 w-4 text-emerald-500" aria-hidden="true" />
-                <span className="text-emerald-500 font-semibold" aria-live="polite">
+                <Check
+                  className="h-4 w-4 text-status-success"
+                  aria-hidden="true"
+                />
+                <span
+                  className="text-status-success font-semibold"
+                  aria-live="polite"
+                >
                   {t("email_copied")}
                 </span>
               </>
             ) : (
               <>
-                <Copy className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" aria-hidden="true" />
+                <Copy
+                  className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors"
+                  aria-hidden="true"
+                />
                 <span dir="ltr" className="select-all">
                   {email}
                 </span>
@@ -121,4 +133,3 @@ export function ContactActionBanner({
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import { Skeleton } from "./skeleton"
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { Skeleton } from "./skeleton";
 
 const meta: Meta<typeof Skeleton> = {
   title: "UI/Skeleton",
@@ -26,20 +26,22 @@ const meta: Meta<typeof Skeleton> = {
   argTypes: {
     className: {
       control: "text",
-      description: "Custom CSS class names to apply sizing, radius, or layout styling",
+      description:
+        "Custom CSS class names to apply sizing, radius, or layout styling",
     },
     accessibleLabel: {
       control: "text",
-      description: "Optional accessible label when skeleton acts as a standalone status announcer",
+      description:
+        "Optional accessible label when skeleton acts as a standalone status announcer",
     },
   },
   args: {
     className: "h-6 w-48",
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Skeleton>
+export default meta;
+type Story = StoryObj<typeof Skeleton>;
 
 /**
  * Composite skeleton layout previewed in **Light Mode**.
@@ -51,11 +53,12 @@ export const Light: Story = {
     backgrounds: { default: "light" },
     docs: {
       description: {
-        story: "Accessible skeleton card layout displayed on light background container.",
+        story:
+          "Accessible skeleton card layout displayed on light background container.",
       },
     },
   },
-  render: (args) => (
+  render: () => (
     <div className="flex flex-col gap-3 w-64">
       <Skeleton className="h-32 w-full rounded-lg" />
       <Skeleton className="h-4 w-3/4" />
@@ -65,14 +68,14 @@ export const Light: Story = {
   decorators: [
     (Story) => (
       <div className="light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[280px]">
-        <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
           Light Mode
         </span>
         <Story />
       </div>
     ),
   ],
-}
+};
 
 /**
  * Composite skeleton layout previewed in **Dark Mode**.
@@ -84,11 +87,12 @@ export const Dark: Story = {
     backgrounds: { default: "dark" },
     docs: {
       description: {
-        story: "Accessible skeleton card layout displayed on dark obsidian background container.",
+        story:
+          "Accessible skeleton card layout displayed on dark obsidian background container.",
       },
     },
   },
-  render: (args) => (
+  render: () => (
     <div className="flex flex-col gap-3 w-64">
       <Skeleton className="h-32 w-full rounded-lg" />
       <Skeleton className="h-4 w-3/4" />
@@ -98,14 +102,14 @@ export const Dark: Story = {
   decorators: [
     (Story) => (
       <div className="dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[280px]">
-        <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
           Dark Mode
         </span>
         <Story />
       </div>
     ),
   ],
-}
+};
 
 /**
  * Single skeleton placeholder block in **Light Mode**.
@@ -124,14 +128,14 @@ export const SkeletonLight: Story = {
   decorators: [
     (Story) => (
       <div className="light bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]">
-        <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
           Skeleton (Light)
         </span>
         <Story />
       </div>
     ),
   ],
-}
+};
 
 /**
  * Single skeleton placeholder block in **Dark Mode**.
@@ -150,12 +154,11 @@ export const SkeletonDark: Story = {
   decorators: [
     (Story) => (
       <div className="dark bg-background text-foreground p-8 rounded-xl border border-border shadow-xs flex flex-col items-center justify-center gap-3 min-w-[220px]">
-        <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
           Skeleton (Dark)
         </span>
         <Story />
       </div>
     ),
   ],
-}
-
+};

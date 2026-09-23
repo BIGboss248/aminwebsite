@@ -1,30 +1,46 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from './button';
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { Button } from "./button";
 
 const meta: Meta<typeof Button> = {
-  title: 'UI/Button',
+  title: "UI/Button",
   component: Button,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'outline', 'secondary', 'ghost', 'destructive', 'link'],
-      description: 'The visual style variant of the button',
+      control: "select",
+      options: [
+        "default",
+        "outline",
+        "secondary",
+        "ghost",
+        "destructive",
+        "link",
+      ],
+      description: "The visual style variant of the button",
     },
     size: {
-      control: 'select',
-      options: ['default', 'xs', 'sm', 'lg', 'icon', 'icon-xs', 'icon-sm', 'icon-lg'],
-      description: 'The sizing scale of the button',
+      control: "select",
+      options: [
+        "default",
+        "xs",
+        "sm",
+        "lg",
+        "icon",
+        "icon-xs",
+        "icon-sm",
+        "icon-lg",
+      ],
+      description: "The sizing scale of the button",
     },
     disabled: {
-      control: 'boolean',
-      description: 'Whether the button is disabled',
+      control: "boolean",
+      description: "Whether the button is disabled",
     },
   },
   args: {
-    children: 'Button',
-    variant: 'default',
-    size: 'default',
+    children: "Button",
+    variant: "default",
+    size: "default",
   },
 };
 
@@ -33,49 +49,49 @@ type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
   args: {
-    children: 'Primary Action',
-    variant: 'default',
+    children: "Primary Action",
+    variant: "default",
   },
 };
 
 export const Outline: Story = {
   args: {
-    children: 'Outline Button',
-    variant: 'outline',
+    children: "Outline Button",
+    variant: "outline",
   },
 };
 
 export const Secondary: Story = {
   args: {
-    children: 'Secondary Action',
-    variant: 'secondary',
+    children: "Secondary Action",
+    variant: "secondary",
   },
 };
 
 export const Ghost: Story = {
   args: {
-    children: 'Ghost Button',
-    variant: 'ghost',
+    children: "Ghost Button",
+    variant: "ghost",
   },
 };
 
 export const Destructive: Story = {
   args: {
-    children: 'Destructive Action',
-    variant: 'destructive',
+    children: "Destructive Action",
+    variant: "destructive",
   },
 };
 
 export const LinkVariant: Story = {
   args: {
-    children: 'Link Style',
-    variant: 'link',
+    children: "Link Style",
+    variant: "link",
   },
 };
 
 export const Disabled: Story = {
   args: {
-    children: 'Disabled Button',
+    children: "Disabled Button",
     disabled: true,
   },
 };
@@ -94,13 +110,11 @@ export const Sizes: Story = {
 export const DarkMode: Story = {
   parameters: {
     themes: {
-      themeOverride: 'dark',
+      themeOverride: "dark",
     },
   },
   args: {
-    children: 'Dark Mode Primary',
-    variant: 'default',
+    children: "Dark Mode Primary",
+    variant: "default",
   },
 };
-
-

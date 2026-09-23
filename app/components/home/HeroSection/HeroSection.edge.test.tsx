@@ -5,7 +5,7 @@ import type { AvailabilityStatus } from "./HeroSection.types";
 import enMessages from "@/messages/en.json";
 import faMessages from "@/messages/fa.json";
 
-let mockLocale = "en";
+const mockLocale = "en" as string;
 
 jest.mock("next-intl", () => ({
   useLocale: () => mockLocale,
@@ -17,7 +17,6 @@ jest.mock("next-intl", () => ({
     return key;
   },
 }));
-
 
 // Mock the Link component from @/app/components/Link
 jest.mock("@/app/components/Link", () => {
@@ -156,22 +155,20 @@ describe("HeroSection (Adversarial Edge Cases & Stress Tests)", () => {
       );
 
       const pill = container.querySelector(".rounded-full.border.text-xs");
-      expect(pill).toHaveClass("text-emerald-600");
+      expect(pill).toHaveClass("text-status-success");
 
       const dot = container.querySelector(".rounded-full.animate-pulse");
-      expect(dot).toHaveClass("bg-emerald-500");
+      expect(dot).toHaveClass("bg-status-success");
     });
 
     it("renders 'busy' status with amber indicators", () => {
-      const { container } = render(
-        <HeroSection availabilityStatus="busy" />,
-      );
+      const { container } = render(<HeroSection availabilityStatus="busy" />);
 
       const pill = container.querySelector(".rounded-full.border.text-xs");
-      expect(pill).toHaveClass("text-amber-600");
+      expect(pill).toHaveClass("text-status-warning");
 
       const dot = container.querySelector(".rounded-full.animate-pulse");
-      expect(dot).toHaveClass("bg-amber-500");
+      expect(dot).toHaveClass("bg-status-warning");
     });
 
     it("renders 'offline' status with zinc indicators", () => {
@@ -180,10 +177,10 @@ describe("HeroSection (Adversarial Edge Cases & Stress Tests)", () => {
       );
 
       const pill = container.querySelector(".rounded-full.border.text-xs");
-      expect(pill).toHaveClass("text-zinc-600");
+      expect(pill).toHaveClass("text-muted-foreground");
 
       const dot = container.querySelector(".rounded-full.animate-pulse");
-      expect(dot).toHaveClass("bg-zinc-400");
+      expect(dot).toHaveClass("bg-muted-foreground");
     });
 
     it("falls back gracefully when an unknown availabilityStatus is provided", () => {
@@ -193,9 +190,9 @@ describe("HeroSection (Adversarial Edge Cases & Stress Tests)", () => {
         />,
       );
 
-      // Dot falls back to bg-zinc-400
+      // Dot falls back to bg-muted-foreground
       const dot = container.querySelector(".rounded-full.animate-pulse");
-      expect(dot).toHaveClass("bg-zinc-400");
+      expect(dot).toHaveClass("bg-muted-foreground");
       expect(container.querySelector("section")).toBeInTheDocument();
     });
   });
@@ -283,7 +280,9 @@ describe("HeroSection (Adversarial Edge Cases & Stress Tests)", () => {
 
   describe("Component Stability Under Stress", () => {
     it("remains stable under rapid re-renders with alternating props and locales", () => {
-      const { rerender } = render(<HeroSection locale="en" availabilityStatus="available" />);
+      const { rerender } = render(
+        <HeroSection locale="en" availabilityStatus="available" />,
+      );
 
       const statuses: AvailabilityStatus[] = ["available", "busy", "offline"];
       const locales = ["en", "fa", "en", "fa"];

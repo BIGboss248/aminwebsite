@@ -49,6 +49,9 @@
   --color-skeleton: var(--skeleton);
   --color-skeleton-shimmer: var(--skeleton-shimmer);
   --color-skeleton-border: var(--skeleton-border);
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-info: var(--status-info);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -82,6 +85,9 @@ body {
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
+  --status-success: oklch(0.65 0.18 145);
+  --status-warning: oklch(0.75 0.16 75);
+  --status-info: oklch(0.65 0.15 220);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -122,6 +128,9 @@ body {
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --status-success: oklch(0.72 0.18 145);
+  --status-warning: oklch(0.78 0.16 75);
+  --status-info: oklch(0.72 0.15 220);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -160,6 +169,11 @@ body {
   section:nth-of-type(even) {
     background-color: var(--section-alternate);
     color: var(--section-alternate-foreground);
+  }
+
+  .mask-radial-hero {
+    mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 100%);
   }
 }
 

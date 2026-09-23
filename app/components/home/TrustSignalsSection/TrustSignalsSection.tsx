@@ -4,8 +4,6 @@ import { Award, GraduationCap, Languages, ShieldCheck } from "lucide-react";
 import { Link } from "@/app/components/Link";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
-import enMessages from "@/messages/en.json";
-import faMessages from "@/messages/fa.json";
 import type { TrustSignalsSectionProps } from "./TrustSignalsSection.types";
 
 /**
@@ -26,17 +24,8 @@ export function TrustSignalsSection({
   actionHref = ROUTES.about,
   className = "",
 }: TrustSignalsSectionProps): React.JSX.Element {
-  let tTrust: (key: string) => string;
-  try {
-    const t = useTranslations("home.trust_signals");
-    tTrust = (key: string) => t(key as never);
-  } catch {
-    const dict =
-      locale === "fa"
-        ? faMessages.home.trust_signals
-        : enMessages.home.trust_signals;
-    tTrust = (key: string) => (dict as Record<string, string>)[key] ?? key;
-  }
+  const t = useTranslations("home.trust_signals");
+  const tTrust = (key: string) => t(key as never);
 
   const resolvedEyebrow = eyebrow ?? tTrust("eyebrow");
   const resolvedTitle = title ?? tTrust("title");
@@ -54,7 +43,7 @@ export function TrustSignalsSection({
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Section Header */}
         <div className="max-w-3xl mb-12 sm:mb-16">
-          <p className="text-xs font-mono font-semibold uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-3">
+          <p className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
             {resolvedEyebrow}
           </p>
           <h2
@@ -71,19 +60,19 @@ export function TrustSignalsSection({
         {/* Bento Grid Container */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-stretch">
           {/* CELL 1: Production Web Vitals (6 Cols) */}
-          <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all hover:border-cyan-500/40 hover:-translate-y-0.5 dark:hover:shadow-[0_0_24px_-4px_rgba(6,182,212,0.15)]">
+          <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all hover:border-primary/40 hover:-translate-y-0.5 dark:hover:shadow-md dark:hover:shadow-primary/10">
             <div>
               {/* Header Badge */}
               <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-4 mb-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-medium tracking-wider select-none">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-status-success/30 bg-status-success/10 text-status-success text-xs font-mono font-medium tracking-wider select-none">
                   <span
-                    className="size-2 rounded-full bg-emerald-500 animate-pulse"
+                    className="size-2 rounded-full bg-status-success animate-pulse"
                     aria-hidden="true"
                   />
                   <span>{tTrust("cell1_badge")}</span>
                 </div>
                 <ShieldCheck
-                  className="size-5 text-emerald-600 dark:text-emerald-400"
+                  className="size-5 text-status-success"
                   aria-hidden="true"
                 />
               </div>
@@ -106,10 +95,10 @@ export function TrustSignalsSection({
                   className="flex flex-col items-center justify-center p-2"
                   aria-label={tTrust("cell1_metric1_aria")}
                 >
-                  <span className="text-2xl sm:text-3xl font-mono font-bold text-cyan-600 dark:text-cyan-400 tracking-tight">
+                  <span className="text-2xl sm:text-3xl font-mono font-bold text-primary tracking-tight">
                     {tTrust("cell1_metric1_value")}
                   </span>
-                  <span className="mt-1 text-[11px] font-mono text-muted-foreground">
+                  <span className="mt-1 text-xs font-mono text-muted-foreground">
                     {tTrust("cell1_metric1_label")}
                   </span>
                 </div>
@@ -119,10 +108,10 @@ export function TrustSignalsSection({
                   className="flex flex-col items-center justify-center p-2 border-s border-e border-border/40"
                   aria-label={tTrust("cell1_metric2_aria")}
                 >
-                  <span className="text-2xl sm:text-3xl font-mono font-bold text-emerald-600 dark:text-emerald-400 tracking-tight">
+                  <span className="text-2xl sm:text-3xl font-mono font-bold text-status-success tracking-tight">
                     {tTrust("cell1_metric2_value")}
                   </span>
-                  <span className="mt-1 text-[11px] font-mono text-muted-foreground">
+                  <span className="mt-1 text-xs font-mono text-muted-foreground">
                     {tTrust("cell1_metric2_label")}
                   </span>
                 </div>
@@ -135,7 +124,7 @@ export function TrustSignalsSection({
                   <span className="text-2xl sm:text-3xl font-mono font-bold text-foreground tracking-tight">
                     {tTrust("cell1_metric3_value")}
                   </span>
-                  <span className="mt-1 text-[11px] font-mono text-muted-foreground">
+                  <span className="mt-1 text-xs font-mono text-muted-foreground">
                     {tTrust("cell1_metric3_label")}
                   </span>
                 </div>
@@ -149,11 +138,11 @@ export function TrustSignalsSection({
           </div>
 
           {/* CELL 2: Dual Academic Foundation (6 Cols) */}
-          <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all hover:border-violet-500/40 hover:-translate-y-0.5 dark:hover:shadow-[0_0_24px_-4px_rgba(139,92,246,0.15)]">
+          <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all hover:border-primary/40 hover:-translate-y-0.5 dark:hover:shadow-md dark:hover:shadow-primary/10">
             <div>
               {/* Header Badge */}
               <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-4 mb-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-400 text-xs font-mono font-medium tracking-wider select-none">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-mono font-medium tracking-wider select-none">
                   <GraduationCap className="size-3.5" aria-hidden="true" />
                   <span>{tTrust("cell2_badge")}</span>
                 </div>
@@ -168,7 +157,7 @@ export function TrustSignalsSection({
               <div className="space-y-4">
                 <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="size-2 rounded-full bg-violet-500" />
+                    <span className="size-2 rounded-full bg-primary" />
                     <h4 className="text-sm font-semibold text-foreground">
                       {tTrust("cell2_degree1_title")}
                     </h4>
@@ -180,7 +169,7 @@ export function TrustSignalsSection({
 
                 <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="size-2 rounded-full bg-cyan-500" />
+                    <span className="size-2 rounded-full bg-primary" />
                     <h4 className="text-sm font-semibold text-foreground">
                       {tTrust("cell2_degree2_title")}
                     </h4>
@@ -201,7 +190,7 @@ export function TrustSignalsSection({
           </div>
 
           {/* CELL 3: Continuous Mastery & Professional Certifications (7 Cols) */}
-          <div className="md:col-span-2 lg:col-span-7 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all hover:border-cyan-500/40 hover:-translate-y-0.5">
+          <div className="md:col-span-2 lg:col-span-7 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all hover:border-primary/40 hover:-translate-y-0.5">
             <div>
               {/* Header Badge */}
               <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-4 mb-6">
@@ -222,7 +211,7 @@ export function TrustSignalsSection({
                   <p className="text-xs font-medium text-foreground">
                     {tTrust("cell3_cert1")}
                   </p>
-                  <p className="text-[11px] font-mono text-cyan-600 dark:text-cyan-400 mt-0.5">
+                  <p className="text-xs font-mono text-primary mt-0.5">
                     {tTrust("cell3_cert1_issuer")}
                   </p>
                 </div>
@@ -231,7 +220,7 @@ export function TrustSignalsSection({
                   <p className="text-xs font-medium text-foreground">
                     {tTrust("cell3_cert2")}
                   </p>
-                  <p className="text-[11px] font-mono text-cyan-600 dark:text-cyan-400 mt-0.5">
+                  <p className="text-xs font-mono text-primary mt-0.5">
                     {tTrust("cell3_cert2_issuer")}
                   </p>
                 </div>
@@ -240,7 +229,7 @@ export function TrustSignalsSection({
                   <p className="text-xs font-medium text-foreground">
                     {tTrust("cell3_cert3")}
                   </p>
-                  <p className="text-[11px] font-mono text-muted-foreground mt-0.5">
+                  <p className="text-xs font-mono text-muted-foreground mt-0.5">
                     {tTrust("cell3_cert3_issuer")}
                   </p>
                 </div>
@@ -249,7 +238,7 @@ export function TrustSignalsSection({
                   <p className="text-xs font-medium text-foreground">
                     {tTrust("cell3_cert4")}
                   </p>
-                  <p className="text-[11px] font-mono text-muted-foreground mt-0.5">
+                  <p className="text-xs font-mono text-muted-foreground mt-0.5">
                     {tTrust("cell3_cert4_issuer")}
                   </p>
                 </div>
@@ -261,7 +250,7 @@ export function TrustSignalsSection({
               <Link
                 href={resolvedActionHref}
                 locale={locale}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-cyan-600 dark:text-cyan-400 hover:underline min-h-[44px]"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline min-h-11"
               >
                 <span>{tTrust("cell3_action")}</span>
                 <span aria-hidden="true" className="ms-1 rtl:rotate-180">
@@ -272,11 +261,11 @@ export function TrustSignalsSection({
           </div>
 
           {/* CELL 4: Global Bilingual Fluency (5 Cols) */}
-          <div className="md:col-span-2 lg:col-span-5 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all hover:border-cyan-500/40 hover:-translate-y-0.5">
+          <div className="md:col-span-2 lg:col-span-5 flex flex-col justify-between rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all hover:border-primary/40 hover:-translate-y-0.5">
             <div>
               {/* Header Badge */}
               <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-4 mb-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-mono font-medium tracking-wider select-none">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-mono font-medium tracking-wider select-none">
                   <Languages className="size-3.5" aria-hidden="true" />
                   <span>{tTrust("cell4_badge")}</span>
                 </div>
@@ -294,11 +283,11 @@ export function TrustSignalsSection({
                     <span className="text-xs font-semibold text-foreground">
                       {tTrust("cell4_lang1_name")}
                     </span>
-                    <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-medium">
+                    <span className="text-xs font-mono text-status-success font-medium">
                       {tTrust("cell4_lang1_level")}
                     </span>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {tTrust("cell4_lang1_note")}
                   </p>
                 </div>
@@ -308,11 +297,11 @@ export function TrustSignalsSection({
                     <span className="text-xs font-semibold text-foreground">
                       {tTrust("cell4_lang2_name")}
                     </span>
-                    <span className="text-[11px] font-mono text-cyan-600 dark:text-cyan-400 font-medium">
+                    <span className="text-xs font-mono text-primary font-medium">
                       {tTrust("cell4_lang2_level")}
                     </span>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {tTrust("cell4_lang2_note")}
                   </p>
                 </div>
@@ -321,7 +310,7 @@ export function TrustSignalsSection({
 
             {/* BiDi Badge */}
             <div className="pt-4 border-t border-border/40">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-medium bg-status-success/10 text-status-success border border-status-success/20">
                 {tTrust("cell4_bidi_badge")}
               </span>
             </div>

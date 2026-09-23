@@ -96,19 +96,17 @@ export function SiteNavbar({
   const effectivePathname = currentPath ?? routerPathname;
   const effectiveLocale = activeLocale ?? contextLocale;
 
-  let tNav: (key: string) => string;
-  let tCommon: (key: string) => string;
-  try {
-    const navT = useTranslations("navigation");
-    const commonT = useTranslations("common");
-    tNav = (key: string) => navT(key as never);
-    tCommon = (key: string) => commonT(key as never);
-  } catch {
-    tNav = (key: string) => key;
-    tCommon = (key: string) => key;
-  }
+  const navT = useTranslations("navigation");
+  const commonT = useTranslations("common");
+  const tNav = (key: string) => navT(key as never);
+  const tCommon = (key: string) => commonT(key as never);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(effectivePathname);
+  if (prevPathname !== effectivePathname) {
+    setPrevPathname(effectivePathname);
+    setMobileMenuOpen(false);
+  }
 
   // Close mobile drawer on Escape key press
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -125,11 +123,6 @@ export function SiteNavbar({
     }
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mobileMenuOpen, handleKeyDown]);
-
-  // Close mobile drawer on route transition
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [effectivePathname]);
 
   const navItems = [
     {
@@ -192,7 +185,7 @@ export function SiteNavbar({
           aria-label={`${brandName} ${tNav("home")}`}
         >
           {/* Circuit Lattice SVG Vector Emblem */}
-          <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-[0_0_12px_rgba(6,182,212,0.3)] group-hover:rotate-6">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-md group-hover:shadow-primary/20 group-hover:rotate-6">
             <svg
               className="h-4.5 w-4.5 text-primary"
               viewBox="0 0 24 24"
@@ -210,7 +203,7 @@ export function SiteNavbar({
                 y1="2"
                 x2="12"
                 y2="22"
-                className="stroke-emerald-500"
+                className="stroke-status-success"
                 strokeWidth="1.5"
                 strokeDasharray="2 2"
               />
@@ -218,10 +211,10 @@ export function SiteNavbar({
           </div>
 
           {/* Monospace Cockpit Brand Title */}
-          <div className="flex items-center gap-1 font-mono text-[13px] font-bold tracking-wider text-foreground">
+          <div className="flex items-center gap-1 font-mono text-xs font-bold tracking-wider text-foreground">
             <span>{brandName.toUpperCase()}</span>
-            <span className="text-primary">//</span>
-            <span className="text-[11px] font-semibold text-primary">
+            <span className="text-primary">{"//"}</span>
+            <span className="text-xs font-semibold text-primary">
               {tCommon("brand_lab")}
             </span>
           </div>
@@ -237,7 +230,7 @@ export function SiteNavbar({
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "group inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                    "group inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary",
                     active
                       ? "text-primary bg-primary/10 font-semibold"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
@@ -259,7 +252,7 @@ export function SiteNavbar({
                   {item.badge && (
                     <span
                       aria-hidden="true"
-                      className="ms-1 font-mono text-[9px] font-medium px-1.5 py-0.2 rounded-full border border-primary/40 bg-primary/15 text-primary"
+                      className="ms-1 font-mono text-xs font-medium px-1.5 py-0.5 rounded-full border border-primary/40 bg-primary/15 text-primary"
                     >
                       {item.badge}
                     </span>
@@ -343,7 +336,7 @@ export function SiteNavbar({
                     <span>{item.label}</span>
                   </div>
                   {item.badge && (
-                    <span className="font-mono text-[9px] font-medium px-1.5 py-0.2 rounded-full border border-primary/40 bg-primary/15 text-primary">
+                    <span className="font-mono text-xs font-medium px-1.5 py-0.5 rounded-full border border-primary/40 bg-primary/15 text-primary">
                       {item.badge}
                     </span>
                   )}

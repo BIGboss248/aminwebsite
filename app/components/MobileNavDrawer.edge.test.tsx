@@ -417,7 +417,7 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
       expect(aside).toHaveClass("flex");
       expect(aside).toHaveClass("flex-col");
       expect(aside).toHaveClass("h-full");
-      expect(aside).toHaveClass("w-[320px]");
+      expect(aside).toHaveClass("w-80");
       expect(aside).toHaveClass("border-s");
     });
   });
@@ -467,7 +467,7 @@ describe("MobileNavDrawer Adversarial & Edge-Case Test Suite", () => {
       const skeleton = screen.getByTestId("mobile-nav-drawer-skeleton");
       expect(skeleton).toHaveClass("custom-skeleton-class");
       expect(skeleton).toHaveClass("flex");
-      expect(skeleton).toHaveClass("w-[320px]");
+      expect(skeleton).toHaveClass("w-80");
     });
   });
 

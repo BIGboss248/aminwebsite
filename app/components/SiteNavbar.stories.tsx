@@ -1,5 +1,5 @@
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { fn } from "@storybook/test";
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "next-themes";
@@ -79,10 +79,12 @@ Fixed at \`h-14\` (56px) height with glassmorphism and subtle structural borders
     },
     className: {
       control: "text",
-      description: "Optional custom CSS class name applied to outer header landmark.",
+      description:
+        "Optional custom CSS class name applied to outer header landmark.",
     },
     onLocaleChange: {
-      description: "Action spy triggered when locale switcher segment is clicked.",
+      description:
+        "Action spy triggered when locale switcher segment is clicked.",
     },
     onThemeToggle: {
       description: "Action spy triggered when theme toggle button is clicked.",
@@ -121,7 +123,7 @@ export const Light: Story = {
     (Story) => (
       <div className="light bg-background text-foreground min-h-[160px] w-full flex flex-col border border-border">
         <div className="p-3 border-b border-border flex items-center justify-between">
-          <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+          <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
             Light Mode
           </span>
         </div>
@@ -150,7 +152,7 @@ export const Dark: Story = {
     (Story) => (
       <div className="dark bg-background text-foreground min-h-[160px] w-full flex flex-col border border-border">
         <div className="p-3 border-b border-border flex items-center justify-between">
-          <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+          <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
             Dark Mode
           </span>
         </div>
@@ -178,7 +180,7 @@ export const SkeletonLight: Story = {
     (Story) => (
       <div className="light bg-background text-foreground min-h-[160px] w-full flex flex-col border border-border">
         <div className="p-3 border-b border-border flex items-center justify-between">
-          <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+          <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
             Skeleton (Light)
           </span>
         </div>
@@ -206,7 +208,7 @@ export const SkeletonDark: Story = {
     (Story) => (
       <div className="dark bg-background text-foreground min-h-[160px] w-full flex flex-col border border-border">
         <div className="p-3 border-b border-border flex items-center justify-between">
-          <span className="text-[11px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
+          <span className="text-xs font-mono font-medium uppercase tracking-wider text-muted-foreground">
             Skeleton (Dark)
           </span>
         </div>

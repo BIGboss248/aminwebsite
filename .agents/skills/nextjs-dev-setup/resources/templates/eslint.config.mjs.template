@@ -20,19 +20,30 @@ const eslintConfig = defineConfig([
       shadcn,
     },
     rules: {
-      "shadcn/no-restyle": ["error", { allow: ["layout"] }],
-      "shadcn/no-arbitrary-values": "error",
+      "shadcn/no-restyle": [
+        "error",
+        {
+          allow: ["layout"],
+          contracts: [
+            // Sample component contract exception:
+            // { pattern: "^Button$", allow: ["w-full", "mt-*", "mb-*"] },
+          ],
+        },
+      ],
       "shadcn/no-raw-colors": "error",
-      "shadcn/no-inline-styles": "error",
+      "shadcn/no-arbitrary-values": "error",
       "shadcn/no-unknown-classes": "error",
+      "shadcn/no-inline-styles": "error",
+      "shadcn/require-static-classes": "error",
     },
   },
   {
-    // Turn off restyle & arbitrary value rules in primitive UI directories so components can style themselves
+    // Turn off restyle, arbitrary values & static class checks in primitive UI directories so components can style themselves
     files: ["app/components/ui/**", "components/ui/**", "src/components/ui/**"],
     rules: {
       "shadcn/no-restyle": "off",
       "shadcn/no-arbitrary-values": "off",
+      "shadcn/require-static-classes": "off",
     },
   },
 ]);

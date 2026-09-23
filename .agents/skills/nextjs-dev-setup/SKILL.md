@@ -20,6 +20,13 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 
 ---
 
+## Phase 0: Implementation Plan & Approval Gate
+
+> [!IMPORTANT]
+> **Plan Before Execution:** Always generate and present an `implementation_plan.md` artifact detailing all planned file creations, modifications, package installations, and configuration changes across Stages 1 through 6 before executing any write operations or modifying commands in the repository. Wait for user confirmation/approval before proceeding with execution.
+
+---
+
 ## Step-by-Step Execution Flow
 
 ### Stage 1: Project Metadata (`docs/project.json`)

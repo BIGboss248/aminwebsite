@@ -1,300 +1,112 @@
 ---
 name: component-design
-description: Pure UX and UI discovery, design token verification, interactive user design grilling, and comprehensive design specification generation (docs/design/components/[page]/[component]/design-spec.md) for web and app components, sections, and pages. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
+description: >-
+  Discover, interview, and craft comprehensive UX/UI design specifications (design-spec.md) and design tokens for web components. Triggers on "/component-design", "design component", "design section", "design UI", "wireframe component", or "create design spec".
 metadata:
   author: BIGboss248
-  version: "2.3"
+  version: "2.4"
 ---
 
 # Component & UI Design Skill (`component-design`)
 
-This skill defines the complete, repeatable workflow for discovering and specifying web and app components, sections, and full pages in any project. It focuses strictly on **User Experience (UX), User Interface (UI), layout architecture, visual aesthetics, typography, color tokens, and producing a comprehensive design specification markdown file (`design-spec.md`)** that can be fed downstream to visual prototyping tools like [`stitch-design`](file:///d:/Scripts/aminwebsite/.agents/skills/stitch-design/SKILL.md) or code implementation workflows.
-
-> [!IMPORTANT]
-> **Pure Design Scope (Zero Coding Guardrail):**
-> This skill is strictly concerned with design, layout, visual hierarchy, aesthetic tokens, and design specifications. It does **NOT** generate React components, Next.js code, TypeScript props interfaces, component library installation commands (no shadcn/Radix commands), or backend logic. Code implementation is handled in downstream development workflows.
-
-> [!CAUTION]
-> **Design Tokens Prerequisite Gate (Tokens First Rule):**
-> No component, section, or page design can proceed without a fully verified set of central design tokens in [`docs/project.json`](file:///d:/Scripts/aminwebsite/docs/project.json). The skill MUST first verify all tokens exist; if any are missing, it must grill the user to define them and persist them to `docs/project.json` before drafting any component designs.
-
-> [!TIP]
-> **Zero In-Skill Image Generation (Token Conservation Rule):**
-> To conserve tokens and maintain user control over visual assets, this skill MUST NOT invoke `generate_image` directly. When bespoke imagery is needed (hero backdrops, diagrams, portraits, brand marks), formulate and output structured image generation prompts directly to the user so they can generate and place the images in the project files.
+A structured UX/UI discovery and specification workflow for designing web and application components, sections, and pages. Generates production-ready design specifications (`design-spec.md`) consumable by visual prototyping tools like [`stitch-design`](file:///d:/Scripts/aminwebsite/.agents/skills/stitch-design/SKILL.md) and code implementation workflows.
 
 ---
 
-## 1. Core Deliverables & Workflow Overview
+## Guardrails & Core Principles
+
+> [!IMPORTANT]
+> **1. Zero Coding Guardrail (Pure Design Scope)**: This skill is strictly concerned with UX, UI, layout architecture, typography, and visual tokens. Never output React components, Next.js directives, TypeScript prop interfaces, or package installation commands (no shadcn/Radix CLI commands). Code implementation is handled in downstream development workflows.
+
+> [!CAUTION]
+> **2. Design Tokens Prerequisite Gate (Tokens First Rule)**: No component can be designed without verified canonical design tokens in [`docs/project.json`](file:///docs/project.json). Missing tokens must be grilled and persisted before drafting component designs. See [token-verification-matrix.md](./references/token-verification-matrix.md).
+
+> [!TIP]
+> **3. Token Conservation Rule (Zero Direct In-Skill Image Generation)**: Never invoke `generate_image` directly. Formulate structured image generation prompts for the user to generate and place into project directories.
+
+---
+
+## Workflow Overview
 
 ```mermaid
 flowchart TD
-    Start["Invoke /component-design<br/>(Page Name + Component / Section Name)"] --> Step1["Step 1: Dynamic Context & Token Gate<br/>(Scan docs/**, CONTEXT.md & docs/project.json)"]
-    Step1 --> CheckTokens{"Are ALL Design Tokens<br/>verified in docs/project.json?"}
-    CheckTokens -- "No / Missing Tokens" --> GrillTokens["Step 1.1: Dynamic Grilling on Central Tokens<br/>(Formulate 3 relevant choices from scanned project context)"]
-    GrillTokens --> SaveTokens["Step 1.2: Persist Canonical Tokens<br/>(Update docs/project.json under 'design_system')"]
-    SaveTokens --> Round1
-    CheckTokens -- "Yes / Verified" --> Round1["Step 2 - Round 1: Intent & Core Story<br/>(Interview user on purpose & tone)"]
-    Round1 --> Round2["Step 2 - Round 2: Spatial Hierarchy & Flow<br/>(Adapt questions based on Round 1 answers)"]
-    Round2 --> Round3["Step 2 - Round 3: Interaction & Media Accents<br/>(Refine dynamics & visual assets based on layout)"]
-    Round3 --> Step3["Step 3: Proactive Asset Prompt Formulation<br/>(Provide ready-to-use prompts to user, NO direct generate_image)"]
-    Step3 --> Step4["Step 4: Generate Design Folder & design-spec.md<br/>(Write docs/design/components/[page]/[component]/design-spec.md)"]
-    Step4 --> Step5["Step 5: Independent Subagent Quality & Design Audit<br/>(invoke_subagent checks guardrails, tokens, and spec completeness)"]
-    Step5 --> Finish["Spec Ready for Downstream Handoff<br/>(Ready for /stitch-design or implementation)"]
-```
-
-### Deliverable 1: Canonical Design Tokens in `docs/project.json`
-
-The single source of truth for the application's visual system. Before any component is designed, the skill verifies and centralizes all brand identity, light and dark color palettes, locale-specific typography pairings, border radii, and elevation scales into [`docs/project.json`](file:///d:/Scripts/aminwebsite/docs/project.json) under the `"design_system"` schema.
-
-### Deliverable 2: The Component Design Specification
-
-Every designed component or section must be saved in a dedicated path structured strictly by page and component:
-
-```text
-docs/design/components/[page name]/[component name]/
-├── design-spec.md          # Comprehensive UX/UI design specification
-└── [user placed assets...] # Bespoke images placed by user from recommended prompts
+    Start["Invoke /component-design<br/>(Page + Component Name)"] --> Step1["Step 1: Dynamic Context & Token Gate<br/>(Scan docs/**, CONTEXT.md & docs/project.json)"]
+    Step1 --> CheckTokens{"Are Design Tokens<br/>complete in docs/project.json?"}
+    CheckTokens -- "Missing Tokens" --> GrillTokens["Grill Missing Tokens<br/>(3 context-driven choices)"]
+    GrillTokens --> SaveTokens["Persist to docs/project.json"]
+    SaveTokens --> Step2
+    CheckTokens -- "Verified" --> Step2["Step 2: Multi-Round Adaptive Grilling<br/>(Rounds 1–3: Intent, Layout, Interactions)"]
+    Step2 --> Step3["Step 3: Visual Asset Prompt Formulation<br/>(Provide ready-to-use image prompts)"]
+    Step3 --> Step4["Step 4: Scaffold & Write design-spec.md<br/>(docs/design/components/[page]/[component]/)"]
+    Step4 --> Step5["Step 5: Subagent Audit & Auto-Repair<br/>(invoke_subagent checks guardrails & tokens)"]
+    Step5 --> Finish["Spec Ready for Downstream Handoff<br/>(Visual Prototyping / Implementation)"]
 ```
 
 ---
 
-## 2. Step-by-Step Execution Workflow
+## Execution Runbook
 
 ### Step 1: Dynamic Context Discovery & Design Token Verification Gate
 
-> [!IMPORTANT]
-> **Dynamic Discovery Rule:** Documentation files in the workspace do not have fixed names. Never assume hardcoded file paths or hardcoded project themes. Dynamically scan all files within the `docs/` directory and root `CONTEXT.md` to extract existing context.
+1. **Scan Project Context**: Dynamically inspect all files in `docs/` and root `CONTEXT.md` to extract target personas, business goals, and existing design bookmarks.
+2. **Scan Supported Locales**: Read `project_context_and_metadata.supported_languages` in [`docs/project.json`](file:///docs/project.json).
+3. **Verify Design Tokens**: Audit [`docs/project.json`](file:///docs/project.json) under `"design_system"` against [token-verification-matrix.md](./references/token-verification-matrix.md).
+4. **Grill Missing Tokens**: If tokens are absent, formulate 3 project-tailored options (marking one `(Recommended)`), grill the user, and persist them under `"design_system"`.
 
-Before designing any component, automatically inspect the workspace to establish context and verify central design tokens:
+### Step 2: Progressive Multi-Round Component Grilling
 
-1. **Scan `docs/**`and`CONTEXT.md`:\*\*
-   - Target audience and user personas.
-   - Core business objectives and product category.
-   - Existing design references, benchmark URLs, and bookmarks.
-2. **Scan Supported Locales (`docs/project.json`):**
-   - Extract the list of supported languages and layout directions (e.g. `ltr`, `rtl`) from `project_context_and_metadata.supported_languages`.
-3. **Inspect Existing Tokens:**
-   - Read [`docs/project.json`](file:///d:/Scripts/aminwebsite/docs/project.json) and inspect any existing style files (e.g., `globals.css`, `styles/`).
-4. **The Design Token Verification Checklist:**
-   Verify whether [`docs/project.json`](file:///d:/Scripts/aminwebsite/docs/project.json) has a complete `"design_system"` object containing:
-   - [ ] **Brand Story / Message:** Core emotional tone and visual personality.
-   - [ ] **Light Mode Color Palette:** Canvas background/foreground, alternate section background/foreground, elevated card surface, subtle border, primary accent, secondary accent, status colors (success, warning, error, info).
-   - [ ] **Dark Mode Color Palette:** Complete dark counterpart for every light token.
-   - [ ] **Typography System (Per Locale Object):** An object keyed by each supported locale in the project with `heading_font`, `body_font`, and `code_font`.
-   - [ ] **Border Radii:** Base, card, button, badge, modal.
-   - [ ] **Elevation / Shadows:** Card shadow, elevated shadow, modal shadow.
+Execute an adaptive 3-round interview using `ask_question` (or interactive chat), pausing between rounds to ingest user answers. Consult [adaptive-grilling-rounds.md](./references/adaptive-grilling-rounds.md) for full question formulations:
 
----
-
-#### Step 1.1: Dynamic Grilling on Missing Tokens (Context-Driven Options)
-
-> [!IMPORTANT]
-> **Zero Hardcoded Repository Assumptions:**
-> The options presented during grilling MUST NEVER be hardcoded from any specific project or repository. The agent must dynamically synthesize **3 genuinely relevant choices** formulated entirely from the active project's scanned `docs/**`, `CONTEXT.md`, business goals, and supported languages.
->
-> - Formulate 3 distinct, high-quality, and plausible choices directly fitting the project's domain.
-> - Mark the single strongest and most coherent choice as `(Recommended)`.
-> - Do not include filler options or artificial opposites; all 3 choices must represent legitimate, thoughtful design directions for the active project.
-
-When grilling on missing tokens, formulate dynamic questions covering:
-
-1. **Brand Story & Aesthetic Tone:** Formulate 3 relevant aesthetic philosophies derived from the project's purpose.
-2. **Color Palette Strategy (Light & Dark):** Formulate 3 cohesive color combinations (canvas, surfaces, accents, and status tokens) tailored to the project.
-3. **Typography System (Per Locale):** Formulate 3 font pairing choices covering heading, body, and monospace fonts for every locale defined in the project's supported languages.
-4. **Border Radii & Spatial Geometry:** Formulate 3 geometric curvature scales appropriate for the project's aesthetic.
-
----
-
-#### Step 1.2: Persist Canonical Tokens to `docs/project.json`
-
-Once established from existing docs or user grilling, update [`docs/project.json`](file:///d:/Scripts/aminwebsite/docs/project.json) under `"design_system"`.
-
----
-
-### Step 2: Progressive Multi-Round Component Grilling (Adaptive Interview)
-
-With all global design tokens verified and recorded, interview the user regarding the specific component, section, or page to be designed.
-
-> [!IMPORTANT]
-> **Multi-Round Adaptive Interview Rule:**
-> NEVER dump all grilling questions in a single monolithic prompt. Conduct the interview iteratively across **2 to 3 distinct conversational rounds** using `ask_question` (or interactive prompts).
-> After each round, pause and ingest the user's answers. Use the user's responses as context to dynamically formulate, narrow, and adjust the choices in the subsequent round.
->
-> For every question across all rounds:
->
-> - Dynamically formulate **3 relevant, high-quality choices** derived from scanned project docs and prior round answers.
-> - Mark the single strongest recommendation as `(Recommended)`.
-> - Avoid filler or generic opposite options; provide realistic, project-tailored directions.
-
----
-
-#### Round 1: Component Intent, Persona & Emotional Tone
-
-In this initial round, establish the foundational purpose, user job-to-be-done, and tone of the component:
-
-1. **Specific Component Purpose & User Job-to-be-Done:**
-   - What specific task or decision does the visitor accomplish in this section, and why does it matter to their journey? Formulate 3 relevant options based on component type and project goals.
-2. **Emotional Tone & Visual Persona:**
-   - What emotional impression and visual attitude should this component convey (e.g., authoritative technical precision vs. friendly high-trust onboarding vs. bold high-contrast showcase)? Formulate 3 options fitting the brand story.
-
-_-> Submit Round 1 questions to the user and wait for their response before proceeding to Round 2._
-
----
-
-#### Round 2: Spatial Hierarchy, Layout Grid & Focal Flow (Adapted from Round 1)
-
-Ingest the user's answers from Round 1. Knowing the exact purpose and emotional tone chosen, tailor the spatial layout and visual hierarchy questions:
-
-1. **Layout Structure & Grid Arrangement:**
-   - Tailored to the chosen purpose from Round 1: How should content be structured spatially across the viewport (e.g. asymmetrical split-column with sticky visual anchor, multi-column modular card matrix, or stacked editorial flow)? Formulate 3 tailored layout options.
-2. **Spatial Density & Scale:**
-   - Formulate 3 density scales aligned with the chosen tone (e.g. expansive spacious breathing room, balanced rhythmic content flow, or compact high-information density).
-3. **Visual Focal Point & Eye Flow:**
-   - Sequence of eye navigation tailored to the chosen layout: 1st focal hook (hero graphic / metric / title), 2nd supporting information (cards / benefits / subtext), 3rd action trigger (CTA button / link / form). Formulate 3 structured flow sequences.
-
-_-> Submit Round 2 questions to the user and wait for their response before proceeding to Round 3._
-
----
-
-#### Round 3: Interaction Dynamics, Media Accents & Ergonomics (Adapted from Rounds 1 & 2)
-
-Ingest the answers from Rounds 1 and 2. Now knowing the purpose, tone, and spatial layout, interview the user on specific interactive behaviors and visual accents:
-
-1. **Interactive Behavior & State Dynamics:**
-   - Based on the selected layout and cards: What hover, focus, and state transitions best elevate the component (e.g. subtle border glow + elevation lift, micro-expand interactive cards, or minimalist static presentation)? Formulate 3 interactive behavior options.
-2. **Media, Accents & Visual Graphics:**
-   - What visual assets are needed to support the primary focal hook (e.g. custom 3D isometric graphic, ambient glow backdrop, vector diagram/iconography, or typography-only layout)? Formulate 3 visual asset options.
-3. **Ergonomic & Locale Nuances:**
-   - If the project supports RTL or specific touch requirements, verify if any component-specific directional adjustments (e.g. asymmetrical alignment flips, mirrored visual paths) or sticky behaviors are required.
-
-_-> Submit Round 3 questions to the user and wait for their response before proceeding to Step 3._
-
----
+- **Round 1 (Intent & Story)**: Clarify component purpose, user jobs-to-be-done, and emotional tone.
+- **Round 2 (Spatial Hierarchy & Grid)**: Tailor multi-column layout, density scales, and focal eye flow based on Round 1 responses.
+- **Round 3 (Interactions & Accents)**: Establish hover/focus state dynamics, media assets, and BiDi / RTL nuances based on Rounds 1 & 2.
 
 ### Step 3: Proactive Visual Asset Prompt Formulation
 
-> [!CAUTION]
-> **Do NOT Invoke `generate_image` Directly:**
-> To conserve tokens, never call `generate_image` in this skill. Instead, evaluate the visual needs of the component and provide structured image generation prompts directly in your response and in `design-spec.md`.
+If the component requires bespoke graphics, backdrops, or icons, formulate structured generation prompts for the user instead of calling `generate_image`. See prompt block format in [adaptive-grilling-rounds.md](./references/adaptive-grilling-rounds.md).
 
-When the component benefits from custom imagery, provide a structured prompt block:
+### Step 4: Scaffold Component Folder & `design-spec.md`
 
-```markdown
-### Recommended Visual Asset: [Asset Name]
+1. Create the directory: `docs/design/components/[page name]/[component name]/`
+2. Scaffold `design-spec.md` using the canonical 9-section layout from [design-spec.template.md](./resources/templates/design-spec.template.md):
+   - **§1 Executive Summary & Story**
+   - **§2 Visual Hierarchy & Spatial Flow**
+   - **§3 Layout Grid & Responsive Breakpoints** (Mobile, Tablet, Desktop)
+   - **§4 Design Tokens & Color Mapping** (Light & Dark)
+   - **§5 Typography Scale** (Per Supported Locale)
+   - **§6 Interaction States Matrix** (Default, Hover, Active, Focus, Disabled, Skeleton)
+   - **§7 Bidirectional (RTL) Adaptations**
+   - **§8 Accessibility & Ergonomics** (WCAG AA/AAA, $\ge 44\text{px}$ touch targets)
+   - **§9 Recommended Visual Assets & Prompts**
 
-- **Target File Path:** `docs/design/components/[page]/[component]/[filename].png`
-- **Recommended Aspect Ratio:** `16:9` (banners/backdrops), `1:1` (badges/avatars/logos), or `4:3` (cards)
-- **Generation Prompt:**
-  > "[Detailed, high-fidelity prompt specifying style, lighting, color palette matching tokens, and subject matter]"
-```
+### Step 5: Independent Subagent Quality Audit (`invoke_subagent`)
 
-The user can then generate the image externally and place it directly into the component's folder.
+To guarantee unbiased quality, invoke an independent reviewer subagent before presenting results to the user:
 
----
-
-### Step 4: Generate Component Folder & `design-spec.md`
-
-Create the component directory at `docs/design/components/[page name]/[component name]/` and write `design-spec.md`.
-
-#### Structure of `design-spec.md`:
-
-1. **Executive Summary & Story:**
-   - Component identifier, section type, target persona, emotional tone, and business purpose.
-2. **Visual Hierarchy & Spatial Flow:**
-   - 1st focal point (primary visual hook), 2nd focal point (content/messaging), 3rd focal point (call to action or secondary details).
-3. **Layout Grid & Breakpoints:**
-   - Mobile (< 768px): Stacking order, full-width ergonomics, touch spacing.
-   - Tablet (768px - 1024px): Responsive transitions, 2-column or wrapping arrangements.
-   - Desktop ($\ge$ 1024px): Multi-column grid, max-width constraints, margins, and whitespace.
-4. **Design Tokens & Color Mapping:**
-   - Light and dark theme mappings referencing canonical tokens in `docs/project.json` (canvas background, surfaces, borders, text, accents, status indicators).
-5. **Typography Scale (Per Locale):**
-   - Typographic hierarchy (display, headings H1-H4, body text, captions, monospace tags) for each supported locale.
-6. **Interaction States Matrix:**
-   - State definitions: Default, hover, active, focus rings (keyboard accessibility), disabled, and skeleton/loading state fallbacks.
-7. **Bidirectional (RTL) Adaptations:**
-   - If RTL locales are supported (e.g. Persian `fa`), document reading order, mirrored layout rules, directional chevron flips, and unmirrored elements (e.g. code snippets, telephone numbers).
-8. **Accessibility & Ergonomics:**
-   - Contrast ratio compliance (WCAG AA/AAA).
-   - Minimum interactive touch target sizes ($\ge 44\text{px} \times 44\text{px}$).
-   - Visible focus ring specifications and screen-reader considerations.
-9. **Recommended Visual Assets & Prompts:**
-   - List of image prompts formulated in Step 3 for user generation.
+1. Spawn auditor subagent (`TypeName: "self"`, `Role: "Independent Design & UX Auditor"`, `Model: "inherit"`).
+2. Use the structured audit prompt in [subagent-audit-protocol.md](./references/subagent-audit-protocol.md).
+3. If `ISSUES_FOUND`, immediately resolve all flagged issues in `design-spec.md` before concluding.
 
 ---
 
-### Step 5: Independent Subagent Quality & Design Audit (`invoke_subagent`)
+## Downstream Handoff
 
-> [!IMPORTANT]
-> **Unbiased Verification Architecture (Subagent Review Loop):**
-> To eliminate author confirmation bias and prevent self-grading, the primary design agent MUST NOT self-certify its output. Before presenting the completed design spec to the user, you MUST invoke an independent reviewer subagent using the `invoke_subagent` tool to audit the generated deliverables.
+Once `design-spec.md` is approved and verified:
 
-#### 1. Spawn Independent Design Auditor Subagent
-
-Call `invoke_subagent` with:
-
-- `TypeName`: `"self"`
-- `Role`: `"Independent Design & UX Auditor"`
-- `Model`: `"inherit"`
-- `Prompt`: Provide a rigorous design auditing prompt:
-
-```text
-You are an independent Senior Design & UX Reviewer. You did NOT generate this design spec. Your job is to audit the completed design deliverables with completely fresh eyes and find any flaws, token mismatches, or guardrail breaches before the user reviews them.
-
-TARGET COMPONENT DIRECTORY:
-docs/design/components/[page name]/[component name]/
-
-CANONICAL PROJECT TOKENS:
-docs/project.json (under "design_system")
-
-Deliverables to Audit:
-1. docs/design/components/[page name]/[component name]/design-spec.md
-
-Audit against these strict criteria:
-1. Zero Coding Guardrail: Confirm that NO React components, Next.js directives ('use client'/'use server'), TypeScript prop interfaces, or package installation commands (no shadcn/Radix CLI commands) leaked into design-spec.md. Code implementation belongs strictly downstream.
-2. Design System & Token Compliance: Verify that colors (light/dark canvas, surfaces, accents, status), typography (headings, body, code per locale), border radii, and elevation shadows used in design-spec.md strictly align with docs/project.json without arbitrary or hallucinated values.
-3. Bilingual & Directional Fidelity: If the project supports RTL languages (e.g. Persian 'fa'), verify design-spec.md provides clear bidirectional mirroring guidelines.
-4. Specification Completeness: Verify design-spec.md documents all required sections: Executive Summary, Visual Hierarchy, Breakpoints Grid, Design Tokens, Typography Scale, Interaction States Matrix, BiDi Adaptations, Accessibility (contrast & >= 44px touch targets), and Visual Asset Prompts.
-5. Image Generation Rule Compliance: Confirm that generate_image was NOT invoked directly, and that image prompts are clearly structured for user generation.
-
-Respond in this exact format:
-VERDICT: PASS | ISSUES_FOUND
-
-ISSUES (if any):
-- LOCATION: {file:line or section}
-- PROBLEM: {what is non-compliant or broken}
-- FIX: {concrete instruction to fix}
-
-SUMMARY: {brief overall evaluation}
-```
-
-#### 2. Evaluate Review & Auto-Repair Resolution
-
-1. **Evaluate Subagent Verdict:**
-   - **PASS**: The reviewer found no issues. Proceed directly to presenting the completed spec to the user.
-   - **ISSUES_FOUND**: The primary design agent MUST immediately resolve all flagged issues in `design-spec.md` (e.g., correcting mismatched token values or filling missing spec sections) before completing execution.
-2. **Sanity Check**: Confirm all auditor corrections are applied and clean.
+1. **Visual Prototyping**: Trigger [`stitch-design`](file:///d:/Scripts/aminwebsite/.agents/skills/stitch-design/SKILL.md) to generate UI screens and layout variants in Google Stitch.
+2. **Code Implementation**: Provide `design-spec.md` to component implementation skills (e.g., `nextjs-component-dev` / `nextjs-create-component`).
 
 ---
 
-## 3. Downstream Handoff
+## Execution Verification Checklist
 
-Once `design-spec.md` is complete and verified:
+Before completing execution, confirm:
 
-1. **Visual Prototyping**: Invoke [`stitch-design`](file:///d:/Scripts/aminwebsite/.agents/skills/stitch-design/SKILL.md) to scaffold screens and create variants using Google Stitch (`StitchMCP`).
-2. **Code Implementation**: Feed `design-spec.md` to component implementation skills (e.g., `nextjs-create-component`).
-
----
-
-## 4. Execution Verification Checklist
-
-Before declaring completion, ensure:
-
-- [ ] No code or framework implementation instructions (no React, Next.js, or shadcn mentions) exist in deliverables.
-- [ ] Central design tokens in [`docs/project.json`](file:///d:/Scripts/aminwebsite/docs/project.json) are verified and up to date.
-- [ ] Output directory follows the exact path: `docs/design/components/[page name]/[component name]/`.
-- [ ] All grilling options and choices were generated dynamically from the active project's documentation, with zero hardcoded repository assumptions.
-- [ ] Component grilling was conducted across progressive adaptive rounds, dynamically adjusting following questions based on user answers.
-- [ ] `generate_image` was NOT invoked directly; recommended image prompts were output for the user.
-- [ ] `design-spec.md` is complete, covering visual hierarchy, tokens, per-locale typography, interaction states, and accessibility.
-- [ ] **Independent subagent design audit was invoked via `invoke_subagent`, and all flagged issues were resolved.**
+- [ ] No code or library installation commands (no React, Next.js, shadcn CLI) exist in deliverables.
+- [ ] Canonical design tokens in [`docs/project.json`](file:///docs/project.json) are verified and complete.
+- [ ] Output directory is structured at `docs/design/components/[page]/[component]/`.
+- [ ] Grilling options were dynamically synthesized with zero hardcoded repository assumptions.
+- [ ] Component grilling followed progressive adaptive rounds.
+- [ ] `generate_image` was NOT called directly; asset prompts were provided to the user.
+- [ ] `design-spec.md` includes all 9 required sections.
+- [ ] Independent subagent audit was invoked via `invoke_subagent` and all issues resolved.

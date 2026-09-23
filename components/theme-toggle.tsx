@@ -84,40 +84,72 @@ export function ThemeToggle({
       // Gracefully handle environments where getBoundingClientRect fails
     }
 
-    const x = event.clientX || (rect ? rect.left + rect.width / 2 : 0);
-    const y = event.clientY || (rect ? rect.top + rect.height / 2 : 0);
+    const isKeyboardClick = event.clientX === 0 && event.clientY === 0;
+    const x =
+      isKeyboardClick || !event.clientX
+        ? rect.left + rect.width / 2
+        : event.clientX;
+    const y =
+      isKeyboardClick || !event.clientY
+        ? rect.top + rect.height / 2
+        : event.clientY;
 
     const endRadius = Math.hypot(
       Math.max(x, (typeof window !== "undefined" ? window.innerWidth : 0) - x),
       Math.max(y, (typeof window !== "undefined" ? window.innerHeight : 0) - y),
     );
 
+    const isDark = nextTheme === "dark";
+
+    // Set CSS custom properties on documentElement for instant GPU compositor animation
+    const docEl = document.documentElement;
+    docEl.style.setProperty("--theme-x", `${x}px`);
+    docEl.style.setProperty("--theme-y", `${y}px`);
+    docEl.style.setProperty("--theme-r", `${endRadius}px`);
+
     try {
       const transition = document.startViewTransition(() => {
         flushSync(() => {
           setTheme(nextTheme);
         });
+        docEl.classList.toggle("dark", isDark);
       });
 
-      transition?.ready
-        ?.then(() => {
-          document.documentElement.animate(
-            {
-              clipPath: [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${endRadius}px at ${x}px ${y}px)`,
-              ],
-            },
-            {
-              duration: 500,
-              easing: "ease-in-out",
-              pseudoElement: "::view-transition-new(root)",
-            },
-          );
-        })
-        ?.catch(() => {
-          // Prevent unhandled promise rejection if transition is aborted or superseded
-        });
+      if (transition && transition.ready) {
+        transition.ready
+          .then(() => {
+            const clipPath = [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${endRadius}px at ${x}px ${y}px)`,
+            ];
+
+            docEl.animate(
+              {
+                clipPath: isDark ? clipPath : [...clipPath].reverse(),
+              },
+              {
+                duration: 500,
+                easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+                pseudoElement: isDark
+                  ? "::view-transition-new(root)"
+                  : "::view-transition-old(root)",
+              },
+            );
+          })
+          .catch(() => {
+            // Prevent unhandled promise rejection if transition is aborted or superseded
+          });
+      }
+
+      if (transition && transition.finished) {
+        transition.finished
+          .finally(() => {
+            docEl.style.removeProperty("--theme-x");
+            docEl.style.removeProperty("--theme-y");
+            docEl.style.removeProperty("--theme-r");
+          })
+          .catch(() => {});
+      }
     } catch {
       setTheme(nextTheme);
     }
@@ -131,8 +163,8 @@ export function ThemeToggle({
       aria-label={tCommon("theme_toggle")}
       className={cn("relative", className)}
     >
-      <Sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <Sun className="rotate-0 scale-100 transition-transform duration-300 dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute rotate-90 scale-0 transition-transform duration-300 dark:rotate-0 dark:scale-100" />
       <span className="sr-only">{tCommon("theme_toggle")}</span>
     </Button>
   );

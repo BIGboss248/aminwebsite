@@ -202,5 +202,11 @@
     "Category": "PROCESS",
     "Instruction": "When creating or authoring AI skills ('SKILL.md'), strictly minimize the YAML frontmatter 'description' to 1-2 concise sentences stating WHAT the skill does and specific trigger phrases (never describing 'how' or internal execution mechanics), minimize the 'SKILL.md' file itself (under 150-250 lines) by extracting deep technical documentation into 'references/', and move large code templates, configurations, or boilerplates into separate files under 'resources/templates/' or 'examples/' referenced via relative markdown links.",
     "Why": "user explicit instruction: configure skill-creator to minimize description of skills it creates, minimize skill file itself, separate into references, and move code templates to their own files and reference them"
+  },
+  {
+    "Rule_number": 35,
+    "Category": "UI",
+    "Instruction": "In circular clip-path theme switch animations using the View Transitions API, declare CSS keyframes ('theme-expand'/'theme-shrink') bound with CSS custom properties ('--theme-x', '--theme-y', '--theme-r') and explicit '::view-transition-group(root)' animation duration matching the transition (500ms), and synchronously toggle the document class ('classList.toggle('dark', isDark)') inside the 'startViewTransition' callback. This ensures GPU compositor execution from frame 0 and eliminates 1-frame theme flashes and mid-transition snapshot stutters.",
+    "Why": "diagnosed root cause: next-themes updates document class in asynchronous useEffect rather than synchronously in startViewTransition, and default 250ms UA ::view-transition-group duration caused premature animation cutoff and full-screen flash"
   }
 ]

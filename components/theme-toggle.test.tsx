@@ -134,8 +134,59 @@ describe("ThemeToggle Baseline Unit Tests", () => {
       }),
       expect.objectContaining({
         duration: 500,
-        easing: "ease-in-out",
+        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
         pseudoElement: "::view-transition-new(root)",
+      }),
+    );
+  });
+
+  it("invokes document.startViewTransition and executes reverse clip-path animation on old pseudo-element when transitioning from dark to light", async () => {
+    mockResolvedTheme = "dark";
+    const mockAnimate = jest.fn();
+    const mockTransitionReady = Promise.resolve();
+
+    document.documentElement.animate = mockAnimate;
+    (
+      document as unknown as { startViewTransition?: unknown }
+    ).startViewTransition = jest.fn().mockImplementation((cb: () => void) => {
+      cb();
+      return {
+        ready: mockTransitionReady,
+      };
+    });
+
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button", { name: /toggle theme/i });
+
+    jest.spyOn(button, "getBoundingClientRect").mockReturnValue({
+      x: 100,
+      y: 100,
+      width: 40,
+      height: 40,
+      top: 100,
+      left: 100,
+      right: 140,
+      bottom: 140,
+      toJSON: () => {},
+    });
+
+    await act(async () => {
+      fireEvent.click(button, { clientX: 120, clientY: 120 });
+      await mockTransitionReady;
+    });
+
+    expect(document.startViewTransition).toHaveBeenCalledTimes(1);
+    expect(mockSetTheme).toHaveBeenCalledWith("light");
+    expect(mockAnimate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        clipPath: expect.arrayContaining([
+          expect.stringContaining("circle(0px at 120px 120px)"),
+        ]),
+      }),
+      expect.objectContaining({
+        duration: 500,
+        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+        pseudoElement: "::view-transition-old(root)",
       }),
     );
   });

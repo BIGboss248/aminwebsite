@@ -1,0 +1,70 @@
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import { ExperienceTimeline } from "./ExperienceTimeline";
+import { ExperienceTimelineSkeleton } from "./ExperienceTimelineSkeleton";
+import enMessages from "@/messages/en.json";
+import faMessages from "@/messages/fa.json";
+
+let mockLocale = "en";
+
+jest.mock("next-intl", () => ({
+  useLocale: () => mockLocale,
+  useTranslations: (namespace?: string) => (key: string) => {
+    const dict = mockLocale === "fa" ? faMessages : enMessages;
+    if (namespace === "about.experience") {
+      return (dict.about.experience as Record<string, string>)[key] ?? key;
+    }
+    return key;
+  },
+}));
+
+describe("ExperienceTimeline Component", () => {
+  beforeEach(() => {
+    mockLocale = "en";
+  });
+
+  it("renders experience items and academic degrees in English", () => {
+    mockLocale = "en";
+    render(<ExperienceTimeline locale="en" />);
+
+    expect(
+      screen.getByRole("heading", {
+        level: 2,
+        name: /Experience & Academic Milestones/i,
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/Lead Systems Architect & Full-Stack Consultant/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Senior Frontend & Systems Engineer/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/B\.S\. in Computer Science/i)).toBeInTheDocument();
+    expect(screen.getByText(/B\.S\. in Financial Management/i)).toBeInTheDocument();
+  });
+
+  it("renders experience items in Persian", () => {
+    mockLocale = "fa";
+    render(<ExperienceTimeline locale="fa" />);
+
+    expect(
+      screen.getByRole("heading", {
+        level: 2,
+        name: /نقاط عطف تجربی و دانشگاهی/i,
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/معمار ارشد سیستم‌ها و مشاور فول‌استک/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/کارشناسی علوم کامپیوتر/i),
+    ).toBeInTheDocument();
+  });
+
+  it("renders skeleton fallback correctly", () => {
+    const { container } = render(<ExperienceTimelineSkeleton />);
+    expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
+  });
+});

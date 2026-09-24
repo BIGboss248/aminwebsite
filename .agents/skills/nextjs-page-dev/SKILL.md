@@ -46,6 +46,19 @@ Specialized workflow for creating production-ready Next.js App Router pages with
 ## Workflow Steps
 
 - [ ] **Step 0: Implementation Plan Generation & Approval Gate**
+## Error Type
+Build Error
+
+## Error Message
+app/[locale]/error.tsx must be a Client Component. Add the "use client" directive the top of the file to resolve this issue.
+
+## Build Output
+./app/[locale]/error.tsx
+Error: app/[locale]/error.tsx must be a Client Component. Add the "use client" directive the top of the file to resolve this issue.
+    Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+Ecmascript file had an error
+
+Next.js version: 16.3.1 (Turbopack)
   - Read `docs/project.json` and target route definition in `lib/routes.ts`.
   - Formulate page metadata, JSON-LD schema type, translation namespaces, and component layout.
   - Present concise implementation plan to the user if creating major new pages.

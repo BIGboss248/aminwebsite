@@ -104,3 +104,7 @@ The implementation plan must cover:
       bash .agents/skills/nextjs-component-dev/scripts/verify-dev.sh <target_component_dir>
       ```
   - Fix any syntax errors, missing dictionary keys, or test regressions until all assertions pass.
+
+- [ ] **Step 5: Implementation Plan Checklist Synchronization**
+  - Check off the completed component item (`- [x]`) in `docs/plan/05-pages-and-components.md`.
+  - If all sub-components and page infrastructure tasks for the parent page are completed, check off the parent page item (`- [x]`).

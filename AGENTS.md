@@ -25,6 +25,11 @@ Single-context layout (`CONTEXT.md` and `docs/adr/`). See `docs/agents/domain.md
 - **Discrete Commands**: Never chain multiple terminal commands using `&&`, `||`, or `;` on a single line. Always execute terminal commands individually as discrete single operations.
 - **Permission Alignment**: When running inspection or diagnostic commands (e.g., `git diff`, `git status`), avoid appending unnecessary file/path arguments unless specifically requested, ensuring commands cleanly match user-configured permission allowlists.
 
+### Implementation Plan Tracking (Pages & Components)
+
+- **Plan Item Checklist Updates**: Whenever creating, developing, or completing pages, sections, child components, or page-level infrastructure/SEO tasks (e.g., `page.tsx`, `loading.tsx`, `error.tsx`, `generateMetadata`, `JSON-LD Schema`, `generateStaticParams()`), immediately check off (`- [x]`) the corresponding items in [`docs/plan/05-pages-and-components.md`](file:///c:/scripts/aminwebsite/docs/plan/05-pages-and-components.md).
+- **Page Completion Condition**: Mark a parent page item as completed (`- [x]`) in [`docs/plan/05-pages-and-components.md`](file:///c:/scripts/aminwebsite/docs/plan/05-pages-and-components.md) if and only when all of its individual component sub-checklists and page infrastructure/SEO tasks are completed.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

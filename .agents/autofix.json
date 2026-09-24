@@ -220,6 +220,12 @@
     "Category": "ARCH",
     "Instruction": "In the 'nextjs-plan' skill and implementation plans: omit separate wireframes and interaction flows steps (component design is coupled directly with component dev); omit React Compiler or Turbopack cache configuration steps; omit manual 'NEXT_PUBLIC_' prefixing rules and service-specific API key steps (handled via setup wizards); omit separate upfront translation catalog expansion steps (dictionaries are populated dynamically during component dev); and keep layout header/footer steps non-prescriptive as strictly 'Design and develop SiteHeader' and 'Design and develop SiteFooter' without forcing pre-defined visual designs.",
     "Why": "user explicit corrections: streamline planning steps, remove redundant boilerplate items, and keep layout design flexible without forcing pre-defined structures"
+  },
+  {
+    "Rule_number": 38,
+    "Category": "PROCESS",
+    "Instruction": "When executing page or component creation tasks, always update and check off completed items ('- [x]') in 'docs/plan/05-pages-and-components.md' for the created components, sections, or page infrastructure files (page.tsx, loading.tsx, error.tsx, generateMetadata, JSON-LD Schema, generateStaticParams), ticking off the parent page only when all its sub-items are completed.",
+    "Why": "user explicit requirement: configure AGENTS.md to check items in docs/plan/05-pages-and-components.md if the task is page or component creations"
   }
 ]
 

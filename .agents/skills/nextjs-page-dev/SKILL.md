@@ -88,3 +88,7 @@ Next.js version: 16.3.1 (Turbopack)
       bash .agents/skills/nextjs-page-dev/scripts/verify-page.sh <route_dir>
       ```
   - Ensure zero TypeScript or missing dictionary errors.
+
+- [ ] **Step 5: Implementation Plan Checklist Synchronization**
+  - Check off the completed page infrastructure items (`page.tsx`, `loading.tsx`, `error.tsx`, `generateMetadata`, `JSON-LD Schema`, `generateStaticParams()`) in `docs/plan/05-pages-and-components.md`.
+  - If all component sub-checklists and page infrastructure tasks for this page are completed, check off the parent page item (`- [x]`).

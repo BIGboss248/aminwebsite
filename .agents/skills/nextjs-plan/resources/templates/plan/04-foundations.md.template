@@ -1,0 +1,28 @@
+# Phase 4: Core Foundations & Runtime Configuration
+
+---
+
+## Deliverables & Tasks
+
+- [ ] **4.1 Environment Variables Configuration**
+  - [ ] Setup `.env.local` template for development
+  - [ ] Explicitly prefix client-exposed variables with `NEXT_PUBLIC_`
+  - [ ] Configure dynamic post-build environment variable loading for container runtime
+- [ ] **4.2 Multilanguage Support (i18n)**
+  - [ ] Configure request negotiation and routing with `proxy.ts` (or `middleware.ts`)
+  - [ ] Setup translation dictionaries inside root `messages/` (`messages/en.json`, `messages/fa.json`)
+  - [ ] Implement bidirectional layout support (LTR / RTL directionality) and font pairings
+  - [ ] Create language switcher component and localized navigation wrappers
+- [ ] **4.3 Theme & Color Palette**
+  - [ ] Define color palette and semantic theme tokens in `globals.css` (OKLCH tokens for Light/Dark)
+  - [ ] Implement `ThemeProvider` with system preference detection and localStorage persistence
+  - [ ] Build theme switcher toggle component (`components/theme-toggle.tsx`)
+- [ ] **4.4 Website Layout Shell**
+  - [ ] Build root layout (`app/[locale]/layout.tsx`) with dynamic `lang`, `dir`, and font classes
+  - [ ] Wrap application with global context providers (`app/providers.tsx`)
+  - [ ] Build responsive `SiteHeader` with desktop navigation and mobile drawer
+  - [ ] Build `SiteFooter` with brand details and navigation links
+  - [ ] Optimize web fonts using `next/font` with zero layout shift (CLS)
+- [ ] **4.5 Health & Telemetry (OpenTelemetry)**
+  - [ ] Setup server telemetry and distributed tracing via OpenTelemetry (`instrumentation.ts` / `@vercel/otel`)
+  - [ ] Setup Core Web Vitals (RUM) monitoring component

@@ -208,5 +208,12 @@
     "Category": "UI",
     "Instruction": "In circular clip-path theme switch animations using the View Transitions API, declare CSS keyframes ('theme-expand'/'theme-shrink') bound with CSS custom properties ('--theme-x', '--theme-y', '--theme-r') and explicit '::view-transition-group(root)' animation duration matching the transition (500ms), and synchronously toggle the document class ('classList.toggle('dark', isDark)') inside the 'startViewTransition' callback. This ensures GPU compositor execution from frame 0 and eliminates 1-frame theme flashes and mid-transition snapshot stutters.",
     "Why": "diagnosed root cause: next-themes updates document class in asynchronous useEffect rather than synchronously in startViewTransition, and default 250ms UA ::view-transition-group duration caused premature animation cutoff and full-screen flash"
+  },
+  {
+    "Rule_number": 36,
+    "Category": "ARCH",
+    "Instruction": "In the 'nextjs-plan' skill and modular implementation plans under 'docs/plan/', structure the roadmap into 7 chronological phases: Phase 1 (Discovery & Route Architecture), Phase 2 (Environment, Testing & CI/CD), Phase 3 (System Health Monitoring Probe /api/health), Phase 4 (Core Foundations: Env, i18n, Theme, Layout Shells, OTel), Phase 5 (Pages & Component Implementation Checklists), Phase 6 (Server Functions & Global SEO Metadata), and Phase 7 (Integrations & Production Release). Do not include a separate pre-made UI primitives phase so the agent creates unique designs. For every page outlined in Phase 5, enforce explicit sub-checklist tasks for page infrastructure and SEO: page view ('page.tsx'), loading skeleton ('loading.tsx'), route error boundary ('error.tsx'), metadata/OpenGraph ('generateMetadata'), structured data (JSON-LD schema), and 'generateStaticParams()' for dynamic/localized routes.",
+    "Why": "user explicit requirement: move health probe to phase 3, foundations to phase 4, remove phase 5 primitives to allow unique designs, and include page-level SEO, loading.tsx, error.tsx, and json-ld tasks under every page"
   }
 ]
+

@@ -25,11 +25,11 @@ export const SITE_CONFIG = {
   social: {
     github: "https://github.com/BIGboss248",
     linkedin: "https://linkedin.com/in/amin-jamali",
-    orcid: "https://orcid.org",
+    orcid: "https://orcid.org/0009-0004-9921-7273",
     twitter: "https://x.com/",
   },
   credentials: {
-    orcidId: "",
+    orcidId: "0009-0004-9921-7273",
     publications: [
       // Research publications with DOIs defined in CONTEXT.md
     ],

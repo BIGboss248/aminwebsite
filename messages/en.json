@@ -455,5 +455,55 @@
       "item4_desc": "Conducting pair-programming sessions and code reviews for aspiring engineers entering systems and full-stack development.",
       "loading": "Loading beyond code section"
     }
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact & Socials | Amin Jamali",
+      "description": "Get in touch with Amin Jamali via direct message or connect through LinkedIn, GitHub, and ORCID."
+    },
+    "header": {
+      "eyebrow": "// GET IN TOUCH",
+      "title": "Contact & Connect",
+      "description": "Have a question, project inquiry, or want to collaborate? Send a message using the form below or connect across my professional and research profiles."
+    },
+    "form": {
+      "title": "Send a Message",
+      "name_label": "Full Name",
+      "name_placeholder": "Your full name",
+      "email_label": "Email Address",
+      "email_placeholder": "your.email@example.com",
+      "subject_label": "Subject",
+      "subject_placeholder": "What is this regarding?",
+      "message_label": "Message",
+      "message_placeholder": "Write your message here...",
+      "submit_btn": "Send Message",
+      "submitting_btn": "Sending Message...",
+      "success_title": "Message Sent Successfully",
+      "success_desc": "Thank you for reaching out. Your message has been sent successfully. I will get back to you as soon as possible.",
+      "send_another": "Send Another Message",
+      "error_generic": "An error occurred while sending your message. Please try again or reach out directly via social profiles.",
+      "error_rate_limit": "Rate limit exceeded. Please wait a moment before sending another message.",
+      "val_name_required": "Full name is required.",
+      "val_email_invalid": "Please enter a valid email address.",
+      "val_subject_required": "Subject is required.",
+      "val_message_short": "Message must be at least 10 characters.",
+      "loading": "Loading contact form..."
+    },
+    "socials": {
+      "eyebrow": "// PROFILES & SOCIALS",
+      "title": "Social Profiles & Credentials",
+      "description": "Connect directly through professional networks, open-source code repositories, and academic research records.",
+      "linkedin_name": "LinkedIn",
+      "linkedin_handle": "in/amin-jamali",
+      "linkedin_desc": "Professional background, career updates & consulting inquiries",
+      "github_name": "GitHub",
+      "github_handle": "@BIGboss248",
+      "github_desc": "Open-source projects, systems code & experimental repositories",
+      "orcid_name": "ORCID",
+      "orcid_handle": "0009-0004-9921-7273",
+      "orcid_desc": "Verified researcher identity, publications & academic citations",
+      "external_link": "Open profile in new tab",
+      "loading": "Loading social profiles..."
+    }
   }
 }

@@ -191,24 +191,18 @@
   - [ ] **Section: Master Hash & Entropy Analysis**
     - [ ] `FingerprintHashCard` - Deterministic master fingerprint hash with copy button and entropy breakdown
 
-- [ ] **Page: Contact & Booking (`/[locale]/contact`)**
-  - [ ] **Page Infrastructure & SEO**
-    - [ ] `page.tsx` - Contact page view and layout assembly
-    - [ ] `loading.tsx` - Streaming loading skeleton fallback
-    - [ ] `error.tsx` - Route error boundary
-    - [ ] `generateMetadata` - Localized title, description, and OpenGraph tags
-    - [ ] `JSON-LD Schema` - Structured data (`ContactPage`)
-    - [ ] `generateStaticParams()` - Static locale params generation
-  - [ ] **Section: Contact Intro & Direct Channels**
-    - [ ] `ContactHero` - Direct inquiry value proposition and response time guarantee (<24h)
-    - [ ] `DirectEmailCard` - Direct email with one-click copy and PGP public key link
-    - [ ] `PgpKeyDownloadCard` - Verified PGP key fingerprint and `.asc` download button
-  - [ ] **Section: Smart Inquiry Form**
-    - [ ] `ContactInquiryForm` - Type-safe form with honeypot and rate-limiting feedback
-    - [ ] `IntentSelector` - Radio/chip selector (Consulting/Architecture, Full-Time Role, Project, Security/Diagnostic Inquiry)
-    - [ ] `FormSubmitButton` - Submit button with loading state and localized confirmation feedback
-  - [ ] **Section: Calendar Booking Integration**
-    - [ ] `CalendarBookingWidget` - Direct 15-minute introductory call scheduler embed / link
+- [x] **Page: Contact & Socials (`/[locale]/contact`)**
+  - [x] **Page Infrastructure & SEO**
+    - [x] `page.tsx` - Contact page view and layout assembly
+    - [x] `loading.tsx` - Streaming loading skeleton fallback
+    - [x] `error.tsx` - Route error boundary
+    - [x] `generateMetadata` - Localized title, description, and OpenGraph tags
+    - [x] `JSON-LD Schema` - Structured data (`ContactPage`)
+    - [x] `generateStaticParams()` - Static locale params generation
+  - [x] **Section: Simple Contact Form**
+    - [x] `ContactForm` - Clean form with Full Name, Email Address, Subject, and Message inputs
+  - [x] **Section: Socials Showcase Block**
+    - [x] `SocialsBlock` - Showcase cards linking to LinkedIn, GitHub, and ORCID profiles
 
 - [ ] **Page: System & Error Pages**
   - [ ] **Section: 404 Not Found (`not-found.tsx` / `[locale]/not-found.tsx`)**

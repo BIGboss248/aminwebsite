@@ -48,6 +48,7 @@ Specialized workflow for creating production-ready React Server Components (RSC)
 - **Server Prefetch:** Trigger unawaited prefetch (`void queryClient.prefetchQuery(...)`) calling internal DB functions directly (zero relative fetch on server). Dehydrate with `<HydrationBoundary>`.
 - **Streamed Components:** Use `useSuspenseQuery` inside `<Suspense fallback={<[ComponentName]Skeleton />}>`.
 - **Optimistic Mutations:** Use `useMutation` with `onMutate` cache snapshots and `onError` rollbacks; call Server Actions with `updateTag(cache.tag)`.
+- **Next.js 16 'use cache' Directives:** For native Next.js 16 caching and Server Action revalidation semantics (`updateTag`, `revalidateTag`), consult [`references/caching-and-revalidation.md`](./references/caching-and-revalidation.md).
 
 ---
 

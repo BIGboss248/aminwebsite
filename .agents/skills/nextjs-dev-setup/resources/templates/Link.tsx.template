@@ -1,0 +1,37 @@
+"use client";
+
+import * as React from "react";
+import { Link as I18nLink } from "@/i18n/navigation";
+import { useProgress } from "@vercel/react-transition-progress";
+
+export interface LinkProps extends React.ComponentProps<typeof I18nLink> {}
+
+/**
+ * Composite Link component combining localized routing from `next-intl`
+ * with automatic top route progress bar triggering from `@vercel/react-transition-progress`.
+ */
+export function Link({ href, onClick, children, ...props }: LinkProps) {
+  const startProgress = useProgress();
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (onClick) onClick(e);
+
+    // Only start progress bar if event was not prevented and target is an internal app route
+    if (
+      !e.defaultPrevented &&
+      typeof href === "string" &&
+      !href.startsWith("http") &&
+      !href.startsWith("#") &&
+      !href.startsWith("mailto:") &&
+      !href.startsWith("tel:")
+    ) {
+      startProgress();
+    }
+  };
+
+  return (
+    <I18nLink href={href} onClick={handleClick} {...props}>
+      {children}
+    </I18nLink>
+  );
+}

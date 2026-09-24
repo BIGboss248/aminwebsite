@@ -24,3 +24,10 @@
 - [ ] **4.5 Health & Telemetry (OpenTelemetry)**
   - [ ] Setup server telemetry and distributed tracing via OpenTelemetry (`instrumentation.ts` / `@vercel/otel`)
   - [ ] Setup Core Web Vitals (RUM) monitoring component
+- [ ] **4.6 Global Fallback Boundaries & Error Pages**
+  - [ ] Build global root error boundary (`app/global-error.tsx`)
+  - [ ] Build localized root error handler (`app/[locale]/error.tsx`)
+  - [ ] Build localized 404 Not Found page (`app/[locale]/not-found.tsx`)
+  - [ ] Build localized 401 Unauthorized page (`app/[locale]/unauthorized.tsx`)
+  - [ ] Build localized 403 Forbidden page (`app/[locale]/forbidden.tsx`)
+

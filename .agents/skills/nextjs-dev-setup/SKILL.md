@@ -29,11 +29,13 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 
 ## Step-by-Step Execution Flow
 
-### Stage 1: Project Metadata (`docs/project.json`)
+### Stage 1: Project Metadata & Developer Tooling (`docs/project.json`)
 
 1. Create `docs/` directory if absent.
 2. Initialize `docs/project.json` using [project.template.json](./resources/templates/project.template.json).
-3. If and only if required fields cannot be deduced from repository files, confirm only the missing fields with the user.
+3. Configure `.vscode/launch.json` using [vscode-launch.json.template](./resources/templates/vscode-launch.json.template) for inspect & browser debugging.
+4. Scaffold `app/providers.tsx` with `<ProgressBarProvider>` using [providers.tsx.template](./resources/templates/providers.tsx.template) and composite `<Link>` using [Link.tsx.template](./resources/templates/Link.tsx.template).
+5. If and only if required fields cannot be deduced from repository files, confirm only the missing fields with the user.
 
 ### Stage 2: Testing Suites (Jest, Playwright & Storybook)
 

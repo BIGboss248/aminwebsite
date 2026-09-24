@@ -24,7 +24,7 @@ import type {
  * @returns A React Server Component rendering the 4-quadrant Bento Matrix.
  */
 export function TechStackMatrix({
-  locale = "en",
+  locale: _locale = "en",
   className = "",
 }: TechStackMatrixProps): React.JSX.Element {
   const t = useTranslations("home.tech_matrix");
@@ -303,27 +303,27 @@ export function TechStackMatrix({
 
           {/* Section Summary Telemetry Stats */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2 lg:pt-0">
-            <div className="flex flex-col p-3 sm:p-4 rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm min-w-[120px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+            <div className="flex flex-col p-3 sm:p-4 rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm min-w-30">
+              <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 {t("stat_experience_label" as never)}
               </span>
               <span className="text-base sm:text-lg font-mono font-bold text-primary">
                 {t("stat_experience_val" as never)}
               </span>
             </div>
-            <div className="flex flex-col p-3 sm:p-4 rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm min-w-[120px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+            <div className="flex flex-col p-3 sm:p-4 rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm min-w-30">
+              <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 {t("stat_tech_label" as never)}
               </span>
               <span className="text-base sm:text-lg font-mono font-bold text-foreground">
                 {t("stat_tech_val" as never)}
               </span>
             </div>
-            <div className="flex flex-col p-3 sm:p-4 rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm min-w-[120px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+            <div className="flex flex-col p-3 sm:p-4 rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm min-w-30">
+              <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 {t("stat_protocols_label" as never)}
               </span>
-              <span className="text-base sm:text-lg font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              <span className="text-base sm:text-lg font-mono font-bold text-status-success">
                 {t("stat_protocols_val" as never)}
               </span>
             </div>
@@ -362,7 +362,7 @@ export function TechStackMatrix({
                     </div>
                     <span
                       className={cn(
-                        "px-2.5 py-1 rounded-full text-[11px] font-mono font-medium border",
+                        "px-2.5 py-1 rounded-full text-xs font-mono font-medium border",
                         domainStyle.badgePill,
                       )}
                     >

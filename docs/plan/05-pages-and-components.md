@@ -16,13 +16,13 @@
 
 ## Canonical Page & Component Inventory
 
-- [ ] **Page: Home (`/[locale]`)**
-  - [ ] **Page Infrastructure & SEO**
+- [x] **Page: Home (`/[locale]`)**
+  - [x] **Page Infrastructure & SEO**
     - [x] `page.tsx` - Root localized page component and layout assembly
-    - [ ] `loading.tsx` - Streaming loading skeleton fallback
-    - [ ] `error.tsx` - Localized route error boundary
+    - [x] `loading.tsx` - Streaming loading skeleton fallback
+    - [x] `error.tsx` - Localized route error boundary
     - [x] `generateMetadata` - Localized page title, description, and OpenGraph metadata
-    - [ ] `JSON-LD Schema` - Structured data (`WebSite` / `Person`)
+    - [x] `JSON-LD Schema` - Structured data (`WebSite` / `Person`)
     - [x] `generateStaticParams()` - Static locale parameters generation
   - [x] **Section: Global Navigation / Header**
     - [x] `SiteNavbar` - Brand header with desktop route links

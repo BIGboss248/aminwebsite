@@ -21,6 +21,6 @@
   - [x] Design and develop `SiteHeader`
   - [x] Design and develop `SiteFooter`
   - [x] Optimize web fonts using `next/font` with zero layout shift (CLS)
-- [ ] **4.5 Health & Telemetry (OpenTelemetry)**
-  - [ ] Setup server telemetry and distributed tracing via OpenTelemetry (`instrumentation.ts` / `@vercel/otel`)
-  - [ ] Setup Core Web Vitals (RUM) monitoring component (`useReportWebVitals` / beacon dispatcher)
+- [x] **4.5 Health & Telemetry (OpenTelemetry)**
+  - [x] Setup server telemetry and distributed tracing via OpenTelemetry (`instrumentation.ts` / `@vercel/otel`)
+  - [x] Setup Core Web Vitals (RUM) monitoring component (`useReportWebVitals` / beacon dispatcher)

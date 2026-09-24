@@ -6,6 +6,7 @@ import {
   HeroSectionSkeleton,
 } from "@/app/components/home/HeroSection";
 import { routing } from "@/i18n/routing";
+import { SITE_CONFIG } from "@/lib/site-config";
 import TrustSignalsSection, {
   TrustSignalsSectionSkeleton,
 } from "../components/home/TrustSignalsSection";
@@ -41,9 +42,52 @@ export async function generateMetadata({
 
 export default async function Home({ params }: HomePageProps) {
   const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "metadata" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_CONFIG.baseUrl}/${locale}#website`,
+        url: `${SITE_CONFIG.baseUrl}/${locale}`,
+        name: tCommon("brand"),
+        description: tMeta("description"),
+        inLanguage: locale === "fa" ? "fa-IR" : "en-US",
+      },
+      {
+        "@type": "Person",
+        "@id": `${SITE_CONFIG.baseUrl}/#person`,
+        name: SITE_CONFIG.author.name,
+        url: `${SITE_CONFIG.baseUrl}/${locale}`,
+        jobTitle: SITE_CONFIG.author.role,
+        sameAs: [
+          SITE_CONFIG.social.github,
+          SITE_CONFIG.social.linkedin,
+          SITE_CONFIG.social.orcid,
+          SITE_CONFIG.social.twitter,
+        ].filter(Boolean),
+        knowsAbout: [
+          "Next.js",
+          "TypeScript",
+          "React",
+          "Tailwind CSS",
+          "Go",
+          "Docker",
+          "DNS over HTTPS",
+          "Systems Architecture",
+        ],
+      },
+    ],
+  };
 
   return (
     <div className="flex flex-col flex-1 w-full bg-background font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Suspense fallback={<HeroSectionSkeleton />}>
         <HeroSection locale={locale as "en" | "fa"} />
       </Suspense>

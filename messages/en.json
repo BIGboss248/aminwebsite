@@ -284,6 +284,13 @@
     "title": "Amin Jamali | Full-Stack Engineer & Architect",
     "description": "Personal portfolio, interactive engineering lab, and digital credentials platform of Amin Jamali."
   },
+  "error": {
+    "title": "System Node Anomaly",
+    "description": "An unexpected exception occurred while rendering this route. Telemetry has logged the incident for diagnostic review.",
+    "retry": "Retry Execution",
+    "home": "Return to Systems Cockpit",
+    "digest_label": "INCIDENT_DIGEST"
+  },
   "footer": {
     "eyebrow": "// DIRECT COLLABORATION & INQUIRY",
     "headline": "Let's Build Something Exceptional",

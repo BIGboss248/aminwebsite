@@ -72,7 +72,6 @@ export function SkillBadge({
   const techTag = t(skill.tagKey as never);
   const techExp = t(skill.expKey as never);
   const techUsecase = t(skill.usecaseKey as never);
-  const expLabel = t("popover_experience_label" as never);
   const usecaseLabel = t("popover_usecase_label" as never);
 
   const accentStyles = {
@@ -128,7 +127,7 @@ export function SkillBadge({
       }}
       className={cn(
         "group relative flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg border border-border/70 bg-card/60 hover:bg-card text-foreground transition-all duration-200 cursor-pointer select-none",
-        "min-h-[44px] sm:min-h-[40px]",
+        "min-h-11 sm:min-h-10",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         accentStyles.borderHover,
         accentStyles.glow,
@@ -159,7 +158,7 @@ export function SkillBadge({
             aria-hidden="true"
           />
         </div>
-        <span className="text-[10px] sm:text-[11px] font-mono text-muted-foreground/90 truncate tracking-wide">
+        <span className="text-xs font-mono text-muted-foreground/90 truncate tracking-wide">
           {techTag}
         </span>
       </div>
@@ -182,7 +181,7 @@ export function SkillBadge({
             </div>
             <span
               className={cn(
-                "px-2 py-0.5 rounded-full text-[10px] font-mono font-medium border",
+                "px-2 py-0.5 rounded-full text-xs font-mono font-medium border",
                 accentStyles.pillBg,
               )}
             >
@@ -192,7 +191,7 @@ export function SkillBadge({
 
           {/* Body */}
           <div className="space-y-1.5 text-start">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+            <div className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
               {usecaseLabel}
             </div>
             <p className="text-xs text-foreground/90 leading-relaxed font-sans">

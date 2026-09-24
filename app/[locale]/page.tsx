@@ -15,6 +15,9 @@ import FeaturedProjectsGrid, {
 import LabLauncherSection, {
   LabLauncherSectionSkeleton,
 } from "../components/home/LabLauncherSection";
+import TechStackMatrix, {
+  TechStackMatrixSkeleton,
+} from "../components/home/TechStackMatrix";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -52,6 +55,9 @@ export default async function Home({ params }: HomePageProps) {
       </Suspense>
       <Suspense fallback={<LabLauncherSectionSkeleton />}>
         <LabLauncherSection locale={locale as "en" | "fa"} />
+      </Suspense>
+      <Suspense fallback={<TechStackMatrixSkeleton />}>
+        <TechStackMatrix locale={locale as "en" | "fa"} />
       </Suspense>
     </div>
   );

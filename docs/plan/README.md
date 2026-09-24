@@ -8,10 +8,10 @@ A modular, chronological roadmap tracking all milestones from empty workspace to
 
 | Phase | Milestone | File Link | Completed Tasks | Status |
 | :---: | :--- | :--- | :---: | :---: |
-| **01** | Discovery & Route Architecture | [01-discovery-and-architecture.md](./01-discovery-and-architecture.md) | 10 / 11 | **In Progress** |
-| **02** | Environment, Testing & CI/CD | [02-environment-and-cicd.md](./02-environment-and-cicd.md) | 10 / 12 | **In Progress** |
+| **01** | Discovery & Route Architecture | [01-discovery-and-architecture.md](./01-discovery-and-architecture.md) | 10 / 10 | **Completed** |
+| **02** | Environment, Testing & CI/CD | [02-environment-and-cicd.md](./02-environment-and-cicd.md) | 10 / 10 | **Completed** |
 | **03** | System Health Monitoring Probe | [03-system-health-probe.md](./03-system-health-probe.md) | 2 / 2 | **Completed** |
-| **04** | Core Foundations & Runtime | [04-core-foundations.md](./04-core-foundations.md) | 8 / 14 | **In Progress** |
+| **04** | Core Foundations & Runtime | [04-core-foundations.md](./04-core-foundations.md) | 8 / 13 | **In Progress** |
 | **05** | Pages & Component Implementation | [05-pages-and-components.md](./05-pages-and-components.md) | 1 / 6 Pages | **In Progress** |
 | **06** | Server Functions & Global SEO Metadata | [06-server-functions-and-metadata.md](./06-server-functions-and-metadata.md) | 1 / 7 | **In Progress** |
 | **07** | Integrations & Production Release | [07-integrations-and-release.md](./07-integrations-and-release.md) | 0 / 4 | **Pending** |

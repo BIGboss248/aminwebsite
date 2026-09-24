@@ -22,16 +22,17 @@ docs/plan/
 
 ---
 
-## Chronological Phase Ordering & Rules
+## Chronological Phase Ordering & Principles
 
 ### Phase 1: Project Discovery & Route Architecture (`01-discovery-and-architecture.md`)
-- Establish project brief, target personas, KPIs, and domain concepts.
-- Map full route inventory and rendering strategies (SSG, ISR, SSR, Client).
+- Establish project brief, target personas, KPIs, and domain concepts in `docs/design/01-strategy-brief.md`.
+- Map full route inventory and rendering strategies (SSG, ISR, SSR, Client) in `docs/design/02-sitemap-and-routes.md`.
 - Scaffold canonical specifications (`docs/project.json`), type-safe route registry (`lib/routes.ts`), and site configuration (`lib/site-config.ts`).
+- *(Note: Wireframes and interaction flows are omitted here because component UX/UI design directly precedes component development per component).*
 
 ### Phase 2: Environment, Testing & CI/CD (`02-environment-and-cicd.md`)
 - Configure package manager (`pnpm` or `bun`).
-- Initialize Next.js App Router workspace with TypeScript, Tailwind CSS, and Turbopack.
+- Initialize Next.js App Router workspace with TypeScript and Tailwind CSS.
 - Configure agent documentation (`AGENTS.md`) and global/workspace MCP servers.
 - Setup unit testing (Jest/RTL) and E2E testing (Playwright).
 - Setup CI/CD, Git pre-push hooks (`pnpm run test:all`), Release Please, and production Dockerfile.
@@ -41,10 +42,15 @@ docs/plan/
 - **Verification**: Verify automated JSON `200 OK` response and Docker Compose healthcheck probes before configuring core runtime layouts and UI.
 
 ### Phase 4: Core Foundations & Runtime Configuration (`04-core-foundations.md`)
-- **Environment Variables**: Configure `.env.local`, client prefixes (`NEXT_PUBLIC_`), and dynamic container runtime env loading.
-- **Multilanguage Support (i18n)**: Configure `next-intl` (via `proxy.ts` or `middleware.ts`), root `messages/[locale].json` dictionaries, and bidirectional (LTR/RTL) layout support.
+- **Environment Variables**: Setup `.env.local` template for development and container runtime.
+- **Multilanguage Support (i18n)**: Configure `next-intl` (via `proxy.ts` or `middleware.ts`), root `messages/[locale].json` dictionaries, and bidirectional (LTR/RTL) layout support. *(Translation dictionary keys are populated dynamically during component development)*.
 - **Theme & Color Palette**: Define semantic CSS tokens in `globals.css`, configure `ThemeProvider` from `next-themes`, and build `ThemeToggle`.
-- **Website Layout Shell**: Build root layout (`app/[locale]/layout.tsx`), global providers, responsive header/drawer, footer, and font loading.
+- **Website Layout Shell**:
+  - Build root layout (`app/[locale]/layout.tsx`) with dynamic `lang`, `dir`, and font classes.
+  - Wrap application with global context providers (`app/providers.tsx`).
+  - Design and develop `SiteHeader` (non-prescriptive design).
+  - Design and develop `SiteFooter` (non-prescriptive design).
+  - Optimize web fonts using `next/font` with zero layout shift (CLS).
 - **Health & Telemetry (OTel)**: Configure distributed tracing via OpenTelemetry (`instrumentation.ts` / `@vercel/otel`) and Core Web Vitals RUM.
 
 ### Phase 5: Pages & Component Implementation Checklists (`05-pages-and-components.md`)
@@ -55,25 +61,9 @@ docs/plan/
   - `loading.tsx` - Route streaming loading skeleton fallback
   - `error.tsx` - Nested route error boundary with recovery action
   - `generateMetadata` / `metadata` - Route metadata, title, description, and OpenGraph/Twitter cards
-  - `JSON-LD` Schema - Structured data for search engine crawlers (e.g., `Person`, `WebSite`, `Article`)
+  - `JSON-LD Schema` - Structured data for search engine crawlers (e.g., `Person`, `WebSite`, `Article`)
   - `generateStaticParams()` - Static route parameter generation (if dynamic or localized route)
 - **Page Completion Rule**: A page checklist item is ticked off (`- [x]`) **IF AND ONLY WHEN all of its individual component sub-checklist items and page infrastructure/SEO tasks are completed**.
-
-```markdown
-- [ ] **Page: Home (`/`)**
-  - [ ] **Page Infrastructure & SEO**
-    - [ ] `page.tsx` - Page component and layout assembly
-    - [ ] `loading.tsx` - Streaming skeleton fallback
-    - [ ] `error.tsx` - Route error boundary
-    - [ ] `generateMetadata` - Localized page title, description, and OpenGraph tags
-    - [ ] `JSON-LD Schema` - Structured data (`WebSite` / `Person`)
-    - [ ] `generateStaticParams()` - Static locale params generation
-  - [ ] **Section: Hero**
-    - [ ] `HeroHeadline` - Core value proposition and intro copy
-    - [ ] `AvailabilityBadge` - Contract / full-time status indicator pill
-    - [ ] `HeroMotionGraphic` - Animated visual or interactive hero asset
-    - [ ] `PrimaryActions` - Call-to-action button group
-```
 
 ### Phase 6: Server Functions & Global SEO Metadata (`06-server-functions-and-metadata.md`)
 - Implement Server Actions (`'use server'`) and custom API handlers (`route.ts`).

@@ -6,10 +6,8 @@
 
 - [x] **2.1 Package Manager**
   - [x] Select and configure package manager (`pnpm@11.22.0` with `pnpm-lock.yaml`)
-- [ ] **2.2 Next.js Workspace Initialization**
+- [x] **2.2 Next.js Workspace Initialization**
   - [x] Initialize Next.js 16 App Router project with TypeScript and Tailwind CSS v4
-  - [ ] Enable React Compiler (`babel-plugin-react-compiler`) in `next.config.ts` if applicable
-  - [ ] Enable Turbopack filesystem cache for dev (`experimental.turbopackFileSystemCacheForDev: true`)
 - [x] **2.3 Agent Documentation & MCP Tools**
   - [x] Enforce reading `node_modules/next/dist/docs/` as the primary source of truth in `AGENTS.md`
   - [x] Document terminal constraints, permission alignment, and self-repair integration in `AGENTS.md`

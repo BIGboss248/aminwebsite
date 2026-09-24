@@ -8,8 +8,6 @@
   - [ ] Select and configure package manager (`pnpm` / `bun`) with lockfile
 - [ ] **2.2 Next.js Workspace Initialization**
   - [ ] Initialize Next.js App Router with TypeScript and Tailwind CSS
-  - [ ] Enable React Compiler (`babel-plugin-react-compiler`) in `next.config.ts` if applicable
-  - [ ] Configure fast compile options (e.g. `experimental.turbopackFileSystemCacheForDev`)
 - [ ] **2.3 Agent Documentation & MCP Tools**
   - [ ] Configure `AGENTS.md` with Next.js guidelines and discrete command rules
   - [ ] Configure workspace `mcp.json` and host global AGY MCP configs (`next-devtools`, `playwright`, `codebase-memory`)

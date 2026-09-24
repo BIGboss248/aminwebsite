@@ -214,6 +214,13 @@
     "Category": "ARCH",
     "Instruction": "In the 'nextjs-plan' skill and modular implementation plans under 'docs/plan/', structure the roadmap into 7 chronological phases: Phase 1 (Discovery & Route Architecture), Phase 2 (Environment, Testing & CI/CD), Phase 3 (System Health Monitoring Probe /api/health), Phase 4 (Core Foundations: Env, i18n, Theme, Layout Shells, OTel), Phase 5 (Pages & Component Implementation Checklists), Phase 6 (Server Functions & Global SEO Metadata), and Phase 7 (Integrations & Production Release). Do not include a separate pre-made UI primitives phase so the agent creates unique designs. For every page outlined in Phase 5, enforce explicit sub-checklist tasks for page infrastructure and SEO: page view ('page.tsx'), loading skeleton ('loading.tsx'), route error boundary ('error.tsx'), metadata/OpenGraph ('generateMetadata'), structured data (JSON-LD schema), and 'generateStaticParams()' for dynamic/localized routes.",
     "Why": "user explicit requirement: move health probe to phase 3, foundations to phase 4, remove phase 5 primitives to allow unique designs, and include page-level SEO, loading.tsx, error.tsx, and json-ld tasks under every page"
+  },
+  {
+    "Rule_number": 37,
+    "Category": "ARCH",
+    "Instruction": "In the 'nextjs-plan' skill and implementation plans: omit separate wireframes and interaction flows steps (component design is coupled directly with component dev); omit React Compiler or Turbopack cache configuration steps; omit manual 'NEXT_PUBLIC_' prefixing rules and service-specific API key steps (handled via setup wizards); omit separate upfront translation catalog expansion steps (dictionaries are populated dynamically during component dev); and keep layout header/footer steps non-prescriptive as strictly 'Design and develop SiteHeader' and 'Design and develop SiteFooter' without forcing pre-defined visual designs.",
+    "Why": "user explicit corrections: streamline planning steps, remove redundant boilerplate items, and keep layout design flexible without forcing pre-defined structures"
   }
 ]
+
 

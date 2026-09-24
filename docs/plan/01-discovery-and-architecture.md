@@ -11,11 +11,10 @@
   - [x] Define success criteria & metrics: 95+ Lighthouse scores, sub-second LCP, zero layout shift (CLS), interactive tool responsiveness
   - [x] Analyze industry benchmarks and leading engineering portfolios / diagnostic tools
   - [x] Define product category in [`docs/design/01-strategy-brief.md`](file:///c:/scripts/aminwebsite/docs/design/01-strategy-brief.md)
-- [ ] **1.2 Information Architecture & Sitemap**
+- [x] **1.2 Information Architecture & Sitemap**
   - [x] Map page route inventory: Home (`/`), About (`/about`), Projects/Case Studies (`/projects`), Lab Hub (`/lab`), Contact (`/contact`) in [`docs/design/02-sitemap-and-routes.md`](file:///c:/scripts/aminwebsite/docs/design/02-sitemap-and-routes.md)
   - [x] Map section hierarchy for each page in [`docs/design/02-sitemap-and-routes.md`](file:///c:/scripts/aminwebsite/docs/design/02-sitemap-and-routes.md)
   - [x] Define rendering strategy per route (SSG for marketing/case studies, SSR for dynamic diagnostics, client-side for lab tools) in [`docs/design/02-sitemap-and-routes.md`](file:///c:/scripts/aminwebsite/docs/design/02-sitemap-and-routes.md)
-  - [ ] Develop wireframes and interaction flows in [`docs/design/wireframes/`](file:///c:/scripts/aminwebsite/docs/design/wireframes/) (bypassing the blank page via Google Stitch / Figma)
 - [x] **1.3 Type-Safe Registries & Site Config**
   - [x] Create centralized route paths registry (`lib/routes.ts`) with typed paths and dynamic route builders
   - [x] Centralize site metadata, author bio, social links, and credentials in a shared configuration file (`lib/site-config.ts`)

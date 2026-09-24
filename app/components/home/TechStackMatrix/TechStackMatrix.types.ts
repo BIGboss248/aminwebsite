@@ -19,8 +19,10 @@ export interface SkillItem {
   expKey: string;
   /** Core architectural use case description translation key */
   usecaseKey: string;
-  /** Lucide icon identifier / component */
-  icon: LucideIcon;
+  /** Lucide icon identifier key */
+  iconName: string;
+  /** Optional direct Lucide icon component */
+  icon?: LucideIcon;
   /** Domain category */
   domain: DomainCategory;
 }

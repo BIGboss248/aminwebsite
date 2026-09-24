@@ -144,6 +144,7 @@ describe("TechStackMatrix (Baseline TDD Suite)", () => {
       expKey: "skill_nextjs_exp",
       usecaseKey: "skill_nextjs_usecase",
       icon: Code2,
+      iconName: "Code2",
       domain: "frontend",
     };
 

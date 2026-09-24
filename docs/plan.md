@@ -34,7 +34,7 @@ A comprehensive, chronological checklist tracking all milestones from empty work
 
   > [!IMPORTANT]
   > **Page Completion Rule**: A page checklist item is ticked off (`- [x]`) **IF AND ONLY WHEN all of its individual component sub-checklist items are designed**.
-  - [ ] **Page: Home (`/`)**
+  - [x] **Page: Home (`/`)**
     - [x] **Section: Global Navigation / Header**
       - [x] `SiteNavbar` - Brand header with desktop route links
       - [x] `MobileNavDrawer` - Slide-out navigation menu for mobile viewports
@@ -54,10 +54,10 @@ A comprehensive, chronological checklist tracking all milestones from empty work
     - [x] **Section: Interactive Lab Tools Launcher**
       - [x] `LabLauncherSection` - Interactive launcher container
       - [x] `ToolQuickCard` - Quick diagnostic tool card with live status indicator & prober launch trigger
-    - [ ] **Section: Competencies & Tech Matrix**
-      - [ ] `TechStackMatrix` - Categorized competency tags (Next.js, TypeScript, Go, Docker)
-      - [ ] `SkillBadge` - Interactive skill tag with experience context
-    - [ ] **Section: Global Footer**
+    - [x] **Section: Competencies & Tech Matrix**
+      - [x] `TechStackMatrix` - Categorized competency tags (Next.js, TypeScript, Go, Docker)
+      - [x] `SkillBadge` - Interactive skill tag with experience context
+    - [x] **Section: Global Footer**
       - [x] `SiteFooter` - Author bio, contact links, copyright, and social links
       - [x] `SocialLinksBar` - GitHub, LinkedIn, ORCID, Twitter/X links
 

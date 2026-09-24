@@ -114,21 +114,27 @@ export function AboutHero({
               className="w-full pt-6 border-t border-border/60 flex flex-wrap items-center gap-y-3 gap-x-6 text-muted-foreground font-mono text-xs"
             >
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground/80">{t("uptime_label")}:</span>
+                <span className="text-muted-foreground/80">
+                  {t("uptime_label")}:
+                </span>
                 <span className="text-status-success font-bold tracking-wider">
                   {t("uptime_val")}
                 </span>
               </div>
               <span className="text-border">•</span>
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground/80">{t("latency_label")}:</span>
+                <span className="text-muted-foreground/80">
+                  {t("latency_label")}:
+                </span>
                 <span className="text-primary font-bold tracking-wider">
                   {t("latency_val")}
                 </span>
               </div>
               <span className="text-border">•</span>
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground/80">{t("concurrency_label")}:</span>
+                <span className="text-muted-foreground/80">
+                  {t("concurrency_label")}:
+                </span>
                 <span className="text-foreground font-bold tracking-wider">
                   {t("concurrency_val")}
                 </span>
@@ -186,7 +192,7 @@ export function AboutHero({
                     fill
                     sizes="(max-width: 768px) 224px, 288px"
                     priority
-                    className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500 scale-105 hover:scale-100"
+                    className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500 scale-105 hover:scale-100 object-top"
                   />
                 </div>
               </div>
@@ -216,7 +222,9 @@ export function AboutHero({
                 </span>
               </div>
               <div className="font-mono text-xs text-foreground flex items-center justify-between">
-                <span className="text-muted-foreground">{t("runtime_label")}</span>
+                <span className="text-muted-foreground">
+                  {t("runtime_label")}
+                </span>
                 <span className="text-primary font-semibold">
                   {t("runtime_val")}
                 </span>

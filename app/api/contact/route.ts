@@ -81,6 +81,37 @@ export async function POST(request: Request) {
 
     console.info(`[Contact Form] Received valid message: refId=${refId}, email=${body.email}`);
 
+    /**
+     * TODO: Implement Email Dispatch to Inbox
+     *
+     * Wire this up to your preferred transactional email service provider
+     * (e.g., Resend, Postmark, SendGrid, AWS SES, or Nodemailer SMTP):
+     *
+     * Expected configuration:
+     * - Recipient Inbox: process.env.CONTACT_RECIPIENT_EMAIL || SITE_CONFIG.contact.email (contact@aminjamali79.com)
+     * - Sender: "Amin Jamali Portfolio <noreply@aminjamali79.com>" or verified domain sender
+     * - Reply-To: `${body.name} <${body.email}>`
+     * - Subject: `[Contact Form] ${body.subject} (Ref: ${refId})`
+     * - Content:
+     *     Sender: ${body.name} (${body.email})
+     *     Subject: ${body.subject}
+     *     Message: ${body.message}
+     *     Reference ID: ${refId}
+     *     Timestamp: ${new Date().toISOString()}
+     *
+     * Example Resend Implementation:
+     * ```ts
+     * const resend = new Resend(process.env.RESEND_API_KEY);
+     * await resend.emails.send({
+     *   from: 'Contact Form <notifications@meetjamali.com>',
+     *   to: [process.env.CONTACT_RECIPIENT_EMAIL || SITE_CONFIG.contact.email],
+     *   reply_to: body.email,
+     *   subject: `[Portfolio Inquiry] ${body.subject} (${refId})`,
+     *   text: `From: ${body.name} (${body.email})\n\n${body.message}\n\nRef: ${refId}`,
+     * });
+     * ```
+     */
+
     return NextResponse.json({
       success: true,
       refId,

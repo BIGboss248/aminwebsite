@@ -4,9 +4,15 @@
 
 ### Self-Repair & Continuous Learning (Always Active)
 
-- **Always invoke `.agents/skills/self-repair`**: At session start and before starting any task, load and scan [`.agents/autofix.json`](file:///d:/Scripts/aminwebsite/.agents/autofix.json) to apply learned constraints and user preferences.
-- **Rule Capture**: Whenever the user provides a correction, preference, or a mistake is diagnosed, immediately formulate an imperative rule and append it to [`.agents/autofix.json`](file:///d:/Scripts/aminwebsite/.agents/autofix.json).
-- **Skill Synchronization**: Each time changes or updates are made to Next.js skills or any other skill in [`.agents/skills/`](file:///d:/Scripts/aminwebsite/.agents/skills/), also update/mirror the corresponding skill in [`d:\Scripts\Obsidian\skills`](file:///d:/Scripts/Obsidian/skills).
+- **Always invoke `.agents/skills/self-repair`**: At session start and before starting any task, load and scan [`.agents/autofix.json`](file:///c:/scripts/aminwebsite/.agents/autofix.json) to apply learned constraints and user preferences.
+- **Rule Capture**: Whenever the user provides a correction, preference, or a mistake is diagnosed, immediately formulate an imperative rule and append it to [`.agents/autofix.json`](file:///c:/scripts/aminwebsite/.agents/autofix.json).
+- **Skill Synchronization**: Each time changes or updates are made to Next.js skills or any other skill in [`.agents/skills/`](file:///c:/scripts/aminwebsite/.agents/skills/), also update/mirror the corresponding skill in [`d:\Scripts\Obsidian\skills`](file:///d:/Scripts/Obsidian/skills).
+
+### Code Intelligence & Navigation (Codebase Memory MCP)
+
+- **Always invoke `.agents/skills/codebase-memory`**: Before searching, exploring, reading code, or assessing change impact, always invoke [`.agents/skills/codebase-memory`](file:///c:/scripts/aminwebsite/.agents/skills/codebase-memory/SKILL.md).
+- **Index-First Protocol**: Because background watcher re-indexing is disabled (`auto_watch = false`) to prevent editor lag and system stutters, always verify graph freshness via `index_status` or trigger an on-demand incremental re-index via `index_repository` (`mode: "fast"` or `"moderate"`) before querying the knowledge graph.
+- **Graph-First Search & Navigation**: Prioritize `codebase-memory` MCP tools (`search_graph`, `trace_path`, `get_code_snippet`, `get_architecture`, `detect_changes`) over naive text grep or full-file reads (`view_file`). Only fallback to text search (`search_code` or `git grep`) for literal strings in markdown, configuration files, stylesheets, or files excluded in `.cbmignore`.
 
 ### Issue tracker
 

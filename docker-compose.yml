@@ -12,6 +12,7 @@ services:
       - "${PORT:-3000}:${PORT:-3000}"
     environment:
       - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
       - PORT=${PORT:-3000}
       - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-https://meetjamali.com}
       - CONTACT_RECIPIENT_EMAIL=${CONTACT_RECIPIENT_EMAIL:-contact@meetjamali.com}
@@ -20,4 +21,4 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 30s

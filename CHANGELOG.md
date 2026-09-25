@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.7.0](https://github.com/BIGboss248/aminwebsite/compare/v1.6.0...v1.7.0) (2026-09-25)
+
+
+### Features
+
+* added lab page ([8ffb21a](https://github.com/BIGboss248/aminwebsite/commit/8ffb21ab143ef20f28e2cace6745e22815863b78))
+* added loading and error pages ([0f911e3](https://github.com/BIGboss248/aminwebsite/commit/0f911e31b8ac3a4d6b5d16d1349beb4b0c0bf44d))
+* added otel ([1be4111](https://github.com/BIGboss248/aminwebsite/commit/1be411138b1c144f54d2974c9225486842976a7f))
+* contact page ([e6f0de9](https://github.com/BIGboss248/aminwebsite/commit/e6f0de9f28ed69688130be473f2a39797eb01cda))
+* doh page ([21fdc1d](https://github.com/BIGboss248/aminwebsite/commit/21fdc1d04f2bb226da0a1d219b48ff17b02d7693))
+* hero section ([e05d457](https://github.com/BIGboss248/aminwebsite/commit/e05d457a4528eadc2608a1a57badd055f0ee6969))
+* projects page v1 ([1582e39](https://github.com/BIGboss248/aminwebsite/commit/1582e39c1ebff9dbdc6d2c18708ec37939dbfac1))
+* skill enhanced ([a8e0514](https://github.com/BIGboss248/aminwebsite/commit/a8e051449e2725a62735ae8fe4c5acf9a0fd9dfa))
+* skill matrix section ([11adb88](https://github.com/BIGboss248/aminwebsite/commit/11adb880afa8d4e74fe299b7d46dfa8f1c1e0279))
+* techstack matrix component ([7f93652](https://github.com/BIGboss248/aminwebsite/commit/7f93652b0f79584f221978a82fbd6ead7c856caf))
+* use next mcp in component dev ([5591693](https://github.com/BIGboss248/aminwebsite/commit/5591693da8929c31baa034659986957204599129))
+
+
+### Bug Fixes
+
+* fixed test component based on new content ([6b70b3a](https://github.com/BIGboss248/aminwebsite/commit/6b70b3a686a66f3c927f863f3d031528fb4e21fb))
+* image positioning ([2f511f1](https://github.com/BIGboss248/aminwebsite/commit/2f511f100225006c37a933f9303cec31c2ff4f2e))
+* modified content accordingly ([2c4edce](https://github.com/BIGboss248/aminwebsite/commit/2c4edceea1e3f442fd6bfede5fcdc544cd10e908))
+* theme stutter and flash ([3189ac1](https://github.com/BIGboss248/aminwebsite/commit/3189ac1880d5d08d63f9fda21d7f10733ce66365))
+
 ## [1.6.0](https://github.com/BIGboss248/aminwebsite/compare/v1.5.0...v1.6.0) (2026-09-21)
 
 

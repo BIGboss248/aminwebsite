@@ -214,5 +214,11 @@
     "Category": "PROCESS",
     "Instruction": "After applying code edits or file changes, immediately stage the modified files in git (e.g., 'git add <file>' or 'git add .') to prevent changes from being automatically rejected or reverted by Antigravity (agy).",
     "Why": "user explicit requirement: stage changes after applying them since changes are being auto rejected by agy"
+  },
+  {
+    "Rule_number": 37,
+    "Category": "PROCESS",
+    "Instruction": "In Next.js component development workflows ('nextjs-component-dev'), ensure the Next.js development server is active before developing by checking and tuning into any running instance via 'next-devtools' MCP server ('nextjs_index') or launching it in the background if absent, and utilize 'next-devtools' MCP tools ('nextjs_call', 'get_errors') to detect, diagnose, and resolve any runtime issues, compilation breaks, or hydration mismatches immediately after component authoring.",
+    "Why": "user explicit requirement: run dev server first or tune into it via next-devtools MCP server and use next-devtools MCP server to debug any issues after component dev"
   }
 ]

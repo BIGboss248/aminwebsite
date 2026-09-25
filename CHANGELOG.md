@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/BIGboss248/aminwebsite/compare/v1.7.0...v1.7.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* website url update ([1b8af0a](https://github.com/BIGboss248/aminwebsite/commit/1b8af0a90cb9890b7191ca3c62e837cb51d65bb7))
+
 ## [1.7.0](https://github.com/BIGboss248/aminwebsite/compare/v1.6.0...v1.7.0) (2026-09-25)
 
 

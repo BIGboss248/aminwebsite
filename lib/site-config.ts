@@ -19,7 +19,7 @@ export const SITE_CONFIG = {
     timezone: "Asia/Tehran (UTC+3:30)",
   },
   contact: {
-    email: "contact@aminjamali79.com",
+    email: "contact@meetjamali.com",
     availability: "Open to select consulting and full-time opportunities",
   },
   social: {

@@ -681,5 +681,100 @@
         "tag": "Machine Learning"
       }
     }
+  },
+  "lab": {
+    "meta": {
+      "title": "Interactive Systems Lab & Diagnostics | Amin Jamali",
+      "description": "Browser-native systems observatory and network diagnostics suite. RFC 8484 DNS over HTTPS, WebRTC identity leak detection, and hardware entropy analysis with 100% client-side execution and zero telemetry logging."
+    },
+    "hero": {
+      "eyebrow": "// INTERACTIVE SYSTEMS OBSERVATORY",
+      "badge": "DIAGNOSTIC COCKPIT",
+      "title": "Browser-Native Systems & Network Diagnostics",
+      "description": "High-precision client-side diagnostic utilities engineered for real-time protocol verification, censorship analysis, and client entropy inspection with zero intermediary proxying and zero server telemetry.",
+      "stat_tools_label": "ACTIVE PROBERS",
+      "stat_tools_val": "3 Utilities",
+      "stat_client_label": "EXECUTION MODEL",
+      "stat_client_val": "100% Client-Side",
+      "stat_privacy_label": "SERVER LOGGING",
+      "stat_privacy_val": "0 Bytes Retained",
+      "loading": "Loading interactive systems lab header..."
+    },
+    "privacy_banner": {
+      "badge": "ZERO-LOGGING ARCHITECTURE",
+      "title": "Client-Side Execution & Privacy Guarantee",
+      "description": "All diagnostic utilities in this lab execute entirely within your browser environment. Queries to upstream resolvers (such as Cloudflare or Google DoH) connect directly from your device via HTTPS. We never proxy queries, log IP addresses, or store client telemetry on our servers.",
+      "point1_title": "Direct Browser Fetch",
+      "point1_desc": "RFC 8484 DNS queries and STUN requests establish direct socket connections from your browser to upstream resolvers.",
+      "point2_title": "Zero Proxy Intermediaries",
+      "point2_desc": "No query payload, domain lookup, or IP address ever passes through or touches our portfolio backend server.",
+      "point3_title": "Local-Only Hashing",
+      "point3_desc": "Device entropy, WebGL descriptors, and canvas signatures are calculated strictly in transient memory."
+    },
+    "tools_catalog": {
+      "eyebrow": "// DIAGNOSTIC UTILITIES CATALOG",
+      "title": "Interactive Probers & Systems Instrumentation",
+      "description": "Select a diagnostic utility below to launch the standalone interactive testing environment.",
+      "filter_all": "All Diagnostic Tools",
+      "filter_dns": "DNS & Protocol Probing",
+      "filter_network": "Network & IP Auditing",
+      "filter_entropy": "Hardware & Entropy",
+      "status_ready": "SYSTEM READY",
+      "status_client_only": "100% CLIENT-SIDE",
+      "direct_launch_action": "Launch Diagnostic Tool",
+      "specs_label": "SPECIFICATIONS & ARCHITECTURE",
+      "execution_label": "EXECUTION ENVIRONMENT",
+      "loading": "Loading diagnostic tools catalog..."
+    },
+    "tools": {
+      "doh": {
+        "tag": "PROBE_01 // RFC 8484",
+        "status": "OPERATIONAL",
+        "title": "DNS over HTTPS (DoH) Prober",
+        "description": "Benchmark real-time DNS resolution latency, audit upstream DNS poisoning, and verify RFC 8484 wire-format resolver answers across Cloudflare, Google, and Quad9 directly from your browser.",
+        "protocol": "RFC 8484 / application/dns-json",
+        "execution_mode": "Direct Browser Fetch",
+        "latency_target": "Sub-50ms Benchmarking",
+        "features": [
+          "Multi-Resolver Parallel Latency Comparison",
+          "DNS Poisoning & Spoofing Detection",
+          "Wire Format & JSON Record Parsing",
+          "Zero-Telemetry Client-Side Execution"
+        ],
+        "cta": "Launch DoH Prober"
+      },
+      "ipinfo": {
+        "tag": "PROBE_02 // RFC 5389",
+        "status": "OPERATIONAL",
+        "title": "IP & Identity Leak Scanner",
+        "description": "Audit WebRTC private and public IP candidate leaks, inspect public IPv4/IPv6 dual-stack ASN routing, and verify browser-to-network timezone synchronization to prevent identity exposure.",
+        "protocol": "WebRTC STUN / RFC 5389",
+        "execution_mode": "Browser Socket Candidate",
+        "latency_target": "Real-time STUN Gathering",
+        "features": [
+          "WebRTC ICE Candidate Leak Detection",
+          "Public IPv4 & IPv6 Dual-Stack Verification",
+          "ASN, ISP & Geolocation Route Audit",
+          "System vs. Browser Timezone Drift Check"
+        ],
+        "cta": "Launch Identity Scanner"
+      },
+      "fingerprint": {
+        "tag": "PROBE_03 // HARDWARE ENTROPY",
+        "status": "OPERATIONAL",
+        "title": "Client Device Fingerprint Inspector",
+        "description": "Quantify browser hardware entropy by computing deterministic 2D Canvas render hashes, WebGL unmasked GPU vendor strings, and AudioContext oscillator frequency signatures in transient memory.",
+        "protocol": "HTML5 Canvas / WebGL / Web Audio",
+        "execution_mode": "In-Memory Computation",
+        "latency_target": "Instantaneous (< 15ms)",
+        "features": [
+          "2D Canvas Geometric Geometry Hashing",
+          "WebGL Unmasked GPU Renderer Extraction",
+          "AudioContext Oscillator Frequency Signature",
+          "Transient Memory Analysis (Zero Persistence)"
+        ],
+        "cta": "Launch Fingerprint Inspector"
+      }
+    }
   }
 }

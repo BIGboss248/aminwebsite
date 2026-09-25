@@ -92,141 +92,127 @@
   {
     "Rule_number": 16,
     "Category": "ARCH",
-    "Instruction": "In the 'nextjs-plan' skill and 'docs/plan.md', Step 1 must grill the user on what pages the web app needs, followed by what sections and components each page requires; in 'docs/plan.md', outline every page as a checklist item with all of its components as nested sub-checklists, where a page is ticked off only when all its components are designed.",
-    "Why": "user explicit requirement: grill on pages then sections, and outline pages with component sub-checklists ticked off when all components are designed"
-  },
-  {
-    "Rule_number": 17,
-    "Category": "ARCH",
     "Instruction": "In Storybook stories created for components, write comprehensive structured markdown documentation in 'parameters.docs.description.component' and export strictly four story variants: 'Light' (configured with light theme and dedicated light background container), 'Dark' (configured with dark theme and dedicated dark background container), 'SkeletonLight' (skeleton fallback configured with light theme and dedicated light background container), and 'SkeletonDark' (skeleton fallback configured with dark theme and dedicated dark background container) so both light and dark variants of the component and its skeleton are immediately visible side-by-side with proper contrast on Storybook Docs pages. All Storybook preview wrappers, backgrounds, and story decorators MUST strictly use the production semantic theme tokens from 'app/globals.css' ('bg-background', 'text-foreground', 'border-border', 'text-muted-foreground', etc.) with scoped '.light' and '.dark' classes; hardcoding custom arbitrary styles or hex/palette colors (such as '#FAFAFA', '#050505', 'border-zinc-*') in Storybook is strictly prohibited.",
     "Why": "user explicit requirement: use production theme tokens for component creation and Storybook backgrounds without hardcoding custom styles, write docs for storybook, and display both light and dark variants of the component and skeleton with high contrast on Docs pages"
   },
   {
-    "Rule_number": 18,
+    "Rule_number": 17,
     "Category": "PROCESS",
     "Instruction": "When the 'nextjs-storybook-story' workflow is invoked or when Storybook stories are created/tested, the verification gate MUST physically execute Storybook verification tests (both smoke/indexing test via 'pnpm run storybook:smoke' or 'storybook dev --smoke-test' and static production build via 'pnpm run build-storybook') to ensure zero syntax errors, AST parsing breaks, or bundle failures before declaring completion.",
     "Why": "user explicit requirement: add the story book test to verification gate of nextjs-storybook-story"
   },
   {
-    "Rule_number": 19,
+    "Rule_number": 18,
     "Category": "PROCESS",
     "Instruction": "When using the 'codebase-memory-mcp' code intelligence server, always maintain a root '.cbmignore' file excluding high-churn files ('.agents/', 'docs/', build caches, test reports, and '.codebase-memory/') and configure 'auto_watch = false' (via 'codebase-memory-mcp config set auto_watch false') to prevent system stutters and constant background re-indexing during file editing.",
     "Why": "diagnosed performance issue: codebase-memory background git watcher triggers reindexing and zstd artifact rewrites on every save, causing system stutters"
   },
   {
-    "Rule_number": 20,
+    "Rule_number": 19,
     "Category": "PROCESS",
     "Instruction": "Always invoke and apply '.agents/skills/codebase-memory' before searching, exploring, reading code, or assessing change impact. Because background watcher re-indexing is disabled ('auto_watch = false') to prevent system stutters, the agent MUST always ensure graph freshness by checking 'index_status' or executing 'index_repository' (with mode='fast' or 'moderate') before issuing search queries, and always prioritize codebase-memory graph tools ('search_graph', 'trace_path', 'get_code_snippet', 'detect_changes') over naive text grep or full-file reading.",
     "Why": "user explicit requirement: create a skill that the agent always invokes and configures agent to use codebase memory mcp to search the codebase and always indexes codebase first since on-watch indexing is disabled"
   },
   {
-    "Rule_number": 21,
+    "Rule_number": 20,
     "Category": "ARCH",
     "Instruction": "In Antigravity global MCP configurations ('~/.gemini/antigravity/mcp_config.json' and '~/.gemini/config/mcp_config.json'), 'agy.exe' does not respect '\"disabled\": true' inside the 'mcpServers' object and will still launch the child processes. To properly disable an MCP server, move it completely out of 'mcpServers' (e.g., into a separate '_disabledMcpServers' object).",
     "Why": "diagnosed behavior: agy launches all commands defined under mcpServers regardless of disabled flag"
   },
   {
+    "Rule_number": 21,
+    "Category": "ARCH",
+    "Instruction": "In navigation components (SiteNavbar, MobileNavDrawer), design specifications, and preview artifacts, do not render 'COCKPIT TOPOLOGY', uptime badges (such as '99.9%'), version tags, or availability/status badges; keep the brand lockup and navigation links clean without extraneous telemetry badges.",
+    "Why": "user explicit instruction: remove cockpit topology, uptime, version tags, and availability badges from navigation components"
+  },
+  {
     "Rule_number": 22,
-    "Category": "ARCH",
-    "Instruction": "In the SiteNavbar component, design specifications, and preview artifacts, do not render availability/status badges or version tags in the brand identity lockup; keep the brand lockup clean with the emblem, brand title, and optional systems role.",
-    "Why": "user explicit instruction: remove the availability badge and version in site navbar"
-  },
-  {
-    "Rule_number": 23,
-    "Category": "ARCH",
-    "Instruction": "In navigation components (SiteNavbar, MobileNavDrawer), design specifications, and preview artifacts, do not render 'COCKPIT TOPOLOGY', uptime badges (such as '99.9%'), or availability/status badges; keep the brand lockup and navigation links clean without extraneous telemetry badges.",
-    "Why": "user explicit instruction: remove cockpit topology, uptime, and availability badge"
-  },
-  {
-    "Rule_number": 24,
     "Category": "PROCESS",
     "Instruction": "NEVER use 'read_url_content' to download binary files (images, raw HTML exports, or any non-text binary). It is a text-only fetcher that corrupts binary data and mangles file content. Always use 'run_command' with PowerShell 'Invoke-WebRequest -Uri <url> -OutFile <path>' to download any binary or raw file directly to disk.",
     "Why": "diagnosed mistake: used read_url_content to download Stitch JPG and HTML files — JPGs were corrupted (unreadable), HTML was not the raw source. Fix: always use Invoke-WebRequest for binary downloads."
   },
   {
-    "Rule_number": 25,
+    "Rule_number": 23,
     "Category": "PROCESS",
     "Instruction": "In design skills and workflows, do not call 'generate_image' or generate images directly to produce image assets. Instead, output the structured image prompt (including prompt description, aspect ratio, suggested filename, and target directory) directly to the user so the user can generate the image externally and place it in the project files, reducing token consumption.",
     "Why": "user explicit requirement: do not generate images directly in design skills; output image prompts to user so user can generate externally and place in project files to reduce token consumption"
   },
   {
-    "Rule_number": 26,
+    "Rule_number": 24,
     "Category": "ARCH",
     "Instruction": "When generating or creating a Next.js page component that is nested under a '[locale]' dynamic route segment and the project defines more than one locale in 'docs/project.json', always export 'generateStaticParams()' returning '{ locale }' for all supported locales (from '@/'i18n/routing' or 'supported_languages') to enable static pre-rendering across all locales.",
     "Why": "user explicit requirement: configure nextjs-create-component to generate locale routes if generating a nextjs page and if there is more than one locale and the page is nested under locale dynamic route"
   },
   {
-    "Rule_number": 27,
+    "Rule_number": 25,
     "Category": "ARCH",
     "Instruction": "In Storybook configurations and component stories that render components using Next.js localized navigation or 'next-intl' ('Link', 'useRouter', 'useTranslations'), always wrap stories with 'NextIntlClientProvider' (supplying 'locale' and translation dictionaries from 'messages/[locale].json') and 'ProgressBarProvider' (both globally in '.storybook/preview.tsx' and within story decorators) to prevent 'No intl context found' runtime errors in Storybook.",
     "Why": "diagnosed error: Storybook threw 'No intl context found' because Link component calls useRouter from next-intl which requires NextIntlClientProvider in context"
   },
   {
-    "Rule_number": 28,
+    "Rule_number": 26,
     "Category": "PROCESS",
     "Instruction": "In component creation workflows, TDD cycles, and verification gates, execute test runner commands targeted strictly to the specific component's test and edge test files (e.g., 'pnpm test <path>/[ComponentName].test.tsx <path>/[ComponentName].edge.test.tsx') rather than running the full project test suite, and suppress verbose command output flags to minimize context token consumption.",
     "Why": "user explicit requirement: configure skills to use targeted test execution and token optimization"
   },
   {
-    "Rule_number": 29,
+    "Rule_number": 27,
     "Category": "ARCH",
     "Instruction": "In component development workflows ('nextjs-component-dev' / 'nextjs-create-component'), never add hardcoded text, fallback string placeholders, or in-file mock dictionary objects (e.g. 'DEFAULT_CONTENT') in component code. All user-facing strings, labels, badges, and CTAs must be extracted into the translation dictionary files ('messages/[locale].json') across all supported languages defined in 'docs/project.json', and consumed via next-intl ('getTranslations' in RSC, 'useTranslations' in Client Components).",
     "Why": "user explicit requirement: configure nextjs-component-dev to not add i18n placeholders in components it creates and fill the dictionary files instead"
   },
   {
-    "Rule_number": 30,
+    "Rule_number": 28,
     "Category": "PROCESS",
     "Instruction": "Only create Storybook story files ('[ComponentName].stories.tsx') and execute Storybook verification tests when the 'nextjs-storybook-story' skill is specifically invoked or when explicitly requested by the user; do not automatically generate story files or run Storybook smoke/build tests during standard component development workflows ('nextjs-component-dev' / 'nextjs-create-component').",
     "Why": "user explicit instruction: only create story for components if .agents/skills/nextjs-storybook-story is invoked or explicitly asked by user"
   },
   {
-    "Rule_number": 31,
+    "Rule_number": 29,
     "Category": "PROCESS",
     "Instruction": "In the 'component-design' skill and UI discovery workflows, conduct the user interview in progressive adaptive rounds (Round 1: Purpose, Intent & Emotional Tone; Round 2: Spatial Hierarchy, Layout Grid & Focal Flow; Round 3: Interaction Dynamics, Media Accents & Ergonomics) so each subsequent round uses the user's previous answers as context to formulate and adjust targeted follow-up questions.",
     "Why": "user explicit instruction: configure component-design skill to conduct interview in rounds so subsequent questions adapt based on user answers"
   },
   {
-    "Rule_number": 32,
-    "Category": "PROCESS",
-    "Instruction": "In skill definition files ('SKILL.md'), keep the frontmatter 'description' concise and focused strictly on WHAT the skill does and when it triggers, without explaining internal procedural steps, methodology, or implementation mechanics ('how').",
-    "Why": "user explicit correction: limit description front matter to what the skill does, not how it does it"
-  },
-  {
-    "Rule_number": 33,
-    "Category": "UI",
-    "Instruction": "In card header sections (such as 'ToolQuickCard' and diagnostic/spec cards), always configure header container rows with 'flex-wrap' and responsive gap spacing (e.g. 'flex flex-wrap items-center justify-between gap-2.5') so protocol tags, live status indicators, and privacy mode badges wrap cleanly across responsive viewports and localized languages without overflowing or truncating.",
-    "Why": "user explicit correction: elements in the header section of each card are overflowing configure them to wrap"
-  },
-  {
-    "Rule_number": 34,
+    "Rule_number": 30,
     "Category": "PROCESS",
     "Instruction": "When creating or authoring AI skills ('SKILL.md'), strictly minimize the YAML frontmatter 'description' to 1-2 concise sentences stating WHAT the skill does and specific trigger phrases (never describing 'how' or internal execution mechanics), minimize the 'SKILL.md' file itself (under 150-250 lines) by extracting deep technical documentation into 'references/', and move large code templates, configurations, or boilerplates into separate files under 'resources/templates/' or 'examples/' referenced via relative markdown links.",
     "Why": "user explicit instruction: configure skill-creator to minimize description of skills it creates, minimize skill file itself, separate into references, and move code templates to their own files and reference them"
   },
   {
-    "Rule_number": 35,
+    "Rule_number": 31,
     "Category": "UI",
     "Instruction": "In circular clip-path theme switch animations using the View Transitions API, declare CSS keyframes ('theme-expand'/'theme-shrink') bound with CSS custom properties ('--theme-x', '--theme-y', '--theme-r') and explicit '::view-transition-group(root)' animation duration matching the transition (500ms), and synchronously toggle the document class ('classList.toggle('dark', isDark)') inside the 'startViewTransition' callback. This ensures GPU compositor execution from frame 0 and eliminates 1-frame theme flashes and mid-transition snapshot stutters.",
     "Why": "diagnosed root cause: next-themes updates document class in asynchronous useEffect rather than synchronously in startViewTransition, and default 250ms UA ::view-transition-group duration caused premature animation cutoff and full-screen flash"
   },
   {
-    "Rule_number": 36,
+    "Rule_number": 32,
+    "Category": "UI",
+    "Instruction": "In card header sections (such as 'ToolQuickCard' and diagnostic/spec cards), always configure header container rows with 'flex-wrap' and responsive gap spacing (e.g. 'flex flex-wrap items-center justify-between gap-2.5') so protocol tags, live status indicators, and privacy mode badges wrap cleanly across responsive viewports and localized languages without overflowing or truncating.",
+    "Why": "user explicit correction: elements in the header section of each card are overflowing configure them to wrap"
+  },
+  {
+    "Rule_number": 33,
     "Category": "ARCH",
     "Instruction": "In the 'nextjs-plan' skill and modular implementation plans under 'docs/plan/', structure the roadmap into 7 chronological phases: Phase 1 (Discovery & Route Architecture), Phase 2 (Environment, Testing & CI/CD), Phase 3 (System Health Monitoring Probe /api/health), Phase 4 (Core Foundations: Env, i18n, Theme, Layout Shells, OTel), Phase 5 (Pages & Component Implementation Checklists), Phase 6 (Server Functions & Global SEO Metadata), and Phase 7 (Integrations & Production Release). Do not include a separate pre-made UI primitives phase so the agent creates unique designs. For every page outlined in Phase 5, enforce explicit sub-checklist tasks for page infrastructure and SEO: page view ('page.tsx'), loading skeleton ('loading.tsx'), route error boundary ('error.tsx'), metadata/OpenGraph ('generateMetadata'), structured data (JSON-LD schema), and 'generateStaticParams()' for dynamic/localized routes.",
     "Why": "user explicit requirement: move health probe to phase 3, foundations to phase 4, remove phase 5 primitives to allow unique designs, and include page-level SEO, loading.tsx, error.tsx, and json-ld tasks under every page"
   },
   {
-    "Rule_number": 37,
+    "Rule_number": 34,
     "Category": "ARCH",
     "Instruction": "In the 'nextjs-plan' skill and implementation plans: omit separate wireframes and interaction flows steps (component design is coupled directly with component dev); omit React Compiler or Turbopack cache configuration steps; omit manual 'NEXT_PUBLIC_' prefixing rules and service-specific API key steps (handled via setup wizards); omit separate upfront translation catalog expansion steps (dictionaries are populated dynamically during component dev); and keep layout header/footer steps non-prescriptive as strictly 'Design and develop SiteHeader' and 'Design and develop SiteFooter' without forcing pre-defined visual designs.",
     "Why": "user explicit corrections: streamline planning steps, remove redundant boilerplate items, and keep layout design flexible without forcing pre-defined structures"
   },
   {
-    "Rule_number": 38,
+    "Rule_number": 35,
     "Category": "PROCESS",
     "Instruction": "When executing page or component creation tasks, always update and check off completed items ('- [x]') in 'docs/plan/05-pages-and-components.md' for the created components, sections, or page infrastructure files (page.tsx, loading.tsx, error.tsx, generateMetadata, JSON-LD Schema, generateStaticParams), ticking off the parent page only when all its sub-items are completed.",
     "Why": "user explicit requirement: configure AGENTS.md to check items in docs/plan/05-pages-and-components.md if the task is page or component creations"
+  },
+  {
+    "Rule_number": 36,
+    "Category": "PROCESS",
+    "Instruction": "After applying code edits or file changes, immediately stage the modified files in git (e.g., 'git add <file>' or 'git add .') to prevent changes from being automatically rejected or reverted by Antigravity (agy).",
+    "Why": "user explicit requirement: stage changes after applying them since changes are being auto rejected by agy"
   }
 ]
-
-

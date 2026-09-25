@@ -4,15 +4,31 @@ Containerizing Next.js using **Standalone Mode** packages only traced production
 
 ---
 
-## 1. Standalone Next.js Output
+## 1. Standalone Next.js Output & Server Actions Allowed Origins
 
-Ensure `output: "standalone"` is enabled in `next.config.ts`:
+Ensure `output: "standalone"` is enabled and `experimental.serverActions.allowedOrigins` is configured using `SITE_CONFIG.baseUrl` from `lib/site-config.ts` in `next.config.ts`. This ensures Server Actions work seamlessly behind reverse proxies (e.g. Traefik, Nginx, Cloudflare) without triggering CSRF or origin mismatch rejections:
 
 ```ts
 import type { NextConfig } from "next";
+import { SITE_CONFIG } from "./lib/site-config";
+
+const siteHost = new URL(SITE_CONFIG.baseUrl).host;
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        siteHost,
+        `*.${siteHost}`,
+        "localhost:3000",
+        "127.0.0.1:3000",
+      ],
+    },
+  },
+  outputFileTracingIncludes: {
+    "/*": ["./node_modules/@swc/helpers/**/*"],
+  },
 };
 
 export default nextConfig;

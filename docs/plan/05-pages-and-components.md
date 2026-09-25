@@ -73,30 +73,30 @@
   - [x] **Section: Beyond Code & Community**
     - [x] `PersonalInterestsGrid` - Open-source contributions, technical reading, and community engagement
 
-- [ ] **Page: Projects / Case Studies Archive (`/[locale]/projects`)**
-  - [ ] **Page Infrastructure & SEO**
-    - [ ] `page.tsx` - Projects archive view and layout assembly
-    - [ ] `loading.tsx` - Streaming loading skeleton fallback
-    - [ ] `error.tsx` - Route error boundary
-    - [ ] `generateMetadata` - Localized title, description, and OpenGraph/Twitter cards
-    - [ ] `JSON-LD Schema` - Structured data (`CollectionPage`)
-    - [ ] `generateStaticParams()` - Static locale params generation
-  - [ ] **Section: Header & Value Intro**
-    - [ ] `ProjectsHero` - Archive introduction and filter summary
-  - [ ] **Section: Category Filter & Search Bar**
-    - [ ] `ProjectFilterTabs` - Interactive tabs (All, Full-Stack / E-Commerce, Systems & Automation, Financial AI & BI, Academic Research)
-    - [ ] `ProjectSearchBar` - Real-time keyword filter for case studies
-  - [ ] **Section: Projects Showcase Grid (Resume Case Studies)**
-    - [ ] `ProjectArchiveGrid` - Comprehensive responsive grid
-    - [ ] `CaseStudyCard` - High-density project card with metrics, architecture tags, and live links
-    - [ ] **Case Study 1: Setayesh Parts (`/projects/setayesh-parts`)** - Commercial & E-Commerce Web Platform (Next.js, Payload CMS, Docker VPS, GitHub Actions CI/CD, Cloudflare CDN)
-    - [ ] **Case Study 2: Bahar Trade Co. Web Platform (`/projects/bahar-trade-web`)** - Enterprise Corporate Web & CMS Engine (Next.js SSR, Payload CMS, Technical SEO, B2B Conversion Rate Optimization)
-    - [ ] **Case Study 3: ParsBERT-XGBoost Commodity Volatility Model (`/projects/parsbert-ime-forecasting`)** - Hybrid NLP & Financial Sentiment Forecasting Platform (ParsBERT, XGBoost, LSTM, IME Time-Series, DOI: `10.61838/jafci.485`)
-    - [ ] **Case Study 4: DQN & LSTM Volatility Analysis Engine (`/projects/dqn-commodity-forex-analysis`)** - Reinforcement Learning & Machine Learning Market System (Deep Q-Network, LSTM, Commodity & Forex Volatility, DOI: `10.61838/bmfopen.545`)
-    - [ ] **Case Study 5: Bahar Trade IT Automation & Database Tuning (`/projects/bahar-trade-it-automation`)** - Enterprise Linux Infrastructure Automation & PostgreSQL Optimization (Bash Scripting, SQL Query Tuning, Next.js SSR, DOI: `10.61838/msesj.477`)
-  - [ ] **Section: Open Source & Repositories**
-    - [ ] `OpenSourceShowcase` - GitHub open-source repositories and utility tools
-    - [ ] `GithubRepoCard` - Real-time star count, language badge, and repo link
+- [x] **Page: Projects / Case Studies Archive (`/[locale]/projects`)**
+  - [x] **Page Infrastructure & SEO**
+    - [x] `page.tsx` - Projects archive view and layout assembly
+    - [x] `loading.tsx` - Streaming loading skeleton fallback
+    - [x] `error.tsx` - Route error boundary
+    - [x] `generateMetadata` - Localized title, description, and OpenGraph/Twitter cards
+    - [x] `JSON-LD Schema` - Structured data (`CollectionPage`)
+    - [x] `generateStaticParams()` - Static locale params generation
+  - [x] **Section: Header & Value Intro**
+    - [x] `ProjectsHero` - Archive introduction and filter summary
+  - [x] **Section: Category Filter & Search Bar**
+    - [x] `ProjectFilterTabs` - Interactive tabs (All, Full-Stack / E-Commerce, Systems & Automation, Financial AI & BI, Academic Research)
+    - [x] `ProjectSearchBar` - Real-time keyword filter for case studies
+  - [x] **Section: Projects Showcase Grid (Resume Case Studies)**
+    - [x] `ProjectArchiveGrid` - Comprehensive responsive grid
+    - [x] `CaseStudyCard` - High-density project card with metrics, architecture tags, and live links
+    - [x] **Case Study 1: Setayesh Parts (`/projects/setayesh-parts`)** - Commercial & E-Commerce Web Platform (Next.js, Payload CMS, Docker VPS, GitHub Actions CI/CD, Cloudflare CDN)
+    - [x] **Case Study 2: Bahar Trade Co. Web Platform (`/projects/bahar-trade-web`)** - Enterprise Corporate Web & CMS Engine (Next.js SSR, Payload CMS, Technical SEO, B2B Conversion Rate Optimization)
+    - [x] **Case Study 3: ParsBERT-XGBoost Commodity Volatility Model (`/projects/parsbert-ime-forecasting`)** - Hybrid NLP & Financial Sentiment Forecasting Platform (ParsBERT, XGBoost, LSTM, IME Time-Series, DOI: `10.61838/jafci.485`)
+    - [x] **Case Study 4: DQN & LSTM Volatility Analysis Engine (`/projects/dqn-commodity-forex-analysis`)** - Reinforcement Learning & Machine Learning Market System (Deep Q-Network, LSTM, Commodity & Forex Volatility, DOI: `10.61838/bmfopen.545`)
+    - [x] **Case Study 5: Bahar Trade IT Automation & Database Tuning (`/projects/bahar-trade-it-automation`)** - Enterprise Linux Infrastructure Automation & PostgreSQL Optimization (Bash Scripting, SQL Query Tuning, Next.js SSR, DOI: `10.61838/msesj.477`)
+  - [x] **Section: Open Source & Repositories**
+    - [x] `OpenSourceShowcase` - GitHub open-source repositories and utility tools
+    - [x] `GithubRepoCard` - Real-time star count, language badge, and repo link
 
 - [ ] **Page: Case Study Detail (`/[locale]/projects/[slug]`)**
   - [ ] **Page Infrastructure & SEO**

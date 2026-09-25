@@ -13,21 +13,32 @@ jest.mock("next-intl", () => ({
         const idx = parseInt(key.split(".")[1], 10);
         return enMessages.lab.tools.doh.features[idx] ?? key;
       }
-      return (enMessages.lab.tools.doh as Record<string, string>)[key] ?? key;
+      return (
+        (enMessages.lab.tools.doh as unknown as Record<string, string>)[key] ??
+        key
+      );
     }
     if (namespace === "lab.tools.ipinfo") {
       if (key.startsWith("features.")) {
         const idx = parseInt(key.split(".")[1], 10);
         return enMessages.lab.tools.ipinfo.features[idx] ?? key;
       }
-      return (enMessages.lab.tools.ipinfo as Record<string, string>)[key] ?? key;
+      return (
+        (enMessages.lab.tools.ipinfo as unknown as Record<string, string>)[key] ??
+        key
+      );
     }
     if (namespace === "lab.tools.fingerprint") {
       if (key.startsWith("features.")) {
         const idx = parseInt(key.split(".")[1], 10);
         return enMessages.lab.tools.fingerprint.features[idx] ?? key;
       }
-      return (enMessages.lab.tools.fingerprint as Record<string, string>)[key] ?? key;
+      return (
+        (enMessages.lab.tools.fingerprint as unknown as Record<
+          string,
+          string
+        >)[key] ?? key
+      );
     }
     return key;
   },

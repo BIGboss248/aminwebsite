@@ -138,27 +138,27 @@
     - [x] `LabToolGrid` - Grid of interactive utilities
     - [x] `LabToolCard` - Detailed tool card with protocol badges, execution requirements, and direct launch action
 
-- [ ] **Page: Lab - DNS over HTTPS (DoH) Prober (`/[locale]/lab/doh`)**
-  - [ ] **Page Infrastructure & SEO**
-    - [ ] `page.tsx` - DoH prober client tool view
-    - [ ] `loading.tsx` - Skeleton loader
-    - [ ] `error.tsx` - Error boundary
-    - [ ] `generateMetadata` - Tool-specific title & description
-    - [ ] `generateStaticParams()` - Static locale params generation
-  - [ ] **Section: Tool Header & Methodology**
-    - [ ] `DohToolHeader` - Title, protocol explanation, and censorship detection mechanics
-    - [ ] `DohMethodologyTooltip` - Explainer on DNS poisoning, query paths, and resolver differences
-  - [ ] **Section: Query Controller**
-    - [ ] `ResolverSelector` - Resolver tabs (Cloudflare, Google, Quad9, Custom endpoint)
-    - [ ] `DomainQueryInput` - Input bar with auto-fill domain chips
-    - [ ] `RecordTypeSelector` - Record type toggle chips (A, AAAA, CNAME, MX, TXT)
-    - [ ] `ExecuteQueryButton` - Primary execute button with loading spinner & batch query toggle
-  - [ ] **Section: Diagnostic Console & Output**
-    - [ ] `DohLatencyGraph` - Real-time horizontal bar comparison of resolver latencies
-    - [ ] `DohResponseTerminal` - Dark terminal with JSON/raw DNS wire answers
-    - [ ] `CensorshipIndicatorBadge` - Visual status badge (Secure, Poisoned, Blocked, Timeout)
-  - [ ] **Section: Export & Sharing**
-    - [ ] `ExportDohResultsButton` - Copy JSON / Shareable benchmark URL
+- [x] **Page: Lab - DNS over HTTPS (DoH) Prober (`/[locale]/lab/doh`)**
+  - [x] **Page Infrastructure & SEO**
+    - [x] `page.tsx` - DoH prober client tool view
+    - [x] `loading.tsx` - Skeleton loader
+    - [x] `error.tsx` - Error boundary
+    - [x] `generateMetadata` - Tool-specific title & description
+    - [x] `generateStaticParams()` - Static locale params generation
+  - [x] **Section: Tool Header & Methodology**
+    - [x] `DohToolHeader` - Title, protocol explanation, and censorship detection mechanics
+    - [x] `DohMethodologyTooltip` - Explainer on DNS poisoning, query paths, and resolver differences
+  - [x] **Section: Query Controller**
+    - [x] `ResolverSelector` - Resolver tabs (Cloudflare, Google, Quad9, Custom endpoint)
+    - [x] `DomainQueryInput` - Input bar with auto-fill domain chips
+    - [x] `RecordTypeSelector` - Record type toggle chips (A, AAAA, CNAME, MX, TXT)
+    - [x] `ExecuteQueryButton` - Primary execute button with loading spinner & batch query toggle
+  - [x] **Section: Diagnostic Console & Output**
+    - [x] `DohLatencyGraph` - Real-time horizontal bar comparison of resolver latencies
+    - [x] `DohResponseTerminal` - Dark terminal with JSON/raw DNS wire answers
+    - [x] `CensorshipIndicatorBadge` - Visual status badge (Secure, Poisoned, Blocked, Timeout)
+  - [x] **Section: Export & Sharing**
+    - [x] `ExportDohResultsButton` - Copy JSON / Shareable benchmark URL
 
 - [ ] **Page: Lab - IP & Identity Leak Scanner (`/[locale]/lab/ipinfo`)**
   - [ ] **Page Infrastructure & SEO**

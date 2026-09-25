@@ -775,6 +775,63 @@
         ],
         "cta": "Launch Fingerprint Inspector"
       }
+    },
+    "doh_prober": {
+      "meta": {
+        "title": "DNS over HTTPS (DoH) Prober & Censorship Detector | Amin Jamali",
+        "description": "Browser-native RFC 8484 DNS over HTTPS diagnostic prober. Benchmark latency across Cloudflare, Google, and Quad9, audit DNS poisoning, and analyze wire answers with 100% client-side execution."
+      },
+      "header": {
+        "eyebrow": "// DIAGNOSTIC OBSERVATORY // PROBE_01",
+        "badge": "RFC 8484 CLIENT PROBE",
+        "title": "DNS over HTTPS (DoH) Prober",
+        "description": "Real-time client-side DNS resolution probe benchmarking multi-resolver latency, detecting upstream DNS poisoning and NXDOMAIN tampering, and inspecting raw RFC 8484 JSON response payloads directly from your browser.",
+        "back_to_lab": "Return to Lab Hub"
+      },
+      "methodology": {
+        "badge": "PROTOCOL METHODOLOGY",
+        "title": "RFC 8484 Mechanics & Censorship Detection",
+        "description": "Traditional DNS queries over port 53 (UDP/TCP) travel in cleartext, exposing queries to ISP snooping, intermediate transparent proxies, and state-level DNS injection. DNS over HTTPS wraps queries in TLS 1.3 tunnels via HTTPS.",
+        "rfc_title": "RFC 8484 Standard",
+        "rfc_desc": "Executes HTTP POST/GET requests with 'application/dns-json' and 'application/dns-message' wire formats.",
+        "poisoning_title": "Poisoning Detection",
+        "poisoning_desc": "Detects bogons, loopback addresses (127.0.0.1, 10.10.34.x), and private subnet injection in public domain answers.",
+        "zero_log_title": "Zero Intermediaries",
+        "zero_log_desc": "All HTTPS connections open directly from the browser to Cloudflare, Google, or Quad9 without backend proxies."
+      },
+      "controller": {
+        "resolver_label": "Upstream DNS Resolvers",
+        "mode_single": "Single Resolver",
+        "mode_parallel": "Benchmark All (Parallel)",
+        "custom_resolver_placeholder": "https://example.com/dns-query",
+        "domain_label": "Target Domain Name",
+        "domain_placeholder": "e.g. google.com, cloudflare.com, wikipedia.org",
+        "quick_domains_label": "Quick Presets:",
+        "record_type_label": "Record Type",
+        "execute_single": "Query Selected Resolver",
+        "execute_parallel": "Benchmark All Resolvers",
+        "executing": "Resolving DNS Records...",
+        "input_aria": "Domain name to resolve"
+      },
+      "console": {
+        "title": "Diagnostic Telemetry & Wire Answers",
+        "latency_title": "Resolver Latency Benchmark",
+        "terminal_title": "Raw DNS Response Payload",
+        "empty_state_title": "Diagnostic Console Ready",
+        "empty_state_desc": "Select target domain, record type, and resolvers above, then click 'Execute' to start direct browser-to-resolver diagnostics.",
+        "status_secure": "SECURE // VALID",
+        "status_poisoned": "POISONED // BOGON INJECTED",
+        "status_blocked": "BLOCKED / NXDOMAIN",
+        "status_timeout": "TIMEOUT / UNREACHABLE",
+        "answers_count": "{count, plural, =0 {0 answers} =1 {1 answer} other {# answers}}",
+        "copy_json": "Copy Raw JSON",
+        "copied": "Copied to Clipboard!",
+        "records_table_title": "Parsed Answer Records",
+        "col_name": "Name",
+        "col_type": "Type",
+        "col_ttl": "TTL",
+        "col_data": "Data / Target"
+      }
     }
   }
 }

@@ -35,12 +35,12 @@ describe("ExperienceTimeline Component", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/Lead Systems Architect & Full-Stack Consultant/i),
+      screen.getByText(/Full-Stack Web Developer & Technical SEO Specialist/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Senior Frontend & Systems Engineer/i),
+      screen.getByText(/IT & Infrastructure Automation Specialist/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/B\.S\. in Computer Science/i)).toBeInTheDocument();
+    expect(screen.getByText(/B\.S\. in Computer Engineering/i)).toBeInTheDocument();
     expect(screen.getByText(/B\.S\. in Financial Management/i)).toBeInTheDocument();
   });
 
@@ -56,10 +56,10 @@ describe("ExperienceTimeline Component", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/معمار ارشد سیستم‌ها و مشاور فول‌استک/i),
+      screen.getByText(/توسعه‌دهنده نرم‌افزارهای تحت وب و متخصص SEO/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/کارشناسی علوم کامپیوتر/i),
+      screen.getByText(/کارشناسی مهندسی کامپیوتر/i),
     ).toBeInTheDocument();
   });
 

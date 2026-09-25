@@ -62,10 +62,10 @@ describe("About Page Component (RSC & SEO)", () => {
     });
 
     expect(metadata.title).toBe(
-      "About Amin Jamali | Biography & Systems Architecture",
+      "About Amin Jamali | Biography, Systems Architecture & Credentials",
     );
     expect(metadata.description).toBe(
-      "Biography, engineering philosophy, academic credentials, and systems journey of Amin Jamali.",
+      "Biography, engineering philosophy, dual academic background, and professional IT & Web development journey of Amin Jamali.",
     );
   });
 

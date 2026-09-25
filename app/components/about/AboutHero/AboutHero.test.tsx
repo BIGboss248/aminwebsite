@@ -68,22 +68,22 @@ describe("AboutHero Component", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/Systems Engineer & Full-Stack Developer/i),
+      screen.getByText(/IT Specialist & Full-Stack Web Developer/i),
     ).toBeInTheDocument();
 
     expect(
       screen.getByText(
-        /"I build systems that don't fail — obsidian reliability, zero compromise\."/i,
+        /"Bridging modern web architectures, data-driven BI solutions, and rock-solid infrastructure\."/i,
       ),
     ).toBeInTheDocument();
 
     const projectsLink = screen.getByRole("link", {
-      name: /View Case Studies/i,
+      name: /View Projects & Case Studies/i,
     });
     expect(projectsLink).toHaveAttribute("href", ROUTES.projects.root);
 
     const labLink = screen.getByRole("link", {
-      name: /Explore the Lab/i,
+      name: /Explore Interactive Lab/i,
     });
     expect(labLink).toHaveAttribute("href", ROUTES.lab.root);
   });
@@ -97,12 +97,12 @@ describe("AboutHero Component", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/مهندس سیستم‌ها و توسعه‌دهنده فول‌استک/i),
+      screen.getByText(/کارشناس ارشد فناوری اطلاعات \(IT\) و توسعه‌دهنده وب/i),
     ).toBeInTheDocument();
 
     expect(
       screen.getByText(
-        /«من سیستم‌هایی می‌سازم که شکست نمی‌خورند — پایداری ابسیدین، بدون هیچ مصالحه‌ای.»/i,
+        /«پیوند معماری مدرن وب، راهکارهای داده‌محور هوش تجاری و زیرساخت‌های پایدار.»/i,
       ),
     ).toBeInTheDocument();
   });

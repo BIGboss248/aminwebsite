@@ -41,14 +41,14 @@ describe("AcademicResearchSection Component", () => {
 
     expect(
       screen.getByText(
-        /Deep Learning Approaches in Time-Series Forecasting & Financial Volatility/i,
+        /Designing and Evaluating a Hybrid NLP and Machine Learning Model in Financial News Sentiment Analysis/i,
       ),
     ).toBeInTheDocument();
 
-    expect(screen.getByText("10.1000/ijacs.2024.0892")).toBeInTheDocument();
+    expect(screen.getByText("10.61838/jafci.485")).toBeInTheDocument();
     expect(screen.getByText("ORCID Researcher Identity")).toBeInTheDocument();
     expect(
-      screen.getByText("Full-Stack Web Architecture Specialization"),
+      screen.getByText("Google AI & Generative AI Content and Prompt Optimization"),
     ).toBeInTheDocument();
   });
 

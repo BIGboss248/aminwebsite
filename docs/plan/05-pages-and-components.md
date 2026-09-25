@@ -84,11 +84,16 @@
   - [ ] **Section: Header & Value Intro**
     - [ ] `ProjectsHero` - Archive introduction and filter summary
   - [ ] **Section: Category Filter & Search Bar**
-    - [ ] `ProjectFilterTabs` - Interactive tabs (All, Full-Stack, Systems/Networking, Web Design, Open Source)
+    - [ ] `ProjectFilterTabs` - Interactive tabs (All, Full-Stack / E-Commerce, Systems & Automation, Financial AI & BI, Academic Research)
     - [ ] `ProjectSearchBar` - Real-time keyword filter for case studies
-  - [ ] **Section: Projects Showcase Grid**
+  - [ ] **Section: Projects Showcase Grid (Resume Case Studies)**
     - [ ] `ProjectArchiveGrid` - Comprehensive responsive grid
     - [ ] `CaseStudyCard` - High-density project card with metrics, architecture tags, and live links
+    - [ ] **Case Study 1: Setayesh Parts (`/projects/setayesh-parts`)** - Commercial & E-Commerce Web Platform (Next.js, Payload CMS, Docker VPS, GitHub Actions CI/CD, Cloudflare CDN)
+    - [ ] **Case Study 2: Bahar Trade Co. Web Platform (`/projects/bahar-trade-web`)** - Enterprise Corporate Web & CMS Engine (Next.js SSR, Payload CMS, Technical SEO, B2B Conversion Rate Optimization)
+    - [ ] **Case Study 3: ParsBERT-XGBoost Commodity Volatility Model (`/projects/parsbert-ime-forecasting`)** - Hybrid NLP & Financial Sentiment Forecasting Platform (ParsBERT, XGBoost, LSTM, IME Time-Series, DOI: `10.61838/jafci.485`)
+    - [ ] **Case Study 4: DQN & LSTM Volatility Analysis Engine (`/projects/dqn-commodity-forex-analysis`)** - Reinforcement Learning & Machine Learning Market System (Deep Q-Network, LSTM, Commodity & Forex Volatility, DOI: `10.61838/bmfopen.545`)
+    - [ ] **Case Study 5: Bahar Trade IT Automation & Database Tuning (`/projects/bahar-trade-it-automation`)** - Enterprise Linux Infrastructure Automation & PostgreSQL Optimization (Bash Scripting, SQL Query Tuning, Next.js SSR, DOI: `10.61838/msesj.477`)
   - [ ] **Section: Open Source & Repositories**
     - [ ] `OpenSourceShowcase` - GitHub open-source repositories and utility tools
     - [ ] `GithubRepoCard` - Real-time star count, language badge, and repo link
@@ -100,10 +105,10 @@
     - [ ] `error.tsx` - Route error boundary
     - [ ] `generateMetadata` - Dynamic case study title, description, and OpenGraph image
     - [ ] `JSON-LD Schema` - Structured data (`TechArticle` / `Article`)
-    - [ ] `generateStaticParams()` - Static paths generation for all slug & locale permutations
+    - [ ] `generateStaticParams()` - Static paths generation for all 5 project slug & locale permutations (`setayesh-parts`, `bahar-trade-web`, `parsbert-ime-forecasting`, `dqn-commodity-forex-analysis`, `bahar-trade-it-automation`)
   - [ ] **Section: Case Study Header & Metrics**
     - [ ] `CaseStudyHero` - Title, time horizon, client domain, and deployed live preview link
-    - [ ] `MetricBadgeRow` - Highlighted production impact metrics (cache hits, latency drops)
+    - [ ] `MetricBadgeRow` - Highlighted production impact metrics (cache hits, latency drops, accuracy scores, Sharpe ratios)
   - [ ] **Section: Problem Statement & Architecture**
     - [ ] `ProblemStatementBlock` - Background context, constraints, and requirements
     - [ ] `ArchitectureDiagramViewer` - Interactive system architecture diagram with component boundaries

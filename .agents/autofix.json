@@ -220,5 +220,11 @@
     "Category": "PROCESS",
     "Instruction": "In Next.js component development workflows ('nextjs-component-dev'), ensure the Next.js development server is active before developing by checking and tuning into any running instance via 'next-devtools' MCP server ('nextjs_index') or launching it in the background if absent, and utilize 'next-devtools' MCP tools ('nextjs_call', 'get_errors') to detect, diagnose, and resolve any runtime issues, compilation breaks, or hydration mismatches immediately after component authoring.",
     "Why": "user explicit requirement: run dev server first or tune into it via next-devtools MCP server and use next-devtools MCP server to debug any issues after component dev"
+  },
+  {
+    "Rule_number": 38,
+    "Category": "ARCH",
+    "Instruction": "In portfolio content, case studies, metadata, and messaging, never generate synthetic/fake web metrics, fabricated client testimonials, or invented mock case studies; prioritize recruiter credibility by highlighting genuine, verifiable engineering deliverables, real-world systems (e.g. Setayesh Parts, Bahar Trade), real published research (DOIs), and authentic technical competencies with an approachable, warm, and collaborative tone.",
+    "Why": "user explicit requirement: value recruiters more, avoid fake web metrics and synthetic case studies, and present authentic projects"
   }
 ]

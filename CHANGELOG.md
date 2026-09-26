@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/BIGboss248/aminwebsite/compare/v1.7.1...v1.8.0) (2026-09-26)
+
+
+### Features
+
+* content updates ([5047e06](https://github.com/BIGboss248/aminwebsite/commit/5047e06412a536c9da17ed5fdafed33229cb21d3))
+* ip leak labs ([059ba27](https://github.com/BIGboss248/aminwebsite/commit/059ba270177d059e6f4f78f454acccb00ead0770))
+
 ## [1.7.1](https://github.com/BIGboss248/aminwebsite/compare/v1.7.0...v1.7.1) (2026-09-25)
 
 

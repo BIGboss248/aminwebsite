@@ -160,24 +160,24 @@
   - [x] **Section: Export & Sharing**
     - [x] `ExportDohResultsButton` - Copy JSON / Shareable benchmark URL
 
-- [ ] **Page: Lab - IP & Identity Leak Scanner (`/[locale]/lab/ipinfo`)**
-  - [ ] **Page Infrastructure & SEO**
-    - [ ] `page.tsx` - IP leak scanner view
-    - [ ] `loading.tsx` - Skeleton loader
-    - [ ] `error.tsx` - Error boundary
-    - [ ] `generateMetadata` - Tool-specific title & description
-    - [ ] `generateStaticParams()` - Static locale params generation
-  - [ ] **Section: Scanner Header**
-    - [ ] `IpScanHeader` - Real-time identity diagnostic title and explanation
-  - [ ] **Section: Leak Detection Grid**
-    - [ ] `PublicIpCard` - Public IPv4/IPv6, ISP, ASN, and organization details
-    - [ ] `WebRtcLeakCard` - STUN/TURN server leak probe checking for local/private IP exposure
-    - [ ] `DnsLeakCard` - Transparent DNS resolver leak detector
-    - [ ] `TimezoneMismatchCard` - System clock vs IP geolocation timezone alignment check
-  - [ ] **Section: Geolocation Map & Routing**
-    - [ ] `GeoLocationMap` - Client-rendered map showing detected physical location coordinates
-  - [ ] **Section: Mitigation Guidance**
-    - [ ] `LeakMitigationAdvice` - Actionable advice for hardening proxy and VPN tunnels
+- [x] **Page: Lab - IP & Identity Leak Scanner (`/[locale]/lab/ipinfo`)**
+  - [x] **Page Infrastructure & SEO**
+    - [x] `page.tsx` - IP leak scanner view
+    - [x] `loading.tsx` - Skeleton loader
+    - [x] `error.tsx` - Error boundary
+    - [x] `generateMetadata` - Tool-specific title & description
+    - [x] `generateStaticParams()` - Static locale params generation
+  - [x] **Section: Scanner Header**
+    - [x] `IpScanHeader` - Real-time identity diagnostic title and explanation
+  - [x] **Section: Leak Detection Grid**
+    - [x] `PublicIpCard` - Public IPv4/IPv6, ISP, ASN, and organization details
+    - [x] `WebRtcLeakCard` - STUN/TURN server leak probe checking for local/private IP exposure
+    - [x] `DnsLeakCard` - Transparent DNS resolver leak detector
+    - [x] `TimezoneMismatchCard` - System clock vs IP geolocation timezone alignment check
+  - [x] **Section: Geolocation Map & Routing**
+    - [x] `GeoLocationMap` - Client-rendered map showing detected physical location coordinates
+  - [x] **Section: Mitigation Guidance**
+    - [x] `LeakMitigationAdvice` - Actionable advice for hardening proxy and VPN tunnels
 
 - [ ] **Page: Lab - Client Device Fingerprint Inspector (`/[locale]/lab/fingerprint`)**
   - [ ] **Page Infrastructure & SEO**

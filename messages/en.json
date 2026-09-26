@@ -832,6 +832,117 @@
         "col_ttl": "TTL",
         "col_data": "Data / Target"
       }
+    },
+    "ipinfo": {
+      "meta": {
+        "title": "IP & Identity Leak Scanner | Amin Jamali Systems Lab",
+        "description": "Real-time client-side identity & privacy leak diagnostic probe. Audit WebRTC socket candidate leaks, test IPv4/IPv6 dual-stack routing, and verify browser timezone synchronization."
+      },
+      "header": {
+        "eyebrow": "// IDENTITY & NETWORK OBSERVATORY // PROBE_02",
+        "badge": "RFC 5389 & WEBRTC CANDIDATE PROBE",
+        "title": "IP & Identity Leak Scanner",
+        "description": "Audit real-time WebRTC socket candidate leaks, test IPv4/IPv6 dual-stack public routing, verify ASN/ISP autonomous system metadata, and detect browser vs. system clock timezone desynchronization directly within your browser.",
+        "back_to_lab": "Return to Lab Hub"
+      },
+      "methodology": {
+        "badge": "PROTOCOL METHODOLOGY",
+        "title": "WebRTC STUN Mechanics & Leak Vectors",
+        "description": "Modern browsers employ WebRTC for real-time peer-to-peer audio and video communication. During Interactive Connectivity Establishment (ICE), the browser contacts STUN servers (RFC 5389) to discover public and local routing addresses.",
+        "webrtc_title": "WebRTC Socket Candidates",
+        "webrtc_desc": "STUN queries bypass HTTP/SOCKS proxies, requesting the router's external NAT endpoint and revealing your true public IP even when connected to standard browser proxy extensions.",
+        "dns_title": "Transparent DNS Interception",
+        "dns_desc": "If your upstream DNS traffic does not match your active VPN gateway ASN, your operating system is leaking queries to your local ISP's transparent resolver.",
+        "tz_title": "Timezone Drift Fingerprinting",
+        "tz_desc": "Ad networks and anti-fraud engines compare Javascript Intl.DateTimeFormat() against the IP geolocation database timezone to detect proxy usage."
+      },
+      "controller": {
+        "scan_now": "Scan Identity Vectors Now",
+        "scanning": "Gathering ICE Candidates & IP Geolocation...",
+        "copy_json": "Copy Diagnostic JSON",
+        "copied": "Copied to Clipboard!",
+        "score_label": "Identity Privacy Score",
+        "score_desc": "Evaluated based on WebRTC candidate isolation, public IP anonymity, DNS routing alignment, and timezone synchronization.",
+        "status_secure": "PROTECTED // NO LEAK",
+        "status_warning": "EXPOSURE // SUB-OPTIMAL",
+        "status_critical": "CRITICAL // LEAK DETECTED",
+        "last_scan_label": "Last Diagnostic Audit"
+      },
+      "public_ip": {
+        "title": "Public IP & Autonomous System (ASN)",
+        "ipv4_label": "Public IPv4 Address",
+        "ipv6_label": "Public IPv6 Address",
+        "isp_label": "Internet Service Provider (ISP)",
+        "asn_label": "Autonomous System Number (ASN)",
+        "location_label": "Physical Geolocation",
+        "dual_stack_active": "Dual-Stack Active (IPv4 + IPv6)",
+        "single_stack_ipv4": "Single-Stack (IPv4 Only)",
+        "not_detected": "Not Detected / Offline",
+        "datacenter_vpn_tag": "Datacenter / VPN Gateway",
+        "residential_tag": "Residential / Consumer ISP",
+        "secure_badge": "Public Route Verified",
+        "coords_label": "Coordinates",
+        "postal_label": "Postal Code"
+      },
+      "webrtc": {
+        "title": "WebRTC ICE Candidate Leak Probe",
+        "badge_secure": "SECURE // NO IP LEAK",
+        "badge_leaked": "LEAK DETECTED // REAL IP EXPOSED",
+        "badge_local_exposed": "LOCAL PRIVATE IP EXPOSED",
+        "badge_disabled": "WEBRTC DISABLED / BLOCKED",
+        "desc_secure": "No candidate leak detected. WebRTC STUN requests cleanly match your external public IP address or use masked mDNS candidates.",
+        "desc_leaked": "WebRTC STUN request bypassed your proxy/VPN and exposed your real ISP public IP address.",
+        "desc_local": "WebRTC exposed your local internal network IP (LAN subnet) or host candidate interface.",
+        "candidates_label": "Discovered ICE Candidates",
+        "type_srflx": "Server Reflexive (STUN Public Endpoint)",
+        "type_host": "Host Candidate (Local Interface / mDNS)",
+        "type_relay": "Relay Candidate (TURN Gateway)",
+        "no_candidates": "No raw candidate strings leaked from browser socket."
+      },
+      "dns": {
+        "title": "Transparent DNS Leak Detector",
+        "badge_secure": "ENCRYPTED / MATCHED ASN",
+        "badge_mismatch": "POTENTIAL DNS LEAK",
+        "badge_transparent": "LOCAL ISP RESOLVER DETECTED",
+        "desc_secure": "DNS resolution routes through an encrypted resolver or matches your active gateway ASN.",
+        "desc_mismatch": "DNS resolver ASN does not match your public IP network routing. Queries may be visible to intermediate providers.",
+        "resolver_label": "Active DNS Gateway",
+        "asn_label": "Resolver ASN",
+        "isp_label": "Resolver Organization",
+        "protocol_label": "Transport Protocol"
+      },
+      "timezone": {
+        "title": "Timezone & Clock Drift Inspector",
+        "badge_match": "SYNCHRONIZED // MATCHED",
+        "badge_mismatch": "DRIFT DETECTED // MISMATCH",
+        "desc_match": "Browser Intl clock timezone perfectly matches the IP geolocation timezone. Zero entropy drift detected.",
+        "desc_mismatch": "System timezone does not align with your IP geolocation. This disparity is frequently flagged by anti-fraud heuristics.",
+        "system_tz_label": "System Clock Timezone",
+        "geo_tz_label": "IP Geolocation Timezone",
+        "offset_diff_label": "Offset Disparity",
+        "local_time_label": "System Local Time"
+      },
+      "map": {
+        "title": "Geographic Route Visualization",
+        "coordinates_label": "Detected Coordinates",
+        "accuracy_label": "Estimated Geo Radius",
+        "city_label": "City",
+        "country_label": "Country / Region",
+        "live_vector_tag": "CLIENT GEOLOCATION HUD",
+        "approx_notice": "Location is estimated from public BGP routing tables with zero device GPS access."
+      },
+      "mitigation": {
+        "title": "Identity Hardening & Leak Mitigation",
+        "subtitle": "Recommended defense-in-depth measures to eliminate browser fingerprinting and socket leaks.",
+        "item1_title": "Enforce WebRTC mDNS or Disable Media PeerConnection",
+        "item1_desc": "In Firefox, set 'media.peerconnection.enabled = false' in about:config. In Chromium browsers, install extensions or enable strict mDNS candidate masking to prevent STUN IP discovery.",
+        "item2_title": "Configure System-Wide DNS over HTTPS (DoH)",
+        "item2_desc": "Set your OS or router DNS to 1.1.1.1 (Cloudflare) or 9.9.9.9 (Quad9) with strict DoH/DoT encryption to prevent ISP transparent proxy interception.",
+        "item3_title": "Align System Timezone with Gateway Proxy",
+        "item3_desc": "When tunneling through international VPN endpoints, synchronize your operating system clock timezone with the destination server region to defeat entropy checks.",
+        "item4_title": "Disable IPv6 if Using IPv4-Only VPN Tunnels",
+        "item4_desc": "Ensure your VPN client has native IPv6 leak protection enabled, or disable IPv6 on the network adapter if your provider only tunnels IPv4 packets."
+      }
     }
   }
 }

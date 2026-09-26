@@ -70,47 +70,47 @@ describe("TrustSignalsSection (Baseline TDD)", () => {
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: /Empirical Proof & Verifiable Systems Rigor/i,
+        name: /Grounded Engineering Rigor & Verified Credentials/i,
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Grounded in audited production benchmarks, dual academic foundations, and certified industry engineering specializations\./i,
+        /Backed by production deployments, dual academic degrees, peer-reviewed research, and certified industry specializations\./i,
       ),
     ).toBeInTheDocument();
 
     // Cell 1: Production Web Vitals
-    expect(screen.getByText(/PRODUCTION VERIFIED/i)).toBeInTheDocument();
-    expect(screen.getByText(/Sub-Second LCP/i)).toBeInTheDocument();
-    expect(screen.getByText(/< 0\.8s/i)).toBeInTheDocument();
-    expect(screen.getByText(/Audited Score/i)).toBeInTheDocument();
-    expect(screen.getByText(/99\+/i)).toBeInTheDocument();
-    expect(screen.getByText(/Zero Visual Shift/i)).toBeInTheDocument();
-    expect(screen.getByText(/0\.00/i)).toBeInTheDocument();
+    expect(screen.getByText(/PRODUCTION EXPERTISE/i)).toBeInTheDocument();
+    expect(screen.getByText(/5\+ Yrs/i)).toBeInTheDocument();
+    expect(screen.getByText(/Production Experience/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/100%/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/Type-Safe & Tested/i)).toBeInTheDocument();
+    expect(screen.getByText(/Docker/i)).toBeInTheDocument();
+    expect(screen.getByText(/OCI Containerized/i)).toBeInTheDocument();
 
     // Cell 2: Dual Academic Foundation
     expect(screen.getByText(/DUAL B\.S\. DEGREES/i)).toBeInTheDocument();
-    expect(screen.getByText(/B\.S\. in Computer Science/i)).toBeInTheDocument();
+    expect(screen.getByText(/B\.S\. in Computer Engineering/i)).toBeInTheDocument();
     expect(
       screen.getByText(/B\.S\. in Financial Management/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Systems Architecture × Business Logic/i),
+      screen.getByText(/Software Engineering × Financial Intelligence/i),
     ).toBeInTheDocument();
 
     // Cell 3: Professional Certifications
     expect(screen.getByText(/VERIFIED SPECIALIZATIONS/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Full-Stack Web Architecture/i),
+      screen.getByText(/Google AI & Prompt Optimization/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Deep Learning & Neural Networks/i),
+      screen.getByText(/React Foundations for Next\.js/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Cloud Systems & DevOps Automation/i),
+      screen.getByText(/DevOps, Cloud & Containers/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Advanced TypeScript & Modern React/i),
+      screen.getByText(/AWS Cloud Quest Tracks/i),
     ).toBeInTheDocument();
 
     // Cell 4: Bilingual Fluency
@@ -127,18 +127,20 @@ describe("TrustSignalsSection (Baseline TDD)", () => {
     render(<TrustSignalsSection locale="fa" />);
 
     expect(
-      screen.getByText(/\/\/ ۰۱\. مدارک تأیید شده و معیارهای عملیاتی/i),
+      screen.getByText(/\/\/ ۰۱\. مدارک تأیید شده و توانمندی‌های عملیاتی/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: /اثبات تجربی و دقت مهندسی در سطح سامانه‌ها/i,
+        name: /دقت مهندسی مبتنی بر پروژه‌های واقعی و مدارج معتبر/i,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/تأیید شده در محیط عملیاتی/i)).toBeInTheDocument();
-    expect(screen.getByText(/کارشناسی علوم کامپیوتر/i)).toBeInTheDocument();
+    expect(screen.getByText(/تخصص در محیط عملیاتی/i)).toBeInTheDocument();
+    expect(screen.getByText(/کارشناسی مهندسی کامپیوتر/i)).toBeInTheDocument();
     expect(screen.getByText(/کارشناسی مدیریت مالی/i)).toBeInTheDocument();
-    expect(screen.getByText(/تخصص‌های تأیید شده/i)).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/تخصص‌های تأیید شده/i).length,
+    ).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/فارسی \(Persian\)/i)).toBeInTheDocument();
   });
 
@@ -181,19 +183,19 @@ describe("TrustSignalsSection (Baseline TDD)", () => {
     render(<TrustSignalsSection locale="en" />);
 
     const section = screen.getByRole("region", {
-      name: /Empirical Proof & Verifiable Systems Rigor/i,
+      name: /Grounded Engineering Rigor & Verified Credentials/i,
     });
     expect(section).toBeInTheDocument();
 
     // Check accessible metric labels
     expect(
-      screen.getByLabelText(/Largest Contentful Paint: less than 0.8 seconds/i),
+      screen.getByLabelText(/More than 5 years of production experience/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByLabelText(/Lighthouse Performance Score: 99 plus/i),
+      screen.getByLabelText(/100% strict TypeScript type safety/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByLabelText(/Cumulative Layout Shift: zero visual shift/i),
+      screen.getByLabelText(/Production Docker containerized architecture/i),
     ).toBeInTheDocument();
   });
 

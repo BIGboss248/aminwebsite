@@ -66,71 +66,71 @@ describe("FeaturedProjectsGrid (Baseline TDD)", () => {
 
     // Eyebrow & Main Section Headline
     expect(
-      screen.getByText(/\/\/ 02\. FEATURED ENGINEERING SYSTEMS/i),
+      screen.getByText(/\/\/ 02\. FEATURED ENGINEERING PROJECTS/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: /Selected Case Studies & Delivered Systems/i,
+        name: /Real-World Projects & Delivered Systems/i,
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /High-impact production systems spanning enterprise web platforms, high-throughput e-commerce engines, and cross-platform mobile apps\./i,
+        /Production web platforms, commercial e-commerce engines, enterprise infrastructure automation, and applied machine learning research\./i,
       ),
     ).toBeInTheDocument();
 
-    // CASE 01: Enterprise Corporate Platform
-    expect(screen.getByText(/CASE_01 \/\/ WEB_PLATFORM/i)).toBeInTheDocument();
+    // CASE 01: Commercial E-Commerce Platform (Setayesh Parts)
+    expect(screen.getByText(/COMMERCIAL \/\/ E-COMMERCE/i)).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 3,
-        name: /Enterprise Corporate Platform/i,
+        name: /Setayesh Parts Platform/i,
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Full-Stack Architecture & Web Vitals/i),
+      screen.getByText(/Full-Stack Web Architecture & Deployment/i),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /High-performance corporate web platform engineered with Next.js App Router/i,
+        /Commercial auto parts e-commerce platform with Payload CMS, customer authentication, online payment gateway, and self-hosted Docker CI\/CD\./i,
       ),
     ).toBeInTheDocument();
 
-    // CASE 02: High-Throughput E-Commerce Platform
-    expect(screen.getByText(/CASE_02 \/\/ COMMERCE_ENGINE/i)).toBeInTheDocument();
+    // CASE 02: Enterprise Corporate Web Platform (Bahar Trade)
+    expect(screen.getByText(/ENTERPRISE \/\/ CORPORATE WEB/i)).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 3,
-        name: /High-Throughput E-Commerce Platform/i,
+        name: /Bahar Trade Corporate Platform/i,
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Commerce Architecture & Inventory State/i),
+      screen.getByText(/Web Engineering & Technical SEO/i),
     ).toBeInTheDocument();
 
-    // CASE 03: Cross-Platform Note-Taking App
-    expect(screen.getByText(/CASE_03 \/\/ MOBILE_APP/i)).toBeInTheDocument();
+    // CASE 03: Applied AI NLP Research (ParsBERT)
+    expect(screen.getByText(/APPLIED AI \/\/ RESEARCH/i)).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 3,
-        name: /Cross-Platform Note-Taking App/i,
+        name: /ParsBERT NLP Commodity Forecasting/i,
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Mobile State & Local-First Persistence/i),
+      screen.getByText(/Machine Learning & Sentiment Analysis/i),
     ).toBeInTheDocument();
-    expect(screen.getAllByText(/Flutter/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/ParsBERT/i).length).toBeGreaterThanOrEqual(1);
 
     // Action links
     const caseStudyLinks = screen.getAllByRole("link", {
-      name: /View Case Study/i,
+      name: /View Project Details/i,
     });
     expect(caseStudyLinks).toHaveLength(3);
 
     // View All buttons (desktop + mobile)
     const viewAllLinks = screen.getAllByRole("link", {
-      name: /Explore All Case Studies/i,
+      name: /Explore All Projects/i,
     });
     expect(viewAllLinks.length).toBeGreaterThanOrEqual(1);
     expect(viewAllLinks[0]).toHaveAttribute("href", ROUTES.projects.root);
@@ -141,30 +141,30 @@ describe("FeaturedProjectsGrid (Baseline TDD)", () => {
     render(<FeaturedProjectsGrid locale="fa" />);
 
     expect(
-      screen.getByText(/\/\/ ۰۲\. سامانه‌ها و پروژه‌های شاخص/i),
+      screen.getByText(/\/\/ ۰۲\. پروژه‌های شاخص و سامانه‌های توسعه‌یافته/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: /مطالعات موردی منتخب و سیستم‌های توسعه‌یافته/i,
+        name: /پروژه‌های عملیاتی واقعی و سیستم‌های تحویل‌شده/i,
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 3,
-        name: /پلتفرم سازمانی شرکت تجاری/i,
+        name: /پلتفرم فروشگاهی قطعات یدکی ستایش/i,
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 3,
-        name: /پلتفرم فروشگاهی و تجارت الکترونیک/i,
+        name: /سامانه وب شرکت بهار تجارت/i,
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 3,
-        name: /اپلیکیشن یادداشت‌برداری چندسکویی/i,
+        name: /پیش‌بینی نوسانات بورس کالا با ParsBERT/i,
       }),
     ).toBeInTheDocument();
   });
@@ -208,7 +208,7 @@ describe("FeaturedProjectsGrid (Baseline TDD)", () => {
       }),
     ).toBeInTheDocument();
     const customViewAllLinks = screen.getAllByRole("link", {
-      name: /Explore All Case Studies/i,
+      name: /Explore All Projects/i,
     });
     expect(customViewAllLinks[0]).toHaveAttribute("href", "/custom-projects-link");
   });

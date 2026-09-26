@@ -62,7 +62,7 @@ describe("FeaturedProjectsGrid (Adversarial & Edge Cases)", () => {
     );
 
     const section = screen.getByRole("region", {
-      name: /Selected Case Studies & Delivered Systems/i,
+      name: /Real-World Projects & Delivered Systems/i,
     });
     expect(section).toBeInTheDocument();
     expect(container.querySelectorAll("article")).toHaveLength(0);

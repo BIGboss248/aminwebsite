@@ -106,7 +106,7 @@ describe("TrustSignalsSection (Adversarial Edge Cases & Stress Tests)", () => {
       expect(
         screen.getByRole("heading", {
           level: 2,
-          name: /Empirical Proof & Verifiable Systems Rigor/i,
+          name: /Grounded Engineering Rigor & Verified Credentials/i,
         }),
       ).toBeInTheDocument();
     });

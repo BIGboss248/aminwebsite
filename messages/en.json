@@ -944,5 +944,34 @@
         "item4_desc": "Ensure your VPN client has native IPv6 leak protection enabled, or disable IPv6 on the network adapter if your provider only tunnels IPv4 packets."
       }
     }
+  },
+  "single_page": {
+    "meta": {
+      "title": "Amin Jamali | Systems Architecture & Full-Stack Engineering",
+      "description": "Single-page developer cockpit, systems architecture, verified credentials, full-stack projects, and direct contact inquiry with Amin Jamali."
+    },
+    "hero": {
+      "system_profile_badge": "[ SYS_PROFILE // LEAD_IT_WEB_SPECIALIST ]",
+      "role_title": "IT Specialist & Full-Stack Web Developer",
+      "role_kernel": "NEXT.JS / TYPESCRIPT / BI & DATA SYSTEMS",
+      "philosophy_quote": "\"Bridging modern web architectures, data-driven BI solutions, and rock-solid infrastructure.\"",
+      "bio_lead": "Multidisciplinary IT specialist and senior web engineer with 5+ years of experience bridging Next.js/TypeScript architecture, enterprise IT infrastructure automation, BI implementations, generative AI workflows, and financial data analysis.",
+      "cta_projects": "View Projects & Case Studies",
+      "cta_lab": "Explore Interactive Lab",
+      "uptime_label": "EXPERIENCE",
+      "uptime_val": "5+ Years",
+      "latency_label": "DEGREES",
+      "latency_val": "Dual B.S.",
+      "concurrency_label": "RESEARCH",
+      "concurrency_val": "Peer-Reviewed",
+      "portrait_alt": "Amin Jamali — IT Specialist & Web Developer",
+      "identity_verified": "IDENTITY: VERIFIED",
+      "architect_key": "ORCID_0009_0004_9921_7273",
+      "spec_title": "CORE_TECHNICAL_SPEC",
+      "spec_arch": "x86_64 // EDGE_SSR // BI_ANALYTICS",
+      "runtime_label": "RUNTIME_STACK:",
+      "runtime_val": "Next.js / TypeScript / Python / Docker / SQL",
+      "loading": "Loading single-page hero section"
+    }
   }
 }

@@ -210,6 +210,39 @@
   - [x] **Section: Socials Showcase Block**
     - [x] `SocialsBlock` - Showcase cards linking to LinkedIn, GitHub, and ORCID profiles
 
+- [ ] **Page: Single-Page Website (`/[locale]/single-page`)**
+  - [x] **Page Infrastructure & SEO**
+    - [x] `page.tsx` - Unified single-page layout assembly and section orchestration (`#hero`, `#projects`, `#certifications`, `#contact`)
+    - [x] `loading.tsx` - Streaming loading skeleton fallback for single-page experience
+    - [x] `error.tsx` - Localized route error boundary
+    - [x] `generateMetadata` - Localized single-page title, description, and OpenGraph/Twitter cards
+    - [x] `JSON-LD Schema` - Structured data (`WebSite` / `ProfilePage` / `Person`)
+    - [x] `generateStaticParams()` - Static locale parameters generation (`en`, `fa`)
+  - [ ] **Section: Viewport Scroll-Spy Sticky Navigation Bar (`app/components/single-page/SinglePageNavbar`)**
+    - [ ] `SinglePageNavbar` - Viewport-aware scroll-spy navigation (IntersectionObserver) tracking and highlighting active in-view section, smooth anchor navigation, language switcher (EN/FA), and theme toggle
+    - [ ] `SinglePageNavbarSkeleton` - Skeleton fallback for single-page navigation bar
+    - [ ] `SinglePageMobileNav` - Responsive mobile slide-out drawer with active scroll-spy section links
+  - [x] **Section: Hero - Narrative Bio & Systems Philosophy (`app/components/single-page/SinglePageHero`)**
+    - [x] `SinglePageHero` - Hero section adapting and reusing `AboutHero` (headline narrative, author portrait/visual, core engineering philosophy, and immediate CTA jump anchors)
+    - [x] `SinglePageHeroSkeleton` - Suspense skeleton fallback for hero section
+  - [ ] **Section: Projects & Research Showcase (`app/components/single-page/SinglePageProjectsSection`)**
+    - [ ] `SinglePageProjectsSection` - Responsive projects grid container highlighting authentic engineering systems and published research
+    - [ ] `SinglePageProjectCard` - Showcase card featuring tech stack badges, verifiable metrics, direct external links to GitHub repositories, live web deployments, and DOI research publications
+    - [ ] `SinglePageProjectsSkeleton` - Suspense skeleton fallback for projects grid
+  - [ ] **Section: Top 4 Certifications & LinkedIn Showcase (`app/components/single-page/SinglePageCertificationsSection`)**
+    - [ ] `SinglePageCertificationsSection` - Showcase section presenting top 4 professional course certifications and verified credentials
+    - [ ] `CertificationCard` - Credential card detailing certificate title, issuing platform/institution, credential ID, and verification link
+    - [ ] `LinkedInProfileBanner` - Prominent callout card linking directly to LinkedIn profile and professional network
+    - [ ] `SinglePageCertificationsSkeleton` - Suspense skeleton fallback for certifications section
+  - [ ] **Section: Contact & Direct Inquiry (`app/components/single-page/SinglePageContactSection`)**
+    - [ ] `SinglePageContactSection` - Bottom-of-page contact container integrating `ContactForm` and communication channels
+    - [ ] `ContactForm` Integration - Clean inquiry form with Name, Email, Subject, and Message inputs
+    - [ ] `SinglePageContactSkeleton` - Suspense skeleton fallback for contact section
+  - [ ] **Section: Single-Page Footer (`app/components/single-page/SinglePageFooter`)**
+    - [ ] `SinglePageFooter` - Lightweight footer with quick anchor navigation, copyright, and social links
+  - [ ] **Milestone: Production Page Swap Transition**
+    - [ ] `SinglePageSwap` - Validated transition to swap `/[locale]/single-page` with root `/[locale]` (Home) while preserving standalone route access
+
 - [ ] **Page: System & Error Pages**
   - [ ] **Section: 404 Not Found (`not-found.tsx` / `[locale]/not-found.tsx`)**
     - [ ] `NotFoundHero` - Branded creative 404 headline with developer easter egg

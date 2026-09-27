@@ -21,6 +21,7 @@ export const ROUTES = {
     fingerprint: "/lab/fingerprint",
   },
   contact: "/contact",
+  singlePage: "/single-page",
   api: {
     health: "/api/health",
     telemetry: "/api/telemetry/vitals",

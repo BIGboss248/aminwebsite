@@ -19,6 +19,7 @@
 │   ├── /lab/ipinfo           # IP & Identity Leak Vector detector (WebRTC, DNS, timezone)
 │   └── /lab/fingerprint      # Client device fingerprinting inspector (Canvas, WebGL, Audio)
 ├── /contact                  # Contact channels, PGP key, secure inquiry form
+├── /single-page              # Unified single-page portfolio (scroll-spy, hero, projects, certs, contact)
 └── /api                      # Edge and Node.js Route Handlers
     ├── /api/health           # Container liveness & readiness probe (heap, event loop, DB)
     ├── /api/telemetry/vitals # Web Vitals beacon ingestion
@@ -41,6 +42,7 @@
 | `/lab/ipinfo`      | **Hybrid (SSR + CSR)**           | Dynamic request context                  | WebRTC socket detection, IP geolocation map       | Server extracts headers, client tests WebRTC leaks |
 | `/lab/fingerprint` | **CSR**                          | Client-only calculation                  | Canvas / WebGL canvas rendering, hash display     | Deterministic browser signature generation         |
 | `/contact`         | **SSG**                          | Static page shell                        | Form validation state (`react-hook-form` + `zod`) | Direct contact inquiry interface                   |
+| `/single-page`     | **SSG** (`generateStaticParams`) | Static at build; cached on CDN           | Scroll-spy navbar, contact form, interactive CTAs | Unified single-page experience (swap candidate)   |
 | `/api/health`      | **Dynamic SSR**                  | `export const dynamic = 'force-dynamic'` | Pure JSON response                                | Kubernetes / Docker health check probe             |
 | `/api/contact`     | **Dynamic SSR**                  | Server function or POST handler          | Pure JSON response                                | Validates and dispatches contact emails            |
 
@@ -69,7 +71,24 @@
 8. **Site Footer**:
    - Centralized author information from `lib/site-config.ts`, copyright, social links, RSS/sitemap links.
 
-### 3.2 Case Study Detail Page (`/projects/[slug]`)
+### 3.2 Single-Page Website (`/single-page`)
+
+1. **Scroll-Spy Sticky Navigation Bar (`SinglePageNavbar`)**:
+   - Viewport-aware Intersection Observer tracking active sections (`#hero`, `#projects`, `#certifications`, `#contact`).
+   - Smooth anchor navigation jumping, localized language switcher, and theme toggle.
+2. **Hero Section (`AboutHero` Adaptation / `SinglePageHero`)**:
+   - Headline narrative, author portrait/visual, core systems engineering philosophy, and immediate CTA links.
+3. **Projects & Research Showcase (`SinglePageProjectsSection`)**:
+   - High-density project showcase linking directly to external URLs: GitHub repositories, live web applications, and peer-reviewed research papers (DOIs).
+4. **Top 4 Certifications & LinkedIn Showcase (`SinglePageCertificationsSection`)**:
+   - Grid highlighting top 4 professional course certifications with credential verifications.
+   - Prominent callout card linking directly to LinkedIn profile.
+5. **Contact Section (`ContactForm` Integration / `SinglePageContactSection`)**:
+   - Placed at the bottom of the page featuring the full contact inquiry form and direct communication channels.
+6. **Single-Page Footer (`SinglePageFooter`)**:
+   - Lightweight footer with anchor navigation, copyright, and social links.
+
+### 3.3 Case Study Detail Page (`/projects/[slug]`)
 
 1. **Case Study Header**: Project title, time horizon, client/domain, and deployed live link.
 2. **Key Metric Badges**: Performance, scalability, and delivery milestones.
@@ -79,7 +98,7 @@
 6. **Verifiable Results**: Lighthouse audit comparisons and business outcomes.
 7. **Next Case Study Navigation**: Previous / Next project links.
 
-### 3.3 Interactive Lab Pages (`/lab/*`)
+### 3.4 Interactive Lab Pages (`/lab/*`)
 
 1. **Tool Header**: Diagnostic title, explanation of the security/networking mechanism, and methodology.
 2. **Action Controller**: "Run Test" trigger, configuration toggles (e.g. select custom DNS resolver, toggle WebRTC leak test).

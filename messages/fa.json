@@ -972,6 +972,18 @@
       "runtime_label": "پشته زمان اجرا:",
       "runtime_val": "Next.js / TypeScript / Python / Docker / SQL",
       "loading": "در حال بارگذاری بخش معرفی صفحه اصلی"
+    },
+    "nav": {
+      "brand_cockpit": "ناوبری",
+      "hero": "معرفی",
+      "projects": "پروژه‌ها",
+      "certifications": "گواهینامه‌ها",
+      "contact": "تماس",
+      "main_nav": "ناوبری هوشمند تک‌صفحه‌ای",
+      "mobile_nav": "منوی موبایل تک‌صفحه‌ای",
+      "toggle_menu": "تغییر وضعیت منوی ناوبری",
+      "close_drawer": "بستن منوی ناوبری",
+      "active_section": "بخش فعال"
     }
   }
 }

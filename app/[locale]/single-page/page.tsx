@@ -4,15 +4,15 @@ import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { SITE_CONFIG } from "@/lib/site-config";
 import {
+  SinglePageNavbar,
+  SinglePageNavbarSkeleton,
   SinglePageHero,
   SinglePageHeroSkeleton,
-} from "@/app/components/single-page/SinglePageHero";
-import {
   ContactForm,
   ContactFormSkeleton,
   SocialsBlock,
   SocialsBlockSkeleton,
-} from "@/app/components/single-page/ContactForm";
+} from "@/app/components/single-page";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -98,6 +98,9 @@ export default async function SinglePage({ params }: SinglePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <Suspense fallback={<SinglePageNavbarSkeleton />}>
+        <SinglePageNavbar activeLocale={locale as "en" | "fa"} />
+      </Suspense>
       <Suspense fallback={<SinglePageHeroSkeleton />}>
         <SinglePageHero locale={locale as "en" | "fa"} />
       </Suspense>

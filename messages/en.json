@@ -972,6 +972,18 @@
       "runtime_label": "RUNTIME_STACK:",
       "runtime_val": "Next.js / TypeScript / Python / Docker / SQL",
       "loading": "Loading single-page hero section"
+    },
+    "nav": {
+      "brand_cockpit": "SPY",
+      "hero": "Overview",
+      "projects": "Projects",
+      "certifications": "Certifications",
+      "contact": "Contact",
+      "main_nav": "Single page scroll-spy navigation",
+      "mobile_nav": "Single page mobile navigation",
+      "toggle_menu": "Toggle navigation menu",
+      "close_drawer": "Close navigation drawer",
+      "active_section": "Active Section"
     }
   }
 }

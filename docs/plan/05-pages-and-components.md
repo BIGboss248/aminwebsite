@@ -218,10 +218,10 @@
     - [x] `generateMetadata` - Localized single-page title, description, and OpenGraph/Twitter cards
     - [x] `JSON-LD Schema` - Structured data (`WebSite` / `ProfilePage` / `Person`)
     - [x] `generateStaticParams()` - Static locale parameters generation (`en`, `fa`)
-  - [ ] **Section: Viewport Scroll-Spy Sticky Navigation Bar (`app/components/single-page/SinglePageNavbar`)**
-    - [ ] `SinglePageNavbar` - Viewport-aware scroll-spy navigation (IntersectionObserver) tracking and highlighting active in-view section, smooth anchor navigation, language switcher (EN/FA), and theme toggle
-    - [ ] `SinglePageNavbarSkeleton` - Skeleton fallback for single-page navigation bar
-    - [ ] `SinglePageMobileNav` - Responsive mobile slide-out drawer with active scroll-spy section links
+  - [x] **Section: Viewport Scroll-Spy Sticky Navigation Bar (`app/components/single-page/SinglePageNavbar`)**
+    - [x] `SinglePageNavbar` - Viewport-aware scroll-spy navigation (IntersectionObserver) tracking and highlighting active in-view section, smooth anchor navigation, language switcher (EN/FA), and theme toggle
+    - [x] `SinglePageNavbarSkeleton` - Skeleton fallback for single-page navigation bar
+    - [x] `SinglePageMobileNav` - Responsive mobile slide-out drawer with active scroll-spy section links
   - [x] **Section: Hero - Narrative Bio & Systems Philosophy (`app/components/single-page/SinglePageHero`)**
     - [x] `SinglePageHero` - Hero section adapting and reusing `AboutHero` (headline narrative, author portrait/visual, core engineering philosophy, and immediate CTA jump anchors)
     - [x] `SinglePageHeroSkeleton` - Suspense skeleton fallback for hero section

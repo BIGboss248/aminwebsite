@@ -1,6 +1,6 @@
 import React from "react";
-import { ContactFormSkeleton } from "@/app/components/contact/ContactForm/ContactFormSkeleton";
-import { SocialsBlockSkeleton } from "@/app/components/contact/SocialsBlock/SocialsBlockSkeleton";
+import { ContactFormSkeleton } from "@/app/components/single-page/ContactForm/ContactForm/ContactFormSkeleton";
+import { SocialsBlockSkeleton } from "@/app/components/single-page/ContactForm/SocialsBlock/SocialsBlockSkeleton";
 
 export default function ContactLoading(): React.JSX.Element {
   return (

@@ -19,6 +19,11 @@ jest.mock("next-intl/server", () => ({
           (enMessages.single_page.meta as Record<string, string>)[key] ?? key
         );
       }
+      if (namespace === "contact.header") {
+        return (
+          (enMessages.contact.header as Record<string, string>)[key] ?? key
+        );
+      }
       if (namespace === "common") {
         return (enMessages.common as Record<string, string>)[key] ?? key;
       }
@@ -33,6 +38,17 @@ jest.mock("@/app/components/single-page/SinglePageHero", () => ({
   ),
   SinglePageHeroSkeleton: () => (
     <div data-testid="single-page-hero-skeleton">SinglePageHeroSkeleton</div>
+  ),
+}));
+
+jest.mock("@/app/components/single-page/ContactForm", () => ({
+  ContactForm: () => <div data-testid="contact-form">ContactForm</div>,
+  ContactFormSkeleton: () => (
+    <div data-testid="contact-form-skeleton">ContactFormSkeleton</div>
+  ),
+  SocialsBlock: () => <div data-testid="socials-block">SocialsBlock</div>,
+  SocialsBlockSkeleton: () => (
+    <div data-testid="socials-block-skeleton">SocialsBlockSkeleton</div>
   ),
 }));
 
@@ -55,12 +71,16 @@ describe("SinglePage Website Page (RSC & SEO)", () => {
     );
   });
 
-  it("renders JSON-LD structured data and single-page hero", async () => {
+  it("renders JSON-LD structured data, single-page hero, and contact section", async () => {
     const pageElement = await SinglePage({
       params: Promise.resolve({ locale: "en" }),
     });
 
-    const { container } = render(pageElement);
+    const { container, getByTestId } = render(pageElement);
+
+    expect(getByTestId("single-page-hero")).toBeInTheDocument();
+    expect(getByTestId("contact-form")).toBeInTheDocument();
+    expect(getByTestId("socials-block")).toBeInTheDocument();
 
     const scriptTag = container.querySelector(
       'script[type="application/ld+json"]',
@@ -69,11 +89,16 @@ describe("SinglePage Website Page (RSC & SEO)", () => {
     const jsonLdData = JSON.parse(scriptTag?.innerHTML || "{}");
 
     expect(jsonLdData["@context"]).toBe("https://schema.org");
-    expect(jsonLdData["@graph"]).toHaveLength(1);
+    expect(jsonLdData["@graph"]).toHaveLength(2);
 
     const webSiteSchema = jsonLdData["@graph"][0];
     expect(webSiteSchema["@type"]).toBe("WebSite");
     expect(webSiteSchema.author["@type"]).toBe("Person");
     expect(webSiteSchema.author.name).toBe("Amin Jamali");
+
+    const contactSchema = jsonLdData["@graph"][1];
+    expect(contactSchema["@type"]).toBe("ContactPage");
+    expect(contactSchema.mainEntity["@type"]).toBe("Person");
+    expect(contactSchema.mainEntity.name).toBe("Amin Jamali");
   });
 });

@@ -25,14 +25,11 @@ jest.mock("next-intl/server", () => ({
   }),
 }));
 
-jest.mock("@/app/components/contact/ContactForm", () => ({
+jest.mock("@/app/components/single-page/ContactForm", () => ({
   ContactForm: () => <div data-testid="contact-form">ContactForm</div>,
   ContactFormSkeleton: () => (
     <div data-testid="contact-form-skeleton">ContactFormSkeleton</div>
   ),
-}));
-
-jest.mock("@/app/components/contact/SocialsBlock", () => ({
   SocialsBlock: () => <div data-testid="socials-block">SocialsBlock</div>,
   SocialsBlockSkeleton: () => (
     <div data-testid="socials-block-skeleton">SocialsBlockSkeleton</div>

@@ -6,11 +6,9 @@ import { SITE_CONFIG } from "@/lib/site-config";
 import {
   ContactForm,
   ContactFormSkeleton,
-} from "@/app/components/contact/ContactForm";
-import {
   SocialsBlock,
   SocialsBlockSkeleton,
-} from "@/app/components/contact/SocialsBlock";
+} from "@/app/components/single-page/ContactForm";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -42,7 +40,10 @@ export async function generateMetadata({
 export default async function ContactPage({ params }: ContactPageProps) {
   const { locale } = await params;
   const tMeta = await getTranslations({ locale, namespace: "contact.meta" });
-  const tHeader = await getTranslations({ locale, namespace: "contact.header" });
+  const tHeader = await getTranslations({
+    locale,
+    namespace: "contact.header",
+  });
 
   const jsonLd = {
     "@context": "https://schema.org",

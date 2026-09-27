@@ -31,13 +31,13 @@ describe("OpenSourceShowcase Component", () => {
 
     expect(screen.getByText("BIGboss248/aminwebsite")).toBeInTheDocument();
     expect(
-      screen.getByText("BIGboss248/dns-over-https-tester"),
+      screen.getByText("BIGboss248/setayeshparts"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("BIGboss248/webrtc-leak-detector"),
+      screen.getByText("BIGboss248/flutter-currency-project"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("BIGboss248/parsbert-ime-sentiment"),
+      screen.getByText("BIGboss248/Tool-box"),
     ).toBeInTheDocument();
   });
 });

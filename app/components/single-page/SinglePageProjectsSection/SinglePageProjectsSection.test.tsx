@@ -73,10 +73,16 @@ describe("SinglePageProjectsSection Component", () => {
 
     // Check authentic production items
     expect(
-      screen.getByText(/Setayesh Parts Web Platform/i),
+      screen.getByText(/Setayesh Parts \| Specialized Tuning & Performance Parts/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Bahar Trade Co\. Web Platform/i),
+      screen.getByText(/Bahar Trade Co\. \| Premium Iron Ore & Steel Supply/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Flutter Currency & Note App/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/IT & Infrastructure Tool-box/i),
     ).toBeInTheDocument();
     expect(
       screen.getByText(/Bahar Trade IT Automation & Database Tuning/i),
@@ -97,6 +103,19 @@ describe("SinglePageProjectsSection Component", () => {
     const doiLinks = screen.getAllByTitle(/DOI Publication/i);
     expect(doiLinks.length).toBe(3);
     expect(doiLinks[0]).toHaveAttribute("href", "https://doi.org/10.61838/jafci.485");
+
+    // Check GitHub link elements
+    const githubLinks = screen.getAllByTitle(/GitHub Repository/i);
+    expect(githubLinks.length).toBe(3); // Setayesh parts, Flutter currency, Tool-box
+    expect(githubLinks.some((l) => l.getAttribute("href") === "https://github.com/BIGboss248/setayeshparts")).toBe(true);
+    expect(githubLinks.some((l) => l.getAttribute("href") === "https://github.com/BIGboss248/flutter-currency-project")).toBe(true);
+    expect(githubLinks.some((l) => l.getAttribute("href") === "https://github.com/BIGboss248/Tool-box")).toBe(true);
+
+    // Check Live link elements
+    const liveLinks = screen.getAllByTitle(/Live Site/i);
+    expect(liveLinks.length).toBe(2); // Setayesh parts & Bahar trade co
+    expect(liveLinks.some((l) => l.getAttribute("href") === "https://setayesh.aminjamali.site/")).toBe(true);
+    expect(liveLinks.some((l) => l.getAttribute("href") === "https://bahartradeco.com/en")).toBe(true);
   });
 
   it("filters items when clicking category tabs", () => {
@@ -115,7 +134,7 @@ describe("SinglePageProjectsSection Component", () => {
 
     // Production item should not be in the filtered list
     expect(
-      screen.queryByText(/Setayesh Parts Web Platform/i),
+      screen.queryByText(/Setayesh Parts \| Specialized Tuning & Performance Parts/i),
     ).not.toBeInTheDocument();
 
     const productionTab = screen.getByRole("tab", {
@@ -124,7 +143,7 @@ describe("SinglePageProjectsSection Component", () => {
     fireEvent.click(productionTab);
 
     expect(
-      screen.getByText(/Setayesh Parts Web Platform/i),
+      screen.getByText(/Setayesh Parts \| Specialized Tuning & Performance Parts/i),
     ).toBeInTheDocument();
     expect(
       screen.queryByText(/ParsBERT-XGBoost Commodity Volatility Model/i),
@@ -143,11 +162,19 @@ describe("SinglePageProjectsSection Component", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/پلتفرم وب قطعات ستایش/i),
+      screen.getByText(/ستایش پارتس \| قطعات تخصصی تیونینگ و عملکرد خودرو/i),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/پلتفرم وب شرکت بهار تجارت/i),
+      screen.getByText(/شرکت بهار تجارت \| تأمین سنگ آهن و محصولات فولادی/i),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/اپلیکیشن مدیریت ارز و یادداشت فلاتر/i),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/جعبه‌ابزار و ابزارهای زیرساخت IT و شبکه/i),
     ).toBeInTheDocument();
 
     expect(

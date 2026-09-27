@@ -11,6 +11,8 @@ const LANG_COLORS: Record<string, string> = {
   Rust: "bg-[#dea584]",
   Go: "bg-[#00ADD8]",
   Shell: "bg-[#89e051]",
+  Dart: "bg-[#00B4AB]",
+  Flutter: "bg-[#02569B]",
 };
 
 /**

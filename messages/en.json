@@ -660,25 +660,25 @@
         "tag": "Full-Stack Portfolio"
       },
       "repo2": {
-        "name": "BIGboss248/dns-over-https-tester",
-        "desc": "Browser-native RFC 8484 DNS over HTTPS client diagnostic probe with censorship detection, DNS poisoning analysis, and latency benchmarking.",
+        "name": "BIGboss248/setayeshparts",
+        "desc": "Scalable commercial e-commerce web platform for car parts distribution with Next.js App Router, Payload CMS, MongoDB, dual theme, and automated CI/CD.",
         "lang": "TypeScript",
-        "stars": "⭐ 28",
-        "tag": "Network Diagnostics"
+        "stars": "⭐ 18",
+        "tag": "E-Commerce Platform"
       },
       "repo3": {
-        "name": "BIGboss248/webrtc-leak-detector",
-        "desc": "Zero-telemetry WebRTC STUN/TURN candidate IP leak probe and browser timezone alignment inspector for hardening client privacy.",
-        "lang": "TypeScript",
-        "stars": "⭐ 19",
-        "tag": "Security & Privacy"
+        "name": "BIGboss248/flutter-currency-project",
+        "desc": "Mobile currency and note-taking application front-end developed in Flutter, deploying an Android app with real-time Firebase backend integration.",
+        "lang": "Dart",
+        "stars": "⭐ 15",
+        "tag": "Mobile & Flutter"
       },
       "repo4": {
-        "name": "BIGboss248/parsbert-ime-sentiment",
-        "desc": "PyTorch & HuggingFace transformer pipeline fine-tuning ParsBERT on Persian financial texts for IME commodity price forecasting.",
-        "lang": "Python",
-        "stars": "⭐ 34",
-        "tag": "Machine Learning"
+        "name": "BIGboss248/Tool-box",
+        "desc": "Curated collection of useful open-source tools, operational scripts, and network utilities deployable on VPS or homelabs, refined across 4+ years of IT management.",
+        "lang": "Shell",
+        "stars": "⭐ 24",
+        "tag": "DevOps & Homelab"
       }
     }
   },
@@ -995,6 +995,7 @@
       "metrics_label": "VERIFIED IMPACT METRICS",
       "tech_label": "ARCHITECTURE & STACK",
       "doi_label": "DOI Publication",
+      "github_label": "GitHub Repository",
       "live_label": "Live Site",
       "case_study_label": "Case Study",
       "role_label": "Role / Scope:",
@@ -1006,10 +1007,10 @@
         "setayesh_parts": {
           "tag": "COMMERCIAL // E-COMMERCE",
           "status": "PRODUCTION",
-          "title": "Setayesh Parts Web Platform",
+          "title": "Setayesh Parts | Specialized Tuning & Performance Parts",
           "role": "Full-Stack Architecture & DevOps Engineer",
           "client": "Setayesh Auto Parts Co.",
-          "summary": "Scalable commercial web platform and e-commerce catalog engine designed for high-concurrency auto parts distribution with instantaneous client search, sub-second LCP, and automated continuous deployment.",
+          "summary": "Scalable commercial e-commerce web platform and auto parts distribution engine engineered with Next.js, Payload CMS, MongoDB database backend, and dual theme support.",
           "metric1_val": "< 0.8s",
           "metric1_lbl": "Sub-Second LCP",
           "metric2_val": "99+",
@@ -1018,17 +1019,17 @@
           "metric3_lbl": "Automated CI/CD",
           "tech1": "Next.js",
           "tech2": "Payload CMS",
-          "tech3": "Docker VPS",
-          "tech4": "GitHub Actions",
-          "tech5": "Cloudflare CDN"
+          "tech3": "MongoDB",
+          "tech4": "TypeScript",
+          "tech5": "Tailwind CSS"
         },
         "bahar_trade_web": {
           "tag": "ENTERPRISE // CMS ENGINE",
           "status": "PRODUCTION",
-          "title": "Bahar Trade Co. Web Platform",
+          "title": "Bahar Trade Co. | Premium Iron Ore & Steel Supply",
           "role": "Lead Full-Stack Web Developer & Technical SEO Specialist",
           "client": "Bahar International Trade Co.",
-          "summary": "Enterprise corporate web application and headless CMS engine engineered with Next.js SSR, headless content models, comprehensive technical SEO, and conversion-optimized B2B product catalogs.",
+          "summary": "Dual-language, dual-theme corporate website developed using Next.js with Payload CMS, MongoDB database backend, and conversion-optimized B2B product catalogs.",
           "metric1_val": "+145%",
           "metric1_lbl": "Organic Traffic Lift",
           "metric2_val": "0.00",
@@ -1037,9 +1038,47 @@
           "metric3_lbl": "TTFB Response",
           "tech1": "Next.js SSR",
           "tech2": "Payload CMS",
-          "tech3": "Technical SEO",
+          "tech3": "MongoDB",
           "tech4": "TypeScript",
           "tech5": "Docker"
+        },
+        "flutter_currency_project": {
+          "tag": "MOBILE // FLUTTER & ANDROID",
+          "status": "OPEN SOURCE",
+          "title": "Flutter Currency & Note App",
+          "role": "Mobile App Developer & Firebase Architect",
+          "client": "Open Source / Android App",
+          "summary": "Front-end of a currency tracker and note application developed with Flutter and deployed as an Android app with a real-time Firebase backend.",
+          "metric1_val": "100%",
+          "metric1_lbl": "Flutter Cross-Platform",
+          "metric2_val": "Realtime",
+          "metric2_lbl": "Firebase Cloud Sync",
+          "metric3_val": "Offline",
+          "metric3_lbl": "Local State Cache",
+          "tech1": "Flutter",
+          "tech2": "Dart",
+          "tech3": "Firebase",
+          "tech4": "Android",
+          "tech5": "State Management"
+        },
+        "toolbox": {
+          "tag": "DEVOPS // INFRASTRUCTURE & TOOLS",
+          "status": "OPEN SOURCE",
+          "title": "IT & Infrastructure Tool-box",
+          "role": "DevOps Engineer & Infrastructure Architect",
+          "client": "Open Source / VPS & Homelab",
+          "summary": "A revised collection of useful open-source tools, operational scripts, and network utilities deployable on VPS or homelabs, refined across 4+ years of IT and infrastructure management.",
+          "metric1_val": "4+ Yrs",
+          "metric1_lbl": "Curated IT Experience",
+          "metric2_val": "Modular",
+          "metric2_lbl": "VPS Deployments",
+          "metric3_val": "Automated",
+          "metric3_lbl": "Homelab Operations",
+          "tech1": "Linux",
+          "tech2": "Bash",
+          "tech3": "Docker",
+          "tech4": "VPS",
+          "tech5": "Networking"
         },
         "bahar_trade_automation": {
           "tag": "INFRASTRUCTURE // SQL TUNING",

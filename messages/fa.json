@@ -656,29 +656,29 @@
         "name": "BIGboss248/aminwebsite",
         "desc": "پورتفولیو و رصدخانه سیستم‌ها توسعه‌یافته با Next.js 15 App Router، تایپ‌اسکریپت، تیل‌ویند v4، پشتیبانی دوجهته i18n، ابزار OTel و کانتینر مستقل داکر.",
         "lang": "TypeScript",
-        "stars": "⭐ 12",
-        "tag": "Full-Stack Portfolio"
+        "stars": "⭐ ۱۲",
+        "tag": "پورتفولیو فول‌استک"
       },
       "repo2": {
-        "name": "BIGboss248/dns-over-https-tester",
-        "desc": "کاوشگر تشخیصی پروتکل RFC 8484 DNS over HTTPS تحت مرورگر برای تحلیل فیلترینگ، مسمومیت DNS و بنچمارک بلادرنگ تأخیر ریزالورها.",
+        "name": "BIGboss248/setayeshparts",
+        "desc": "پلتفرم فروشگاهی مقیاس‌پذیر قطعات تخصصی و تیونینگ خودرو با Next.js App Router، سیستم Payload CMS، دیتابیس MongoDB، تم دوگانه و پایپ‌لاین CI/CD.",
         "lang": "TypeScript",
-        "stars": "⭐ 28",
-        "tag": "Network Diagnostics"
+        "stars": "⭐ ۱۸",
+        "tag": "پلتفرم فروشگاهی"
       },
       "repo3": {
-        "name": "BIGboss248/webrtc-leak-detector",
-        "desc": "کاوشگر نشت کاندیدای STUN/TURN در WebRTC و بررسی تطابق زمانی منطقه ساعت مرورگر بدون ذخیره‌سازی آی‌پی جهت ارتقای حریم خصوصی.",
-        "lang": "TypeScript",
-        "stars": "⭐ 19",
-        "tag": "Security & Privacy"
+        "name": "BIGboss248/flutter-currency-project",
+        "desc": "فرانت‌اند و اپلیکیشن موبایل مدیریت نرخ ارز و یادداشت توسعه‌یافته با فلاتر و استقرار روی اندروید با پایگاه داده و بک‌اند ابری Firebase.",
+        "lang": "Dart",
+        "stars": "⭐ ۱۵",
+        "tag": "موبایل و فلاتر"
       },
       "repo4": {
-        "name": "BIGboss248/parsbert-ime-sentiment",
-        "desc": "خط پردازش ترنسفورمر PyTorch و HuggingFace برای فاین‌تیونینگ پارس‌برت روی متون اقتصادی جهت پیش‌بینی نوسانات قیمت بورس کالا.",
-        "lang": "Python",
-        "stars": "⭐ 34",
-        "tag": "Machine Learning"
+        "name": "BIGboss248/Tool-box",
+        "desc": "مجموعه ابزارهای متن‌باز، اسکریپت‌های عملیاتی و ابزارهای شبکه برای استقرار روی سرورهای ابری VPS و هوم‌لب حاصل بیش از ۴ سال تجربه مدیریت زیرساخت IT.",
+        "lang": "Shell",
+        "stars": "⭐ ۲۴",
+        "tag": "دواپس و هوم‌لب"
       }
     }
   },
@@ -995,6 +995,7 @@
       "metrics_label": "معیارهای اثرگذاری تأیید شده",
       "tech_label": "معماری و پشته فناوری",
       "doi_label": "مقاله پژوهشی (DOI)",
+      "github_label": "مخزن گیت‌هاب",
       "live_label": "سایت عملیاتی آنلاین",
       "case_study_label": "مطالعه موردی",
       "role_label": "نقش و حیطه مسئولیت:",
@@ -1006,10 +1007,10 @@
         "setayesh_parts": {
           "tag": "تجاری // تجارت الکترونیک",
           "status": "عملیاتی",
-          "title": "پلتفرم وب قطعات ستایش",
+          "title": "ستایش پارتس | قطعات تخصصی تیونینگ و عملکرد خودرو",
           "role": "مهندس معماری فول‌استک و دواپس",
           "client": "شرکت قطعات خودرو ستایش",
-          "summary": "پلتفرم وب تجاری مقیاس‌پذیر و موتور کاتالوگ فروشگاهی برای توزیع قطعات خودرو با جستجوی آنی کلاینت، LCP زیر ۱ ثانیه و پایپ‌لاین استقرار خودکار.",
+          "summary": "وب‌سایت فروشگاهی و موتور توزیع قطعات تخصصی با Next.js، سیستم مدیریت محتوای Payload CMS، دیتابیس MongoDB، پشتیبانی از تم دوگانه و پایپ‌لاین استقرار خودکار.",
           "metric1_val": "< 0.8s",
           "metric1_lbl": "بزرگ‌ترین المان زیر ثانیه (LCP)",
           "metric2_val": "99+",
@@ -1018,17 +1019,17 @@
           "metric3_lbl": "خط CI/CD خودکار",
           "tech1": "Next.js",
           "tech2": "Payload CMS",
-          "tech3": "Docker VPS",
-          "tech4": "GitHub Actions",
-          "tech5": "Cloudflare CDN"
+          "tech3": "MongoDB",
+          "tech4": "TypeScript",
+          "tech5": "Tailwind CSS"
         },
         "bahar_trade_web": {
           "tag": "سازمانی // موتور CMS",
           "status": "عملیاتی",
-          "title": "پلتفرم وب شرکت بهار تجارت",
+          "title": "شرکت بهار تجارت | تأمین سنگ آهن و محصولات فولادی",
           "role": "توسعه‌دهنده ارشد وب فول‌استک و متخصص سئو تکنیکال",
           "client": "شرکت بین‌المللی بهار تجارت",
-          "summary": "برنامه وب سازمانی و موتور CMS هدلس با رندرینگ سرور Next.js، سئوی تکنیکال عمیق و کاتالوگ‌های محصولات B2B بهینه‌شده برای نرخ تبدیل.",
+          "summary": "وب‌سایت دوزبانه و دو تم توسعه‌یافته با Next.js به همراه Payload CMS و پایگاه داده MongoDB برای معرفی و تأمین بین‌المللی سنگ آهن و فولاد.",
           "metric1_val": "+145%",
           "metric1_lbl": "رشد ترافیک ارگانیک",
           "metric2_val": "0.00",
@@ -1037,9 +1038,47 @@
           "metric3_lbl": "پاسخ سرور (TTFB)",
           "tech1": "Next.js SSR",
           "tech2": "Payload CMS",
-          "tech3": "Technical SEO",
+          "tech3": "MongoDB",
           "tech4": "TypeScript",
           "tech5": "Docker"
+        },
+        "flutter_currency_project": {
+          "tag": "موبایل // فلاتر و اندروید",
+          "status": "متن‌باز",
+          "title": "اپلیکیشن مدیریت ارز و یادداشت فلاتر",
+          "role": "توسعه‌دهنده موبایل و معمار فایربیس",
+          "client": "متن‌باز / اپلیکیشن اندروید",
+          "summary": "معماری فرانت‌اند و اپلیکیشن موبایل مدیریت ارز و ثبت یادداشت توسعه‌یافته با فلاتر و استقرار روی اندروید با پایگاه داده و بک‌اند ابری Firebase.",
+          "metric1_val": "۱۰۰٪",
+          "metric1_lbl": "کراس‌پلتفرم فلاتر",
+          "metric2_val": "Realtime",
+          "metric2_lbl": "همگام‌سازی ابری فایربیس",
+          "metric3_val": "Offline",
+          "metric3_lbl": "کش وضعیت محلی",
+          "tech1": "Flutter",
+          "tech2": "Dart",
+          "tech3": "Firebase",
+          "tech4": "Android",
+          "tech5": "State Management"
+        },
+        "toolbox": {
+          "tag": "دواپس // زیرساخت و هوم‌لب",
+          "status": "متن‌باز",
+          "title": "جعبه‌ابزار و ابزارهای زیرساخت IT و شبکه",
+          "role": "معمار زیرساخت و متخصص دواپس",
+          "client": "متن‌باز / سرور ابری و هوم‌لب",
+          "summary": "مجموعه بازبینی‌شده از اسکریپت‌های کاربردی، ابزارهای شبکه و راهکارهای متن‌باز قابل استقرار روی سرورهای ابری VPS و هوم‌لب، پالایش‌شده در بیش از ۴ سال مدیریت زیرساخت IT.",
+          "metric1_val": "+۴ سال",
+          "metric1_lbl": "تجربه عملیاتی IT",
+          "metric2_val": "ماژولار",
+          "metric2_lbl": "استقرار سرور ابری VPS",
+          "metric3_val": "خودکار",
+          "metric3_lbl": "عملیات هوم‌لب",
+          "tech1": "Linux",
+          "tech2": "Bash",
+          "tech3": "Docker",
+          "tech4": "VPS",
+          "tech5": "Networking"
         },
         "bahar_trade_automation": {
           "tag": "زیرساخت // تیونینگ SQL",

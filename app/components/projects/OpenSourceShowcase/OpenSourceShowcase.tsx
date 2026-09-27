@@ -33,7 +33,7 @@ export function OpenSourceShowcase({
       lang: t("repo2.lang"),
       stars: t("repo2.stars"),
       tag: t("repo2.tag"),
-      url: "https://github.com/BIGboss248/dns-over-https-tester",
+      url: "https://github.com/BIGboss248/setayeshparts",
     },
     {
       name: t("repo3.name"),
@@ -41,7 +41,7 @@ export function OpenSourceShowcase({
       lang: t("repo3.lang"),
       stars: t("repo3.stars"),
       tag: t("repo3.tag"),
-      url: "https://github.com/BIGboss248/webrtc-leak-detector",
+      url: "https://github.com/BIGboss248/flutter-currency-project",
     },
     {
       name: t("repo4.name"),
@@ -49,7 +49,7 @@ export function OpenSourceShowcase({
       lang: t("repo4.lang"),
       stars: t("repo4.stars"),
       tag: t("repo4.tag"),
-      url: "https://github.com/BIGboss248/parsbert-ime-sentiment",
+      url: "https://github.com/BIGboss248/Tool-box",
     },
   ];
 

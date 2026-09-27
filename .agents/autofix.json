@@ -232,6 +232,12 @@
     "Category": "ARCH",
     "Instruction": "Maintain strictly two environment files: '.env.example' (the single source of truth template with documented load order, categories, and production defaults, which is copied/renamed to '.env' for production deployments) and '.env.development' (used locally for development). All '.env*' files must be excluded in '.gitignore' except '.env.example'. Whenever any new environment variable is introduced or required across any component, route, or integration, immediately mirror and document it in BOTH '.env.example' (with production defaults) and '.env.development' (with local development defaults). Do not add custom startup environment logging code as Next.js CLI natively reports loaded env files.",
     "Why": "user explicit requirement: only two .env files (.env.example template for prod deployment and .env.development for dev), ignore all .env files except .env.example in git, mirror any new env variables in both env files, and omit custom startup logging since Next.js logs loaded env files natively"
+  },
+  {
+    "Rule_number": 40,
+    "Category": "ARCH",
+    "Instruction": "Do not render synthetic, non-existent, or placeholder GitHub repository cards (such as invented repos 'dns-over-https-tester', 'webrtc-leak-detector', 'parsbert-ime-sentiment') in showcase or projects sections. Feature strictly authentic engineering deliverables, genuine commercial/enterprise systems (Setayesh Parts, Bahar Trade), and peer-reviewed published research papers (with verified DOIs and author ORCID record).",
+    "Why": "user explicit correction: remove the project cards listed as github repositories because they are not real"
   }
 ]
 

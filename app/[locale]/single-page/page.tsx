@@ -8,6 +8,8 @@ import {
   SinglePageNavbarSkeleton,
   SinglePageHero,
   SinglePageHeroSkeleton,
+  SinglePageProjectsSection,
+  SinglePageProjectsSkeleton,
   ContactForm,
   ContactFormSkeleton,
   SocialsBlock,
@@ -103,6 +105,9 @@ export default async function SinglePage({ params }: SinglePageProps) {
       </Suspense>
       <Suspense fallback={<SinglePageHeroSkeleton />}>
         <SinglePageHero locale={locale as "en" | "fa"} />
+      </Suspense>
+      <Suspense fallback={<SinglePageProjectsSkeleton />}>
+        <SinglePageProjectsSection locale={locale as "en" | "fa"} />
       </Suspense>
 
       {/* Section: Contact & Direct Inquiry */}

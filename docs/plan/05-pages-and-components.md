@@ -225,10 +225,10 @@
   - [x] **Section: Hero - Narrative Bio & Systems Philosophy (`app/components/single-page/SinglePageHero`)**
     - [x] `SinglePageHero` - Hero section adapting and reusing `AboutHero` (headline narrative, author portrait/visual, core engineering philosophy, and immediate CTA jump anchors)
     - [x] `SinglePageHeroSkeleton` - Suspense skeleton fallback for hero section
-  - [ ] **Section: Projects & Research Showcase (`app/components/single-page/SinglePageProjectsSection`)**
-    - [ ] `SinglePageProjectsSection` - Responsive projects grid container highlighting authentic engineering systems and published research
-    - [ ] `SinglePageProjectCard` - Showcase card featuring tech stack badges, verifiable metrics, direct external links to GitHub repositories, live web deployments, and DOI research publications
-    - [ ] `SinglePageProjectsSkeleton` - Suspense skeleton fallback for projects grid
+  - [x] **Section: Projects & Research Showcase (`app/components/single-page/SinglePageProjectsSection`)**
+    - [x] `SinglePageProjectsSection` - Responsive projects grid container highlighting authentic engineering systems and published research
+    - [x] `SinglePageProjectCard` - Showcase card featuring tech stack badges, verifiable metrics, direct external links to GitHub repositories, live web deployments, and DOI research publications
+    - [x] `SinglePageProjectsSkeleton` - Suspense skeleton fallback for projects grid
   - [ ] **Section: Top 4 Certifications & LinkedIn Showcase (`app/components/single-page/SinglePageCertificationsSection`)**
     - [ ] `SinglePageCertificationsSection` - Showcase section presenting top 4 professional course certifications and verified credentials
     - [ ] `CertificationCard` - Credential card detailing certificate title, issuing platform/institution, credential ID, and verification link

@@ -157,3 +157,6 @@ _Planning complete. Review `docs/plan/README.md` to proceed with component desig
 - [Strategy Brief Template](./resources/templates/01-strategy-brief.md.template) — Template for `docs/design/01-strategy-brief.md`.
 - [Sitemap & Routes Template](./resources/templates/02-sitemap-and-routes.md.template) — Template for `docs/design/02-sitemap-and-routes.md`.
 - [UI Design Tokens Template](./resources/templates/03-ui-design-tokens.md.template) — Template for `docs/design/03-ui-design-tokens.md`.
+- [Environment Variables Example Template](./resources/templates/env.example.template) — Single source of truth template for `.env.example` (renamed to `.env` for production deployments).
+- [Development Environment Template](./resources/templates/env.development.template) — Default development variables for `.env.development` (local dev, gitignored).
+

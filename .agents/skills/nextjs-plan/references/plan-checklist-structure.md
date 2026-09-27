@@ -42,7 +42,10 @@ docs/plan/
 - **Verification**: Verify automated JSON `200 OK` response and Docker Compose healthcheck probes before configuring core runtime layouts and UI.
 
 ### Phase 4: Core Foundations & Runtime Configuration (`04-core-foundations.md`)
-- **Environment Variables**: Setup `.env.local` template for development and container runtime.
+- **Environment Variables**:
+  - Author and maintain `.env.example` as the single source of truth template (which is copied/renamed to `.env` for production deployments) with documented load order precedence (`process.env` > `.env.$(NODE_ENV).local` > `.env.local` > `.env.$(NODE_ENV)` > `.env`), security rules, and variable categories.
+  - Setup `.env.development` for local development. Ensure `.gitignore` ignores all `.env*` files except `.env.example`.
+  - Enforce repository rule: whenever any new environment variable is introduced or required in the codebase, immediately mirror and document it in **both** `.env.example` (with production defaults) and `.env.development` (with local development defaults).
 - **Multilanguage Support (i18n)**: Configure `next-intl` (via `proxy.ts` or `middleware.ts`), root `messages/[locale].json` dictionaries, and bidirectional (LTR/RTL) layout support. *(Translation dictionary keys are populated dynamically during component development)*.
 - **Theme & Color Palette**: Define semantic CSS tokens in `globals.css`, configure `ThemeProvider` from `next-themes`, and build `ThemeToggle`.
 - **Website Layout Shell**:

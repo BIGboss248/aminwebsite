@@ -5,7 +5,9 @@
 ## Deliverables & Status
 
 - [x] **4.1 Environment Variables Configuration**
-  - [x] Setup `.env.local` template for development and container runtime
+  - [x] Author `.env.example` as single source of truth template (to be renamed to `.env` for production deployments) with documented load order, categories, and defaults
+  - [x] Setup development environment file (`.env.development`) for local execution and verify `.gitignore` ignores all `.env*` files except `.env.example`
+  - [x] Enforce repository rule: whenever any new environment variable is introduced, immediately mirror and document it in both `.env.example` (with production defaults) and `.env.development` (with local dev defaults)
 - [x] **4.2 Multilanguage Support (i18n)**
   - [x] Configure request negotiation and routing with `proxy.ts`
   - [x] Setup root translation dictionaries in `messages/` (`messages/en.json`, `messages/fa.json`)

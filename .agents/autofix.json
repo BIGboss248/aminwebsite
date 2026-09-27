@@ -226,5 +226,12 @@
     "Category": "ARCH",
     "Instruction": "In portfolio content, case studies, metadata, and messaging, never generate synthetic/fake web metrics, fabricated client testimonials, or invented mock case studies; prioritize recruiter credibility by highlighting genuine, verifiable engineering deliverables, real-world systems (e.g. Setayesh Parts, Bahar Trade), real published research (DOIs), and authentic technical competencies with an approachable, warm, and collaborative tone.",
     "Why": "user explicit requirement: value recruiters more, avoid fake web metrics and synthetic case studies, and present authentic projects"
+  },
+  {
+    "Rule_number": 39,
+    "Category": "ARCH",
+    "Instruction": "Maintain strictly two environment files: '.env.example' (the single source of truth template with documented load order, categories, and production defaults, which is copied/renamed to '.env' for production deployments) and '.env.development' (used locally for development). All '.env*' files must be excluded in '.gitignore' except '.env.example'. Whenever any new environment variable is introduced or required across any component, route, or integration, immediately mirror and document it in BOTH '.env.example' (with production defaults) and '.env.development' (with local development defaults). Do not add custom startup environment logging code as Next.js CLI natively reports loaded env files.",
+    "Why": "user explicit requirement: only two .env files (.env.example template for prod deployment and .env.development for dev), ignore all .env files except .env.example in git, mirror any new env variables in both env files, and omit custom startup logging since Next.js logs loaded env files natively"
   }
 ]
+

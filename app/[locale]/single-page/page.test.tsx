@@ -32,16 +32,29 @@ jest.mock("next-intl/server", () => ({
   }),
 }));
 
-jest.mock("@/app/components/single-page/SinglePageHero", () => ({
+jest.mock("@/app/components/single-page", () => ({
+  SinglePageNavbar: () => (
+    <div data-testid="single-page-navbar">SinglePageNavbar</div>
+  ),
+  SinglePageNavbarSkeleton: () => (
+    <div data-testid="single-page-navbar-skeleton">
+      SinglePageNavbarSkeleton
+    </div>
+  ),
   SinglePageHero: () => (
     <div data-testid="single-page-hero">SinglePageHero</div>
   ),
   SinglePageHeroSkeleton: () => (
     <div data-testid="single-page-hero-skeleton">SinglePageHeroSkeleton</div>
   ),
-}));
-
-jest.mock("@/app/components/single-page/ContactForm", () => ({
+  SinglePageProjectsSection: () => (
+    <div data-testid="single-page-projects">SinglePageProjectsSection</div>
+  ),
+  SinglePageProjectsSkeleton: () => (
+    <div data-testid="single-page-projects-skeleton">
+      SinglePageProjectsSkeleton
+    </div>
+  ),
   ContactForm: () => <div data-testid="contact-form">ContactForm</div>,
   ContactFormSkeleton: () => (
     <div data-testid="contact-form-skeleton">ContactFormSkeleton</div>
@@ -78,7 +91,9 @@ describe("SinglePage Website Page (RSC & SEO)", () => {
 
     const { container, getByTestId } = render(pageElement);
 
+    expect(getByTestId("single-page-navbar")).toBeInTheDocument();
     expect(getByTestId("single-page-hero")).toBeInTheDocument();
+    expect(getByTestId("single-page-projects")).toBeInTheDocument();
     expect(getByTestId("contact-form")).toBeInTheDocument();
     expect(getByTestId("socials-block")).toBeInTheDocument();
 

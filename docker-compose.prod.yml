@@ -3,6 +3,8 @@ services:
     image: ghcr.io/bigboss248/aminwebsite:${IMAGE_TAG:-latest}
     container_name: nextjs-standalone-app
     restart: always
+    env_file:
+      - .env
     expose:
       - "${PORT:-3000}"
     environment:
@@ -25,12 +27,12 @@ services:
       - "traefik.http.routers.nextjs-secure.entrypoints=websecure"
       - "traefik.http.routers.nextjs-secure.tls=true"
       - "traefik.http.routers.nextjs-secure.tls.certresolver=${CERT_RESOLVER:-letsencrypt}"
+      - "traefik.http.routers.nextjs-secure.service=nextjs"
       # Service Load Balancer Port
       - "traefik.http.services.nextjs.loadbalancer.server.port=${PORT:-3000}"
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
-      - traefik-net
-      - default
+      - traefik-public
     healthcheck:
       test:
         [

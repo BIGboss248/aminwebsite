@@ -43,12 +43,12 @@ export function SinglePageHeroSkeleton({
               <div className="h-4 w-4/6 rounded bg-muted/60" />
             </div>
 
-            {/* Pill buttons skeleton */}
-            <div className="flex flex-wrap gap-2.5 sm:gap-3 pt-2">
-              <div className="h-9 sm:h-10 w-24 sm:w-28 rounded-full bg-muted/70" />
-              <div className="h-9 sm:h-10 w-28 sm:w-32 rounded-full bg-muted/70" />
-              <div className="h-9 sm:h-10 w-24 sm:w-28 rounded-full bg-muted/70" />
-              <div className="h-9 sm:h-10 w-28 sm:w-32 rounded-full bg-muted" />
+            {/* Pill buttons 2x2 skeleton on mobile, horizontal row on sm+ */}
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 sm:gap-3 pt-2 w-full max-w-sm sm:max-w-none mx-auto sm:mx-0">
+              <div className="h-9 sm:h-10 w-full sm:w-28 rounded-full bg-muted/70" />
+              <div className="h-9 sm:h-10 w-full sm:w-32 rounded-full bg-muted/70" />
+              <div className="h-9 sm:h-10 w-full sm:w-28 rounded-full bg-muted/70" />
+              <div className="h-9 sm:h-10 w-full sm:w-32 rounded-full bg-muted" />
             </div>
           </div>
 

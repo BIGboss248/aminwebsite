@@ -11,7 +11,7 @@ import type { SinglePageHeroProps } from "./SinglePageHero.types";
  *
  * An editorial 2-column hero section featuring:
  * - Left column: Brand logo placeholder, big bold name, short role & bio introduction,
- *   and pill-shaped buttons for GitHub, LinkedIn, ORCID, and Mailto inquiry.
+ *   and pill-shaped buttons for GitHub, LinkedIn, ORCID, and Mailto inquiry (2x2 centered grid on mobile).
  * - Right column: Full-size portrait photograph with responsive framing and ambient lighting.
  */
 export function SinglePageHero({
@@ -191,9 +191,9 @@ export function SinglePageHero({
               {t("bio_lead")}
             </p>
 
-            {/* Pill-shaped Buttons (Socials & Direct Mailto) */}
+            {/* Pill-shaped Buttons (2x2 centered set on mobile, horizontal flow on sm+) */}
             <div
-              className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1"
+              className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3.5 pt-1 w-full max-w-sm sm:max-w-none mx-auto sm:mx-0"
               role="group"
               aria-label={t("role_title")}
             >
@@ -205,7 +205,7 @@ export function SinglePageHero({
                   rel={pill.isExternal ? "noopener noreferrer" : undefined}
                   aria-label={pill.ariaLabel}
                   className={cn(
-                    "group inline-flex items-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 shadow-xs hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                    "group inline-flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 shadow-xs hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 w-full sm:w-auto",
                     pill.variant === "primary"
                       ? "bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-sm"
                       : "border border-border bg-card/80 text-foreground hover:bg-card hover:border-primary/60 hover:text-primary",

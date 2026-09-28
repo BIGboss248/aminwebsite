@@ -1,15 +1,18 @@
 import React from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Link } from "@/app/components/Link";
-import { SocialLinksBar } from "@/app/components/global/SiteFooter/SocialLinksBar";
-import { ROUTES } from "@/lib/routes";
+import portraitImage from "@/public/images/about/portrait.jpg";
+import { SITE_CONFIG } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import type { SinglePageHeroProps } from "./SinglePageHero.types";
 
 /**
  * SinglePageHero Component.
- * Unified hero section adapted from AboutHero for the Single-Page Website experience.
+ *
+ * An editorial 2-column hero section featuring:
+ * - Left column: Brand logo placeholder, big bold name, short role & bio introduction,
+ *   and pill-shaped buttons for GitHub, LinkedIn, ORCID, and Mailto inquiry.
+ * - Right column: Full-size portrait photograph with responsive framing and ambient lighting.
  */
 export function SinglePageHero({
   locale = "en",
@@ -18,18 +21,109 @@ export function SinglePageHero({
   const t = useTranslations("single_page.hero");
   const tCommon = useTranslations("common");
 
+  const socialPills = [
+    {
+      id: "github",
+      label: t("social_github"),
+      ariaLabel: t("social_github_aria"),
+      href: SITE_CONFIG.social.github,
+      isExternal: true,
+      variant: "outline" as const,
+      icon: (
+        <svg
+          className="size-4 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+        </svg>
+      ),
+    },
+    {
+      id: "linkedin",
+      label: t("social_linkedin"),
+      ariaLabel: t("social_linkedin_aria"),
+      href: SITE_CONFIG.social.linkedin,
+      isExternal: true,
+      variant: "outline" as const,
+      icon: (
+        <svg
+          className="size-4 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+          <rect x="2" y="9" width="4" height="12" />
+          <circle cx="4" cy="4" r="2" />
+        </svg>
+      ),
+    },
+    {
+      id: "orcid",
+      label: t("social_orcid"),
+      ariaLabel: t("social_orcid_aria"),
+      href: SITE_CONFIG.social.orcid,
+      isExternal: true,
+      variant: "outline" as const,
+      icon: (
+        <svg
+          className="size-4 shrink-0"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.016-5.325 5.016h-3.919V7.416zm1.444 1.303v7.434h2.238c2.644 0 3.737-1.744 3.737-3.712 0-2.147-1.34-3.722-3.737-3.722h-2.238z" />
+        </svg>
+      ),
+    },
+    {
+      id: "email",
+      label: t("social_email"),
+      ariaLabel: t("social_email_aria"),
+      href: `mailto:${SITE_CONFIG.contact.email}`,
+      isExternal: false,
+      variant: "primary" as const,
+      icon: (
+        <svg
+          className="size-4 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <rect width="20" height="16" x="2" y="4" rx="2" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+      ),
+    },
+  ];
+
   return (
     <section
       id="hero"
       aria-labelledby="single-page-hero-heading"
       className={cn(
-        "relative overflow-hidden py-16 sm:py-24 lg:py-32 border-b border-border/40 bg-background text-foreground transition-colors",
+        "relative overflow-hidden py-10 sm:py-14 lg:py-20 border-b border-border/40 bg-background text-foreground transition-colors",
         className,
       )}
     >
+      {/* Subtle Background Grid Pattern */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 opacity-25 dark:opacity-15"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-20 dark:opacity-10"
       >
         <svg
           className="h-full w-full stroke-border"
@@ -56,167 +150,108 @@ export function SinglePageHero({
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          <div className="lg:col-span-7 flex flex-col items-start text-start">
-            <div className="inline-flex items-center gap-2.5 px-3 py-1 rounded-md bg-card border border-border/80 text-muted-foreground font-mono text-xs tracking-wider mb-6 select-none shadow-xs">
-              <span className="size-2 rounded-full bg-primary animate-ping" />
-              <span className="text-primary font-bold">
-                {t("system_profile_badge")}
-              </span>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-center">
+          {/* Left Column: Text & Pill-shaped Socials */}
+          <div className="md:col-span-7 flex flex-col items-start text-start">
+            {/* Logo Placeholder */}
+            <div
+              className="group flex items-center gap-3 mb-5 sm:mb-6 select-none"
+              aria-label={t("logo_placeholder_aria")}
+            >
+              <div className="size-11 sm:size-13 rounded-2xl border border-border bg-card/90 shadow-xs flex items-center justify-center p-2 transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-sm">
+                <span className="font-mono text-sm sm:text-base font-bold tracking-tight text-primary">
+                  {t("logo_initials")}
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+                  {t("logo_placeholder_title")}
+                </span>
+                <span className="text-xs text-foreground/80 font-medium">
+                  {tCommon("brand")}
+                </span>
+              </div>
             </div>
 
+            {/* Big Bold Name */}
             <h1
               id="single-page-hero-heading"
-              className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-foreground leading-tight mb-3"
+              className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight text-foreground leading-[1.08] mb-3"
             >
               {tCommon("brand")}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-2 text-lg sm:text-xl text-foreground/90 font-medium mb-6">
-              <span>{t("role_title")}</span>
-              <span className="text-border hidden sm:inline">/</span>
-              <span className="text-xs sm:text-sm font-mono text-primary font-normal tracking-wide hidden sm:inline">
-                {t("role_kernel")}
-              </span>
-            </div>
+            {/* Role Title */}
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-primary/90 tracking-tight mb-4 sm:mb-5">
+              {t("role_title")}
+            </h2>
 
-            <div className="w-full my-4 p-4 sm:p-5 bg-primary/5 border-s-4 border-primary rounded-e-lg backdrop-blur-xs">
-              <p className="text-base sm:text-lg font-mono text-primary font-medium tracking-tight">
-                {t("philosophy_quote")}
-              </p>
-            </div>
-
-            <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mb-8">
+            {/* Short Bio Description */}
+            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-7 sm:mb-8">
               {t("bio_lead")}
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto mb-10">
-              <Link
-                href="#projects"
-                locale={locale}
-                className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-primary text-primary-foreground font-bold text-sm shadow-sm transition-all hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary min-h-11"
-              >
-                <span>{t("cta_projects")}</span>
-                <span aria-hidden="true" className="ms-1 rtl:rotate-180">
-                  ↓
-                </span>
-              </Link>
-
-              <Link
-                href="#contact"
-                locale={locale}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg border border-border bg-card text-foreground font-medium text-sm transition-all hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary min-h-11"
-              >
-                <span className="size-2 rounded-full bg-primary" />
-                <span>{t("cta_lab")}</span>
-              </Link>
-            </div>
-
+            {/* Pill-shaped Buttons (Socials & Direct Mailto) */}
             <div
-              dir="ltr"
-              className="w-full pt-6 border-t border-border/60 flex flex-wrap items-center gap-y-3 gap-x-6 text-muted-foreground font-mono text-xs"
+              className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1"
+              role="group"
+              aria-label={t("role_title")}
             >
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground/80">
-                  {t("uptime_label")}:
-                </span>
-                <span className="text-status-success font-bold tracking-wider">
-                  {t("uptime_val")}
-                </span>
-              </div>
-              <span className="text-border">•</span>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground/80">
-                  {t("latency_label")}:
-                </span>
-                <span className="text-primary font-bold tracking-wider">
-                  {t("latency_val")}
-                </span>
-              </div>
-              <span className="text-border">•</span>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground/80">
-                  {t("concurrency_label")}:
-                </span>
-                <span className="text-foreground font-bold tracking-wider">
-                  {t("concurrency_val")}
-                </span>
-              </div>
+              {socialPills.map((pill) => (
+                <a
+                  key={pill.id}
+                  href={pill.href}
+                  target={pill.isExternal ? "_blank" : undefined}
+                  rel={pill.isExternal ? "noopener noreferrer" : undefined}
+                  aria-label={pill.ariaLabel}
+                  className={cn(
+                    "group inline-flex items-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 shadow-xs hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                    pill.variant === "primary"
+                      ? "bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-sm"
+                      : "border border-border bg-card/80 text-foreground hover:bg-card hover:border-primary/60 hover:text-primary",
+                  )}
+                >
+                  <span className="transition-transform duration-200 group-hover:scale-110">
+                    {pill.icon}
+                  </span>
+                  <span>{pill.label}</span>
+                </a>
+              ))}
             </div>
           </div>
 
-          <div className="lg:col-span-5 flex flex-col items-center justify-center relative w-full">
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 flex items-center justify-center">
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 rounded-full bg-radial from-primary/20 via-transparent to-primary/5 blur-2xl pointer-events-none"
+          {/* Right Column: Full-size Portrait Image */}
+          <div className="md:col-span-5 flex items-center justify-center relative w-full">
+            {/* Ambient Background Glow */}
+            <div
+              aria-hidden="true"
+              className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-primary/15 via-transparent to-primary/5 blur-2xl pointer-events-none -z-10"
+            />
+
+            {/* Full-size Portrait Container */}
+            <div className="relative w-full aspect-[4/5] max-w-sm sm:max-w-md md:max-w-none rounded-2xl sm:rounded-3xl overflow-hidden border border-border/80 bg-card shadow-xl group">
+              <Image
+                src={portraitImage}
+                alt={t("portrait_alt")}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 45vw, 500px"
+                priority
+                placeholder="blur"
+                className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
               />
 
+              {/* Subtle Gradient Overlay */}
               <div
                 aria-hidden="true"
-                className="absolute inset-0 rounded-full border border-border border-dashed animate-[spin_60s_linear_infinite]"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent opacity-60"
               />
 
-              <div
-                aria-hidden="true"
-                className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[10px] text-muted-foreground px-1 bg-background select-none"
-              >
-                000° N
-              </div>
-              <div
-                aria-hidden="true"
-                className="absolute -bottom-3 left-1/2 -translate-x-1/2 font-mono text-[10px] text-muted-foreground px-1 bg-background select-none"
-              >
-                180° S
-              </div>
-              <div
-                aria-hidden="true"
-                className="absolute -left-4 top-1/2 -translate-y-1/2 font-mono text-[10px] text-muted-foreground px-1 bg-background select-none"
-              >
-                270° W
-              </div>
-              <div
-                aria-hidden="true"
-                className="absolute -right-4 top-1/2 -translate-y-1/2 font-mono text-[10px] text-muted-foreground px-1 bg-background select-none"
-              >
-                090° E
-              </div>
-
-              <div
-                aria-hidden="true"
-                className="absolute inset-3 sm:inset-4 rounded-full border border-border/60"
-              />
-
-              <div className="relative w-56 h-56 sm:w-72 sm:h-72 rounded-full p-1 bg-gradient-to-tr from-primary via-border to-primary/40 shadow-lg overflow-hidden">
-                <div className="w-full h-full rounded-full overflow-hidden bg-card relative">
-                  <Image
-                    src="/images/about/portrait.jpg"
-                    alt={t("portrait_alt")}
-                    fill
-                    sizes="(max-width: 768px) 224px, 288px"
-                    priority
-                    className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500 scale-105 hover:scale-100 object-top"
-                  />
-                </div>
-              </div>
-
-              <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 px-3 py-1 bg-background/90 backdrop-blur-md border border-border rounded-full flex items-center gap-2 shadow-xs">
-                <span className="size-1.5 rounded-full bg-status-success animate-pulse" />
-                <span className="font-mono text-[11px] text-foreground font-semibold tracking-wider">
-                  {t("identity_verified")}
+              {/* Status Badge floating tag */}
+              <div className="absolute bottom-3 start-3 z-20 px-3.5 py-1.5 bg-background/90 backdrop-blur-md border border-border rounded-full flex items-center gap-2 shadow-xs">
+                <span className="size-2 rounded-full bg-status-success animate-pulse" />
+                <span className="font-mono text-[11px] text-foreground font-medium tracking-wide">
+                  {t("status_badge")}
                 </span>
-              </div>
-            </div>
-
-            <div className="mt-8 flex flex-col items-center gap-2.5">
-              <span className="text-[11px] font-mono font-medium tracking-wider text-muted-foreground uppercase">
-                {t("socials_label")}
-              </span>
-              <div
-                dir="ltr"
-                className="flex items-center p-1.5 rounded-xl bg-card/80 border border-border/80 shadow-xs backdrop-blur-xs"
-              >
-                <SocialLinksBar />
               </div>
             </div>
           </div>

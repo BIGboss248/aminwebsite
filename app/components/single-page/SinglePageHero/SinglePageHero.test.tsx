@@ -17,43 +17,8 @@ jest.mock("next-intl", () => ({
     if (namespace === "common") {
       return (dict.common as Record<string, string>)[key] ?? key;
     }
-    if (namespace === "footer") {
-      return (dict.footer as Record<string, string>)[key] ?? key;
-    }
     return key;
   },
-}));
-
-jest.mock("@/app/components/Link", () => ({
-  __esModule: true,
-  Link: ({
-    children,
-    href,
-    className,
-    ...rest
-  }: {
-    children: React.ReactNode;
-    href: string;
-    className?: string;
-  }) => (
-    <a href={href} className={className} {...rest}>
-      {children}
-    </a>
-  ),
-  default: ({
-    children,
-    href,
-    className,
-    ...rest
-  }: {
-    children: React.ReactNode;
-    href: string;
-    className?: string;
-  }) => (
-    <a href={href} className={className} {...rest}>
-      {children}
-    </a>
-  ),
 }));
 
 describe("SinglePageHero Component", () => {
@@ -61,60 +26,71 @@ describe("SinglePageHero Component", () => {
     mockLocale = "en";
   });
 
-  it("renders default English title, philosophy quote, and anchor CTAs", () => {
+  it("renders 2-column hero with logo placeholder, big bold name, role, bio, and pill buttons", () => {
     mockLocale = "en";
     render(<SinglePageHero locale="en" />);
 
+    // Logo placeholder
+    expect(
+      screen.getByLabelText(/Brand logo placeholder/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText("AJ")).toBeInTheDocument();
+
+    // Name and Role
     expect(
       screen.getByRole("heading", { level: 1, name: /Amin Jamali/i }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/IT Specialist & Full-Stack Web Developer/i),
+      screen.getByRole("heading", {
+        level: 2,
+        name: /Full-Stack Web Developer & IT Specialist/i,
+      }),
     ).toBeInTheDocument();
 
+    // Bio text
     expect(
       screen.getByText(
-        /"Bridging modern web architectures, data-driven BI solutions, and rock-solid infrastructure\."/i,
+        /I am a full-stack web developer and IT specialist specializing in high-performance Next\.js and TypeScript architectures/i,
       ),
     ).toBeInTheDocument();
 
-    const projectsLink = screen.getByRole("link", {
-      name: /View Projects & Case Studies/i,
+    // Pill-shaped Social Links & Mailto
+    const githubLink = screen.getByRole("link", {
+      name: /Visit GitHub profile of Amin Jamali/i,
     });
-    expect(projectsLink).toHaveAttribute("href", "#projects");
+    expect(githubLink).toHaveAttribute("href", "https://github.com/BIGboss248");
+    expect(githubLink).toHaveAttribute("target", "_blank");
+    expect(githubLink).toHaveAttribute("rel", "noopener noreferrer");
 
-    const contactLink = screen.getByRole("link", {
-      name: /Explore Interactive Lab/i,
+    const linkedinLink = screen.getByRole("link", {
+      name: /Visit LinkedIn profile of Amin Jamali/i,
     });
-    expect(contactLink).toHaveAttribute("href", "#contact");
-
-    // Verify verified social and contact channels are present under the avatar
-    expect(screen.getByRole("link", { name: /GitHub Profile/i })).toHaveAttribute(
-      "href",
-      "https://github.com/BIGboss248",
-    );
-    expect(screen.getByRole("link", { name: /LinkedIn Profile/i })).toHaveAttribute(
+    expect(linkedinLink).toHaveAttribute(
       "href",
       "https://linkedin.com/in/amin-jamali",
     );
-    expect(screen.getByRole("link", { name: /ORCID Researcher Identity/i })).toHaveAttribute(
+    expect(linkedinLink).toHaveAttribute("target", "_blank");
+
+    const orcidLink = screen.getByRole("link", {
+      name: /View ORCID researcher record of Amin Jamali/i,
+    });
+    expect(orcidLink).toHaveAttribute(
       "href",
       "https://orcid.org/0009-0004-9921-7273",
     );
-    expect(screen.getByRole("link", { name: /Twitter \/ X Profile/i })).toHaveAttribute(
-      "href",
-      "https://x.com/",
-    );
-    expect(screen.getByRole("link", { name: /Direct Email Inquiry/i })).toHaveAttribute(
-      "href",
-      "mailto:contact@meetjamali.com",
-    );
+    expect(orcidLink).toHaveAttribute("target", "_blank");
 
-    // Verify irrelevant technical spec box & ORCID ID key badge are removed
-    expect(screen.queryByText(/CORE_TECHNICAL_SPEC/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/RUNTIME_STACK/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/ORCID_0009_0004_9921_7273/i)).not.toBeInTheDocument();
+    const mailtoLink = screen.getByRole("link", {
+      name: /Send an email directly to Amin Jamali/i,
+    });
+    expect(mailtoLink).toHaveAttribute("href", "mailto:contact@meetjamali.com");
+
+    // Right Column Full-size Portrait Image
+    const portraitImg = screen.getByAltText(
+      /Amin Jamali — Full-Stack Web Developer and IT Specialist/i,
+    );
+    expect(portraitImg).toBeInTheDocument();
   });
 
   it("renders Persian translations when locale='fa'", () => {
@@ -122,18 +98,30 @@ describe("SinglePageHero Component", () => {
     render(<SinglePageHero locale="fa" />);
 
     expect(
+      screen.getByLabelText(/جایگاه لوگوی اختصاصی/i),
+    ).toBeInTheDocument();
+
+    expect(
       screen.getByRole("heading", { level: 1, name: /امین جمالی/i }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/کارشناس ارشد فناوری اطلاعات \(IT\) و توسعه‌دهنده وب/i),
+      screen.getByRole("heading", {
+        level: 2,
+        name: /توسعه‌دهنده فول‌استک وب و متخصص فناوری اطلاعات \(IT\)/i,
+      }),
     ).toBeInTheDocument();
 
     expect(
       screen.getByText(
-        /«پیوند معماری مدرن وب، راهکارهای داده‌محور هوش تجاری و زیرساخت‌های پایدار.»/i,
+        /توسعه‌دهنده فول‌استک وب و متخصص فناوری اطلاعات \(IT\) با تمرکز بر معماری‌های مدرن و پرسرعت Next\.js و TypeScript/i,
       ),
     ).toBeInTheDocument();
+
+    const mailtoLink = screen.getByRole("link", {
+      name: /ارسال مستقیم ایمیل به امین جمالی/i,
+    });
+    expect(mailtoLink).toHaveAttribute("href", "mailto:contact@meetjamali.com");
   });
 
   it("renders SinglePageHeroSkeleton fallback with pulse animation", () => {

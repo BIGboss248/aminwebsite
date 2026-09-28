@@ -19,7 +19,7 @@ export interface SinglePageProjectItem {
   doi?: string;
   liveUrl?: string;
   githubUrl?: string;
-  href: string;
+  href?: string;
 }
 
 export interface SinglePageProjectsSectionProps {

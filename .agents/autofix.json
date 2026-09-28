@@ -238,6 +238,18 @@
     "Category": "ARCH",
     "Instruction": "Do not render synthetic, non-existent, or placeholder GitHub repository cards (such as invented repos 'dns-over-https-tester', 'webrtc-leak-detector', 'parsbert-ime-sentiment') in showcase or projects sections. Feature strictly authentic engineering deliverables, genuine commercial/enterprise systems (Setayesh Parts, Bahar Trade), and peer-reviewed published research papers (with verified DOIs and author ORCID record).",
     "Why": "user explicit correction: remove the project cards listed as github repositories because they are not real"
+  },
+  {
+    "Rule_number": 41,
+    "Category": "ARCH",
+    "Instruction": "Do not create or link to individual project detail sub-pages (e.g. '/projects/[slug]'); project cards and showcases must link strictly to authentic external deliverables (GitHub repository links, live project deployments, and peer-reviewed DOI/ORCID research publications).",
+    "Why": "user explicit requirement: remove individual project detail pages from plan and link only to authentic external deliverables (GitHub, live deployment, DOIs/ORCID)"
+  },
+  {
+    "Rule_number": 42,
+    "Category": "ARCH",
+    "Instruction": "Do not attach external links, live URLs, or research DOIs to 'Bahar Trade IT Automation and Infrastructure Management' card (it is internal enterprise IT infrastructure work with no associated public link).",
+    "Why": "user explicit correction: Bahar Trade IT Automation and Infrastructure Management has no associated external link or DOI"
   }
 ]
 

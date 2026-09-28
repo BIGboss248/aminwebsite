@@ -1,23 +1,20 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight, ExternalLink, FileText, FolderGit2 } from "lucide-react";
-import { Link } from "@/app/components/Link";
+import { ExternalLink, FileText, FolderGit2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SinglePageProjectCardProps } from "./SinglePageProjectsSection.types";
 
 /**
  * SinglePageProjectCard Component.
  *
- * High-density modular project card rendering engineering platforms and published research papers with
- * verified metrics, tech stack tags, DOI research links, and production URLs.
+ * High-density modular project card rendering engineering deliverables and published research papers with
+ * tech stack tags, verified DOI links, GitHub repositories, and live production URLs.
  */
 export function SinglePageProjectCard({
   project,
-  locale = "en",
   className = "",
 }: SinglePageProjectCardProps): React.JSX.Element {
   const t = useTranslations("single_page.projects");
-  const isRtl = locale === "fa";
 
   const isResearch = project.category === "research";
 
@@ -54,7 +51,7 @@ export function SinglePageProjectCard({
 
         {/* Title */}
         <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors mb-2">
-          {project.href.startsWith("http") ? (
+          {project.href ? (
             <a
               href={project.href}
               target="_blank"
@@ -65,13 +62,7 @@ export function SinglePageProjectCard({
               <ExternalLink className="size-4 opacity-70" aria-hidden="true" />
             </a>
           ) : (
-            <Link
-              href={project.href}
-              locale={locale}
-              className="focus-visible:outline-hidden"
-            >
-              {project.title}
-            </Link>
+            <span>{project.title}</span>
           )}
         </h3>
 
@@ -86,33 +77,6 @@ export function SinglePageProjectCard({
         <p className="text-sm text-muted-foreground leading-relaxed mb-6">
           {project.summary}
         </p>
-
-        {/* Verified Impact Metrics Strip */}
-        {project.metrics && project.metrics.length > 0 && (
-          <div className="mb-6">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
-              {t("metrics_label")}
-            </div>
-            <div
-              dir="ltr"
-              className="grid grid-cols-3 gap-2 p-3 rounded-lg bg-background border border-border/80 text-center font-mono"
-            >
-              {project.metrics.map((metric, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-col items-center justify-center p-1"
-                >
-                  <span className="text-sm sm:text-base font-bold text-foreground">
-                    {metric.value}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground line-clamp-1">
-                    {metric.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Architecture & Tech Stack Badges */}
         {project.techStack && project.techStack.length > 0 && (
@@ -135,69 +99,49 @@ export function SinglePageProjectCard({
       </div>
 
       {/* Footer Navigation & External Links */}
-      <div className="pt-4 border-t border-border/60 flex flex-wrap items-center justify-between gap-3">
-        {!project.href.startsWith("http") ? (
-          <Link
-            href={project.href}
-            locale={locale}
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-primary group-hover:text-primary/90 transition-colors focus-visible:outline-hidden"
+      <div className="pt-4 border-t border-border/60 flex flex-wrap items-center justify-end gap-3">
+        {project.doi && (
+          <a
+            href={`https://doi.org/${project.doi}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 transition-colors"
+            title={t("doi_label")}
           >
-            <span>{t("case_study_label")}</span>
-            <ArrowRight
-              className={cn(
-                "size-4 transition-transform group-hover:translate-x-1",
-                isRtl && "rotate-180 group-hover:-translate-x-1",
-              )}
-              aria-hidden="true"
-            />
-          </Link>
-        ) : (
-          <span />
+            <FileText className="size-3.5" aria-hidden="true" />
+            <span>DOI: {project.doi}</span>
+          </a>
         )}
 
-        <div className="flex items-center gap-3">
-          {project.doi && (
-            <a
-              href={`https://doi.org/${project.doi}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
-              title={t("doi_label")}
-            >
-              <FileText className="size-3.5 text-purple-500" aria-hidden="true" />
-              <span>DOI</span>
-            </a>
-          )}
+        {project.githubUrl && (
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-medium bg-card text-foreground hover:bg-muted border border-border/80 transition-colors"
+            title={t("github_label")}
+          >
+            <FolderGit2 className="size-3.5 text-primary" aria-hidden="true" />
+            <span>GitHub</span>
+          </a>
+        )}
 
-          {project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
-              title={t("github_label")}
-            >
-              <FolderGit2 className="size-3.5 text-primary" aria-hidden="true" />
-              <span>GitHub</span>
-            </a>
-          )}
-
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
-              title={t("live_label")}
-            >
-              <ExternalLink className="size-3.5" aria-hidden="true" />
-              <span>{t("live_label")}</span>
-            </a>
-          )}
-        </div>
+        {project.liveUrl && (
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+            title={t("live_label")}
+          >
+            <ExternalLink className="size-3.5" aria-hidden="true" />
+            <span>{t("live_label")}</span>
+          </a>
+        )}
       </div>
     </article>
   );
 }
 
 export default SinglePageProjectCard;
+

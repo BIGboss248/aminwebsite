@@ -61,7 +61,7 @@ export function SinglePageProjectsSection({
         ],
         liveUrl: "https://setayesh.aminjamali.site/",
         githubUrl: "https://github.com/BIGboss248/setayeshparts",
-        href: "/projects/setayesh-parts",
+        href: "https://setayesh.aminjamali.site/",
       },
       {
         id: "bahar_trade_web",
@@ -94,7 +94,7 @@ export function SinglePageProjectsSection({
           t("items.bahar_trade_web.tech5"),
         ],
         liveUrl: "https://bahartradeco.com/en",
-        href: "/projects/bahar-trade-web",
+        href: "https://bahartradeco.com/en",
       },
       {
         id: "flutter_currency_project",
@@ -192,7 +192,6 @@ export function SinglePageProjectsSection({
           t("items.bahar_trade_automation.tech4"),
           t("items.bahar_trade_automation.tech5"),
         ],
-        href: "/projects/bahar-trade-it-automation",
       },
       {
         id: "parsbert_ime_forecasting",
@@ -225,7 +224,7 @@ export function SinglePageProjectsSection({
           t("items.parsbert_ime_forecasting.tech5"),
         ],
         doi: "10.61838/jafci.485",
-        href: "/projects/parsbert-ime-forecasting",
+        href: "https://doi.org/10.61838/jafci.485",
       },
       {
         id: "dqn_commodity_forex_analysis",
@@ -258,7 +257,7 @@ export function SinglePageProjectsSection({
           t("items.dqn_commodity_forex_analysis.tech5"),
         ],
         doi: "10.61838/bmfopen.545",
-        href: "/projects/dqn-commodity-forex-analysis",
+        href: "https://doi.org/10.61838/bmfopen.545",
       },
       {
         id: "mses_it_automation_optimization",

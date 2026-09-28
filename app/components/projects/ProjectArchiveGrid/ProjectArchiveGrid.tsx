@@ -67,8 +67,8 @@ export function ProjectArchiveGrid({
           tCase("setayesh_parts.tech4"),
           tCase("setayesh_parts.tech5"),
         ],
-        href: ROUTES.projects.detail("setayesh-parts"),
-        liveUrl: "https://setayeshparts.com",
+        href: "https://setayesh.aminjamali.site/",
+        liveUrl: "https://setayesh.aminjamali.site/",
       },
       {
         id: "bahar-trade-web",
@@ -100,8 +100,8 @@ export function ProjectArchiveGrid({
           tCase("bahar_trade_web.tech4"),
           tCase("bahar_trade_web.tech5"),
         ],
-        href: ROUTES.projects.detail("bahar-trade-web"),
-        liveUrl: "https://bahartrade.com",
+        href: "https://bahartradeco.com/en",
+        liveUrl: "https://bahartradeco.com/en",
       },
       {
         id: "parsbert-ime-forecasting",
@@ -133,7 +133,7 @@ export function ProjectArchiveGrid({
           tCase("parsbert_ime_forecasting.tech4"),
           tCase("parsbert_ime_forecasting.tech5"),
         ],
-        href: ROUTES.projects.detail("parsbert-ime-forecasting"),
+        href: "https://doi.org/10.61838/jafci.485",
         doi: "10.61838/jafci.485",
       },
       {
@@ -166,7 +166,7 @@ export function ProjectArchiveGrid({
           tCase("dqn_commodity_forex_analysis.tech4"),
           tCase("dqn_commodity_forex_analysis.tech5"),
         ],
-        href: ROUTES.projects.detail("dqn-commodity-forex-analysis"),
+        href: "https://doi.org/10.61838/bmfopen.545",
         doi: "10.61838/bmfopen.545",
       },
       {
@@ -199,8 +199,6 @@ export function ProjectArchiveGrid({
           tCase("bahar_trade_it_automation.tech4"),
           tCase("bahar_trade_it_automation.tech5"),
         ],
-        href: ROUTES.projects.detail("bahar-trade-it-automation"),
-        doi: "10.61838/msesj.477",
       },
     ];
   }, [tCase, caseStudies]);

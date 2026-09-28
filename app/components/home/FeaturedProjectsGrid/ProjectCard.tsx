@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Smartphone, Globe } from "lucide-react";
+import { ArrowRight, ExternalLink, Smartphone, Globe } from "lucide-react";
 import { Link } from "@/app/components/Link";
 import { cn } from "@/lib/utils";
 import type { ProjectCardProps } from "./FeaturedProjectsGrid.types";
@@ -29,10 +29,11 @@ export function ProjectCard({
     techStack,
     href,
     frameType = "browser",
-    actionLabel = "View Case Study",
+    actionLabel = "View Live System",
   } = project;
 
   const isRtl = locale === "fa";
+  const isExternal = href.startsWith("http");
 
   return (
     <article
@@ -142,21 +143,33 @@ export function ProjectCard({
         </div>
       </div>
 
-      {/* Interactive Case Study Link */}
+      {/* Interactive External Deliverable Link */}
       <div className="pt-2 border-t border-border/40">
-        <Link
-          href={href}
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded"
-        >
-          <span>{actionLabel}</span>
-          <ArrowRight
-            className={cn(
-              "size-4 transition-transform duration-200 group-hover:translate-x-1",
-              isRtl && "rotate-180 group-hover:-translate-x-1",
-            )}
-            aria-hidden="true"
-          />
-        </Link>
+        {isExternal ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded"
+          >
+            <span>{actionLabel}</span>
+            <ExternalLink className="size-4" aria-hidden="true" />
+          </a>
+        ) : (
+          <Link
+            href={href}
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded"
+          >
+            <span>{actionLabel}</span>
+            <ArrowRight
+              className={cn(
+                "size-4 transition-transform duration-200 group-hover:translate-x-1",
+                isRtl && "rotate-180 group-hover:-translate-x-1",
+              )}
+              aria-hidden="true"
+            />
+          </Link>
+        )}
       </div>
     </article>
   );

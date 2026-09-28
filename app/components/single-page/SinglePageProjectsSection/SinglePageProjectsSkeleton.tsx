@@ -54,8 +54,6 @@ export function SinglePageProjectsSkeleton({
                   <div className="h-3.5 w-5/6 bg-muted/50 rounded" />
                   <div className="h-3.5 w-4/6 bg-muted/40 rounded" />
                 </div>
-                {/* Metric Strip Skeleton */}
-                <div className="h-16 w-full bg-muted/40 rounded-lg mb-6" />
                 {/* Stack Badges Skeleton */}
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   <div className="h-5 w-16 bg-muted/50 rounded" />

@@ -16,7 +16,7 @@ export interface CaseStudyItem {
   summary: string;
   metrics: CaseStudyMetric[];
   techStack: string[];
-  href: string;
+  href?: string;
   doi?: string;
   liveUrl?: string;
 }

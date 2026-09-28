@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight, ExternalLink, FileText } from "lucide-react";
-import { Link } from "@/app/components/Link";
+import { ExternalLink, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CaseStudyCardProps } from "./CaseStudyCard.types";
 
@@ -12,11 +11,9 @@ import type { CaseStudyCardProps } from "./CaseStudyCard.types";
  */
 export function CaseStudyCard({
   caseStudy,
-  locale = "en",
   className = "",
 }: CaseStudyCardProps): React.JSX.Element {
   const t = useTranslations("projects.case_studies");
-  const isRtl = locale === "fa";
 
   return (
     <article
@@ -39,13 +36,19 @@ export function CaseStudyCard({
 
         {/* Title */}
         <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors mb-2">
-          <Link
-            href={caseStudy.href}
-            locale={locale}
-            className="focus-visible:outline-hidden"
-          >
-            {caseStudy.title}
-          </Link>
+          {caseStudy.href ? (
+            <a
+              href={caseStudy.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-visible:outline-hidden inline-flex items-center gap-1.5"
+            >
+              <span>{caseStudy.title}</span>
+              <ExternalLink className="size-4 opacity-70" aria-hidden="true" />
+            </a>
+          ) : (
+            <span>{caseStudy.title}</span>
+          )}
         </h3>
 
         {/* Role & Client Context */}
@@ -107,20 +110,17 @@ export function CaseStudyCard({
 
       {/* Footer Navigation & External Links */}
       <div className="pt-4 border-t border-border/60 flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href={caseStudy.href}
-          locale={locale}
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-primary group-hover:text-primary/90 transition-colors focus-visible:outline-hidden"
-        >
-          <span>{t("view_case_study")}</span>
-          <ArrowRight
-            className={cn(
-              "size-4 transition-transform group-hover:translate-x-1",
-              isRtl && "rotate-180 group-hover:-translate-x-1",
-            )}
-            aria-hidden="true"
-          />
-        </Link>
+        {caseStudy.href && (
+          <a
+            href={caseStudy.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-primary group-hover:text-primary/90 transition-colors focus-visible:outline-hidden"
+          >
+            <span>{caseStudy.doi ? t("view_paper") : t("live_preview")}</span>
+            <ExternalLink className="size-4" aria-hidden="true" />
+          </a>
+        )}
 
         <div className="flex items-center gap-3">
           {caseStudy.doi && (
@@ -131,7 +131,7 @@ export function CaseStudyCard({
               className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
               title={t("view_paper")}
             >
-              <FileText className="size-3.5" aria-hidden="true" />
+              <FileText className="size-3.5 text-purple-500" aria-hidden="true" />
               <span>DOI</span>
             </a>
           )}

@@ -84,8 +84,8 @@ describe("ProjectArchiveGrid Edge Cases", () => {
       screen.getByText("DQN & LSTM Volatility Analysis Engine"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Bahar Trade IT Automation & Database Tuning"),
-    ).toBeInTheDocument();
+      screen.queryByText("Bahar Trade IT Automation & Database Tuning"),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText("Setayesh Parts Web Platform"),
     ).not.toBeInTheDocument();

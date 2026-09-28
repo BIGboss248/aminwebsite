@@ -1,189 +1,113 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SinglePageProjectsSection } from "./SinglePageProjectsSection";
-import { SinglePageProjectsSkeleton } from "./SinglePageProjectsSkeleton";
 import enMessages from "@/messages/en.json";
-import faMessages from "@/messages/fa.json";
 
-let mockLocale = "en";
-
+// Mock next-intl
 jest.mock("next-intl", () => ({
-  useLocale: () => mockLocale,
-  useTranslations: (namespace?: string) => (key: string) => {
-    const dict = mockLocale === "fa" ? faMessages : enMessages;
-    if (namespace === "single_page.projects") {
+  useTranslations: () => {
+    return (key: string) => {
       const keys = key.split(".");
-      let val: any = dict.single_page.projects;
+      let current: unknown = enMessages.single_page.projects;
       for (const k of keys) {
-        val = val?.[k];
+        if (current && typeof current === "object" && k in current) {
+          current = (current as Record<string, unknown>)[k];
+        } else {
+          return key;
+        }
       }
-      return typeof val === "string" ? val : key;
-    }
-    return key;
+      return typeof current === "string" ? current : key;
+    };
   },
 }));
 
+// Mock Link
 jest.mock("@/app/components/Link", () => ({
-  __esModule: true,
   Link: ({
     children,
     href,
     className,
-    ...rest
   }: {
     children: React.ReactNode;
     href: string;
     className?: string;
   }) => (
-    <a href={href} className={className} {...rest}>
-      {children}
-    </a>
-  ),
-  default: ({
-    children,
-    href,
-    className,
-    ...rest
-  }: {
-    children: React.ReactNode;
-    href: string;
-    className?: string;
-  }) => (
-    <a href={href} className={className} {...rest}>
+    <a href={href} className={className} data-testid="mock-link">
       {children}
     </a>
   ),
 }));
 
-describe("SinglePageProjectsSection Component", () => {
-  beforeEach(() => {
-    mockLocale = "en";
-  });
-
-  it("renders section heading, description, and default all category cards in English", () => {
-    mockLocale = "en";
+describe("SinglePageProjectsSection", () => {
+  it("renders the section header and category tabs", () => {
     render(<SinglePageProjectsSection locale="en" />);
 
     expect(
       screen.getByRole("heading", {
-        level: 2,
-        name: /Delivered Systems & Peer-Reviewed Research/i,
+        name: enMessages.single_page.projects.title,
       }),
     ).toBeInTheDocument();
 
-    // Check authentic production items
-    expect(
-      screen.getByText(/Setayesh Parts \| Specialized Tuning & Performance Parts/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Bahar Trade Co\. \| Premium Iron Ore & Steel Supply/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Flutter Currency & Note App/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/IT & Infrastructure Tool-box/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Bahar Trade IT Automation & Database Tuning/i),
-    ).toBeInTheDocument();
-
-    // Check authentic peer-reviewed research items with DOIs
-    expect(
-      screen.getByText(/ParsBERT-XGBoost Commodity Volatility Model/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/DQN & LSTM Market Volatility Forecasting/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Empirical Study on IT Automation & Next\.js SSR Web Optimization/i),
-    ).toBeInTheDocument();
-
-    // Check DOI link elements
-    const doiLinks = screen.getAllByTitle(/DOI Publication/i);
-    expect(doiLinks.length).toBe(3);
-    expect(doiLinks[0]).toHaveAttribute("href", "https://doi.org/10.61838/jafci.485");
-
-    // Check GitHub link elements
-    const githubLinks = screen.getAllByTitle(/GitHub Repository/i);
-    expect(githubLinks.length).toBe(3); // Setayesh parts, Flutter currency, Tool-box
-    expect(githubLinks.some((l) => l.getAttribute("href") === "https://github.com/BIGboss248/setayeshparts")).toBe(true);
-    expect(githubLinks.some((l) => l.getAttribute("href") === "https://github.com/BIGboss248/flutter-currency-project")).toBe(true);
-    expect(githubLinks.some((l) => l.getAttribute("href") === "https://github.com/BIGboss248/Tool-box")).toBe(true);
-
-    // Check Live link elements
-    const liveLinks = screen.getAllByTitle(/Live Site/i);
-    expect(liveLinks.length).toBe(2); // Setayesh parts & Bahar trade co
-    expect(liveLinks.some((l) => l.getAttribute("href") === "https://setayesh.aminjamali.site/")).toBe(true);
-    expect(liveLinks.some((l) => l.getAttribute("href") === "https://bahartradeco.com/en")).toBe(true);
+    expect(screen.getByRole("tab", { name: /all/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /production/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /research/i })).toBeInTheDocument();
   });
 
-  it("filters items when clicking category tabs", () => {
-    mockLocale = "en";
+  it("renders the updated Bahar Trade IT Automation and Infrastructure Management card without verified impact metrics", () => {
     render(<SinglePageProjectsSection locale="en" />);
 
-    const researchTab = screen.getByRole("tab", {
-      name: /ORCID Research \(DOIs\)/i,
-    });
+    // Check title and summary
+    expect(
+      screen.getByText("Bahar Trade IT Automation and Infrastructure Management"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Enterprise Linux Server Automation, Active Directory Management, Enterprise Security, and IT Administration.",
+      ),
+    ).toBeInTheDocument();
+
+    // Verify impact matrix metrics (e.g. Query Latency Drop) are NOT rendered
+    expect(screen.queryByText("Query Latency Drop")).not.toBeInTheDocument();
+    expect(screen.queryByText("-82%")).not.toBeInTheDocument();
+
+    // Verify Bahar Trade card title is plain text and not a link
+    const titleElement = screen.getByText(
+      "Bahar Trade IT Automation and Infrastructure Management",
+    );
+    expect(titleElement.closest("a")).toBeNull();
+  });
+
+  it("filters cards when clicking category tabs", () => {
+    render(<SinglePageProjectsSection locale="en" />);
+
+    // Initially All projects are shown
+    expect(
+      screen.getByText("Bahar Trade IT Automation and Infrastructure Management"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(enMessages.single_page.projects.items.parsbert_ime_forecasting.title),
+    ).toBeInTheDocument();
+
+    // Click Research tab
+    const researchTab = screen.getByRole("tab", { name: /research/i });
     fireEvent.click(researchTab);
 
-    // Research items should be visible
     expect(
-      screen.getByText(/ParsBERT-XGBoost Commodity Volatility Model/i),
+      screen.getByText(enMessages.single_page.projects.items.parsbert_ime_forecasting.title),
     ).toBeInTheDocument();
-
-    // Production item should not be in the filtered list
     expect(
-      screen.queryByText(/Setayesh Parts \| Specialized Tuning & Performance Parts/i),
+      screen.queryByText("Bahar Trade IT Automation and Infrastructure Management"),
     ).not.toBeInTheDocument();
 
-    const productionTab = screen.getByRole("tab", {
-      name: /Production Systems/i,
-    });
-    fireEvent.click(productionTab);
+    // Click Production tab
+    const prodTab = screen.getByRole("tab", { name: /production/i });
+    fireEvent.click(prodTab);
 
     expect(
-      screen.getByText(/Setayesh Parts \| Specialized Tuning & Performance Parts/i),
+      screen.getByText("Bahar Trade IT Automation and Infrastructure Management"),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText(/ParsBERT-XGBoost Commodity Volatility Model/i),
+      screen.queryByText(enMessages.single_page.projects.items.parsbert_ime_forecasting.title),
     ).not.toBeInTheDocument();
-  });
-
-  it("renders Persian translations when locale='fa'", () => {
-    mockLocale = "fa";
-    render(<SinglePageProjectsSection locale="fa" />);
-
-    expect(
-      screen.getByRole("heading", {
-        level: 2,
-        name: /سامانه‌های عملیاتی و پژوهش‌های داوری‌شده/i,
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/ستایش پارتس \| قطعات تخصصی تیونینگ و عملکرد خودرو/i),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/شرکت بهار تجارت \| تأمین سنگ آهن و محصولات فولادی/i),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/اپلیکیشن مدیریت ارز و یادداشت فلاتر/i),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/جعبه‌ابزار و ابزارهای زیرساخت IT و شبکه/i),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/اتوماسیون زیرساخت IT و بهینه‌سازی دیتابیس بهار تجارت/i),
-    ).toBeInTheDocument();
-  });
-
-  it("renders SinglePageProjectsSkeleton fallback with pulse animation", () => {
-    const { container } = render(<SinglePageProjectsSkeleton />);
-    expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
   });
 });

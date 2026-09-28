@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AMIN JAMALI // ARCHIVE.OBSERVATORY - NFC Digital Destination</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts: Geist & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with custom configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-container": "#00452e",
+            "on-primary-container": "#00424f",
+            "secondary": "#d0bcff",
+            "on-primary-fixed-variant": "#004e5c",
+            "secondary-container": "#571bc1",
+            "on-background": "#d4e4fa",
+            "tertiary-fixed": "#6ffbbe",
+            "surface-container-highest": "#273647",
+            "error": "#ffb4ab",
+            "secondary-fixed-dim": "#d0bcff",
+            "outline-variant": "#3d494c",
+            "on-error": "#690005",
+            "outline": "#869397",
+            "surface": "#051424",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-secondary-fixed-variant": "#5516be",
+            "on-primary-fixed": "#001f26",
+            "surface-bright": "#2c3a4c",
+            "on-secondary-container": "#c4abff",
+            "on-secondary": "#3c0091",
+            "surface-dim": "#051424",
+            "primary-container": "#06b6d4",
+            "surface-container-low": "#0d1c2d",
+            "secondary-fixed": "#e9ddff",
+            "primary-fixed": "#acedff",
+            "on-error-container": "#ffdad6",
+            "surface-tint": "#4cd7f6",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-tertiary": "#003824",
+            "on-surface-variant": "#bcc9cd",
+            "tertiary": "#4edea3",
+            "primary": "#4cd7f6",
+            "surface-container": "#122131",
+            "inverse-on-surface": "#233143",
+            "inverse-surface": "#d4e4fa",
+            "inverse-primary": "#00687a",
+            "error-container": "#93000a",
+            "surface-container-high": "#1c2b3c",
+            "on-primary": "#003640",
+            "surface-variant": "#273647",
+            "background": "#051424",
+            "tertiary-container": "#1bbd85",
+            "on-surface": "#d4e4fa",
+            "primary-fixed-dim": "#4cd7f6",
+            "surface-container-lowest": "#010f1f",
+            "on-tertiary-fixed": "#002113",
+            "on-secondary-fixed": "#23005c"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "margin-desktop": "3rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "margin": "1rem",
+            "gutter": "1rem",
+            "space-xl": "2.5rem",
+            "gutter-desktop": "1.5rem"
+          },
+          "fontFamily": {
+            "label-md": ["JetBrains Mono"],
+            "headline-lg-mobile": ["Geist"],
+            "label-lg": ["JetBrains Mono"],
+            "headline-md": ["Geist"],
+            "headline-sm": ["Geist"],
+            "headline-lg": ["Geist"],
+            "headline-xl-mobile": ["Geist"],
+            "body-sm": ["Geist"],
+            "body-lg": ["Geist"],
+            "label-sm": ["JetBrains Mono"],
+            "body-md": ["Geist"],
+            "headline-xl": ["Geist"]
+          },
+          "fontSize": {
+            "label-md": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-xl-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .telemetry-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(61, 73, 76, 0.12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(61, 73, 76, 0.12) 1px, transparent 1px);
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(1.15); }
+    }
+    .status-pulse {
+      animation: pulse-subtle 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: rotate-slow 24s linear infinite;
+    }
+    .card-deck-elevation {
+      box-shadow: 
+        0 25px 60px -15px rgba(1, 15, 31, 0.95),
+        0 0 50px -10px rgba(6, 182, 212, 0.15),
+        inset 0 1px 0 rgba(76, 215, 246, 0.25),
+        inset 0 0 30px rgba(208, 188, 255, 0.03);
+    }
+    .card-edge-glow {
+      box-shadow: 0 0 20px -2px rgba(6, 182, 212, 0.35);
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface min-h-screen selection:bg-primary-container selection:text-surface-container-lowest relative overflow-x-hidden font-body-md antialiased telemetry-grid flex flex-col justify-between">
+<!-- Tactical Decorative Top Horizon Light -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent pointer-events-none"></div>
+<!-- SHARED COMPONENT: TopNavBar (cockpit_telemetry_bar) -->
+<header class="w-full max-w-full px-margin md:px-margin-desktop py-space-sm flex items-center justify-between z-50 sticky top-0 backdrop-blur-md bg-surface/90 border-b border-outline-variant">
+<!-- Brand / Node Status Indicator -->
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary status-pulse shadow-[0_0_8px_#4edea3]"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary/40"></span>
+</div>
+<a class="font-label-lg text-label-lg font-bold text-primary tracking-widest flex items-center gap-space-xs hover:opacity-90 transition-opacity" href="#">
+<span>AMIN JAMALI // ARCHIVE.OBSERVATORY</span>
+</a>
+</div>
+<!-- Telemetry Navigation Links (Desktop) -->
+<nav class="hidden md:flex items-center gap-space-lg">
+<a class="text-primary border-b-2 border-primary pb-1 font-label-md text-label-md transition-all" href="#telemetry">TELEMETRY</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 font-label-md text-label-md" href="#systems">SYSTEMS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 font-label-md text-label-md" href="#benchmarks">BENCHMARKS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 font-label-md text-label-md" href="#schematics">SCHEMATICS</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 font-label-md text-label-md" href="#kernel">KERNEL</a>
+</nav>
+<!-- Cockpit Action Cluster & NFC Validation Indicator -->
+<div class="flex items-center gap-space-sm">
+<div class="hidden lg:flex items-center gap-space-xs px-2.5 py-1 bg-surface-container-low border border-outline-variant rounded">
+<span class="text-tertiary material-symbols-outlined text-[14px]">sensors</span>
+<span class="font-label-sm text-label-sm text-tertiary tracking-wide uppercase">SYS_STATUS: NOMINAL</span>
+</div>
+<div class="flex items-center gap-1 border-l border-outline-variant pl-space-sm ml-space-xs">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:border-primary transition-all rounded" id="terminalToggleBtn" title="Open Systems Terminal">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:border-primary transition-all rounded" id="vcfDirectDownloadBtn" title="Contact Payload Parameters">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+</div>
+<button class="ml-space-xs hidden sm:inline-flex items-center gap-space-xs px-3 py-1.5 bg-primary text-on-primary font-label-md text-label-md font-semibold rounded hover:bg-primary-fixed transition-all shadow-[0_0_12px_rgba(76,215,246,0.3)]" id="initSessionBtn">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span>INIT_SESSION</span>
+</button>
+</div>
+</header>
+<!-- NFC Ingress / Telemetry Bar Header Banner -->
+<aside class="w-full bg-surface-container-low/70 border-b border-outline-variant/60 px-margin md:px-margin-desktop py-1.5">
+<div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-space-xs font-label-sm text-label-sm">
+<div class="flex items-center gap-space-sm text-on-surface-variant">
+<span class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[14px]">contactless</span>
+<span class="tracking-wider">NFC_HANDSHAKE:</span>
+</span>
+<span class="text-on-surface bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant font-mono">VALIDATED [ID: AJ-CARD-941]</span>
+<span class="hidden sm:inline text-outline">•</span>
+<span class="hidden sm:inline text-on-surface-variant">PHYSICAL TOKEN SCANNED VIA SECURE_NFC_LINK</span>
+</div>
+<div class="flex items-center gap-space-md text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="text-tertiary">LATENCY:</span> 1.4ms
+        </span>
+<span class="hidden md:flex items-center gap-1">
+<span class="text-secondary">OBSERVATORY_NODE:</span> TEH-01 // GLOBAL
+        </span>
+</div>
+</div>
+</aside>
+<!-- MAIN STAGE: Center-Focused Digital Business Card Deck -->
+<main class="w-full flex-1 flex flex-col items-center justify-center px-margin md:px-margin-desktop py-space-lg md:py-space-xl relative">
+<!-- Ambient Cyan/Violet Backlight Blobs -->
+<div class="absolute w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none -top-10 -left-10"></div>
+<div class="absolute w-96 h-96 bg-secondary-container/15 rounded-full blur-3xl pointer-events-none -bottom-10 -right-10"></div>
+<!-- Elevated Digital Business Card Container -->
+<div class="w-full max-w-2xl bg-surface-container-low/95 border border-primary/30 rounded-2xl p-space-md sm:p-space-lg relative overflow-hidden backdrop-blur-xl card-deck-elevation transition-all">
+<!-- Micro-Border Glowing Top & Bottom Horizon Accents -->
+<div class="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-80"></div>
+<div class="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-secondary/40 to-transparent"></div>
+<!-- Card Top Coordinates & Clearance Telemetry Strip -->
+<div class="flex items-center justify-between pb-space-sm border-b border-outline-variant/60 font-label-sm text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5 text-primary font-mono">
+<span class="material-symbols-outlined text-[13px]">my_location</span>
+<span>35.6892° N, 51.3890° E</span>
+<span class="text-outline-variant">::</span>
+<span class="text-on-surface-variant">TEH-01</span>
+</div>
+<div class="flex items-center gap-space-xs font-mono">
+<span class="text-tertiary">RETICLE: LOCKED</span>
+<span class="text-outline-variant">•</span>
+<span class="text-secondary">NFC://AJ-941</span>
+</div>
+</div>
+<!-- CENTERED BIOMETRIC PORTRAIT HUD ACCENT -->
+<div class="flex flex-col items-center pt-space-md sm:pt-space-lg text-center">
+<div class="relative group mb-space-md">
+<!-- Cybernetic Outer Bracket Reticles -->
+<div class="absolute -top-2.5 -left-2.5 w-5 h-5 border-t-2 border-l-2 border-primary z-20 pointer-events-none"></div>
+<div class="absolute -top-2.5 -right-2.5 w-5 h-5 border-t-2 border-r-2 border-primary z-20 pointer-events-none"></div>
+<div class="absolute -bottom-2.5 -left-2.5 w-5 h-5 border-b-2 border-l-2 border-primary z-20 pointer-events-none"></div>
+<div class="absolute -bottom-2.5 -right-2.5 w-5 h-5 border-b-2 border-r-2 border-primary z-20 pointer-events-none"></div>
+<!-- Rotating Telemetry Calibration Orbit Ring -->
+<div class="absolute -inset-2 rounded-full border border-dashed border-primary/30 animate-spin-slow pointer-events-none"></div>
+<div class="absolute -inset-3.5 rounded-full border border-outline-variant/40 pointer-events-none"></div>
+<!-- Biometric Circular HUD Badge with Rim Lighting Portrait -->
+<div class="w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-2 border-primary/50 relative shadow-[0_0_25px_rgba(6,182,212,0.35)] bg-surface-container-lowest">
+<img alt="Amin Jamali - Systems Engineer &amp; Full-Stack Architect" class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AEtjO1Xgq0y7en1kudE7fzqhgN1fBpjswYh08GbSY63WaDw1WQohl0j4YrTQcWNMNt4voDPkSCAGKEuewu_2bfb180Hm1pf6N-JsOP_zfF5cn1wBDalHHHaW2-Aen4MJhDgCvfYtH3DetcjSLy5q8PkFDnrKjKX6gu6Q-TQSiWlEz5p1xwCunje2t2MpkqGMqSCQcUvIAUBrHw6YzNIi4P11NMyR9IyUuMM3RwgPkzSolq2HVIhCgxoJgmd5jsM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent pointer-events-none"></div>
+</div>
+<!-- Live Telemetry Pip Badge Attached Below Reticle -->
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-surface-container-lowest/90 border border-tertiary/60 shadow-[0_0_12px_rgba(78,222,163,0.3)] backdrop-blur-md">
+<span class="w-2 h-2 rounded-full bg-tertiary status-pulse"></span>
+<span class="font-label-sm text-label-sm text-tertiary tracking-wider font-semibold uppercase">LIVE // NODE_VERIFIED</span>
+</div>
+</div>
+<!-- Identity & Verification Pill Badges -->
+<div class="flex flex-wrap items-center justify-center gap-2 mb-space-xs mt-1">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-container/20 border border-secondary/40 text-secondary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>SYSTEMS ARCHITECT &amp; FULL-STACK</span>
+</div>
+<div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container border border-outline-variant text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-primary">contactless</span>
+<span>NFC VERIFIED IDENTITY</span>
+</div>
+<div class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/70 text-on-surface-variant font-label-sm text-label-sm">
+        AUTH_LEVEL: L3_SENIOR
+      </div>
+</div>
+<!-- Prominent Name & Title -->
+<h1 class="font-headline-xl text-headline-xl sm:text-[44px] text-on-surface font-extrabold tracking-tight mt-1 mb-1">
+      Amin Jamali
+    </h1>
+<p class="font-headline-sm text-headline-sm text-primary-fixed-dim font-medium tracking-normal mb-space-sm max-w-lg">
+      Systems Engineer &amp; Full-Stack Architect
+    </p>
+<!-- Punchy Bio Deck -->
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl leading-relaxed text-center px-2">
+      Designing low-latency distributed web platforms, high-throughput backend infrastructure, and empirical machine learning systems. Scanned directly from NFC hardware token — verified contact portal active.
+    </p>
+</div>
+<!-- PRIMARY ACTIONS: High Emphasis CTA Button & Terminal Connect -->
+<div class="mt-space-md sm:mt-space-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-space-sm">
+<!-- High-emphasis Primary CTA button -->
+<button class="flex-1 inline-flex items-center justify-center gap-space-xs px-6 py-3.5 bg-primary text-on-primary font-headline-sm text-headline-sm font-bold rounded-lg hover:bg-primary-fixed transition-all duration-150 card-edge-glow active:scale-[0.98]" id="downloadVcardBtn">
+<span class="material-symbols-outlined text-[20px]">contact_phone</span>
+<span>Save Contact (.vcf)</span>
+</button>
+<!-- Secondary Terminal Execution Button -->
+<button class="flex-1 inline-flex items-center justify-center gap-space-xs px-5 py-3.5 bg-surface-container border border-outline-variant hover:border-primary text-on-surface font-label-lg text-label-lg rounded-lg hover:bg-surface-container-high transition-all duration-150 group" id="executeTerminalBtn">
+<span class="material-symbols-outlined text-[18px] text-primary group-hover:rotate-12 transition-transform">terminal</span>
+<span>Execute Shell Connect</span>
+</button>
+</div>
+<!-- COMPACT TELEMETRY CONTACT CREDENTIALS (Email & PGP Fingerprint) -->
+<div class="mt-space-md grid grid-cols-1 sm:grid-cols-2 gap-space-xs">
+<!-- Primary Dispatch Quick-Copy Card -->
+<div class="group flex items-center justify-between p-2.5 px-3 bg-surface-container/70 border border-outline-variant rounded hover:border-primary transition-all cursor-pointer" id="copyEmailCard">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0">mail</span>
+<div class="truncate text-left">
+<div class="font-label-sm text-[9px] text-on-surface-variant uppercase tracking-wider">Primary Dispatch</div>
+<div class="font-label-md text-label-md text-on-surface font-semibold truncate" id="emailValue">amin@observatory.dev</div>
+</div>
+</div>
+<span class="font-label-sm text-[10px] text-primary group-hover:text-primary-fixed bg-surface-container-high px-2 py-0.5 rounded border border-outline-variant flex items-center gap-1 shrink-0 ml-2" id="emailBadgeText">
+<span class="material-symbols-outlined text-[11px]">content_copy</span>
+<span>COPY</span>
+</span>
+</div>
+<!-- PGP Fingerprint Quick-Copy Card -->
+<div class="group flex items-center justify-between p-2.5 px-3 bg-surface-container/70 border border-outline-variant rounded hover:border-primary transition-all cursor-pointer" id="copyPgpCard">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0">key</span>
+<div class="truncate text-left">
+<div class="font-label-sm text-[9px] text-on-surface-variant uppercase tracking-wider">PGP Fingerprint</div>
+<div class="font-label-md text-label-md text-on-surface font-mono truncate" id="pgpValue">4F2A 99B1 E8D4 CC91</div>
+</div>
+</div>
+<span class="font-label-sm text-[10px] text-secondary group-hover:text-secondary-fixed bg-surface-container-high px-2 py-0.5 rounded border border-outline-variant flex items-center gap-1 shrink-0 ml-2" id="pgpBadgeText">
+<span class="material-symbols-outlined text-[11px]">content_copy</span>
+<span>COPY</span>
+</span>
+</div>
+</div>
+<!-- BALANCED SOCIAL PILL BUTTONS CLUSTER -->
+<div class="mt-space-md pt-space-sm border-t border-outline-variant/60">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider mb-2">
+<span>Verified External Bus Channels</span>
+<span class="text-tertiary font-mono">STATUS: SYNC 100%</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+<!-- GitHub -->
+<a class="flex items-center justify-between px-3 py-2 bg-surface-container border border-outline-variant rounded-lg hover:border-primary hover:bg-surface-container-high transition-all group" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-primary transition-colors">code</span>
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary font-medium truncate">GitHub</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:translate-x-0.5 transition-transform">↗</span>
+</a>
+<!-- LinkedIn -->
+<a class="flex items-center justify-between px-3 py-2 bg-surface-container border border-outline-variant rounded-lg hover:border-primary hover:bg-surface-container-high transition-all group" href="https://linkedin.com" rel="noopener noreferrer" target="_blank">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-primary transition-colors">work</span>
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary font-medium truncate">LinkedIn</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:translate-x-0.5 transition-transform">↗</span>
+</a>
+<!-- Telegram -->
+<a class="flex items-center justify-between px-3 py-2 bg-surface-container border border-outline-variant rounded-lg hover:border-primary hover:bg-surface-container-high transition-all group" href="https://t.me" rel="noopener noreferrer" target="_blank">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-primary transition-colors">send</span>
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary font-medium truncate">Telegram</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:translate-x-0.5 transition-transform">↗</span>
+</a>
+<!-- ORCID -->
+<a class="flex items-center justify-between px-3 py-2 bg-surface-container border border-outline-variant rounded-lg hover:border-primary hover:bg-surface-container-high transition-all group" href="#" rel="noopener noreferrer">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-primary transition-colors">school</span>
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary font-medium truncate">ORCID</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:translate-x-0.5 transition-transform">↗</span>
+</a>
+<!-- RFC Specs -->
+<a class="flex items-center justify-between px-3 py-2 bg-surface-container border border-outline-variant rounded-lg hover:border-primary hover:bg-surface-container-high transition-all group" href="#" rel="noopener noreferrer">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-primary transition-colors">description</span>
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary font-medium truncate">RFC Specs</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:translate-x-0.5 transition-transform">↗</span>
+</a>
+<!-- SSH Gateway -->
+<a class="flex items-center justify-between px-3 py-2 bg-surface-container border border-outline-variant rounded-lg hover:border-secondary hover:bg-surface-container-high transition-all group cursor-pointer" onclick="triggerTerminal()">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-[16px] text-secondary">terminal</span>
+<span class="font-label-md text-label-md text-secondary font-medium truncate">SSH Token</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary group-hover:translate-x-0.5 transition-transform">::</span>
+</a>
+</div>
+</div>
+<!-- BENCHMARK CREDENTIALS & AVAILABILITY TICKER -->
+<div class="mt-space-md pt-space-sm border-t border-outline-variant/60 grid grid-cols-2 sm:grid-cols-3 gap-2">
+<!-- Uptime Index -->
+<div class="p-2.5 bg-surface-container/60 border border-outline-variant/80 rounded">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-[10px]">
+<span>UPTIME_INDEX</span>
+<span class="text-tertiary font-mono">99.98%</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-primary font-bold mt-0.5">12+ <span class="text-label-sm font-normal text-on-surface-variant">Yrs</span></div>
+<div class="font-label-sm text-[10px] text-on-surface-variant">Production Architect</div>
+</div>
+<!-- Daily Event Throughput -->
+<div class="p-2.5 bg-surface-container/60 border border-outline-variant/80 rounded">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-[10px]">
+<span>EVENT_INGRESS</span>
+<span class="text-secondary font-mono">40+ SYS</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-secondary font-bold mt-0.5">18M+</div>
+<div class="font-label-sm text-[10px] text-on-surface-variant">Daily Distributed Ops</div>
+</div>
+<!-- Live Clearance Beacon -->
+<div class="col-span-2 sm:col-span-1 p-2.5 bg-surface-container/60 border border-tertiary/30 rounded flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-[10px]">
+<span>STATUS</span>
+<span class="w-2 h-2 rounded-full bg-tertiary status-pulse"></span>
+</div>
+<div class="font-label-md text-label-md text-on-surface font-medium leading-tight mt-1">
+        Available for Advisory &amp; Technical Leadership
+      </div>
+</div>
+</div>
+<!-- Quick Command Shell Ingress Strip -->
+<div class="mt-space-sm bg-surface-container-lowest border border-outline-variant/60 rounded p-2 flex items-center justify-between font-label-sm text-label-sm">
+<div class="flex items-center gap-1.5 font-mono text-on-surface truncate">
+<span class="text-tertiary font-bold">$</span>
+<span class="truncate">ssh guest@observatory.aminjamali.com -p 2201</span>
+</div>
+<button class="text-primary hover:text-primary-fixed ml-2 shrink-0 font-label-sm flex items-center gap-1" onclick="copySSH()">
+<span class="material-symbols-outlined text-[13px]">content_copy</span>
+<span>COPY</span>
+</button>
+</div>
+</div>
+</main>
+<!-- SHARED COMPONENT: Footer (telemetry_terminal_footer) -->
+<footer class="w-full px-margin md:px-margin-desktop py-space-md border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-space-sm bg-surface-container-lowest">
+<div class="text-label-md font-label-md text-on-surface-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary status-pulse"></span>
+<span>SYS.VER 4.19.0-LTS // AMIN JAMALI ARCHIVAL CORE // ALL NODES SYNCHRONIZED</span>
+</div>
+<!-- Footer Terminal Links with Exact Labels -->
+<div class="flex flex-wrap items-center gap-space-md">
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary hover:underline transition-colors hover:translate-x-0.5 transition-transform" href="#status">STATUS_PAGE</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary hover:underline transition-colors hover:translate-x-0.5 transition-transform" href="#rfc">RFC_ARCHIVE</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary hover:underline transition-colors hover:translate-x-0.5 transition-transform" href="#ssh" onclick="triggerTerminal()">SSH_GATEWAY</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary hover:underline transition-colors hover:translate-x-0.5 transition-transform" href="#pgp" onclick="copyPGP()">PGP_KEYS</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary hover:underline transition-colors hover:translate-x-0.5 transition-transform" href="https://github.com" rel="noopener noreferrer" target="_blank">GITHUB_TELEMETRY</a>
+</div>
+</footer>
+<!-- Toast Notification Overlay for Copy & Actions -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none" id="toastNotification">
+<div class="bg-surface-container-high border border-primary text-on-surface px-4 py-2.5 rounded shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center gap-2 font-label-md text-label-md">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span id="toastMessage">PAYLOAD COPIED TO CLIPBOARD</span>
+</div>
+</div>
+<!-- Interactive JavaScript -->
+<script>
+    // Copy helper with tactical UI feedback
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      if (toast && toastMsg) {
+        toastMsg.textContent = message;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0');
+          toast.classList.remove('translate-y-0', 'opacity-100');
+        }, 2400);
+      }
+    }
+
+    // Email Copy Handling
+    const copyEmailCard = document.getElementById('copyEmailCard');
+    if (copyEmailCard) {
+      copyEmailCard.addEventListener('click', () => {
+        const email = document.getElementById('emailValue').textContent.trim();
+        navigator.clipboard.writeText(email).then(() => {
+          const badge = document.getElementById('emailBadgeText');
+          const original = badge.innerHTML;
+          badge.innerHTML = '<span class="material-symbols-outlined text-[11px]">check</span> COPIED';
+          badge.classList.add('text-tertiary', 'border-tertiary');
+          showToast(`COPIED DISPATCH: ${email}`);
+          setTimeout(() => {
+            badge.innerHTML = original;
+            badge.classList.remove('text-tertiary', 'border-tertiary');
+          }, 2000);
+        });
+      });
+    }
+
+    // PGP Copy Handling
+    function copyPGP() {
+      const pgp = "4F2A 99B1 E8D4 CC91 B012 8841 09DE F120";
+      navigator.clipboard.writeText(pgp).then(() => {
+        showToast("PGP FINGERPRINT EXPORTED: " + pgp);
+      });
+    }
+
+    function copySSH() {
+      const ssh = "ssh guest@observatory.aminjamali.com -p 2201";
+      navigator.clipboard.writeText(ssh).then(() => {
+        showToast("SSH COMMAND COPIED TO CLIPBOARD");
+      });
+    }
+
+    const copyPgpCard = document.getElementById('copyPgpCard');
+    if (copyPgpCard) {
+      copyPgpCard.addEventListener('click', () => {
+        const pgp = document.getElementById('pgpValue').textContent.trim();
+        navigator.clipboard.writeText(pgp).then(() => {
+          const badge = document.getElementById('pgpBadgeText');
+          const original = badge.innerHTML;
+          badge.innerHTML = '<span class="material-symbols-outlined text-[11px]">check</span> COPIED';
+          badge.classList.add('text-secondary-fixed');
+          showToast(`PGP KEY COPIED: ${pgp}`);
+          setTimeout(() => {
+            badge.innerHTML = original;
+            badge.classList.remove('text-secondary-fixed');
+          }, 2000);
+        });
+      });
+    }
+
+    // vCard (.vcf) Simulation Payload Generator
+    function generateAndDownloadVcard() {
+      const vcardData = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        'FN:Amin Jamali',
+        'N:Jamali;Amin;;;',
+        'TITLE:Systems Engineer & Full-Stack Architect',
+        'ORG:Observatory Systems Architecture',
+        'EMAIL;TYPE=INTERNET,WORK:amin@observatory.dev',
+        'NOTE:Scanned via NFC Hardware Token [AJ-CARD-941]. Core stack: Rust, Go, eBPF, Distributed Systems.',
+        'URL:https://observatory.aminjamali.com',
+        'END:VCARD'
+      ].join('\r\n');
+
+      const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Amin_Jamali_Architect.vcf');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showToast("VCARD DELIVERED // CONTACT SYNCHRONIZED");
+    }
+
+    const downloadBtn = document.getElementById('downloadVcardBtn');
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', generateAndDownloadVcard);
+    }
+    const directVcfBtn = document.getElementById('vcfDirectDownloadBtn');
+    if (directVcfBtn) {
+      directVcfBtn.addEventListener('click', generateAndDownloadVcard);
+    }
+
+    // Interactive Terminal Quick Action
+    function triggerTerminal() {
+      showToast("CONNECTING TO OBSERVATORY TERMINAL: guest@observatory");
+    }
+
+    const termBtn = document.getElementById('terminalToggleBtn');
+    if (termBtn) {
+      termBtn.addEventListener('click', triggerTerminal);
+    }
+
+    const execBtn = document.getElementById('executeTerminalBtn');
+    if (execBtn) {
+      execBtn.addEventListener('click', triggerTerminal);
+    }
+
+    const initBtn = document.getElementById('initSessionBtn');
+    if (initBtn) {
+      initBtn.addEventListener('click', () => {
+        showToast("SESSION INGRESS 0x941: ACTIVE WITH AMIN JAMALI");
+      });
+    }
+  </script>
+</body></html>

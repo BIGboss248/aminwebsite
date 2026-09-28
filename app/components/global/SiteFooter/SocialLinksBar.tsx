@@ -16,6 +16,7 @@ export function SocialLinksBar({
   linkedinUrl = SITE_CONFIG.social.linkedin,
   orcidUrl = SITE_CONFIG.social.orcid,
   twitterUrl = SITE_CONFIG.social.twitter,
+  emailUrl = `mailto:${SITE_CONFIG.contact.email}`,
   ...props
 }: SocialLinksBarProps): React.JSX.Element {
   const t = useTranslations("footer");
@@ -25,6 +26,7 @@ export function SocialLinksBar({
       id: "github",
       label: t("social_github"),
       href: githubUrl,
+      isExternal: true,
       icon: (
         <svg
           className="w-4 h-4"
@@ -44,6 +46,7 @@ export function SocialLinksBar({
       id: "linkedin",
       label: t("social_linkedin"),
       href: linkedinUrl,
+      isExternal: true,
       icon: (
         <svg
           className="w-4 h-4"
@@ -65,6 +68,7 @@ export function SocialLinksBar({
       id: "orcid",
       label: t("social_orcid"),
       href: orcidUrl,
+      isExternal: true,
       icon: (
         <svg
           className="w-4 h-4"
@@ -80,6 +84,7 @@ export function SocialLinksBar({
       id: "twitter",
       label: t("social_twitter"),
       href: twitterUrl,
+      isExternal: true,
       icon: (
         <svg
           className="w-4 h-4"
@@ -91,21 +96,42 @@ export function SocialLinksBar({
         </svg>
       ),
     },
+    {
+      id: "email",
+      label: t("social_email"),
+      href: emailUrl,
+      isExternal: false,
+      icon: (
+        <svg
+          className="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <rect width="20" height="16" x="2" y="4" rx="2" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+      ),
+    },
   ];
 
   return (
     <div
       className={cn("flex items-center gap-2", className)}
       role="group"
-      aria-label={t("social_github")}
+      aria-label={t("social_channels_aria")}
       {...props}
     >
       {links.map((link) => (
         <a
           key={link.id}
           href={link.href}
-          target="_blank"
-          rel="noopener noreferrer"
+          target={link.isExternal ? "_blank" : undefined}
+          rel={link.isExternal ? "noopener noreferrer" : undefined}
           aria-label={link.label}
           className="group inline-flex items-center justify-center min-w-11 min-h-11 w-11 h-11 rounded-lg border border-border bg-card/60 text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-card hover:-translate-y-0.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
@@ -118,3 +144,4 @@ export function SocialLinksBar({
     </div>
   );
 }
+

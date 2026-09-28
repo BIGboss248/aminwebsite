@@ -325,6 +325,8 @@
     "social_linkedin": "پروفایل لینکدین",
     "social_orcid": "شناسه پژوهشی ORCID",
     "social_twitter": "پروفایل توییتر / X",
+    "social_email": "ارسال ایمیل مستقیم",
+    "social_channels_aria": "شبکه‌های ارتباطی و تخصصی تأیید شده",
     "loading_footer": "در حال بارگذاری فوتر وب‌سایت"
   },
   "about": {
@@ -971,6 +973,7 @@
       "spec_arch": "x86_64 // EDGE_SSR // BI_ANALYTICS",
       "runtime_label": "پشته زمان اجرا:",
       "runtime_val": "Next.js / TypeScript / Python / Docker / SQL",
+      "socials_label": "راه‌های ارتباطی و شبکه‌های تخصصی",
       "loading": "در حال بارگذاری بخش معرفی صفحه اصلی"
     },
     "nav": {

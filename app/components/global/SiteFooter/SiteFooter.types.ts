@@ -64,6 +64,12 @@ export interface SocialLinksBarProps extends HTMLAttributes<HTMLDivElement> {
    * @defaultValue `SITE_CONFIG.social.twitter`
    */
   twitterUrl?: string;
+
+  /**
+   * Optional Email address or mailto URL override.
+   * @defaultValue `mailto:${SITE_CONFIG.contact.email}`
+   */
+  emailUrl?: string;
 }
 
 /**

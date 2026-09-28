@@ -32,9 +32,10 @@ export function SinglePageHeroSkeleton({
             <div className="h-6 w-full pt-4 border-t border-border/40 bg-muted/30" />
           </div>
 
-          <div className="lg:col-span-5 flex flex-col items-center justify-center space-y-6">
+          <div className="lg:col-span-5 flex flex-col items-center justify-center space-y-4">
             <div className="size-64 sm:size-80 rounded-full bg-muted/50" />
-            <div className="h-20 w-full max-w-sm rounded-lg bg-muted/40" />
+            <div className="h-4 w-32 rounded bg-muted/40" />
+            <div className="h-12 w-64 rounded-xl bg-muted/40" />
           </div>
         </div>
       </div>

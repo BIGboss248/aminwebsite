@@ -325,6 +325,8 @@
     "social_linkedin": "LinkedIn Profile",
     "social_orcid": "ORCID Researcher Identity",
     "social_twitter": "Twitter / X Profile",
+    "social_email": "Direct Email Inquiry",
+    "social_channels_aria": "Verified Social & Contact Channels",
     "loading_footer": "Loading global footer"
   },
   "about": {
@@ -971,6 +973,7 @@
       "spec_arch": "x86_64 // EDGE_SSR // BI_ANALYTICS",
       "runtime_label": "RUNTIME_STACK:",
       "runtime_val": "Next.js / TypeScript / Python / Docker / SQL",
+      "socials_label": "Direct Channels & Verified Profiles",
       "loading": "Loading single-page hero section"
     },
     "nav": {

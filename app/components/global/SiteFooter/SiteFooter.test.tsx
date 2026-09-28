@@ -137,11 +137,15 @@ describe("SiteFooter & SocialLinksBar", () => {
     const twitterLink = screen.getByRole("link", {
       name: new RegExp(enMessages.footer.social_twitter, "i"),
     });
+    const emailLink = screen.getByRole("link", {
+      name: new RegExp(enMessages.footer.social_email, "i"),
+    });
 
     expect(githubLink).toHaveAttribute("href", SITE_CONFIG.social.github);
     expect(linkedinLink).toHaveAttribute("href", SITE_CONFIG.social.linkedin);
     expect(orcidLink).toHaveAttribute("href", SITE_CONFIG.social.orcid);
     expect(twitterLink).toHaveAttribute("href", SITE_CONFIG.social.twitter);
+    expect(emailLink).toHaveAttribute("href", `mailto:${SITE_CONFIG.contact.email}`);
 
     expect(githubLink).toHaveAttribute("target", "_blank");
     expect(githubLink).toHaveAttribute("rel", "noopener noreferrer");

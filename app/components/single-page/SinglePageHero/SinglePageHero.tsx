@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/app/components/Link";
+import { SocialLinksBar } from "@/app/components/global/SiteFooter/SocialLinksBar";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import type { SinglePageHeroProps } from "./SinglePageHero.types";
@@ -205,31 +206,17 @@ export function SinglePageHero({
                   {t("identity_verified")}
                 </span>
               </div>
-
-              <div className="absolute bottom-4 left-0 z-20 px-2.5 py-1 bg-background/90 border border-border rounded font-mono text-[10px] text-primary shadow-xs hidden sm:flex items-center gap-1.5">
-                <span>{t("architect_key")}</span>
-              </div>
             </div>
 
-            <div
-              dir="ltr"
-              className="w-full max-w-sm mt-8 p-4 bg-card border border-border rounded-lg shadow-xs"
-            >
-              <div className="flex items-center justify-between border-b border-border/60 pb-2 mb-2.5">
-                <div className="flex items-center gap-2 font-mono text-xs text-primary font-semibold tracking-wider">
-                  <span>{t("spec_title")}</span>
-                </div>
-                <span className="font-mono text-[11px] text-muted-foreground">
-                  {t("spec_arch")}
-                </span>
-              </div>
-              <div className="font-mono text-xs text-foreground flex items-center justify-between">
-                <span className="text-muted-foreground">
-                  {t("runtime_label")}
-                </span>
-                <span className="text-primary font-semibold">
-                  {t("runtime_val")}
-                </span>
+            <div className="mt-8 flex flex-col items-center gap-2.5">
+              <span className="text-[11px] font-mono font-medium tracking-wider text-muted-foreground uppercase">
+                {t("socials_label")}
+              </span>
+              <div
+                dir="ltr"
+                className="flex items-center p-1.5 rounded-xl bg-card/80 border border-border/80 shadow-xs backdrop-blur-xs"
+              >
+                <SocialLinksBar />
               </div>
             </div>
           </div>

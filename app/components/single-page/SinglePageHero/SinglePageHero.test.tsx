@@ -17,6 +17,9 @@ jest.mock("next-intl", () => ({
     if (namespace === "common") {
       return (dict.common as Record<string, string>)[key] ?? key;
     }
+    if (namespace === "footer") {
+      return (dict.footer as Record<string, string>)[key] ?? key;
+    }
     return key;
   },
 }));
@@ -85,6 +88,33 @@ describe("SinglePageHero Component", () => {
       name: /Explore Interactive Lab/i,
     });
     expect(contactLink).toHaveAttribute("href", "#contact");
+
+    // Verify verified social and contact channels are present under the avatar
+    expect(screen.getByRole("link", { name: /GitHub Profile/i })).toHaveAttribute(
+      "href",
+      "https://github.com/BIGboss248",
+    );
+    expect(screen.getByRole("link", { name: /LinkedIn Profile/i })).toHaveAttribute(
+      "href",
+      "https://linkedin.com/in/amin-jamali",
+    );
+    expect(screen.getByRole("link", { name: /ORCID Researcher Identity/i })).toHaveAttribute(
+      "href",
+      "https://orcid.org/0009-0004-9921-7273",
+    );
+    expect(screen.getByRole("link", { name: /Twitter \/ X Profile/i })).toHaveAttribute(
+      "href",
+      "https://x.com/",
+    );
+    expect(screen.getByRole("link", { name: /Direct Email Inquiry/i })).toHaveAttribute(
+      "href",
+      "mailto:contact@meetjamali.com",
+    );
+
+    // Verify irrelevant technical spec box & ORCID ID key badge are removed
+    expect(screen.queryByText(/CORE_TECHNICAL_SPEC/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/RUNTIME_STACK/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/ORCID_0009_0004_9921_7273/i)).not.toBeInTheDocument();
   });
 
   it("renders Persian translations when locale='fa'", () => {

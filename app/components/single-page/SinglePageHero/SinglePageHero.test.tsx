@@ -70,7 +70,7 @@ describe("SinglePageHero Component", () => {
     });
     expect(linkedinLink).toHaveAttribute(
       "href",
-      "https://linkedin.com/in/amin-jamali",
+      "https://www.linkedin.com/in/amin-jamali2000",
     );
     expect(linkedinLink).toHaveAttribute("target", "_blank");
 

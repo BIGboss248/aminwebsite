@@ -24,7 +24,7 @@ export const SITE_CONFIG = {
   },
   social: {
     github: "https://github.com/BIGboss248",
-    linkedin: "https://linkedin.com/in/amin-jamali",
+    linkedin: "https://www.linkedin.com/in/amin-jamali2000",
     orcid: "https://orcid.org/0009-0004-9921-7273",
     twitter: "https://x.com/",
   },

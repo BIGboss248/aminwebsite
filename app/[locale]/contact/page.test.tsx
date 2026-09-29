@@ -79,7 +79,7 @@ describe("Contact Page Component (RSC & SEO)", () => {
       "https://github.com/BIGboss248",
     );
     expect(contactSchema.mainEntity.sameAs).toContain(
-      "https://linkedin.com/in/amin-jamali",
+      "https://www.linkedin.com/in/amin-jamali2000",
     );
     expect(contactSchema.mainEntity.sameAs).toContain(
       "https://orcid.org/0009-0004-9921-7273",

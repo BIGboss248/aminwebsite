@@ -92,9 +92,10 @@
     - [x] `CaseStudyCard` - High-density project card with metrics, architecture tags, and direct external deliverable links (live deployments, GitHub repositories, and DOI publications)
     - [x] **Deliverable 1: Setayesh Parts** - Commercial & E-Commerce Web Platform (Deployment: `https://setayesh.aminjamali.site/`, GitHub: `https://github.com/BIGboss248/setayeshparts`)
     - [x] **Deliverable 2: Bahar Trade Co. Web Platform** - Enterprise Corporate Web & CMS Engine (Deployment: `https://bahartradeco.com/en`)
-    - [x] **Deliverable 3: ParsBERT-XGBoost Commodity Volatility Model** - Hybrid Persian NLP & Financial Sentiment Forecasting (DOI: `10.61838/jafci.485`)
-    - [x] **Deliverable 4: DQN & LSTM Volatility Analysis Engine** - Reinforcement Learning & Volatility System (DOI: `10.61838/bmfopen.545`)
-    - [x] **Deliverable 5: Bahar Trade IT Automation and Infrastructure Management** - Enterprise Linux Server Automation, Active Directory Management & IT Administration (DOI: `10.61838/msesj.477`)
+    - [x] **Deliverable 3: Azad Bazar** - Multi-Vendor Marketplace & E-Commerce Platform (Deployment: `https://azadbazar.isfahan.iau.ir/`)
+    - [x] **Deliverable 4: ParsBERT-XGBoost Commodity Volatility Model** - Hybrid Persian NLP & Financial Sentiment Forecasting (DOI: `10.61838/jafci.485`)
+    - [x] **Deliverable 5: DQN & LSTM Volatility Analysis Engine** - Reinforcement Learning & Volatility System (DOI: `10.61838/bmfopen.545`)
+    - [x] **Deliverable 6: Bahar Trade IT Automation and Infrastructure Management** - Enterprise Linux Server Automation, Active Directory Management & IT Administration
   - [x] **Section: Open Source & Repositories**
     - [x] `OpenSourceShowcase` - GitHub open-source repositories and utility tools
     - [x] `GithubRepoCard` - Real-time star count, language badge, and repo link
@@ -216,8 +217,8 @@
     - [ ] `SinglePageContactSkeleton` - Suspense skeleton fallback for contact section
   - [ ] **Section: Single-Page Footer (`app/components/single-page/SinglePageFooter`)**
     - [ ] `SinglePageFooter` - Lightweight footer with quick anchor navigation, copyright, and social links
-  - [ ] **Milestone: Production Page Swap Transition**
-    - [ ] `SinglePageSwap` - Validated transition to swap `/[locale]/single-page` with root `/[locale]` (Home) while preserving standalone route access
+  - [x] **Milestone: Production Page Swap Transition**
+    - [x] `SinglePageSwap` - Validated transition to swap `/[locale]/single-page` with root `/[locale]` (Home) while preserving standalone route access
 
 - [ ] **Page: System & Error Pages**
   - [ ] **Section: 404 Not Found (`not-found.tsx` / `[locale]/not-found.tsx`)**

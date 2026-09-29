@@ -92,7 +92,7 @@ Fixed at \`h-14\` (56px) height with glassmorphism and subtle structural borders
   },
   args: {
     brandName: "Amin Jamali",
-    currentPath: ROUTES.home,
+    currentPath: ROUTES.projects.root,
     activeLocale: "en",
     showUptimeBadge: true,
     className: "",

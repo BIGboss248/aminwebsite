@@ -2,6 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 import Home, { generateMetadata, generateStaticParams } from "./page";
 import enMessages from "@/messages/en.json";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 jest.mock("@/i18n/routing", () => ({
   routing: {
@@ -14,8 +15,15 @@ jest.mock("@/i18n/routing", () => ({
 jest.mock("next-intl/server", () => ({
   getTranslations: jest.fn().mockImplementation(async ({ namespace }) => {
     return (key: string) => {
-      if (namespace === "metadata") {
-        return (enMessages.metadata as Record<string, string>)[key] ?? key;
+      if (namespace === "single_page.meta") {
+        return (
+          (enMessages.single_page.meta as Record<string, string>)[key] ?? key
+        );
+      }
+      if (namespace === "contact.header") {
+        return (
+          (enMessages.contact.header as Record<string, string>)[key] ?? key
+        );
       }
       if (namespace === "common") {
         return (enMessages.common as Record<string, string>)[key] ?? key;
@@ -25,50 +33,50 @@ jest.mock("next-intl/server", () => ({
   }),
 }));
 
-jest.mock("@/app/components/home/HeroSection", () => ({
-  HeroSection: () => <div data-testid="hero-section">HeroSection</div>,
-  HeroSectionSkeleton: () => <div data-testid="hero-skeleton">HeroSkeleton</div>,
-}));
-
-jest.mock("../components/home/TrustSignalsSection", () => ({
-  __esModule: true,
-  default: () => <div data-testid="trust-signals-section">TrustSignalsSection</div>,
-  TrustSignalsSectionSkeleton: () => (
-    <div data-testid="trust-signals-skeleton">TrustSignalsSkeleton</div>
+jest.mock("@/app/components/single-page", () => ({
+  SinglePageNavbar: () => (
+    <div data-testid="single-page-navbar">SinglePageNavbar</div>
+  ),
+  SinglePageNavbarSkeleton: () => (
+    <div data-testid="single-page-navbar-skeleton">
+      SinglePageNavbarSkeleton
+    </div>
+  ),
+  SinglePageHero: () => (
+    <div data-testid="single-page-hero">SinglePageHero</div>
+  ),
+  SinglePageHeroSkeleton: () => (
+    <div data-testid="single-page-hero-skeleton">SinglePageHeroSkeleton</div>
+  ),
+  SinglePageProjectsSection: () => (
+    <div data-testid="single-page-projects">SinglePageProjectsSection</div>
+  ),
+  SinglePageProjectsSkeleton: () => (
+    <div data-testid="single-page-projects-skeleton">
+      SinglePageProjectsSkeleton
+    </div>
+  ),
+  SinglePageCertificationsSection: () => (
+    <div data-testid="single-page-certifications">
+      SinglePageCertificationsSection
+    </div>
+  ),
+  SinglePageCertificationsSkeleton: () => (
+    <div data-testid="single-page-certifications-skeleton">
+      SinglePageCertificationsSkeleton
+    </div>
+  ),
+  ContactForm: () => <div data-testid="contact-form">ContactForm</div>,
+  ContactFormSkeleton: () => (
+    <div data-testid="contact-form-skeleton">ContactFormSkeleton</div>
+  ),
+  SocialsBlock: () => <div data-testid="socials-block">SocialsBlock</div>,
+  SocialsBlockSkeleton: () => (
+    <div data-testid="socials-block-skeleton">SocialsBlockSkeleton</div>
   ),
 }));
 
-jest.mock("../components/home/FeaturedProjectsGrid", () => ({
-  __esModule: true,
-  default: () => (
-    <div data-testid="featured-projects-section">FeaturedProjectsGrid</div>
-  ),
-  FeaturedProjectsGridSkeleton: () => (
-    <div data-testid="featured-projects-skeleton">FeaturedProjectsSkeleton</div>
-  ),
-}));
-
-jest.mock("../components/home/LabLauncherSection", () => ({
-  __esModule: true,
-  default: () => (
-    <div data-testid="lab-launcher-section">LabLauncherSection</div>
-  ),
-  LabLauncherSectionSkeleton: () => (
-    <div data-testid="lab-launcher-skeleton">LabLauncherSkeleton</div>
-  ),
-}));
-
-jest.mock("../components/home/TechStackMatrix", () => ({
-  __esModule: true,
-  default: () => (
-    <div data-testid="tech-stack-section">TechStackMatrix</div>
-  ),
-  TechStackMatrixSkeleton: () => (
-    <div data-testid="tech-stack-skeleton">TechStackMatrixSkeleton</div>
-  ),
-}));
-
-describe("Home Page Component (RSC & SEO)", () => {
+describe("Home Page (Single-Page Website Experience)", () => {
   it("generates static params for all supported locales", () => {
     const params = generateStaticParams();
     expect(params).toEqual([{ locale: "en" }, { locale: "fa" }]);
@@ -80,21 +88,30 @@ describe("Home Page Component (RSC & SEO)", () => {
     });
 
     expect(metadata.title).toBe(
-      "Amin Jamali | Full-Stack Engineer & Architect",
+      "Amin Jamali | Systems Architecture & Full-Stack Engineering",
     );
     expect(metadata.description).toBe(
-      "Personal portfolio, interactive engineering lab, and digital credentials platform of Amin Jamali.",
+      "Single-page developer cockpit, systems architecture, verified credentials, full-stack projects, and direct contact inquiry with Amin Jamali.",
+    );
+    expect(metadata.alternates?.canonical).toBe(
+      `${SITE_CONFIG.baseUrl}/en`,
     );
   });
 
-  it("renders JSON-LD structured data and all home sections", async () => {
-    const homeElement = await Home({
+  it("renders JSON-LD structured data and single-page sections", async () => {
+    const pageElement = await Home({
       params: Promise.resolve({ locale: "en" }),
     });
 
-    const { container } = render(homeElement);
+    const { container, getByTestId } = render(pageElement);
 
-    // Verify JSON-LD script tag
+    expect(getByTestId("single-page-navbar")).toBeInTheDocument();
+    expect(getByTestId("single-page-hero")).toBeInTheDocument();
+    expect(getByTestId("single-page-projects")).toBeInTheDocument();
+    expect(getByTestId("single-page-certifications")).toBeInTheDocument();
+    expect(getByTestId("contact-form")).toBeInTheDocument();
+    expect(getByTestId("socials-block")).toBeInTheDocument();
+
     const scriptTag = container.querySelector(
       'script[type="application/ld+json"]',
     );
@@ -104,13 +121,16 @@ describe("Home Page Component (RSC & SEO)", () => {
     expect(jsonLdData["@context"]).toBe("https://schema.org");
     expect(jsonLdData["@graph"]).toHaveLength(2);
 
-    const websiteSchema = jsonLdData["@graph"][0];
-    expect(websiteSchema["@type"]).toBe("WebSite");
-    expect(websiteSchema.name).toBe("Amin Jamali");
+    const webSiteSchema = jsonLdData["@graph"][0];
+    expect(webSiteSchema["@type"]).toBe("WebSite");
+    expect(webSiteSchema.url).toBe(`${SITE_CONFIG.baseUrl}/en`);
+    expect(webSiteSchema.author["@type"]).toBe("Person");
+    expect(webSiteSchema.author.name).toBe("Amin Jamali");
 
-    const personSchema = jsonLdData["@graph"][1];
-    expect(personSchema["@type"]).toBe("Person");
-    expect(personSchema.name).toBe("Amin Jamali");
-    expect(personSchema.knowsAbout).toContain("Next.js");
+    const contactSchema = jsonLdData["@graph"][1];
+    expect(contactSchema["@type"]).toBe("ContactPage");
+    expect(contactSchema.url).toBe(`${SITE_CONFIG.baseUrl}/en#contact`);
+    expect(contactSchema.mainEntity["@type"]).toBe("Person");
+    expect(contactSchema.mainEntity.name).toBe("Amin Jamali");
   });
 });

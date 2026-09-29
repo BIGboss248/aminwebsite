@@ -104,6 +104,39 @@ export function ProjectArchiveGrid({
         liveUrl: "https://bahartradeco.com/en",
       },
       {
+        id: "azad-bazar",
+        category: "fullstack",
+        tag: tCase("azad_bazar.tag"),
+        status: tCase("azad_bazar.status"),
+        title: tCase("azad_bazar.title"),
+        role: tCase("azad_bazar.role"),
+        client: tCase("azad_bazar.client"),
+        summary: tCase("azad_bazar.summary"),
+        metrics: [
+          {
+            value: tCase("azad_bazar.metric1_val"),
+            label: tCase("azad_bazar.metric1_lbl"),
+          },
+          {
+            value: tCase("azad_bazar.metric2_val"),
+            label: tCase("azad_bazar.metric2_lbl"),
+          },
+          {
+            value: tCase("azad_bazar.metric3_val"),
+            label: tCase("azad_bazar.metric3_lbl"),
+          },
+        ],
+        techStack: [
+          tCase("azad_bazar.tech1"),
+          tCase("azad_bazar.tech2"),
+          tCase("azad_bazar.tech3"),
+          tCase("azad_bazar.tech4"),
+          tCase("azad_bazar.tech5"),
+        ],
+        href: "https://azadbazar.isfahan.iau.ir/",
+        liveUrl: "https://azadbazar.isfahan.iau.ir/",
+      },
+      {
         id: "parsbert-ime-forecasting",
         category: "ai_finance",
         tag: tCase("parsbert_ime_forecasting.tag"),

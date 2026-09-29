@@ -90,7 +90,7 @@ export function SiteNavbar({
   showUptimeBadge = true,
   onLocaleChange,
   onThemeToggle,
-}: SiteNavbarProps): React.JSX.Element {
+}: SiteNavbarProps): React.JSX.Element | null {
   const routerPathname = usePathname();
   const contextLocale = useLocale() as "en" | "fa";
   const effectivePathname = currentPath ?? routerPathname;
@@ -123,6 +123,12 @@ export function SiteNavbar({
     }
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mobileMenuOpen, handleKeyDown]);
+
+  // Suppress global SiteNavbar on the root single-page home route ('/')
+  // to ensure SinglePageNavbar serves as the exclusive navigation bar.
+  if (effectivePathname === "/" || effectivePathname === "") {
+    return null;
+  }
 
   const navItems = [
     {

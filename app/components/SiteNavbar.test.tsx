@@ -11,7 +11,7 @@ import enMessages from "@/messages/en.json";
 import faMessages from "@/messages/fa.json";
 
 let mockCurrentLocale = "en";
-let mockPathname = "/";
+let mockPathname = "/about";
 
 jest.mock("next-intl", () => ({
   useLocale: () => mockCurrentLocale,
@@ -72,10 +72,16 @@ describe("SiteNavbar Baseline Unit Tests (TDD)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrentLocale = "en";
-    mockPathname = "/";
+    mockPathname = "/about";
   });
 
-  it("renders a semantic header and navigation landmark with proper ARIA labeling", () => {
+  it("suppresses rendering on the root single-page home route ('/') so SinglePageNavbar acts as exclusive navbar", () => {
+    mockPathname = "/";
+    const { container } = render(<SiteNavbar />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders a semantic header and navigation landmark with proper ARIA labeling on non-root routes", () => {
     render(<SiteNavbar />);
 
     const header = screen.getByRole("banner");

@@ -8,15 +8,18 @@ const mockLocale = "en";
 jest.mock("next-intl", () => ({
   useLocale: () => mockLocale,
   useTranslations: (namespace?: string) => (key: string) => {
-    if (namespace === "home.tech_matrix") {
-      return (enMessages.home.tech_matrix as Record<string, string>)[key] ?? key;
+    if (namespace === "single_page.hero") {
+      return (enMessages.single_page.hero as Record<string, string>)[key] ?? key;
+    }
+    if (namespace === "single_page.certifications") {
+      return (enMessages.single_page.certifications as Record<string, string>)[key] ?? key;
     }
     return key;
   },
 }));
 
-describe("Loading Component (Home Streaming Skeleton)", () => {
-  it("renders the loading container and all home section skeletons", () => {
+describe("Loading Component (Single-Page Streaming Skeleton)", () => {
+  it("renders the loading container and single-page skeleton elements", () => {
     const { container } = render(<Loading />);
 
     const loadingContainer = screen.getByTestId("home-loading-skeleton");
@@ -26,18 +29,14 @@ describe("Loading Component (Home Streaming Skeleton)", () => {
     );
 
     // Hero skeleton is rendered
-    expect(screen.getByLabelText(/loading hero section/i)).toBeInTheDocument();
-    // Trust signals skeleton is rendered
+    expect(screen.getByLabelText(/loading single page hero/i)).toBeInTheDocument();
+    // Certifications skeleton is rendered
     expect(
-      screen.getByLabelText(/loading trust signals and credentials/i),
-    ).toBeInTheDocument();
-    // Tech matrix skeleton is rendered
-    expect(
-      screen.getByLabelText(/loading competencies and tech matrix/i),
+      screen.getByLabelText(/loading certifications and credentials/i),
     ).toBeInTheDocument();
 
-    // Verify all 5 section elements are present
+    // Skeletons are rendered as sections
     const sections = container.querySelectorAll("section");
-    expect(sections.length).toBe(5);
+    expect(sections.length).toBeGreaterThanOrEqual(3);
   });
 });

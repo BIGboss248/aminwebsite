@@ -97,6 +97,39 @@ export function SinglePageProjectsSection({
         href: "https://bahartradeco.com/en",
       },
       {
+        id: "azad_bazar",
+        category: "production",
+        tag: t("items.azad_bazar.tag"),
+        status: t("items.azad_bazar.status"),
+        title: t("items.azad_bazar.title"),
+        role: t("items.azad_bazar.role"),
+        clientOrVenue: t("items.azad_bazar.client"),
+        summary: t("items.azad_bazar.summary"),
+        metrics: [
+          {
+            value: t("items.azad_bazar.metric1_val"),
+            label: t("items.azad_bazar.metric1_lbl"),
+          },
+          {
+            value: t("items.azad_bazar.metric2_val"),
+            label: t("items.azad_bazar.metric2_lbl"),
+          },
+          {
+            value: t("items.azad_bazar.metric3_val"),
+            label: t("items.azad_bazar.metric3_lbl"),
+          },
+        ],
+        techStack: [
+          t("items.azad_bazar.tech1"),
+          t("items.azad_bazar.tech2"),
+          t("items.azad_bazar.tech3"),
+          t("items.azad_bazar.tech4"),
+          t("items.azad_bazar.tech5"),
+        ],
+        liveUrl: "https://azadbazar.isfahan.iau.ir/",
+        href: "https://azadbazar.isfahan.iau.ir/",
+      },
+      {
         id: "flutter_currency_project",
         category: "production",
         tag: t("items.flutter_currency_project.tag"),

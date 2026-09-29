@@ -589,6 +589,25 @@
         "tech4": "TypeScript",
         "tech5": "Docker"
       },
+      "azad_bazar": {
+        "tag": "COMMERCIAL // MULTI-VENDOR MARKETPLACE",
+        "status": "PRODUCTION",
+        "title": "Azad Bazar Multi-Vendor Marketplace",
+        "role": "Marketplace Infrastructure & Platform Engineer",
+        "client": "Behbood System Pasargad / Islamic Azad University of Isfahan",
+        "summary": "Design and deployment of multi-vendor e-commerce marketplace infrastructure in collaboration with Behbood System Pasargad (Growth Center of Islamic Azad University) built on WordPress, WooCommerce, and Dokan Marketplace, with full operational handover to Islamic Azad University of Isfahan.",
+        "metric1_val": "Multi-Vendor",
+        "metric1_lbl": "Dokan Core Architecture",
+        "metric2_val": "100%",
+        "metric2_lbl": "Full Handover to IAU",
+        "metric3_val": "Enterprise",
+        "metric3_lbl": "B2C / C2C Marketplace",
+        "tech1": "WordPress / PHP",
+        "tech2": "WooCommerce",
+        "tech3": "Dokan Marketplace",
+        "tech4": "MySQL / MariaDB",
+        "tech5": "Multi-Vendor E-Commerce"
+      },
       "parsbert_ime_forecasting": {
         "tag": "NLP & ML // TIME-SERIES",
         "status": "PEER-REVIEWED",
@@ -1039,6 +1058,25 @@
           "tech3": "MongoDB",
           "tech4": "TypeScript",
           "tech5": "Docker"
+        },
+        "azad_bazar": {
+          "tag": "COMMERCIAL // MULTI-VENDOR MARKETPLACE",
+          "status": "PRODUCTION",
+          "title": "Azad Bazar | Multi-Vendor Marketplace & E-Commerce Platform",
+          "role": "Marketplace Infrastructure & Platform Engineer",
+          "client": "Behbood System Pasargad / Islamic Azad University of Isfahan",
+          "summary": "Design and deployment of multi-vendor e-commerce marketplace infrastructure in collaboration with Behbood System Pasargad (located at the Growth Center of Islamic Azad University) built on WordPress, WooCommerce, and Dokan Marketplace, followed by full operational handover to Islamic Azad University of Isfahan.",
+          "metric1_val": "Multi-Vendor",
+          "metric1_lbl": "Dokan Marketplace Core",
+          "metric2_val": "100%",
+          "metric2_lbl": "Full Handover to IAU",
+          "metric3_val": "Enterprise",
+          "metric3_lbl": "B2C / C2C Marketplace",
+          "tech1": "WordPress / PHP",
+          "tech2": "WooCommerce",
+          "tech3": "Dokan Marketplace",
+          "tech4": "MySQL / MariaDB",
+          "tech5": "Multi-Vendor E-Commerce"
         },
         "flutter_currency_project": {
           "tag": "MOBILE // FLUTTER & ANDROID",

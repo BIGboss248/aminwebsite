@@ -94,18 +94,24 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
             {
               "@type": "ListItem",
               position: 3,
+              name: "Azad Bazar Multi-Vendor Marketplace",
+              url: "https://azadbazar.isfahan.iau.ir/",
+            },
+            {
+              "@type": "ListItem",
+              position: 4,
               name: "ParsBERT-XGBoost Commodity Volatility Model",
               url: "https://doi.org/10.61838/jafci.485",
             },
             {
               "@type": "ListItem",
-              position: 4,
+              position: 5,
               name: "DQN & LSTM Volatility Analysis Engine",
               url: "https://doi.org/10.61838/bmfopen.545",
             },
             {
               "@type": "ListItem",
-              position: 5,
+              position: 6,
               name: "Bahar Trade IT Automation and Infrastructure Management",
             },
           ],

@@ -85,6 +85,6 @@ describe("Projects Page Component (RSC & SEO)", () => {
     const collectionSchema = jsonLdData["@graph"][0];
     expect(collectionSchema["@type"]).toBe("CollectionPage");
     expect(collectionSchema.mainEntity["@type"]).toBe("ItemList");
-    expect(collectionSchema.mainEntity.itemListElement).toHaveLength(5);
+    expect(collectionSchema.mainEntity.itemListElement).toHaveLength(6);
   });
 });

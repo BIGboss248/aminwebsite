@@ -74,6 +74,12 @@ jest.mock("@/app/components/single-page", () => ({
   SocialsBlockSkeleton: () => (
     <div data-testid="socials-block-skeleton">SocialsBlockSkeleton</div>
   ),
+  SinglePageFooter: () => (
+    <div data-testid="single-page-footer">SinglePageFooter</div>
+  ),
+  SinglePageFooterSkeleton: () => (
+    <div data-testid="single-page-footer-skeleton">SinglePageFooterSkeleton</div>
+  ),
 }));
 
 describe("Home Page (Single-Page Website Experience)", () => {
@@ -111,6 +117,7 @@ describe("Home Page (Single-Page Website Experience)", () => {
     expect(getByTestId("single-page-certifications")).toBeInTheDocument();
     expect(getByTestId("contact-form")).toBeInTheDocument();
     expect(getByTestId("socials-block")).toBeInTheDocument();
+    expect(getByTestId("single-page-footer")).toBeInTheDocument();
 
     const scriptTag = container.querySelector(
       'script[type="application/ld+json"]',

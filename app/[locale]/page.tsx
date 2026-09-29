@@ -44,6 +44,19 @@ export async function generateMetadata({
         fa: `${SITE_CONFIG.baseUrl}/fa`,
       },
     },
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      url: `${SITE_CONFIG.baseUrl}/${locale}`,
+      siteName: SITE_CONFIG.name,
+      locale: locale === "fa" ? "fa_IR" : "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("description"),
+    },
   };
 }
 

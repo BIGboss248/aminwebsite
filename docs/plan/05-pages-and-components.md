@@ -187,7 +187,7 @@
   - [x] **Section: Socials Showcase Block**
     - [x] `SocialsBlock` - Showcase cards linking to LinkedIn, GitHub, and ORCID profiles
 
-- [ ] **Page: Single-Page Website (`/[locale]/single-page`)**
+- [x] **Page: Single-Page Website (`/[locale]/single-page` & `/[locale]`)**
   - [x] **Page Infrastructure & SEO**
     - [x] `page.tsx` - Unified single-page layout assembly and section orchestration (`#hero`, `#projects`, `#certifications`, `#contact`)
     - [x] `loading.tsx` - Streaming loading skeleton fallback for single-page experience
@@ -211,21 +211,19 @@
     - [x] `CertificationCard` - Credential card detailing certificate title, issuing platform/institution, credential ID, and verification link
     - [x] `LinkedInProfileBanner` - Prominent callout card linking directly to LinkedIn profile and professional network
     - [x] `SinglePageCertificationsSkeleton` - Suspense skeleton fallback for certifications section
-  - [ ] **Section: Contact & Direct Inquiry (`app/components/single-page/SinglePageContactSection`)**
-    - [ ] `SinglePageContactSection` - Bottom-of-page contact container integrating `ContactForm` and communication channels
-    - [ ] `ContactForm` Integration - Clean inquiry form with Name, Email, Subject, and Message inputs
-    - [ ] `SinglePageContactSkeleton` - Suspense skeleton fallback for contact section
+  - [x] **Section: Contact & Direct Inquiry (`app/components/single-page/SinglePageContactSection`)**
+    - [x] `SinglePageContactSection` - Bottom-of-page contact container integrating `ContactForm` and communication channels
+    - [x] `ContactForm` Integration - Clean inquiry form with Name, Email, Subject, and Message inputs
+    - [x] `SinglePageContactSkeleton` - Suspense skeleton fallback for contact section
   - [x] **Section: Single-Page Footer (`app/components/single-page/SinglePageFooter`)**
     - [x] `SinglePageFooter` - Lightweight footer with quick anchor navigation, copyright, and social links
   - [x] **Milestone: Production Page Swap Transition**
     - [x] `SinglePageSwap` - Validated transition to swap `/[locale]/single-page` with root `/[locale]` (Home) while preserving standalone route access
 
-- [ ] **Page: System & Error Pages**
-  - [ ] **Section: 404 Not Found (`not-found.tsx` / `[locale]/not-found.tsx`)**
-    - [ ] `NotFoundHero` - Branded creative 404 headline with developer easter egg
-    - [ ] `RecoveryNavigation` - Quick recovery links back to Home, Projects, Lab, and Contact
-    - [ ] `InteractiveTerminalEasterEgg` - Interactive terminal allowing commands (`help`, `ls`, `cat bio`, `home`)
-  - [ ] **Section: Global Error Boundary (`error.tsx` / `global-error.tsx`)**
-    - [ ] `ErrorDisplayCard` - Polite, privacy-conscious error notice without leaking stack traces
-    - [ ] `ResetErrorBoundaryButton` - Retry button calling `reset()`
-    - [ ] `ReportBugLink` - Direct link to file an issue with anonymized error context
+- [x] **Page: System & Error Pages**
+  - [x] **Section: 404 Not Found (`app/not-found.tsx` / `app/[locale]/not-found.tsx`)**
+    - [x] `NotFoundHero` - Branded, accessible 404 headline with localized error state
+    - [x] `RecoveryNavigation` - Quick recovery links back to single-page sections (`#hero`, `#projects`, `#certifications`, `#contact`)
+  - [x] **Section: Global Error Boundary (`app/error.tsx` / `app/global-error.tsx`)**
+    - [x] `ErrorDisplayCard` - Polite, privacy-conscious error notice with incident digest logging
+    - [x] `ResetErrorBoundaryButton` - Retry button calling `reset()`

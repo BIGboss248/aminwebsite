@@ -291,6 +291,16 @@
     "home": "Return to Systems Cockpit",
     "digest_label": "INCIDENT_DIGEST"
   },
+  "not_found": {
+    "title": "Page Not Found",
+    "eyebrow": "// 404 UNRESOLVED ROUTE",
+    "description": "The requested resource could not be found or has been relocated.",
+    "return_home": "Return Home",
+    "section_hero": "Overview & Bio",
+    "section_projects": "Projects & Research",
+    "section_certifications": "Certifications",
+    "section_contact": "Contact & Inquiries"
+  },
   "footer": {
     "eyebrow": "// DIRECT COLLABORATION & INQUIRY",
     "headline": "Let's Build Something Exceptional",

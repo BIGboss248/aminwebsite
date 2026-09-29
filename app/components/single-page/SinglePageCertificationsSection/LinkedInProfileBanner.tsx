@@ -17,7 +17,7 @@ export function LinkedInProfileBanner({
   locale = "en",
   className = "",
 }: LinkedInProfileBannerProps): React.JSX.Element {
-  const t = useTranslations("single_page.certifications.linkedin_banner");
+  const t = useTranslations("single_page.certifications");
 
   return (
     <div
@@ -44,24 +44,24 @@ export function LinkedInProfileBanner({
               <rect x="2" y="9" width="4" height="12" />
               <circle cx="4" cy="4" r="2" />
             </svg>
-            <span>{t("badge")}</span>
+            <span>{t("linkedin_banner.badge")}</span>
           </div>
 
           <div className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
             <span className="size-2 rounded-full bg-status-success animate-pulse" aria-hidden="true" />
-            <span>{t("verified_profile")}</span>
-            <span className="text-primary font-semibold">({t("profile_handle")})</span>
+            <span>{t("linkedin_banner.verified_profile")}</span>
+            <span className="text-primary font-semibold">({t("linkedin_banner.profile_handle")})</span>
           </div>
         </div>
 
         {/* Headline */}
         <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mb-2">
-          {t("headline")}
+          {t("linkedin_banner.headline")}
         </h3>
 
         {/* Description */}
         <p className="text-sm text-muted-foreground leading-relaxed">
-          {t("description")}
+          {t("linkedin_banner.description")}
         </p>
       </div>
 
@@ -71,7 +71,7 @@ export function LinkedInProfileBanner({
           href={SITE_CONFIG.social.linkedin}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={t("cta_aria")}
+          aria-label={t("linkedin_banner.cta_aria")}
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-primary text-primary-foreground font-semibold text-sm shadow-xs hover:bg-primary/90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-150 cursor-pointer min-h-11"
         >
           <svg
@@ -88,7 +88,7 @@ export function LinkedInProfileBanner({
             <rect x="2" y="9" width="4" height="12" />
             <circle cx="4" cy="4" r="2" />
           </svg>
-          <span>{t("cta_connect")}</span>
+          <span>{t("linkedin_banner.cta_connect")}</span>
           <ExternalLink className="size-4 shrink-0 rtl:rotate-180" aria-hidden="true" />
         </a>
       </div>

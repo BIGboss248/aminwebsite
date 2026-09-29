@@ -12,7 +12,7 @@ jest.mock("next-intl", () => ({
       return (enMessages.single_page.hero as Record<string, string>)[key] ?? key;
     }
     if (namespace === "single_page.certifications") {
-      return (enMessages.single_page.certifications as Record<string, string>)[key] ?? key;
+      return (enMessages.single_page.certifications as unknown as Record<string, string>)[key] ?? key;
     }
     return key;
   },

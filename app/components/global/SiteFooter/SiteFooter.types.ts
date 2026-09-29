@@ -29,6 +29,13 @@ export interface SiteFooterProps extends HTMLAttributes<HTMLElement> {
    * @defaultValue `true`
    */
   showActionBanner?: boolean;
+
+  /**
+   * Active route pathname override for testing and isolated preview environments.
+   * When omitted, the active path is automatically resolved via `usePathname()`.
+   * @defaultValue `undefined`
+   */
+  currentPath?: string;
 }
 
 /**

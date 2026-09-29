@@ -991,7 +991,6 @@
       "loading": "Loading single-page hero section"
     },
     "nav": {
-      "brand_cockpit": "SPY",
       "hero": "Overview",
       "projects": "Projects",
       "certifications": "Certifications",
@@ -1601,9 +1600,30 @@
         "description": "Explore full professional background, enterprise project milestones, endorsements, and direct collaboration opportunities.",
         "cta_connect": "Connect on LinkedIn",
         "cta_aria": "Connect with Amin Jamali on LinkedIn (opens in new tab)",
-        "verified_profile": "Verified LinkedIn Profile",
+        "verified_profile": "LinkedIn Profile",
         "profile_handle": "in/amin-jamali"
       }
+    },
+    "footer": {
+      "brand_title": "Amin Jamali",
+      "brand_role": "Full-Stack Engineer & Systems Architect",
+      "brand_tagline": "Architecting resilient frontend systems, edge networking diagnostics, and high-concurrency platforms.",
+      "nav_hero": "Overview",
+      "nav_projects": "Projects & Research",
+      "nav_certifications": "Certifications",
+      "nav_contact": "Contact & Inquiries",
+      "social_heading": "// VERIFIED CHANNELS",
+      "social_github": "GitHub",
+      "social_linkedin": "LinkedIn",
+      "social_orcid": "ORCID",
+      "social_email": "Direct Email",
+      "copy_email": "Copy Email",
+      "email_copied": "Copied to Clipboard!",
+      "back_to_top": "Back to Top",
+      "back_to_top_aria": "Scroll back to top of the page",
+      "copyright": "© {year} Amin Jamali. All rights reserved.",
+      "built_with": "Engineered with Next.js App Router, TypeScript & Tailwind CSS",
+      "loading": "Loading single-page footer..."
     }
   }
 }

@@ -16,6 +16,8 @@ import {
   ContactFormSkeleton,
   SocialsBlock,
   SocialsBlockSkeleton,
+  SinglePageFooter,
+  SinglePageFooterSkeleton,
 } from "@/app/components/single-page";
 
 export function generateStaticParams() {
@@ -154,6 +156,9 @@ export default async function Home({ params }: HomePageProps) {
           </div>
         </div>
       </section>
+      <Suspense fallback={<SinglePageFooterSkeleton />}>
+        <SinglePageFooter locale={locale as "en" | "fa"} />
+      </Suspense>
     </div>
   );
 }

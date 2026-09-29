@@ -86,12 +86,8 @@ export function SinglePageMobileNav({
             </svg>
           </div>
 
-          <div className="flex items-center gap-1 font-mono text-xs font-bold text-foreground">
+          <div className="font-mono text-xs font-bold text-foreground">
             <span>{brandName.toUpperCase()}</span>
-            <span className="text-primary">{"//"}</span>
-            <span className="text-xs font-semibold text-primary">
-              {t("brand_cockpit")}
-            </span>
           </div>
         </div>
 

@@ -192,7 +192,7 @@ export function SinglePageNavbar({
               handleScrollToSection("hero");
             }}
             className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md"
-            aria-label={`${brandName} ${t("brand_cockpit")}`}
+            aria-label={brandName}
           >
             {/* Circuit Lattice Emblem */}
             <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-md group-hover:shadow-primary/20 group-hover:rotate-6">
@@ -221,12 +221,8 @@ export function SinglePageNavbar({
             </div>
 
             {/* Monospace Brand Name */}
-            <div className="flex items-center gap-1 font-mono text-xs font-bold tracking-wider text-foreground">
+            <div className="font-mono text-xs font-bold tracking-wider text-foreground">
               <span>{brandName.toUpperCase()}</span>
-              <span className="text-primary">{"//"}</span>
-              <span className="text-xs font-semibold text-primary">
-                {t("brand_cockpit")}
-              </span>
             </div>
           </Link>
 

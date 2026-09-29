@@ -26,6 +26,10 @@ jest.mock("next-intl", () => ({
   },
 }));
 
+jest.mock("@/i18n/navigation", () => ({
+  usePathname: () => "/about",
+}));
+
 jest.mock("@/app/components/Link", () => {
   const React = require("react");
   const MockLink = React.forwardRef(
@@ -175,6 +179,18 @@ describe("SiteFooter & SocialLinksBar", () => {
     const skeleton = screen.getByTestId("footer-skeleton");
     expect(skeleton).toBeInTheDocument();
     expect(skeleton.tagName.toLowerCase()).toBe("footer");
+  });
+
+  it("suppresses rendering on the root single-page home route ('/')", () => {
+    const { container } = render(<SiteFooter currentPath="/" />);
+    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
+  });
+
+  it("suppresses rendering when currentPath is empty string ('')", () => {
+    const { container } = render(<SiteFooter currentPath="" />);
+    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
   });
 });
 

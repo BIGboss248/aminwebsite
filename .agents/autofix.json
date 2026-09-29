@@ -250,6 +250,12 @@
     "Category": "ARCH",
     "Instruction": "Do not attach external links, live URLs, or research DOIs to 'Bahar Trade IT Automation and Infrastructure Management' card (it is internal enterprise IT infrastructure work with no associated public link).",
     "Why": "user explicit correction: Bahar Trade IT Automation and Infrastructure Management has no associated external link or DOI"
+  },
+  {
+    "Rule_number": 43,
+    "Category": "UI",
+    "Instruction": "In footer components (SiteFooter, SinglePageFooter), design specifications, and translations, do not render systems observatory badges ('// SYSTEMS OBSERVATORY' / '// رصدخانه سیستم‌ها'), navigation section headings ('// QUICK NAVIGATION' / '// ناوبری'), or telemetry status badges ('SYSTEM_STATUS: OPERATIONAL' / 'وضعیت سامانه'); keep the brand lockup, navigation links, and footer layout clean and concise without extraneous telemetry badges.",
+    "Why": "user explicit instruction: remove // SYSTEMS OBSERVATORY, // QUICK NAVIGATION, and system status badge from footer"
   }
 ]
 

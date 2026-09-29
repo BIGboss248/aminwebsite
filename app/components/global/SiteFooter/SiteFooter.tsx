@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import { Link } from "@/app/components/Link";
 import { ContactActionBanner } from "./ContactActionBanner";
 import { SocialLinksBar } from "./SocialLinksBar";
@@ -20,8 +21,18 @@ export function SiteFooter({
   currentYear = new Date().getFullYear(),
   contactEmail = SITE_CONFIG.contact.email,
   showActionBanner = true,
+  currentPath,
   ...props
-}: SiteFooterProps): React.JSX.Element {
+}: SiteFooterProps): React.JSX.Element | null {
+  const routerPathname = usePathname();
+  const effectivePathname = currentPath ?? routerPathname;
+
+  // Suppress global SiteFooter on the root single-page home route ('/')
+  // to ensure SinglePageFooter serves as the exclusive footer.
+  if (effectivePathname === "/" || effectivePathname === "") {
+    return null;
+  }
+
   const t = useTranslations("footer");
 
   const navigationColumns = [

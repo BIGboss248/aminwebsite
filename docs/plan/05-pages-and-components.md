@@ -215,8 +215,8 @@
     - [ ] `SinglePageContactSection` - Bottom-of-page contact container integrating `ContactForm` and communication channels
     - [ ] `ContactForm` Integration - Clean inquiry form with Name, Email, Subject, and Message inputs
     - [ ] `SinglePageContactSkeleton` - Suspense skeleton fallback for contact section
-  - [ ] **Section: Single-Page Footer (`app/components/single-page/SinglePageFooter`)**
-    - [ ] `SinglePageFooter` - Lightweight footer with quick anchor navigation, copyright, and social links
+  - [x] **Section: Single-Page Footer (`app/components/single-page/SinglePageFooter`)**
+    - [x] `SinglePageFooter` - Lightweight footer with quick anchor navigation, copyright, and social links
   - [x] **Milestone: Production Page Swap Transition**
     - [x] `SinglePageSwap` - Validated transition to swap `/[locale]/single-page` with root `/[locale]` (Home) while preserving standalone route access
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/BIGboss248/aminwebsite/compare/v2.0.0...v2.1.0) (2026-09-29)
+
+
+### Features
+
+* readme github ([e509738](https://github.com/BIGboss248/aminwebsite/commit/e50973846c7f741ca92db775196dbcbb27c5a569))
+
+
+### Bug Fixes
+
+* linkedin link ([af70e36](https://github.com/BIGboss248/aminwebsite/commit/af70e36b929d61a3401a4aff5da44b2d5f246aeb))
+
 ## [2.0.0](https://github.com/BIGboss248/aminwebsite/compare/v1.8.0...v2.0.0) (2026-09-29)
 
 

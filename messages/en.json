@@ -1155,6 +1155,417 @@
           "tech5": "SPSS Analysis"
         }
       }
+    },
+    "certifications": {
+      "eyebrow": "// 03. VERIFIED SPECIALIZATIONS & CREDENTIALS",
+      "title": "Top Professional Certifications & Verified Credentials",
+      "description": "Audited professional specializations spanning enterprise IT infrastructure, DevOps container engineering, generative AI workflows, and AWS cloud architecture.",
+      "view_credential": "Verify Credential",
+      "credential_id_label": "Credential ID:",
+      "issued_by_label": "Issued by",
+      "loading": "Loading certifications & credentials showcase...",
+      "show_all_button": "Show All Certifications ({count})",
+      "show_less_button": "Show Less",
+      "additional_eyebrow": "// COMPLETE ACCREDITATION INVENTORY",
+      "additional_title": "All Verified Course Credentials & Specializations",
+      "additional_description": "Explore the full verified curriculum of completed technical specializations, university tracks, and professional badges.",
+      "search_placeholder": "Search certifications by title or issuer...",
+      "no_results": "No matching certifications found.",
+      "items": {
+        "google_it_support": {
+          "tag": "IT INFRASTRUCTURE & SYSTEMS",
+          "badge": "SPECIALIZATION",
+          "title": "Google IT Support Specialization",
+          "issuer": "Google & Coursera",
+          "summary": "Comprehensive 5-course professional specialization covering computer networking protocols, systems administration, Active Directory, Linux OS internals, and enterprise IT security.",
+          "credential_id": "COURSERA-ACYH2BZDEZZL",
+          "credential_url": "https://www.coursera.org/account/accomplishments/specialization/certificate/ACYH2BZDEZZL",
+          "skills": [
+            "Computer Networking",
+            "Linux Administration",
+            "Active Directory",
+            "IT Security",
+            "System Troubleshooting"
+          ]
+        },
+        "ibm_devops": {
+          "tag": "DEVOPS & CLOUD ARCHITECTURE",
+          "badge": "SPECIALIZATION",
+          "title": "IBM DevOps, Cloud, and Agile Foundations Specialization",
+          "issuer": "IBM & Coursera",
+          "summary": "Multi-course professional specialization covering Docker containerization, Kubernetes orchestration, Agile/Scrum development methodologies, and continuous delivery pipelines.",
+          "credential_id": "COURSERA-P7LAPJE2DQAQ",
+          "credential_url": "https://www.coursera.org/account/accomplishments/specialization/P7LAPJE2DQAQ",
+          "skills": [
+            "Docker & Containers",
+            "Kubernetes",
+            "Agile & Scrum",
+            "CI/CD Pipelines",
+            "DevOps Culture"
+          ]
+        },
+        "google_ai": {
+          "tag": "AI & GENERATIVE WORKFLOWS",
+          "badge": "SPECIALIZATION",
+          "title": "Google AI",
+          "issuer": "Google & Coursera",
+          "summary": "Specialized curriculum covering prompt engineering optimization, generative AI applications, data analysis, and responsible AI deployment across enterprise workflows.",
+          "credential_id": "COURSERA-S8L0GL26QTKS",
+          "credential_url": "https://www.coursera.org/account/accomplishments/specialization/S8L0GL26QTKS",
+          "skills": [
+            "Generative AI",
+            "Prompt Optimization",
+            "AI App Building",
+            "Data Analysis",
+            "Responsible AI"
+          ]
+        },
+        "aws_solutions_architect": {
+          "tag": "CLOUD INFRASTRUCTURE & ARCHITECTURE",
+          "badge": "CERTIFIED QUEST",
+          "title": "AWS Cloud Quest: Solutions Architect",
+          "issuer": "Amazon Web Services (AWS)",
+          "summary": "Hands-on architectural credential validating high-availability cloud designs, multi-tier VPC networking, compute scaling, fault tolerance, and IAM security boundaries on AWS.",
+          "credential_id": "CREDLY-A5AC46A3",
+          "credential_url": "https://www.credly.com/badges/a5ac46a3-cb05-4b32-b893-17730a7f54e6/linked_in_profile",
+          "skills": [
+            "Cloud Architecture",
+            "AWS VPC",
+            "High Availability",
+            "Fault Tolerance",
+            "IAM Security"
+          ]
+        }
+      },
+      "additional_items": [
+        {
+          "id": "cert_1",
+          "title": "Generative AI Content and Prompt Optimization",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/records/UEWQTEUE2842"
+        },
+        {
+          "id": "cert_2",
+          "title": "SEO Visibility, Keyword Research, and Auditing",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/records/83NC0S61PC0E"
+        },
+        {
+          "id": "cert_3",
+          "title": "AI for App Building",
+          "issuer": "Google",
+          "url": "https://www.coursera.org/account/accomplishments/records/R1N3O195Z76B"
+        },
+        {
+          "id": "cert_4",
+          "title": "AI for Data Analysis",
+          "issuer": "Google",
+          "url": "https://www.coursera.org/account/accomplishments/records/WTT2RJLVAASB"
+        },
+        {
+          "id": "cert_5",
+          "title": "AI for Content Creation",
+          "issuer": "Google",
+          "url": "https://www.coursera.org/account/accomplishments/records/96YZD7VKYTTT"
+        },
+        {
+          "id": "cert_6",
+          "title": "AI for Writing and Communicating",
+          "issuer": "Google",
+          "url": "https://www.coursera.org/account/accomplishments/records/NJ9VBWE3DYGQ"
+        },
+        {
+          "id": "cert_7",
+          "title": "AI for Research and Insights",
+          "issuer": "Google",
+          "url": "https://www.coursera.org/account/accomplishments/records/DCAODHSTDA5I"
+        },
+        {
+          "id": "cert_8",
+          "title": "AI for Brainstorming and Planning",
+          "issuer": "Google",
+          "url": "https://www.coursera.org/account/accomplishments/records/DZ8AK5RKTUPB"
+        },
+        {
+          "id": "cert_9",
+          "title": "AI Fundamentals",
+          "issuer": "Google",
+          "url": "https://www.coursera.org/account/accomplishments/records/2NPALF7L4YWA"
+        },
+        {
+          "id": "cert_10",
+          "title": "React Foundations for Next.js",
+          "issuer": "Vercel",
+          "url": "https://nextjs.org/learn/certificate?course=react-foundations&user=129616&certId=react-foundations-129616-1767122629221"
+        },
+        {
+          "id": "cert_11",
+          "title": "Introduction to Containers w/ Docker, Kubernetes & OpenShift",
+          "issuer": "IBM",
+          "url": "https://www.coursera.org/account/accomplishments/records/ZES3C4RAN009"
+        },
+        {
+          "id": "cert_12",
+          "title": "Introduction to Agile Development and Scrum",
+          "issuer": "IBM",
+          "url": "https://www.coursera.org/account/accomplishments/records/2RUFQPULJS8Z"
+        },
+        {
+          "id": "cert_13",
+          "title": "Introduction to DevOps",
+          "issuer": "IBM",
+          "url": "https://www.coursera.org/account/accomplishments/records/UR85P2JAJLKI"
+        },
+        {
+          "id": "cert_14",
+          "title": "Supervised Machine Learning: Regression and Classification",
+          "issuer": "DeepLearning.AI, Stanford University",
+          "url": "https://www.coursera.org/account/accomplishments/records/ZGNUM46MBPM4"
+        },
+        {
+          "id": "cert_15",
+          "title": "AWS Cloud Quest: Machine Learning",
+          "issuer": "Amazon Web Services (AWS)",
+          "url": "https://www.credly.com/badges/e6ce9bf0-121e-49af-b29a-53d7d5390651/linked_in_profile"
+        },
+        {
+          "id": "cert_16",
+          "title": "AWS Cloud Quest: Data Analytics",
+          "issuer": "Amazon Web Services (AWS)",
+          "url": "https://www.credly.com/badges/a85ef716-33c2-4bb4-ae1a-22911bb4e95b/linked_in_profile"
+        },
+        {
+          "id": "cert_17",
+          "title": "AWS Cloud Quest: Serverless Developer",
+          "issuer": "Amazon Web Services (AWS)",
+          "url": "https://www.credly.com/badges/70ad0582-c168-46ed-8f68-2a9a0a3e8a15/linked_in_profile"
+        },
+        {
+          "id": "cert_18",
+          "title": "AWS Cloud Quest: Cloud Practitioner",
+          "issuer": "Amazon Web Services (AWS)",
+          "url": "https://www.credly.com/badges/bba4a0b4-0cac-4010-8151-7d0e9091d742/linked_in_profile"
+        },
+        {
+          "id": "cert_19",
+          "title": "Learning REST APIs",
+          "issuer": "LinkedIn",
+          "url": "https://www.linkedin.com/learning/certificates/ee34dbf89781499e1bdec5630d5a73577471df517a91822314d75a905fddccde/"
+        },
+        {
+          "id": "cert_20",
+          "title": "Digital Marketing Foundations",
+          "issuer": "LinkedIn",
+          "url": "https://www.linkedin.com/learning/certificates/126f8a1ed9262d8ef3bdfca1667d8827972c1ad521090e85876ae957d7fc96b0/"
+        },
+        {
+          "id": "cert_21",
+          "title": "What Is Business Analysis?",
+          "issuer": "LinkedIn",
+          "url": "https://www.linkedin.com/learning/certificates/1daafdea8be11d1ce5fb8d186103d03bcef74940750e20a5ce15f3fa63c076c8/"
+        },
+        {
+          "id": "cert_22",
+          "title": "Key Technologies for Business Specialization",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/specialization/certificate/G66N9B7XBGQA"
+        },
+        {
+          "id": "cert_23",
+          "title": "What is Data Science?",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/ZF24W6KQYHLB"
+        },
+        {
+          "id": "cert_24",
+          "title": "Introduction to Artificial Intelligence (AI)",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/MHVBPY9VZKDB"
+        },
+        {
+          "id": "cert_25",
+          "title": "Introduction to Cloud Computing",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/A755TMZHG8QY"
+        },
+        {
+          "id": "cert_26",
+          "title": "Relational Database Administration (DBA)",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/SGZMGSSAZL3J"
+        },
+        {
+          "id": "cert_27",
+          "title": "Python Project for Data Engineering",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/TBG7SDBKA9ZT"
+        },
+        {
+          "id": "cert_28",
+          "title": "Introduction to Relational Databases (RDBMS)",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/QP75AYTQW6XP"
+        },
+        {
+          "id": "cert_29",
+          "title": "Automate your Life with python",
+          "issuer": "Udemy",
+          "url": "https://www.udemy.com/certificate/UC-dfed7e28-ac19-437e-9607-37e7d0f4a475/"
+        },
+        {
+          "id": "cert_30",
+          "title": "Python, Bash and SQL Essentials for Data Engineering Specialization",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/specialization/certificate/HERDBP7JTHAK"
+        },
+        {
+          "id": "cert_31",
+          "title": "Web Applications and Command-Line Tools for Data Engineering",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/ZTJ5CHXMNDEE"
+        },
+        {
+          "id": "cert_32",
+          "title": "Linux and Bash for Data Engineering",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/3QL5TLJ6J7FD"
+        },
+        {
+          "id": "cert_33",
+          "title": "Python and Pandas for Data Engineering",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/ZDBQUK7A4SSJ"
+        },
+        {
+          "id": "cert_34",
+          "title": "Scripting with Python and SQL for Data Engineering",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/9S2RA3SE9NVP"
+        },
+        {
+          "id": "cert_35",
+          "title": "Google Data Analytics Specialization",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/specialization/certificate/6VVRS6Q2EMLH"
+        },
+        {
+          "id": "cert_36",
+          "title": "Sales and CRM Overview",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/UT7VAV9LW46M"
+        },
+        {
+          "id": "cert_37",
+          "title": "Data Analysis with R Programming",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/NPN2JEVT9NLS"
+        },
+        {
+          "id": "cert_38",
+          "title": "Google Data Analytics Capstone: Complete a Case Study",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/RFL4ERR2XUFS"
+        },
+        {
+          "id": "cert_39",
+          "title": "Google Data Analytics Certificate",
+          "issuer": "Coursera",
+          "url": "https://www.credly.com/badges/5028151e-5f1d-4ab9-91b8-b9df23b150f7"
+        },
+        {
+          "id": "cert_40",
+          "title": "Analyze Data to Answer Questions",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/H39YVJ9RCUDF"
+        },
+        {
+          "id": "cert_41",
+          "title": "Process Data from Dirty to Clean",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/GAZQXQQD46WA"
+        },
+        {
+          "id": "cert_42",
+          "title": "Share Data Through the Art of Visualization",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/TGJD7SCEFH5F"
+        },
+        {
+          "id": "cert_43",
+          "title": "Prepare Data for Exploration",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/XWPDTW9E3SMA"
+        },
+        {
+          "id": "cert_44",
+          "title": "Ask Questions to Make Data-Driven Decisions",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/2PLZWJA6MHKH"
+        },
+        {
+          "id": "cert_45",
+          "title": "Foundations: Data, Data, Everywhere",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/SSG3FVLQ9B7V"
+        },
+        {
+          "id": "cert_46",
+          "title": "Technical Support Fundamentals",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/5TTU7W6LEJNV"
+        },
+        {
+          "id": "cert_47",
+          "title": "Python for Data Science, AI & Development",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/2HAVGXSCLUSJ"
+        },
+        {
+          "id": "cert_48",
+          "title": "Introduction to Data Engineering",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/AD7M3DFN4EKW"
+        },
+        {
+          "id": "cert_49",
+          "title": "Crash Course on Python",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/BDY6UBJERGNP"
+        },
+        {
+          "id": "cert_50",
+          "title": "The Bits and Bytes of Computer Networking",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/TFGWEPCX7F7N"
+        },
+        {
+          "id": "cert_51",
+          "title": "System Administration and IT Infrastructure Services",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/SSAQBK2V274S"
+        },
+        {
+          "id": "cert_52",
+          "title": "Operating Systems and You: Becoming a Power User",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/LB42XRZQ6F92"
+        },
+        {
+          "id": "cert_53",
+          "title": "IT Security: Defense against the digital dark arts",
+          "issuer": "Coursera",
+          "url": "https://www.coursera.org/account/accomplishments/certificate/4QSW3ZJB638G"
+        }
+      ],
+      "linkedin_banner": {
+        "badge": "PROFESSIONAL NETWORK",
+        "headline": "Connect & Collaborate on LinkedIn",
+        "description": "Explore full professional background, enterprise project milestones, endorsements, and direct collaboration opportunities.",
+        "cta_connect": "Connect on LinkedIn",
+        "cta_aria": "Connect with Amin Jamali on LinkedIn (opens in new tab)",
+        "verified_profile": "Verified LinkedIn Profile",
+        "profile_handle": "in/amin-jamali"
+      }
     }
   }
 }

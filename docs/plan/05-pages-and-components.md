@@ -205,11 +205,11 @@
     - [x] `SinglePageProjectsSection` - Responsive projects grid container highlighting authentic engineering systems and published research
     - [x] `SinglePageProjectCard` - Showcase card featuring tech stack badges, direct external links to GitHub repositories, live web deployments, and DOI research publications
     - [x] `SinglePageProjectsSkeleton` - Suspense skeleton fallback for projects grid
-  - [ ] **Section: Top 4 Certifications & LinkedIn Showcase (`app/components/single-page/SinglePageCertificationsSection`)**
-    - [ ] `SinglePageCertificationsSection` - Showcase section presenting top 4 professional course certifications and verified credentials
-    - [ ] `CertificationCard` - Credential card detailing certificate title, issuing platform/institution, credential ID, and verification link
-    - [ ] `LinkedInProfileBanner` - Prominent callout card linking directly to LinkedIn profile and professional network
-    - [ ] `SinglePageCertificationsSkeleton` - Suspense skeleton fallback for certifications section
+  - [x] **Section: Top 4 Certifications & LinkedIn Showcase (`app/components/single-page/SinglePageCertificationsSection`)**
+    - [x] `SinglePageCertificationsSection` - Showcase section presenting top 4 professional course certifications and verified credentials
+    - [x] `CertificationCard` - Credential card detailing certificate title, issuing platform/institution, credential ID, and verification link
+    - [x] `LinkedInProfileBanner` - Prominent callout card linking directly to LinkedIn profile and professional network
+    - [x] `SinglePageCertificationsSkeleton` - Suspense skeleton fallback for certifications section
   - [ ] **Section: Contact & Direct Inquiry (`app/components/single-page/SinglePageContactSection`)**
     - [ ] `SinglePageContactSection` - Bottom-of-page contact container integrating `ContactForm` and communication channels
     - [ ] `ContactForm` Integration - Clean inquiry form with Name, Email, Subject, and Message inputs

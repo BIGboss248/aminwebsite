@@ -30,11 +30,13 @@ describe("SinglePageHero Component", () => {
     mockLocale = "en";
     render(<SinglePageHero locale="en" />);
 
-    // Logo placeholder
+    // Website Brand Logo
     expect(
-      screen.getByLabelText(/Brand logo placeholder/i),
+      screen.getByLabelText(/Amin Jamali brand logo/i),
     ).toBeInTheDocument();
-    expect(screen.getByText("AJ")).toBeInTheDocument();
+    expect(
+      screen.getByAltText(/Amin Jamali Logo/i),
+    ).toBeInTheDocument();
 
     // Name and Role
     expect(
@@ -98,7 +100,10 @@ describe("SinglePageHero Component", () => {
     render(<SinglePageHero locale="fa" />);
 
     expect(
-      screen.getByLabelText(/جایگاه لوگوی اختصاصی/i),
+      screen.getByLabelText(/لوگوی رسمی امین جمالی/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByAltText(/لوگوی امین جمالی/i),
     ).toBeInTheDocument();
 
     expect(

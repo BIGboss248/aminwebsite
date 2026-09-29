@@ -8,7 +8,8 @@
   - [ ] Implement Server Action mutation handlers for contact form submission (`app/actions/contact.ts`)
   - [ ] Configure dynamic rate-limiting and server-side Zod validation
 - [ ] **6.2 File-Based Metadata & Social Previews**
-  - [x] Add application favicon (`app/favicon.ico`)
+  - [x] Configure App Icons: `app/favicon.ico`, `app/icon.png` (using `logo.png`), and `app/apple-icon.png`
+  - [x] Configure root layout `generateMetadata` programmatic `icons` fallback
   - [ ] Add default OpenGraph and Twitter cards (`opengraph-image.png`, `twitter-image.png`)
   - [ ] Configure global search engine instructions in `app/robots.ts`
   - [ ] Generate dynamic XML sitemap in `app/sitemap.ts`

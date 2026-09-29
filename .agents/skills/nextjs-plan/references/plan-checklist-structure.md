@@ -71,7 +71,13 @@ docs/plan/
 ### Phase 6: Server Functions & Global SEO Metadata (`06-server-functions-and-metadata.md`)
 - Implement Server Actions (`'use server'`) and custom API handlers (`route.ts`).
 - Configure global crawler instructions (`app/robots.ts`) and dynamic XML sitemap (`app/sitemap.ts`).
-- Configure application icons (`favicon.ico`, `apple-icon.png`).
+- **Application Icons & Metadata Files**:
+  - `favicon`: Place root-level `app/favicon.ico` (generates `<link rel="icon" href="/favicon.ico" sizes="any" />`).
+  - `icon`: Place `app/icon.(png|svg|ico)` (or nested route icons, e.g. `app/icon.png`) or code-generated `app/icon.tsx` using `ImageResponse` from `next/og` (generates `<link rel="icon" ... />` with auto-computed MIME type and dimensions). Supports numbered filenames (`icon1.png`, `icon2.png`) for multiple icon densities.
+  - `apple-icon`: Place `app/apple-icon.(png|jpg)` or code-generated `app/apple-icon.tsx` (generates `<link rel="apple-touch-icon" ... />`).
+  - Configure root layout `generateMetadata` `icons` object (`icon`, `shortcut`, `apple`) as explicit programmatic fallback.
+- Configure social preview cards (`opengraph-image.png`, `twitter-image.png` or dynamic `opengraph-image.tsx`).
+- Inject global structured data (`JSON-LD` via `schema-dts`).
 
 ### Phase 7: Integrations & Production Release (`07-integrations-and-release.md`)
 - Configure 3rd party plugins (analytics with consent gating, error monitoring, email dispatch).

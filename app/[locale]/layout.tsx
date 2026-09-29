@@ -49,6 +49,14 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("description"),
+    icons: {
+      icon: [
+        { url: "/logo.png", type: "image/png" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      apple: "/logo.png",
+      shortcut: "/logo.png",
+    },
   };
 }
 

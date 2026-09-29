@@ -153,19 +153,24 @@ export function SinglePageHero({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-center">
           {/* Left Column: Text & Pill-shaped Socials */}
           <div className="md:col-span-7 flex flex-col items-start text-start">
-            {/* Logo Placeholder */}
+            {/* Website Brand Logo */}
             <div
               className="group flex items-center gap-3 mb-5 sm:mb-6 select-none"
-              aria-label={t("logo_placeholder_aria")}
+              aria-label={t("logo_aria")}
             >
-              <div className="size-11 sm:size-13 rounded-2xl border border-border bg-card/90 shadow-xs flex items-center justify-center p-2 transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-sm">
-                <span className="font-mono text-sm sm:text-base font-bold tracking-tight text-primary">
-                  {t("logo_initials")}
-                </span>
+              <div className="relative size-11 sm:size-13 rounded-2xl border border-border bg-card/90 shadow-xs flex items-center justify-center p-1.5 transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-sm overflow-hidden">
+                <Image
+                  src="/logo.png"
+                  alt={t("logo_alt")}
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain"
+                  priority
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-                  {t("logo_placeholder_title")}
+                  {t("logo_title")}
                 </span>
                 <span className="text-xs text-foreground/80 font-medium">
                   {tCommon("brand")}

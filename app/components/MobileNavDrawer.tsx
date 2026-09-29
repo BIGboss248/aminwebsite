@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useCallback } from "react";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { X, ArrowRight, ArrowLeft } from "lucide-react";
@@ -234,30 +235,15 @@ export function MobileNavDrawer({
             className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
             aria-label={`${brandName} ${tNav("home")}`}
           >
-            {/* Hexagon Lattice Vector Emblem */}
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-md group-hover:shadow-primary/20">
-              <svg
-                className="h-5 w-5 text-primary"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
-                <circle cx="12" cy="12" r="3" className="fill-primary/20" />
-                <line
-                  x1="12"
-                  y1="2"
-                  x2="12"
-                  y2="22"
-                  className="stroke-status-success"
-                  strokeWidth="1.5"
-                  strokeDasharray="2 2"
-                />
-              </svg>
+            {/* Brand Logo Emblem */}
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background shadow-xs transition-all duration-200 group-hover:border-primary group-hover:shadow-md group-hover:shadow-primary/20 overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt=""
+                width={36}
+                height={36}
+                className="size-full object-contain p-0.5"
+              />
             </div>
 
             {/* Brand Title */}

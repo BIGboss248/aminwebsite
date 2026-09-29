@@ -972,9 +972,12 @@
       "description": "Single-page developer cockpit, systems architecture, verified credentials, full-stack projects, and direct contact inquiry with Amin Jamali."
     },
     "hero": {
+      "logo_aria": "Amin Jamali brand logo",
+      "logo_alt": "Amin Jamali Logo",
+      "logo_title": "Amin Jamali",
       "logo_placeholder_aria": "Brand logo placeholder",
       "logo_initials": "AJ",
-      "logo_placeholder_title": "Logo Placeholder",
+      "logo_placeholder_title": "Amin Jamali",
       "role_title": "Full-Stack Web Developer & IT Specialist",
       "role_headline": "Crafting Modern Web Apps & IT Infrastructure",
       "bio_lead": "I am a full-stack web developer and IT specialist specializing in high-performance Next.js and TypeScript architectures, enterprise infrastructure automation, and data-driven systems.",

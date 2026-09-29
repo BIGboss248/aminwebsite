@@ -1,5 +1,36 @@
 # Changelog
 
+## [2.0.0](https://github.com/BIGboss248/aminwebsite/compare/v1.8.0...v2.0.0) (2026-09-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* website is not single page
+
+### Features
+
+* added contact form to single page ([5ea9c64](https://github.com/BIGboss248/aminwebsite/commit/5ea9c644a1c6ff861ef534ce910391caa78a3452))
+* certificate page ([04f31c3](https://github.com/BIGboss248/aminwebsite/commit/04f31c3c64fc4bfa0fb50f11b506d90cdbdb9d41))
+* content edits ([01be9a1](https://github.com/BIGboss248/aminwebsite/commit/01be9a171942fd374f9db6dc31d20686b14258ee))
+* final touches (hopefully) ([53e2664](https://github.com/BIGboss248/aminwebsite/commit/53e26649864b472374a981223f90dd2c5bebffeb))
+* hero section design improvements ([bf0eb40](https://github.com/BIGboss248/aminwebsite/commit/bf0eb40e21f38fad4e27a7f86c9ae05fc85311f7))
+* projects section ([3fd5a9d](https://github.com/BIGboss248/aminwebsite/commit/3fd5a9d5b4f39fdc3bdbe7d60ca049214f6847a5))
+* seo stuff ([15812e8](https://github.com/BIGboss248/aminwebsite/commit/15812e8f278683215287dc769f55cfac769b5d5e))
+* single page navbar ([074e1f9](https://github.com/BIGboss248/aminwebsite/commit/074e1f96f48646fd4d3526b8feb56b923be0c240))
+* single-page creation ([968ccbf](https://github.com/BIGboss248/aminwebsite/commit/968ccbf3cec7b0ba39b51d729c7be13803674f91))
+* **style:** hero section redesign ([7e5baa2](https://github.com/BIGboss248/aminwebsite/commit/7e5baa245a49d34142175d5a2d1fa5c3cdb310e2))
+* **style:** hero section social button style change ([335a967](https://github.com/BIGboss248/aminwebsite/commit/335a9676b1ba158c79a651683bf5103455a3cf83))
+* **style:** projects section edits ([7c6b658](https://github.com/BIGboss248/aminwebsite/commit/7c6b658c449b5308b0fb3330b3870f46d40b28d9))
+* swapped faicon ([8d1a9d2](https://github.com/BIGboss248/aminwebsite/commit/8d1a9d217dbd0cc855ae031135ab6537b213a309))
+* test fix ([649727b](https://github.com/BIGboss248/aminwebsite/commit/649727b71cdc8b6c1d9ac0c72110b70d9d383c01))
+* updated list ([49c67a6](https://github.com/BIGboss248/aminwebsite/commit/49c67a6245c92e9cb93ba69b0a09182bfb4624f0))
+* website is not single page ([df1c7a9](https://github.com/BIGboss248/aminwebsite/commit/df1c7a98decb51f1c6665bcfdcb8a3469a1d35ca))
+
+
+### Bug Fixes
+
+* **test:** mock single-page components in single-page page test ([f5ef615](https://github.com/BIGboss248/aminwebsite/commit/f5ef61559bdb51e303abcbc1c6e5cba970fb45b1))
+
 ## [1.8.0](https://github.com/BIGboss248/aminwebsite/compare/v1.7.1...v1.8.0) (2026-09-26)
 
 

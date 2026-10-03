@@ -25,6 +25,16 @@ export default async function Page({ params, searchParams }: PageProps) {
 }
 ```
 
+### App Shell Prefetching vs Parameter Access
+
+- **Top-Level `await searchParams`**: Accessing `searchParams` directly at the top level of `page.tsx` makes the entire page render request-dynamic, preventing Next.js from generating a prefetchable static shell unless wrapped in `<Suspense>`.
+- **Pushing URL Parameters Down**:
+  - Keep the root `page.tsx` layout and header synchronous or static.
+  - Pass the unawaited `searchParams` / `params` promise down to leaf Server Components wrapped in `<Suspense>`.
+  - This allows Next.js to prefetch the **App Shell** (layout + static chrome) via standard `<Link>`, while dynamic search query results stream in gracefully.
+- **Per-Link URL Data Resolution (`<Link prefetch={true}>`)**:
+  - When linking to a page with dynamic `params` or `searchParams`, `<Link prefetch={true}>` sends an unawaited prefetch request that evaluates dynamic params on the server, populating the Client Router Cache before the user clicks.
+
 ---
 
 ## 2. Static Pre-Rendering (`generateStaticParams`)

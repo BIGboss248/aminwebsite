@@ -15,7 +15,7 @@ User Click / Navigation
  │     ├── Static Layout Shell
  │     ├── Cached Sub-components ('use cache' / Warm Cache)
  │     ├── Granular <Suspense> Skeleton Fallbacks
- │     └── Prefetched Per-link URL Data (params & searchParams)
+ │     └── Prefetched Per-link URL Data (params & searchParams via prefetch={true})
  │
  └──▶ [Streaming Phase (Async)]
        └── Server resolves dynamic DB/API fetches -> Streams into Suspense slots
@@ -32,9 +32,32 @@ User Click / Navigation
 
 ---
 
-## 2. The Three Levers for Instant Components
+## 2. Prefetching Models: App Shell vs. Per-Link Prefetching
 
-When designing components and pages, reach for these three levers:
+Under Next.js Partial Prefetching (`partialPrefetching: true` in `next.config.ts`), there are two distinct prefetch behaviors:
+
+| Dimension | Default App Shell Prefetch (`<Link>`) | Per-Link Prefetch (`<Link prefetch={true}>`) |
+| :--- | :--- | :--- |
+| **Prefetch Scope** | **One per route** (reused across all links to that route). | **One per visible link**. |
+| **Content Included** | Static layout shell + session-specific UI. | Static shell + session UI + **resolved per-link URL data** (`params`, `searchParams`). |
+| **Server Cost** | **Bounded by route count** (lightweight). | **1 server invocation per prefetchable link** entering viewport. |
+| **UX Outcome** | Navigation is instant with skeleton fallbacks for URL-dependent data. | Navigation is instant with URL-dependent cached data **already resolved (no skeleton fallback)**. |
+
+```tsx
+// 1. Default Link: Prefetches shared App Shell (low cost, ideal for dense grids)
+<Link href={`/store/${product.slug}`}>
+  {product.name}
+</Link>
+
+// 2. High-Intent Link: Resolves per-link URL data + cached search ahead of click
+<Link href={`/search?q=${query}`} prefetch={true}>
+  Search "{query}"
+</Link>
+```
+
+---
+
+## 3. The Three Levers for Instant Components
 
 ### Lever 1: Push Down Async I/O
 Extract dynamic, uncached, or request-specific work (`await params`, `await searchParams`, `cookies()`, `headers()`, uncached `fetch()`) into leaf sub-components wrapped in `<Suspense>`.
@@ -60,41 +83,69 @@ export default function ProductPage({ params }: PageProps<'/store/[slug]'>) {
 }
 ```
 
-### Lever 2: Granular Caching (`'use cache'`)
+### Lever 2: Granular Caching & Session Bridging Patterns
 Pair `'use cache'` with `cacheLife` and `cacheTag` to cache data at function or component level so it is packaged directly into the App Shell.
 
-- **Standard Server Caching**:
-  ```tsx
-  import { cacheLife, cacheTag } from "next/cache";
+#### Pattern A: Extract and Pass (Shared Across Sessions)
+When data depends on a cookie (e.g. `teamId`, `tenantId`, `locale`) but is shared across multiple users with that same attribute, read `cookies()` **outside** the cached function and pass it as an argument.
+```tsx
+import { cookies } from "next/headers";
 
-  async function getProduct(slug: string) {
-    "use cache";
-    cacheLife("hours");
-    cacheTag(`product-${slug}`);
-    return db.products.findBySlug(slug);
-  }
-  ```
+async function TeamDashboard() {
+  const teamId = (await cookies()).get("team_id")?.value;
+  const metrics = await getTeamMetrics(teamId);
+  return <MetricsGrid data={metrics} />;
+}
 
-- **Browser-Only Session Caching (`"use cache: private"`)**:
-  When caching data that reads runtime headers or cookies (e.g., user greeting, cart badge) without storing it on the public CDN server, use `"use cache: private"`. As long as its `stale` time is $\ge 5\text{ minutes}$, the client App Shell carries it ahead of the click.
+async function getTeamMetrics(teamId: string | undefined) {
+  "use cache";
+  // Cache key is deterministic based on teamId; traffic scales with team count, NOT session count!
+  return db.metrics.forTeam(teamId);
+}
+```
 
-- **Remote Persistent Caching (`"use cache: remote"`)**:
-  In serverless multi-instance environments, ensures cache consistency across distributed lambdas.
+#### Pattern B: `"use cache: private"` (Tied to a Single User Session)
+When the lookup is strictly private to a single user session (or auth helpers check cookies deep inside):
+```tsx
+import { cookies } from "next/headers";
+import { cacheLife } from "next/cache";
+
+async function UserProfileBadge() {
+  const profile = await getUserProfile();
+  return <span>{profile.name}</span>;
+}
+
+async function getUserProfile() {
+  "use cache: private";
+  cacheLife({ stale: 300 }); // stale >= 5m allows App Shell to carry it ahead of click
+
+  const sessionToken = (await cookies()).get("session")?.value;
+  return db.users.findByToken(sessionToken);
+}
+```
+
+#### Pattern C: Multi-Instance Remote Caching (`"use cache: remote"`)
+In distributed serverless deployments where in-memory lambdas are ephemeral, use `"use cache: remote"` for persistent distributed caching across instances.
 
 ### Lever 3: Per-Link Prefetching (`<Link prefetch>`)
-Under Partial Prefetching, visible `<Link>` elements prefetch the destination's App Shell by default.
-Setting `prefetch={true}` (or `<Link href="..." prefetch>`) opts the link into **per-link prefetching**, resolving per-link URL data (`params`, `searchParams`, dynamic path) before the user clicks.
-
-```tsx
-// Prefetches destination App Shell + resolves per-link params ahead of click
-<Link href={`/store/${product.slug}`} prefetch>
-  {product.name}
-</Link>
-```
+When a route reads `searchParams` or `params` that have a known cache lifetime, `prefetch={true}` tells Next.js to run a prerender for that specific URL ahead of the click. On click, the resolved data appears immediately with no fallback skeleton.
 
 ---
 
-## 3. Granular Loading States vs. Monolithic Skeletons
+## 4. Dense Link Grids & Intent-Based Prefetching
+
+> [!WARNING]
+> **Avoid Blanket `prefetch={true}` on Dense Grids/Feeds:**
+> Setting `prefetch={true}` on a grid of 50 product cards makes 50 simultaneous server prerender requests as cards scroll into the viewport.
+
+### Recommended Strategy:
+1. **Default Links in Grids**: Use standard `<Link>` (without `prefetch={true}`). This prefetches the single shared App Shell once for the entire route at minimal cost.
+2. **Hover/Intent-Triggered Prefetch**: Use `<HoverPrefetchLink>` or call `router.prefetch(href)` on `onMouseEnter` / `onFocus` for high-intent links.
+3. **Explicit `prefetch={true}`**: Reserve for high-traffic primary calls to action (e.g. Hero CTA, header search suggestions, checkout button).
+
+---
+
+## 5. Granular Loading States vs. Monolithic Skeletons
 
 > [!WARNING]
 > **Avoid Monolithic Full-Page Skeletons:**
@@ -107,7 +158,7 @@ Setting `prefetch={true}` (or `<Link href="..." prefetch>`) opts the link into *
 
 ---
 
-## 4. Development Diagnostics & Next DevTools Navigation Inspector
+## 6. Development Diagnostics & Next DevTools Navigation Inspector
 
 1. **Navigation Inspector ("Pause on Navigations")**:
    - Open Next.js DevTools (`next-devtools`).
@@ -124,7 +175,7 @@ Setting `prefetch={true}` (or `<Link href="..." prefetch>`) opts the link into *
 
 ---
 
-## 5. Automated E2E Regression Guards (`@next/playwright`)
+## 7. Automated E2E Regression Guards (`@next/playwright`)
 
 Lock in instant navigation behavior using `@next/playwright`:
 

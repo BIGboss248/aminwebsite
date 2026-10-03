@@ -46,8 +46,29 @@ export async function FeaturedProductsGrid() {
 }
 ```
 
-### C. Session & Private Browser Caching (`"use cache: private"`)
-When caching data that reads runtime request APIs (`cookies()`, `headers()`) without persisting it on public server caches/CDNs:
+### C. Session Bridging: Extract and Pass (Shared Across Sessions)
+When data depends on a cookie (e.g. `teamId`, `locale`) but is shared across multiple users with that same attribute, read `cookies()` outside the cached function and pass the value as an argument.
+```tsx
+import { cookies } from "next/headers";
+import { cacheLife, cacheTag } from "next/cache";
+
+export async function TeamTopics() {
+  const teamId = (await cookies()).get("team_id")?.value;
+  const topics = await getTeamTopics(teamId);
+  return <TopicsList topics={topics} />;
+}
+
+export async function getTeamTopics(teamId: string | undefined) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`team-topics-${teamId}`);
+  // Cache key is deterministic based on teamId; scales with team count, not session count!
+  return db.topics.findByTeam(teamId);
+}
+```
+
+### D. Session Bridging: `"use cache: private"` (Tied to a Single Session)
+When caching data that reads runtime request APIs (`cookies()`, `headers()`) private to a single user session without storing it on public server caches/CDNs:
 ```tsx
 import { cookies } from "next/headers";
 import { cacheLife } from "next/cache";
@@ -62,7 +83,7 @@ export async function getUserPreferences() {
 }
 ```
 
-### D. Multi-Instance Remote Caching (`"use cache: remote"`)
+### E. Multi-Instance Remote Caching (`"use cache: remote"`)
 In distributed serverless environments where memory caches are ephemeral across lambdas, use `"use cache: remote"` to enforce persistent multi-instance caching.
 
 ---

@@ -60,8 +60,13 @@ Specialized workflow for creating production-ready React Server Components (RSC)
 
 - **The Three Levers for Instant Components**:
   1. **Push Down**: Extract request-specific async operations (`await params`, `await searchParams`, `cookies()`, `headers()`, uncached DB/API calls) into leaf sub-components wrapped in `<Suspense>`. Static parents and siblings lift directly into the static/App Shell.
-  2. **Cache**: Pair `'use cache'` with `cacheLife` and `cacheTag` at function/component level. Use `'use cache: private'` for browser-cached session/cookie data with `stale >= 5m` that travels with the App Shell.
-  3. **Per-Link Prefetching**: Use `<Link prefetch>` or composite `<Link>` to resolve per-link URL data (`params`, `searchParams`) before navigation.
+  2. **Cache**: Pair `'use cache'` with `cacheLife` and `cacheTag` at function/component level. Use Session Bridging patterns:
+     - **Pattern A (Extract & Pass)**: Extract session attributes (e.g. `team_id`, `role`, `tier`) from `cookies()` outside and pass as arguments to `'use cache'` functions so cached data is shared across all users with matching attributes (cost scales with team/attribute count, not user session count).
+     - **Pattern B (`"use cache: private"`)**: For strictly user-specific session lookups, use browser-only session caching with `stale >= 5m` that travels with the App Shell.
+  3. **Prefetching Strategy & Dense Grids**:
+     - **Default App Shell Prefetching (`<Link>` / `prefetch={null}`)**: Prefetches one shared static/App Shell per route. Bounded cost ($O(\text{routes})$), zero server invocations per link. Use for dense feeds, card grids (50+ cards), and bulk navigation.
+     - **Per-Link Prefetching (`<Link prefetch={true}>`)**: Resolves dynamic URL data (`params`, `searchParams`) before navigation with 1 server invocation per visible link. Use sparingly for high-intent primary CTAs, hero actions, or master-detail list items where skeleton flashing must be eliminated.
+     - **Dense Card Grids**: NEVER use blanket `prefetch={true}` across dozens of cards in feeds. Retain default `<Link>` or use hover/focus intent prefetching (`router.prefetch()`).
 - **Granular Loading States (Anti-Full-Page Flash)**: Never wrap an entire component or page in a single top-level `<Suspense>` boundary that flashes full skeletons. Keep titles, layout frames, and cached content visible immediately; place `<Suspense>` strictly around dynamic streaming slots.
 - **Native Next.js 16 Caching Directives**: Consult [`references/instant-navigation-and-prefetching.md`](./references/instant-navigation-and-prefetching.md) and [`references/caching-and-revalidation.md`](./references/caching-and-revalidation.md).
 

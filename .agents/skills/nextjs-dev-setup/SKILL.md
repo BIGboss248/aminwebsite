@@ -1,10 +1,7 @@
 ---
 name: nextjs-dev-setup
 description: >-
-  Bootstrap, configure, and verify the complete Next.js App Router development environment, project metadata, testing suites, MCP servers, styling linters, Docker containerization, git hooks, and CI/CD pipelines. Use when the user asks to "setup nextjs dev environment", "start a nextjs project", "containerize nextjs app", or triggers "/nextjs-dev-setup".
-metadata:
-  author: BIGboss248
-  version: "2.3"
+  Bootstrap, configure, and verify the complete Next.js App Router development environment, developer tooling, testing suites, MCP servers, Docker containerization, and CI/CD. Triggers on "/nextjs-dev-setup", "setup nextjs dev environment", "start a nextjs project", or "containerize nextjs app".
 ---
 
 # Next.js Development Setup (`nextjs-dev-setup`)

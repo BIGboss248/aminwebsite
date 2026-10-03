@@ -3,12 +3,14 @@ services:
     image: ghcr.io/<lowercase-repo-owner>/<lowercase-repo-name>:${IMAGE_TAG:-latest}
     container_name: nextjs-standalone-app
     restart: always
+    stop_grace_period: 30s
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     environment:
       - NODE_ENV=production
       - HOSTNAME=0.0.0.0
       - PORT=${PORT:-3000}
+      - NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${NEXT_SERVER_ACTIONS_ENCRYPTION_KEY:-}
     healthcheck:
       test:
         [
@@ -19,4 +21,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
-

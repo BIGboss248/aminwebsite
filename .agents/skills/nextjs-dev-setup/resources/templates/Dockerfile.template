@@ -84,6 +84,8 @@ USER node
 # Expose port for HTTP traffic (defaults to 3000)
 EXPOSE ${PORT}
 
+# Graceful termination signal handling for Next.js after() callbacks and active request drainage
+STOPSIGNAL SIGTERM
+
 # Start Next.js standalone server
 CMD ["node", "server.js"]
-

@@ -65,9 +65,11 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 
 ### Stage 5: Standalone Production Docker Containerization
 
-1. Enable `output: "standalone"` and configure `experimental.serverActions.allowedOrigins` using `SITE_CONFIG.baseUrl` from `lib/site-config.ts` (with wildcard subdomain, `localhost:3000`, `127.0.0.1:3000`) in `next.config.ts` to prevent reverse-proxy origin mismatches.
-2. Deploy [Dockerfile.template](./resources/templates/Dockerfile.template), [docker-compose.yml.template](./resources/templates/docker-compose.yml.template), [docker-compose.prod.yml.template](./resources/templates/docker-compose.prod.yml.template), and [dockerignore.template](./resources/templates/dockerignore.template).
-3. Review architecture in [docker-containerization-guide.md](./references/docker-containerization-guide.md).
+1. Enable `output: "standalone"`, configure `deploymentId` for version skew protection, set `headers` with `X-Accel-Buffering: no` for streaming/PPR proxy compatibility, and configure `experimental.serverActions.allowedOrigins` using `SITE_CONFIG.baseUrl` from `lib/site-config.ts` (with wildcard subdomain, `localhost:3000`, `127.0.0.1:3000`) in `next.config.ts`.
+2. Document `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` in `.env.example` and pass it to container runtimes.
+3. Deploy [Dockerfile.template](./resources/templates/Dockerfile.template) (with `STOPSIGNAL SIGTERM`), [docker-compose.yml.template](./resources/templates/docker-compose.yml.template) (with `stop_grace_period: 30s`), [docker-compose.prod.yml.template](./resources/templates/docker-compose.prod.yml.template), and [dockerignore.template](./resources/templates/dockerignore.template).
+4. Review architecture and multi-container cache drift callout in [docker-containerization-guide.md](./references/docker-containerization-guide.md).
+
 
 ### Stage 6: Git Hooks & Credit-Optimized CI/CD
 

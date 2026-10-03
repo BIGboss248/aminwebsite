@@ -12,6 +12,9 @@ export const SITE_CONFIG = {
   description:
     "Personal portfolio, interactive engineering lab, and digital credentials platform of Amin Jamali.",
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "https://meetjamali.com",
+  version: process.env.NEXT_PUBLIC_APP_VERSION || "2.1.0",
+  commitHash: process.env.NEXT_PUBLIC_GIT_COMMIT_HASH || "dev",
+  commitUrl: `https://github.com/BIGboss248/aminwebsite/commit/${process.env.NEXT_PUBLIC_GIT_COMMIT_HASH || "main"}`,
   author: {
     name: "Amin Jamali",
     role: "Full-Stack Engineer & Systems Architect",

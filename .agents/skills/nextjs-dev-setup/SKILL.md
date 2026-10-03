@@ -68,7 +68,7 @@ Conduct the interactive interview in **progressive, adaptive rounds** (waiting f
 
 ### Stage 5: Standalone Production Docker & Reverse Proxy (Traefik / Nginx)
 
-1. In `next.config.ts`: enable `output: "standalone"`, set `deploymentId` for version skew protection, configure `headers` with `X-Accel-Buffering: no`, and set `experimental.serverActions.allowedOrigins`.
+1. In `next.config.ts`: resolve Git commit hash (`getGitCommitHash()` with CI fallbacks) and package version, inject `NEXT_PUBLIC_APP_VERSION` and `NEXT_PUBLIC_GIT_COMMIT_HASH` under `env`, enable `output: "standalone"`, set `deploymentId` for version skew protection (`${pkg.version}-${gitHash}`), configure `headers` with `X-Accel-Buffering: no`, and set `experimental.serverActions.allowedOrigins`.
 2. Document `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` in `.env.example` and pass it to runtime environments.
 3. Deploy [Dockerfile.template](./resources/templates/Dockerfile.template) (with `STOPSIGNAL SIGTERM`) and [docker-compose.yml.template](./resources/templates/docker-compose.yml.template) (with `stop_grace_period: 30s`).
 4. **Reverse Proxy Configuration**:

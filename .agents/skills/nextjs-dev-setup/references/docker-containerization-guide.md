@@ -10,15 +10,35 @@ Configure `next.config.ts` with standalone output, Server Action origin protecti
 
 ```ts
 import type { NextConfig } from "next";
+import { execSync } from "node:child_process";
 import pkg from "./package.json";
 import { SITE_CONFIG } from "./lib/site-config";
 
 const siteHost = new URL(SITE_CONFIG.baseUrl).host;
 
+// Resolve 7-character Git commit hash automatically
+const getGitCommitHash = (): string => {
+  try {
+    return (
+      process.env.GITHUB_SHA?.slice(0, 7) ||
+      process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ||
+      execSync("git rev-parse --short HEAD").toString().trim()
+    );
+  } catch {
+    return "dev";
+  }
+};
+
+const gitHash = getGitCommitHash();
+
 const nextConfig: NextConfig = {
   output: "standalone",
-  // Version skew protection tied directly to Release Please version in package.json
-  deploymentId: pkg.version,
+  // Version skew protection tied directly to package version and commit hash
+  deploymentId: `${pkg.version}-${gitHash}`,
+  env: {
+    NEXT_PUBLIC_APP_VERSION: pkg.version,
+    NEXT_PUBLIC_GIT_COMMIT_HASH: gitHash,
+  },
   experimental: {
     serverActions: {
       allowedOrigins: [

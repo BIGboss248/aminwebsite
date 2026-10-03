@@ -262,7 +262,14 @@
     "Category": "PROCESS",
     "Instruction": "In development setup and repository initialization workflows ('nextjs-dev-setup'), always generate and present a complete 'implementation_plan.md' artifact detailing all planned file creations, configurations, and packages before applying changes, and proceed directly with execution without stopping to wait for manual confirmation.",
     "Why": "user explicit preference: always generate implementation_plan.md artifact before applying changes but execute directly every time without stopping for confirmation"
+  },
+  {
+    "Rule_number": 45,
+    "Category": "ARCH",
+    "Instruction": "Do not introduce manual override environment variables (such as 'NEXT_PUBLIC_GIT_COMMIT_SHA') or Docker build args for Git commit hash and application version; resolve them automatically and purely at build time in 'next.config.ts' via 'package.json' and 'git rev-parse --short HEAD' (with standard CI environment fallbacks like 'GITHUB_SHA').",
+    "Why": "user explicit instruction: do not create or require manual environment variable overrides for git hash and version"
   }
 ]
+
 
 

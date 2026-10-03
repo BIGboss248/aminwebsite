@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { execSync } from "node:child_process";
 import pkg from "./package.json";
 import { SITE_CONFIG } from "./lib/site-config";
 
@@ -7,9 +8,28 @@ const withNextIntl = createNextIntlPlugin();
 
 const siteHost = new URL(SITE_CONFIG.baseUrl).host;
 
+// Resolve 7-character Git commit hash automatically
+const getGitCommitHash = (): string => {
+  try {
+    return (
+      process.env.GITHUB_SHA?.slice(0, 7) ||
+      process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ||
+      execSync("git rev-parse --short HEAD").toString().trim()
+    );
+  } catch {
+    return "dev";
+  }
+};
+
+const gitHash = getGitCommitHash();
+
 const nextConfig: NextConfig = {
   output: "standalone",
-  deploymentId: pkg.version,
+  deploymentId: `${pkg.version}-${gitHash}`,
+  env: {
+    NEXT_PUBLIC_APP_VERSION: pkg.version,
+    NEXT_PUBLIC_GIT_COMMIT_HASH: gitHash,
+  },
   experimental: {
     serverActions: {
       allowedOrigins: [
@@ -39,3 +59,4 @@ const nextConfig: NextConfig = {
 };
 
 export default withNextIntl(nextConfig);
+

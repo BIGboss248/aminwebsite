@@ -2,15 +2,22 @@
 param (
     [Parameter(Mandatory = $false)]
     [ValidateSet("mcp", "cicd", "all")]
-    [string]$Mode = "all"
+    [string]$Mode = "all",
+
+    [Parameter(Mandatory = $false)]
+    [switch]$AutoInstall
 )
 
 $ErrorActionPreference = "Stop"
 
 Write-Host "=== SEO Operations Setup Verification ===" -ForegroundColor Cyan
 Write-Host "Verification Mode: $Mode" -ForegroundColor Yellow
+if ($AutoInstall) {
+    Write-Host "AutoInstall Flag: ENABLED" -ForegroundColor Yellow
+}
 
 $failures = 0
+$restartRequired = $false
 
 # Check Node.js version >= 22
 Write-Host "`n[1/3] Checking Node.js runtime..." -ForegroundColor Cyan
@@ -31,35 +38,69 @@ try {
 # Verify MCP Mode
 if ($Mode -eq "mcp" -or $Mode -eq "all") {
     Write-Host "`n[2/3] Checking SEO MCP / CLI configuration..." -ForegroundColor Cyan
+    
+    # Check CLI availability
+    $cliFound = $false
     try {
-        $seoVersion = seo --version 2>$null
+        $seoVersion = npx -y seo --version 2>$null
         if ($seoVersion) {
-            Write-Host "  [OK] seo CLI binary found: $seoVersion" -ForegroundColor Green
-        } else {
-            Write-Host "  [WARN] seo binary not in global PATH. You can install it with: npm i -g seo" -ForegroundColor Yellow
+            Write-Host "  [OK] seo CLI available via npx: $seoVersion" -ForegroundColor Green
+            $cliFound = $true
         }
-    } catch {
-        Write-Host "  [WARN] seo binary not found globally" -ForegroundColor Yellow
+    } catch {}
+
+    if (-not $cliFound) {
+        if ($AutoInstall) {
+            Write-Host "  [INSTALL] Installing seo CLI globally..." -ForegroundColor Yellow
+            npm install -g seo
+            $restartRequired = $true
+        } else {
+            Write-Host "  [WARN] seo CLI not detected. Run: npm install -g seo" -ForegroundColor Yellow
+        }
     }
 
+    # Check .agents/mcp_config.json
     $mcpConfigFile = Join-Path (Get-Location) ".agents/mcp_config.json"
-    if (Test-Path $mcpConfigFile) {
+    $mcpConfigExists = Test-Path $mcpConfigFile
+    $mcpConfigured = $false
+
+    if ($mcpConfigExists) {
         $mcpContent = Get-Content $mcpConfigFile -Raw | ConvertFrom-Json
         if ($mcpContent.mcpServers.seo) {
+            $mcpConfigured = $true
             Write-Host "  [OK] SEO MCP server configured in .agents/mcp_config.json" -ForegroundColor Green
-            try {
-                $testRes = npx -y seo mcp serve --test 2>&1
-                if ($testRes -match "constructed successfully") {
-                    Write-Host "  [OK] SEO MCP daemon test passed (npx -y seo mcp serve --test)" -ForegroundColor Green
-                }
-            } catch {
-                Write-Host "  [WARN] Failed to test MCP daemon: $_" -ForegroundColor Yellow
-            }
-        } else {
-            Write-Host "  [WARN] SEO entry not yet added to .agents/mcp_config.json" -ForegroundColor Yellow
         }
-    } else {
-        Write-Host "  [INFO] .agents/mcp_config.json does not exist yet" -ForegroundColor Gray
+    }
+
+    if (-not $mcpConfigured -and $AutoInstall) {
+        Write-Host "  [INSTALL] Adding seo MCP server entry to .agents/mcp_config.json..." -ForegroundColor Yellow
+        $agentsDir = Join-Path (Get-Location) ".agents"
+        if (-not (Test-Path $agentsDir)) {
+            New-Item -ItemType Directory -Path $agentsDir | Out-Null
+        }
+        
+        $mcpObj = if ($mcpConfigExists) { Get-Content $mcpConfigFile -Raw | ConvertFrom-Json } else { [PSCustomObject]@{ mcpServers = [PSCustomObject]@{} } }
+        if (-not $mcpObj.mcpServers) {
+            $mcpObj | Add-Member -MemberType NoteProperty -Name "mcpServers" -Value ([PSCustomObject]@{})
+        }
+        $mcpObj.mcpServers | Add-Member -MemberType NoteProperty -Name "seo" -Value ([PSCustomObject]@{
+            command = "npx"
+            args = @("-y", "seo", "mcp")
+        }) -Force
+
+        $mcpObj | ConvertTo-Json -Depth 10 | Set-Content $mcpConfigFile
+        Write-Host "  [OK] Successfully configured .agents/mcp_config.json" -ForegroundColor Green
+        $restartRequired = $true
+    }
+
+    # Test MCP server startup
+    try {
+        $testRes = npx -y seo mcp serve --test 2>&1
+        if ($testRes -match "constructed successfully") {
+            Write-Host "  [OK] SEO MCP daemon startup test passed" -ForegroundColor Green
+        }
+    } catch {
+        Write-Host "  [WARN] Could not test MCP daemon: $_" -ForegroundColor Yellow
     }
 }
 
@@ -82,6 +123,9 @@ if ($Mode -eq "cicd" -or $Mode -eq "all") {
 }
 
 Write-Host "`n=== Verification Complete ===" -ForegroundColor Cyan
+if ($restartRequired) {
+    Write-Host ">> ACTION REQUIRED: The MCP server configuration was newly installed/updated. Please reload the IDE window or restart the agent session so Antigravity can connect to the new tools. <<" -ForegroundColor Magenta
+}
 if ($failures -eq 0) {
     Write-Host "All prerequisite checks passed successfully." -ForegroundColor Green
     exit 0

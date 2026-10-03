@@ -1,16 +1,19 @@
 # MCP Setup & Tool Reference
 
-This guide details configuring, testing, and querying the local `seo` Model Context Protocol (MCP) server within Antigravity and AI coding agents.
+This guide details configuring, testing, auto-installing, and querying the local `seo` Model Context Protocol (MCP) server within Antigravity and AI coding agents.
 
 ---
 
-## 1. Prerequisites & Verification
+## 1. Prerequisites & Auto-Installation
 
 - **Node.js**: Version 22.0.0 or higher.
-- **Package**: `npm install -g seo`
-- **Health Verification**:
+- **Package Installation**:
   ```bash
-  seo mcp serve --test
+  npm install -g seo
+  ```
+- **Daemon Health Verification**:
+  ```bash
+  npx -y seo mcp serve --test
   ```
   *(Returns exit code 0 on success. Normal `seo mcp serve` runs as a persistent stdio daemon awaiting client JSON-RPC on stdin/stdout).*
 
@@ -45,11 +48,14 @@ This guide details configuring, testing, and querying the local `seo` Model Cont
 }
 ```
 
+> [!IMPORTANT]
+> **Restart Requirement**: When `.agents/mcp_config.json` or `~/.gemini/config/mcp_config.json` is modified or newly added, Antigravity loads the server only upon a new session start or window reload. Always instruct the user to restart the agent session after configuring the server.
+
 ---
 
 ## 3. The 3-Tool MCP Discovery-Description-Execution Pattern
 
-The `seo` MCP server deliberately exposes **3 compact tools** to keep agent context windows lean, rather than dumping 74 separate tool schemas into tool definition space:
+The `seo` MCP server deliberately exposes **3 compact tools** to keep agent context windows lean:
 
 ```mermaid
 flowchart LR
@@ -86,10 +92,11 @@ flowchart LR
 
 ---
 
-## 5. Agent Evidence & Execution Discipline
+## 5. Agent Verification & Discipline
 
-1. **Check Status First**: Inspect data status (`complete`, `partial`, `capped`, `filtered`, `unavailable`) and caveats before forming conclusions.
-2. **Assign Explicit Outcomes**:
+1. **Pre-Flight First**: Check if MCP tools (`seo_list_reports`, `seo_describe_report`, `seo_run_report`) are active in context. If not, auto-install and ask for a session restart.
+2. **Read Status First**: Inspect data status (`complete`, `partial`, `capped`, `filtered`, `unavailable`) and caveats before forming conclusions.
+3. **Assign Explicit Outcomes**:
    - For technical fixes: Mark each as `fixed`, `deferred`, or `not-needed`.
    - For content reviews: Mark each as `changed`, `no-change`, or `deferred`.
-3. **Never Drop Findings**: Track every finding ID and URL inventory item returned by `seo_run_report`.
+4. **Never Drop Findings**: Track every finding ID and URL inventory item returned by `seo_run_report`.

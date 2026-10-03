@@ -2,10 +2,12 @@
 set -e
 
 MODE="all"
+AUTO_INSTALL=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -m|--mode) MODE="$2"; shift ;;
+        -i|--install|--auto-install) AUTO_INSTALL=true ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
@@ -13,8 +15,12 @@ done
 
 echo "=== SEO Operations Setup Verification ==="
 echo "Verification Mode: $MODE"
+if [ "$AUTO_INSTALL" = true ]; then
+    echo "AutoInstall Flag: ENABLED"
+fi
 
 FAILURES=0
+RESTART_REQUIRED=false
 
 echo ""
 echo "[1/3] Checking Node.js runtime..."
@@ -35,24 +41,48 @@ fi
 if [ "$MODE" = "mcp" ] || [ "$MODE" = "all" ]; then
     echo ""
     echo "[2/3] Checking SEO MCP / CLI configuration..."
-    if command -v npx >/dev/null 2>&1; then
+    
+    CLI_FOUND=false
+    if npx -y seo --version >/dev/null 2>&1; then
         SEO_VERSION=$(npx -y seo --version 2>/dev/null || echo "installed")
-        echo "  [OK] seo CLI binary found via npx: $SEO_VERSION"
-    else
-        echo "  [WARN] npx binary not found in PATH"
+        echo "  [OK] seo CLI available via npx: $SEO_VERSION"
+        CLI_FOUND=true
     fi
 
-    if [ -f ".agents/mcp_config.json" ]; then
-        if grep -q '"seo"' .agents/mcp_config.json; then
-            echo "  [OK] SEO MCP server configured in .agents/mcp_config.json"
-            if npx -y seo mcp serve --test >/dev/null 2>&1; then
-                echo "  [OK] SEO MCP daemon test passed (npx -y seo mcp serve --test)"
-            fi
+    if [ "$CLI_FOUND" = false ]; then
+        if [ "$AUTO_INSTALL" = true ]; then
+            echo "  [INSTALL] Installing seo CLI globally..."
+            npm install -g seo
+            RESTART_REQUIRED=true
         else
-            echo "  [WARN] SEO entry not yet added to .agents/mcp_config.json"
+            echo "  [WARN] seo CLI not detected. Run: npm install -g seo"
         fi
+    fi
+
+    MCP_CONFIG_FILE=".agents/mcp_config.json"
+    MCP_CONFIGURED=false
+
+    if [ -f "$MCP_CONFIG_FILE" ]; then
+        if grep -q '"seo"' "$MCP_CONFIG_FILE"; then
+            MCP_CONFIGURED=true
+            echo "  [OK] SEO MCP server configured in $MCP_CONFIG_FILE"
+        fi
+    fi
+
+    if [ "$MCP_CONFIGURED" = false ] && [ "$AUTO_INSTALL" = true ]; then
+        echo "  [INSTALL] Adding seo MCP server entry to $MCP_CONFIG_FILE..."
+        mkdir -p .agents
+        if [ ! -f "$MCP_CONFIG_FILE" ]; then
+            echo '{"mcpServers":{"seo":{"command":"npx","args":["-y","seo","mcp"]}}}' > "$MCP_CONFIG_FILE"
+        fi
+        echo "  [OK] Successfully configured $MCP_CONFIG_FILE"
+        RESTART_REQUIRED=true
+    fi
+
+    if npx -y seo mcp serve --test >/dev/null 2>&1; then
+        echo "  [OK] SEO MCP daemon startup test passed"
     else
-        echo "  [INFO] .agents/mcp_config.json does not exist yet"
+        echo "  [WARN] Could not test MCP daemon"
     fi
 fi
 
@@ -74,6 +104,9 @@ fi
 
 echo ""
 echo "=== Verification Complete ==="
+if [ "$RESTART_REQUIRED" = true ]; then
+    echo ">> ACTION REQUIRED: The MCP server configuration was newly installed/updated. Please reload the IDE window or restart the agent session so Antigravity can connect to the new tools. <<"
+fi
 if [ "$FAILURES" -eq 0 ]; then
     echo "All prerequisite checks passed successfully."
     exit 0

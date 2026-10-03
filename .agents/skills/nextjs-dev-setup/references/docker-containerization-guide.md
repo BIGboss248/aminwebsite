@@ -10,14 +10,15 @@ Configure `next.config.ts` with standalone output, Server Action origin protecti
 
 ```ts
 import type { NextConfig } from "next";
+import pkg from "./package.json";
 import { SITE_CONFIG } from "./lib/site-config";
 
 const siteHost = new URL(SITE_CONFIG.baseUrl).host;
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  // Version skew protection across deployments and rolling releases
-  deploymentId: process.env.NEXT_PUBLIC_APP_VERSION || process.env.GIT_HASH || undefined,
+  // Version skew protection tied directly to Release Please version in package.json
+  deploymentId: pkg.version,
   experimental: {
     serverActions: {
       allowedOrigins: [
@@ -77,7 +78,26 @@ The production Dockerfile employs 3 distinct stages:
 
 ---
 
-## 4. Docker Compose Stacks & Graceful Shutdown
+## 4. Reverse Proxy Integration: Traefik & Nginx
+
+### Option A: Traefik via Docker Compose Labels
+In automated container environments, Traefik routes traffic to the standalone container via Compose labels with TLS and anti-buffering middleware:
+- Template: [`docker-compose.prod.yml.template`](../resources/templates/docker-compose.prod.yml.template)
+- Key labels include `entrypoints=websecure`, `tls=true`, `tls.certresolver=letsencrypt`, and `middlewares.customresponseheaders.X-Accel-Buffering=no`.
+
+### Option B: Nginx Host Reverse Proxy with Certbot SSL
+When hosting Nginx on the host server, deploy a virtual host configuration into `/etc/nginx/sites-available/<domain>`:
+- Template: [`nginx-site.conf.template`](../resources/templates/nginx-site.conf.template)
+- Key directives:
+  1. Redirects HTTP to HTTPS (`301 https://$host$request_uri;`).
+  2. Points to Certbot SSL certificates (`/etc/letsencrypt/live/<domain>/fullchain.pem` & `privkey.pem`).
+  3. Disables buffering (`proxy_buffering off;`, `X-Accel-Buffering "no"`).
+  4. Passes all forwarding headers (`Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`, `X-Forwarded-Port`).
+  5. Caches static Next.js assets (`/_next/static/`) with `Cache-Control "public, max-age=31536000, immutable"`.
+
+---
+
+## 5. Docker Compose Stacks & Graceful Shutdown
 
 Both Compose stacks configure `stop_grace_period: 30s` to allow in-flight HTTP requests and Next.js `after()` callbacks to finish before termination:
 
@@ -90,7 +110,7 @@ Both Compose stacks configure `stop_grace_period: 30s` to allow in-flight HTTP r
 
 ---
 
-## 5. Execution Commands Reference
+## 6. Execution Commands Reference
 
 - **Local Build & Run (Direct Docker)**:
   ```bash

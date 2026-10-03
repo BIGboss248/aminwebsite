@@ -256,6 +256,13 @@
     "Category": "UI",
     "Instruction": "In footer components (SiteFooter, SinglePageFooter), design specifications, and translations, do not render systems observatory badges ('// SYSTEMS OBSERVATORY' / '// رصدخانه سیستم‌ها'), navigation section headings ('// QUICK NAVIGATION' / '// ناوبری'), or telemetry status badges ('SYSTEM_STATUS: OPERATIONAL' / 'وضعیت سامانه'); keep the brand lockup, navigation links, and footer layout clean and concise without extraneous telemetry badges.",
     "Why": "user explicit instruction: remove // SYSTEMS OBSERVATORY, // QUICK NAVIGATION, and system status badge from footer"
+  },
+  {
+    "Rule_number": 44,
+    "Category": "PROCESS",
+    "Instruction": "In development setup and repository initialization workflows ('nextjs-dev-setup'), always generate and present a complete 'implementation_plan.md' artifact detailing all planned file creations, configurations, and packages before applying changes, and proceed directly with execution without stopping to wait for manual confirmation.",
+    "Why": "user explicit preference: always generate implementation_plan.md artifact before applying changes but execute directly every time without stopping for confirmation"
   }
 ]
+
 

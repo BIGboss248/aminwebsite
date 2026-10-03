@@ -6,21 +6,28 @@ description: >-
 
 # Next.js Development Setup (`nextjs-dev-setup`)
 
-A structured, end-to-end orchestration runbook for establishing, configuring, and verifying the Next.js App Router development environment and single source of truth at `docs/project.json`.
+A structured, end-to-end orchestration runbook for discovering, configuring, and verifying the Next.js App Router development environment, reverse proxy routing (Traefik / Nginx), and single source of truth at `docs/project.json`.
 
 ---
 
 ## Pre-Conditions & Discovery
 
 - [ ] **Zero-Interruption Scan**: Scan existing repository files (`package.json`, lockfiles, stylesheets, `docs/adr/*.md`, `docs/plan.md`, `CONTEXT.md`) before asking questions.
-- [ ] For complete property specifications and automated discovery rules, consult [project-json-schema.md](./references/project-json-schema.md).
+- [ ] Consult [project-json-schema.md](./references/project-json-schema.md) for metadata structure and automated deduction rules.
 
 ---
 
-## Phase 0: Implementation Plan & Approval Gate
+## Phase 0: Multi-Round Setup Interview (Grilling) & Plan Generation
 
-> [!IMPORTANT]
-> **Plan Before Execution:** Always generate and present an `implementation_plan.md` artifact detailing all planned file creations, modifications, package installations, and configuration changes across Stages 1 through 6 before executing any write operations or modifying commands in the repository. Wait for user confirmation/approval before proceeding with execution.
+Conduct the interactive interview in **progressive, adaptive rounds** (waiting for user response after each round) to tailor the setup:
+
+1. **Round 1 (Scope & Tooling)**: Probe target testing suites (Jest, Playwright, Storybook), MCP servers, and `@shadcn/lint` enforcement.
+2. **Round 2 (Reverse Proxy & Production Hosting)**: Probe domain name, port, and reverse proxy strategy:
+   - **Traefik via Docker Compose**: Automated container discovery using Compose labels reading from environment variables (`${DOMAIN_NAME}`, `${TRAEFIK_ENTRYPOINT}`, `${TRAEFIK_CERTRESOLVER}`) with anti-buffering.
+   - **Nginx via Host System**: Standalone configuration in `/etc/nginx/sites-available/<domain>` using Certbot SSL certificates.
+3. **Round 3 (CI/CD, Git Hooks & Registry)**: Probe Husky pre-push test suites, Commitlint, and GitHub Actions Release Please / GHCR workflows.
+4. Consult [setup-interview-rounds.md](./references/setup-interview-rounds.md) for complete question sets and branching logic.
+5. **Plan & Execution**: Generate and present an `implementation_plan.md` artifact detailing all planned file creations, configurations, and packages before applying changes, and proceed directly with execution without waiting for manual confirmation.
 
 ---
 
@@ -28,67 +35,61 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 
 ### Stage 1: Project Metadata & Developer Tooling (`docs/project.json`)
 
-1. Create `docs/` directory if absent.
-2. Initialize `docs/project.json` using [project.template.json](./resources/templates/project.template.json).
-3. Configure `.vscode/launch.json` using [vscode-launch.json.template](./resources/templates/vscode-launch.json.template) for inspect & browser debugging.
-4. Scaffold `app/providers.tsx` with `<ProgressBarProvider>` using [providers.tsx.template](./resources/templates/providers.tsx.template) and composite `<Link>` using [Link.tsx.template](./resources/templates/Link.tsx.template).
-5. If and only if required fields cannot be deduced from repository files, confirm only the missing fields with the user.
+1. Initialize `docs/project.json` using [project.template.json](./resources/templates/project.template.json) based on user interview choices.
+2. Configure `.vscode/launch.json` using [vscode-launch.json.template](./resources/templates/vscode-launch.json.template).
+3. Scaffold `app/providers.tsx` with `<ProgressBarProvider>` using [providers.tsx.template](./resources/templates/providers.tsx.template) and composite `<Link>` using [Link.tsx.template](./resources/templates/Link.tsx.template).
+4. Scaffold `.env.example` using [env.example.template](./resources/templates/env.example.template) for production and `.env.local` using [env.local.template](./resources/templates/env.local.template) for local development.
+
 
 ### Stage 2: Testing Suites (Jest, Playwright & Instant Navigation)
 
 > [!IMPORTANT]
-> **No Dummy Test Files (Rule 3):** Do not create placeholder/sample test or story files in the user workspace. Configure framework files and scripts only. Sample patterns are available in [sample-component.test.tsx](./examples/sample-component.test.tsx), [sample-navigation.spec.ts](./examples/sample-navigation.spec.ts), and [sample-component.stories.tsx](./examples/sample-component.stories.tsx).
+> **No Dummy Test Files (Rule 3):** Do not create placeholder/sample test files in the workspace. Configure framework files and scripts only. Sample patterns are available in [sample-component.test.tsx](./examples/sample-component.test.tsx), [sample-navigation.spec.ts](./examples/sample-navigation.spec.ts), and [sample-component.stories.tsx](./examples/sample-component.stories.tsx).
 
 1. **Jest Unit Testing**: Configure [jest.config.ts.template](./resources/templates/jest.config.ts.template) and [jest.setup.ts.template](./resources/templates/jest.setup.ts.template).
-2. **Playwright E2E & Instant Navigation**: Install `@playwright/test` and `@next/playwright` (`pnpm add -D @playwright/test @next/playwright`). Configure [playwright.config.ts.template](./resources/templates/playwright.config.ts.template) and install browsers (`pnpm exec playwright install --with-deps chromium firefox webkit`).
-3. **Next.js Instant Config**: Configure `cacheComponents: true`, `partialPrefetching: true`, and `experimental: { exposeTestingApiInProductionBuild: true, instantInsights: { validationLevel: 'warning' } }` in `next.config.ts`.
+2. **Playwright E2E & Instant Navigation**: Install `@playwright/test` and `@next/playwright` (`pnpm add -D @playwright/test @next/playwright`), configure [playwright.config.ts.template](./resources/templates/playwright.config.ts.template), and install browsers.
+3. **Next.js Instant Config**: Configure `cacheComponents: true`, `partialPrefetching: true`, and instant insights in `next.config.ts`.
 4. **Storybook Workshop**: Configure [.storybook/main.ts](./resources/templates/storybook-main.ts.template) and [.storybook/preview.tsx](./resources/templates/storybook-preview.tsx.template).
-5. Review testing architecture in [testing-guide.md](./references/testing-guide.md) and Storybook workshop in [storybook-guide.md](./references/storybook-guide.md).
+5. Review architectures in [testing-guide.md](./references/testing-guide.md) and [storybook-guide.md](./references/storybook-guide.md).
 
 ### Stage 3: Dual MCP Server Configuration
 
 > [!IMPORTANT]
-> **Antigravity Global MCP Loading Rule:** Antigravity (AG) only loads MCP servers configured globally on the host system (`~/.gemini/antigravity/mcp_config.json` and `~/.gemini/config/mcp_config.json`). Workspace-level `mcp.json` is maintained for portability. Both must be configured.
+> **Antigravity Global MCP Loading Rule:** AG only loads MCP servers configured globally on the host system (`~/.gemini/antigravity/mcp_config.json` and `~/.gemini/config/mcp_config.json`). Workspace `mcp.json` is maintained for portability. Both must be configured.
 
 1. Configure `next-devtools`, `playwright`, `storybook`, and `codebase-memory-mcp`.
-2. **Stutter Prevention**: Ensure `auto_watch = false` via `codebase-memory-mcp config set auto_watch false` and deploy root [.cbmignore](./resources/templates/cbmignore.template).
-3. Review full server specs in [mcp-configuration-guide.md](./references/mcp-configuration-guide.md).
+2. **Stutter Prevention**: Set `auto_watch = false` via `codebase-memory-mcp config set auto_watch false` and deploy root [.cbmignore](./resources/templates/cbmignore.template).
+3. Review full specs in [mcp-configuration-guide.md](./references/mcp-configuration-guide.md).
 
 ### Stage 4: Agent-First Design System Linting (`@shadcn/lint`)
 
-1. Install `@shadcn/lint` devDependency.
-2. Configure ESLint flat config using [eslint.config.mjs.template](./resources/templates/eslint.config.mjs.template).
-3. Review rule mechanics in [styling-and-linting-guide.md](./references/styling-and-linting-guide.md).
+1. Install `@shadcn/lint` and configure ESLint flat config using [eslint.config.mjs.template](./resources/templates/eslint.config.mjs.template).
+2. Review mechanics in [styling-and-linting-guide.md](./references/styling-and-linting-guide.md).
 
-### Stage 5: Standalone Production Docker Containerization
+### Stage 5: Standalone Production Docker & Reverse Proxy (Traefik / Nginx)
 
-1. Enable `output: "standalone"`, configure `deploymentId` for version skew protection, set `headers` with `X-Accel-Buffering: no` for streaming/PPR proxy compatibility, and configure `experimental.serverActions.allowedOrigins` using `SITE_CONFIG.baseUrl` from `lib/site-config.ts` (with wildcard subdomain, `localhost:3000`, `127.0.0.1:3000`) in `next.config.ts`.
-2. Document `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` in `.env.example` and pass it to container runtimes.
-3. Deploy [Dockerfile.template](./resources/templates/Dockerfile.template) (with `STOPSIGNAL SIGTERM`), [docker-compose.yml.template](./resources/templates/docker-compose.yml.template) (with `stop_grace_period: 30s`), [docker-compose.prod.yml.template](./resources/templates/docker-compose.prod.yml.template), and [dockerignore.template](./resources/templates/dockerignore.template).
-4. Review architecture and multi-container cache drift callout in [docker-containerization-guide.md](./references/docker-containerization-guide.md).
-
+1. In `next.config.ts`: enable `output: "standalone"`, set `deploymentId` for version skew protection, configure `headers` with `X-Accel-Buffering: no`, and set `experimental.serverActions.allowedOrigins`.
+2. Document `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` in `.env.example` and pass it to runtime environments.
+3. Deploy [Dockerfile.template](./resources/templates/Dockerfile.template) (with `STOPSIGNAL SIGTERM`) and [docker-compose.yml.template](./resources/templates/docker-compose.yml.template) (with `stop_grace_period: 30s`).
+4. **Reverse Proxy Configuration**:
+   - **Traefik**: Deploy [docker-compose.prod.yml.template](./resources/templates/docker-compose.prod.yml.template) with dynamic environment variable labels (`${DOMAIN_NAME}`, `${TRAEFIK_ENTRYPOINT}`, `${TRAEFIK_CERTRESOLVER}`) and anti-buffering middleware.
+   - **Nginx**: Deploy or output [nginx-site.conf.template](./resources/templates/nginx-site.conf.template) for `/etc/nginx/sites-available/<domain>` with Certbot SSL certificates.
+5. Review architecture and multi-container cache drift callout in [docker-containerization-guide.md](./references/docker-containerization-guide.md).
 
 ### Stage 6: Git Hooks & Credit-Optimized CI/CD
 
 1. Install `husky`, `@commitlint/cli`, `@commitlint/config-conventional`.
-2. Configure [commitlint.config.mjs.template](./resources/templates/commitlint.config.mjs.template) and `.husky/commit-msg`.
-3. Configure `.husky/pre-push` to execute dual test suites: `pnpm run test:all`.
-4. Deploy [.github/workflows/release-please.yml](./resources/templates/release-please.yml.template) with `.next/cache` build caching and multi-arch matrix publishing.
-5. Review CI/CD caching layers in [cicd-and-release-automation-guide.md](./references/cicd-and-release-automation-guide.md).
+2. Configure [commitlint.config.mjs.template](./resources/templates/commitlint.config.mjs.template), `.husky/commit-msg`, and `.husky/pre-push` (`pnpm run test:all`).
+3. Deploy [.github/workflows/release-please.yml](./resources/templates/release-please.yml.template) with `.next/cache` build caching and multi-arch matrix publishing.
+4. Review caching in [cicd-and-release-automation-guide.md](./references/cicd-and-release-automation-guide.md).
 
 ---
 
 ## Verification & Sanity Check
 
 - [ ] Execute configuration verification script:
-  - **Windows (PowerShell)**:
-    ```powershell
-    powershell -ExecutionPolicy Bypass -File .agents/skills/nextjs-dev-setup/scripts/verify-project-config.ps1
-    ```
-  - **Linux / macOS (Bash)**:
-    ```bash
-    bash .agents/skills/nextjs-dev-setup/scripts/verify-project-config.sh
-    ```
+  - **Windows (PowerShell)**: `powershell -ExecutionPolicy Bypass -File .agents/skills/nextjs-dev-setup/scripts/verify-project-config.ps1`
+  - **Linux / macOS (Bash)**: `bash .agents/skills/nextjs-dev-setup/scripts/verify-project-config.sh`
 - [ ] Fix any reported errors and re-verify until all checks pass.
 
 ---
@@ -98,7 +99,7 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 - **Chained Commands**: Never chain commands with `&&` or `;` on a single line in terminal execution.
 - **MCP Disabling**: In AG global configs, `agy.exe` ignores `"disabled": true` inside `mcpServers`. Move disabled servers outside `mcpServers`.
 - **Docker Image Names**: Docker OCI naming strictly requires lowercase repository names (`IMAGE_NAME=$(echo ... | tr '[:upper:]' '[:lower:]')`).
-- **Storybook Intl Context**: Always wrap Storybook stories rendering `Link` or `useTranslations` with `NextIntlClientProvider` to prevent `No intl context found` errors.
+- **Storybook Intl Context**: Always wrap Storybook stories rendering `Link` or `useTranslations` with `NextIntlClientProvider`.
 
 ---
 
@@ -117,19 +118,9 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 | **6. Jest Unit Testing**             | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
 | **7. Storybook & Storybook MCP**     | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |
 | **8. Agent-First Tailwind Linter**   | `eslint.config.mjs`, `package.json`                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@shadcn/lint` for agent verification of design tokens and contracts. |
-| **9. Docker Containerization**       | `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`                         | `[IMPLEMENTED]` / `[UNTOUCHED]` | Multi-stage standalone production container & local/GHCR Docker Compose stacks.  |
+| **9. Docker & Reverse Proxy**        | `Dockerfile`, `docker-compose.prod.yml`, `nginx-site.conf`, `.dockerignore`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Standalone container, Traefik labels / Nginx HTTPS with Certbot SSL.             |
 | **10. Husky Git Hooks**              | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
 | **11. Commitlint Config**            | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
 | **12. Release & CI Build Caching**   | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
 | **13. Environment Verification**     | `scripts/verify-project-config.ps1` / `.sh`                                                            | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
-
-#### Status Definitions:
-
-- **`[IMPLEMENTED]`**: Freshly created, installed, or modified during this setup run.
-- **`[UNTOUCHED]`**: Already properly configured prior to running the skill; preserved as-is.
-- **`[SKIPPED]`**: Intentionally omitted (e.g. optional tooling or user preference).
 ```
-
-#### Git Commit Output
-
-Group files and generate a commit message summarizing the changes made during the setup process. Output the commit commands without running them directly, leaving committing to the user.

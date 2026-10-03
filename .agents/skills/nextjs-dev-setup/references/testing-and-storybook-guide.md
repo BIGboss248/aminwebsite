@@ -34,6 +34,10 @@ Next.js provides built-in integration with Jest via the `next/jest` transformer,
 Playwright tests the complete running Next.js application across real browser engines (**Chromium**, **Firefox**, **WebKit**), verifying routing, auth flows, and `async` Server Components.
 
 - **Config File**: `playwright.config.ts`: see [`playwright.config.ts.template`](../resources/templates/playwright.config.ts.template)
+- **Required Packages**:
+  ```bash
+  pnpm add -D @playwright/test @next/playwright
+  ```
 - **Browser Installation**:
   ```bash
   pnpm exec playwright install --with-deps chromium firefox webkit
@@ -42,7 +46,75 @@ Playwright tests the complete running Next.js application across real browser en
 
 ---
 
-## 4. Storybook Component Workshop & Themes
+## 4. Playwright Instant Navigation Testing (`@next/playwright`)
+
+Next.js provides the `@next/playwright` package with an `instant()` helper that scopes assertions strictly to the UI that is **immediately available on navigation** (static shell, warm cache, and fallback skeletons) before dynamic server content streams in.
+
+### A. Next.js Configuration (`next.config.ts`)
+To enable instant validation in dev and expose the testing API for CI production builds (`next start`):
+```ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  cacheComponents: true,
+  partialPrefetching: true,
+  experimental: {
+    instantInsights: {
+      validationLevel: "warning", // 'warning' (default) or 'manual-warning'
+    },
+    exposeTestingApiInProductionBuild: true, // Exposes instant testing API in 'next start'
+  },
+};
+
+export default nextConfig;
+```
+
+### B. Instant Testing Patterns
+```ts
+import { test, expect } from "@playwright/test";
+import { instant } from "@next/playwright";
+
+test.describe("Instant Navigation Suite", () => {
+  // 1. Initial Page Load (Hard Navigation / Direct Visit)
+  test("initial page load renders static shell instantly", async ({ page, baseURL }) => {
+    await instant(
+      page,
+      async () => {
+        await page.goto("/store/hats");
+        // Assert static shell & cached content are immediately visible
+        await expect(page.locator("h1")).toContainText("Baseball Cap");
+        // Assert dynamic streaming slot is not yet rendered during instant scope
+        await expect(page.getByText("In stock")).toHaveCount(0);
+      },
+      { baseURL } // Mandatory on initial page.goto() so helper knows the origin
+    );
+    // After instant() callback completes, dynamic stream finishes:
+    await expect(page.getByText("In stock")).toBeVisible();
+  });
+
+  // 2. Client Navigation (Soft Navigation via Link)
+  test("client navigation renders prefetched App Shell instantly", async ({ page }) => {
+    await page.goto("/store/shoes");
+    await instant(page, async () => {
+      await page.click('a[href="/store/hats"]');
+      // Crucial: Wait for URL transition before asserting on destination UI
+      await page.waitForURL((url) => url.pathname === "/store/hats");
+      await expect(page.locator("h1")).toContainText("Baseball Cap");
+      await expect(page.getByText("In stock")).toHaveCount(0);
+    });
+    await expect(page.getByText("In stock")).toBeVisible();
+  });
+});
+```
+
+### C. Critical Rules for `instant()` Tests
+1. **Always pass `{ baseURL }`** on the first `page.goto()` navigation within `instant()`.
+2. **Always `await page.waitForURL(...)`** inside client navigation callbacks before asserting on target UI to prevent selector matching on the source page.
+3. **Assert Shell vs Streamed Content**: Inside the `instant()` callback, assert that static/cached UI exists and dynamic streaming UI is absent (`toHaveCount(0)`). Outside `instant()`, assert that streamed content arrives.
+
+---
+
+## 5. Storybook Component Workshop & Themes
 
 Storybook provides an isolated UI component development workshop, visual regression testing, interactive sandbox testing, and living styleguide documentation.
 
@@ -60,7 +132,7 @@ Storybook provides an isolated UI component development workshop, visual regress
 
 ---
 
-## 5. Unified `package.json` Scripts
+## 6. Unified `package.json` Scripts
 
 Configure test and story scripts with exit-code-safe flags so empty project suites do not break CI:
 

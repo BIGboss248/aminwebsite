@@ -46,6 +46,25 @@ export async function FeaturedProductsGrid() {
 }
 ```
 
+### C. Session & Private Browser Caching (`"use cache: private"`)
+When caching data that reads runtime request APIs (`cookies()`, `headers()`) without persisting it on public server caches/CDNs:
+```tsx
+import { cookies } from "next/headers";
+import { cacheLife } from "next/cache";
+
+export async function getUserPreferences() {
+  "use cache: private";
+  cacheLife({ stale: 300 }); // stale >= 5 mins allows App Shell to carry it ahead of click
+
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value ?? "system";
+  return { theme };
+}
+```
+
+### D. Multi-Instance Remote Caching (`"use cache: remote"`)
+In distributed serverless environments where memory caches are ephemeral across lambdas, use `"use cache: remote"` to enforce persistent multi-instance caching.
+
 ---
 
 ## 2. Granular Lifetime Control (`cacheLife`)

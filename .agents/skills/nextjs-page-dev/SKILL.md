@@ -12,6 +12,7 @@ Specialized workflow for creating production-ready Next.js App Router pages with
 
 > [!TIP]
 > **Modular Assets & Deep Guides:**
+> - Streaming & UI Boundaries: [`references/streaming-and-boundaries.md`](./references/streaming-and-boundaries.md)
 > - Page Conventions & Lifecycle: [`references/page-conventions-and-lifecycle.md`](./references/page-conventions-and-lifecycle.md)
 > - SEO & Structured Data Guide: [`references/seo-structured-data-guide.md`](./references/seo-structured-data-guide.md)
 > - Reusable Templates: [`resources/templates/`](./resources/templates/)
@@ -38,27 +39,16 @@ Specialized workflow for creating production-ready Next.js App Router pages with
 ### 4. Static Pre-Rendering (`generateStaticParams`)
 - If the page is nested under a `[locale]` dynamic segment (or any dynamic segment) and `supported_languages` contains >1 locale, export `generateStaticParams()` returning `{ locale }` for all supported locales.
 
-### 5. Suspense & Loading Skeletons
-- If the page performs asynchronous database queries or upstream API requests, create companion `loading.tsx` matching page layout geometry to prevent Cumulative Layout Shift (CLS).
+### 5. Instant Navigation & Granular Suspense Push-Down
+- **Granular Loading States**: Push `<Suspense>` down to specific dynamic sub-components so static/cached sections (header, hero, cached product info) lift into the **Static Shell** and **App Shell** immediately.
+- **Opting Out**: If a segment is inherently dynamic and instant feedback is not desired, configure `export const instant = false`.
+- Consult [`references/streaming-and-boundaries.md`](./references/streaming-and-boundaries.md) for streaming patterns.
 
 ---
 
 ## Workflow Steps
 
 - [ ] **Step 0: Implementation Plan Generation & Approval Gate**
-## Error Type
-Build Error
-
-## Error Message
-app/[locale]/error.tsx must be a Client Component. Add the "use client" directive the top of the file to resolve this issue.
-
-## Build Output
-./app/[locale]/error.tsx
-Error: app/[locale]/error.tsx must be a Client Component. Add the "use client" directive the top of the file to resolve this issue.
-    Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-Ecmascript file had an error
-
-Next.js version: 16.3.1 (Turbopack)
   - Read `docs/project.json` and target route definition in `lib/routes.ts`.
   - Formulate page metadata, JSON-LD schema type, translation namespaces, and component layout.
   - Present concise implementation plan to the user if creating major new pages.

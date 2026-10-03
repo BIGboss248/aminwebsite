@@ -37,15 +37,16 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 4. Scaffold `app/providers.tsx` with `<ProgressBarProvider>` using [providers.tsx.template](./resources/templates/providers.tsx.template) and composite `<Link>` using [Link.tsx.template](./resources/templates/Link.tsx.template).
 5. If and only if required fields cannot be deduced from repository files, confirm only the missing fields with the user.
 
-### Stage 2: Testing Suites (Jest, Playwright & Storybook)
+### Stage 2: Testing Suites (Jest, Playwright & Instant Navigation)
 
 > [!IMPORTANT]
 > **No Dummy Test Files (Rule 3):** Do not create placeholder/sample test or story files in the user workspace. Configure framework files and scripts only. Sample patterns are available in [sample-component.test.tsx](./examples/sample-component.test.tsx), [sample-navigation.spec.ts](./examples/sample-navigation.spec.ts), and [sample-component.stories.tsx](./examples/sample-component.stories.tsx).
 
 1. **Jest Unit Testing**: Configure [jest.config.ts.template](./resources/templates/jest.config.ts.template) and [jest.setup.ts.template](./resources/templates/jest.setup.ts.template).
-2. **Playwright E2E**: Configure [playwright.config.ts.template](./resources/templates/playwright.config.ts.template) and install browsers (`pnpm exec playwright install --with-deps chromium firefox webkit`).
-3. **Storybook Workshop**: Configure [.storybook/main.ts](./resources/templates/storybook-main.ts.template) and [.storybook/preview.tsx](./resources/templates/storybook-preview.tsx.template).
-4. Review testing architecture in [testing-and-storybook-guide.md](./references/testing-and-storybook-guide.md).
+2. **Playwright E2E & Instant Navigation**: Install `@playwright/test` and `@next/playwright` (`pnpm add -D @playwright/test @next/playwright`). Configure [playwright.config.ts.template](./resources/templates/playwright.config.ts.template) and install browsers (`pnpm exec playwright install --with-deps chromium firefox webkit`).
+3. **Next.js Instant Config**: Configure `cacheComponents: true`, `partialPrefetching: true`, and `experimental: { exposeTestingApiInProductionBuild: true, instantInsights: { validationLevel: 'warning' } }` in `next.config.ts`.
+4. **Storybook Workshop**: Configure [.storybook/main.ts](./resources/templates/storybook-main.ts.template) and [.storybook/preview.tsx](./resources/templates/storybook-preview.tsx.template).
+5. Review testing and instant navigation architecture in [testing-and-storybook-guide.md](./references/testing-and-storybook-guide.md).
 
 ### Stage 3: Dual MCP Server Configuration
 
@@ -112,7 +113,7 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 | **1. Project Metadata**              | `docs/project.json`                                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.              |
 | **2. Core Dependencies**             | `package.json`, Lockfile                                                                               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                          |
 | **3. Next.js Dev Server MCP**        | `~/.gemini/antigravity/mcp_config.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) globally for AG & in workspace.  |
-| **4. Playwright & Playwright MCP**   | `playwright.config.ts`, `~/.gemini/antigravity/mcp_config.json`, `mcp.json`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified test runner, browser binaries & Playwright MCP globally & in workspace. |
+| **4. Playwright & Instant Testing** | `playwright.config.ts`, `@next/playwright`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified runner, browsers, Playwright MCP & `@next/playwright` instant navigation helper. |
 | **5. Codebase Memory & Stutter Fix** | `.cbmignore`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`, `auto_watch=false`                  | `[IMPLEMENTED]` / `[UNTOUCHED]` | Registered MCP, configured .cbmignore exclusions, and disabled session watcher.  |
 | **6. Jest Unit Testing**             | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
 | **7. Storybook & Storybook MCP**     | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |

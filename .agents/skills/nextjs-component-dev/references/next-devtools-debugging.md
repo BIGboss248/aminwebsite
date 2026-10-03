@@ -51,9 +51,26 @@ After authoring a component, skeleton, and dictionary entries:
    - Use `browser_eval` to execute browser-side JavaScript expressions or check DOM state if needed.
    - Use Playwright MCP tools (`browser_navigate`, `browser_snapshot`) for full visual verification when necessary.
 
+## 3. Navigation Inspector & Instant Navigation Diagnostics
+
+When `cacheComponents: true` is enabled in `next.config.ts`, Next.js DevTools provides the **Navigation Inspector**:
+
+1. **Pause on Navigations**:
+   - Toggle **Pause on navigations** in Next.js DevTools.
+   - Trigger a direct refresh or click a link: the page freezes at its initial loading state.
+   - Inspect the **Static Shell** on page loads or the **App Shell** on client navigations.
+   - Verify which `<Suspense>` boundaries are showing fallbacks and confirm cached content renders immediately without flashing spinners.
+   - Click **Resume** to release the freeze and stream in the remaining data.
+
+2. **Resolving "Blocking-Route" Insights**:
+   Next.js surfaces dev overlay insights when a component blocks instant navigation:
+   - **Stream Card**: Move slug/URL/header-dependent fetches into a sub-component wrapped in `<Suspense>`.
+   - **Cache Card**: Add `'use cache'` and `cacheLife` to cache async functions in the static shell.
+   - **Block Card**: Export `export const instant = false` from the route segment if instant navigation is explicitly not desired.
+
 ---
 
-## 3. Resolving Runtime Issues
+## 4. Resolving Runtime Issues
 
 - **Compilation / Syntax Errors:** Inspect error stacks returned by `nextjs_call` and immediately resolve import paths, syntax errors, or TypeScript mismatches.
 - **Hydration Mismatches:** Ensure Client Components (`"use client"`) don't render non-deterministic content (dates, random IDs) without proper hydration suppression or `useEffect` mounts.

@@ -14,6 +14,7 @@ Specialized workflow for creating production-ready React Server Components (RSC)
 > [!TIP]
 > **Modular Assets & Templates:**
 >
+> - Instant Navigation & Prefetching: [`references/instant-navigation-and-prefetching.md`](./references/instant-navigation-and-prefetching.md)
 > - Next DevTools Debugging Guide: [`references/next-devtools-debugging.md`](./references/next-devtools-debugging.md)
 > - Caching & Revalidation: [`references/caching-and-revalidation.md`](./references/caching-and-revalidation.md)
 > - Code Templates: [`resources/templates/`](./resources/templates/) ([Component](./resources/templates/component.template.tsx), [Skeleton](./resources/templates/skeleton.template.tsx), [Jest Unit Test](./resources/templates/unit-test.template.tsx), [Playwright Spec](./resources/templates/e2e-spec.template.ts))
@@ -53,15 +54,23 @@ Specialized workflow for creating production-ready React Server Components (RSC)
 - **Progress Links:** Use `<Link>` from `@vercel/react-transition-progress` for primary navigation, hero CTAs, and interactive cards; use standard `next/link` for static utility links.
 - **Images:** Always use `next/image` with explicit dimensions or `fill`, responsive `sizes`, and `priority` for above-the-fold LCP assets.
 
-### 5. TanStack Query & Server Prefetching
+### 5. Instant Navigation, Granular Suspense & Caching Architecture
+
+- **The Three Levers for Instant Components**:
+  1. **Push Down**: Extract request-specific async operations (`await params`, `await searchParams`, `cookies()`, `headers()`, uncached DB/API calls) into leaf sub-components wrapped in `<Suspense>`. Static parents and siblings lift directly into the static/App Shell.
+  2. **Cache**: Pair `'use cache'` with `cacheLife` and `cacheTag` at function/component level. Use `'use cache: private'` for browser-cached session/cookie data with `stale >= 5m` that travels with the App Shell.
+  3. **Per-Link Prefetching**: Use `<Link prefetch>` or composite `<Link>` to resolve per-link URL data (`params`, `searchParams`) before navigation.
+- **Granular Loading States (Anti-Full-Page Flash)**: Never wrap an entire component or page in a single top-level `<Suspense>` boundary that flashes full skeletons. Keep titles, layout frames, and cached content visible immediately; place `<Suspense>` strictly around dynamic streaming slots.
+- **Native Next.js 16 Caching Directives**: Consult [`references/instant-navigation-and-prefetching.md`](./references/instant-navigation-and-prefetching.md) and [`references/caching-and-revalidation.md`](./references/caching-and-revalidation.md).
+
+### 6. TanStack Query & Server Prefetching
 
 - **Unified Cache Contract:** Define `key`, `tag`, and `queryOptions` with explicit `staleTime` (e.g. `30_000` ms).
 - **Server Prefetch:** Trigger unawaited prefetch (`void queryClient.prefetchQuery(...)`) calling internal DB functions directly (zero relative fetch on server). Dehydrate with `<HydrationBoundary>`.
 - **Streamed Components:** Use `useSuspenseQuery` inside `<Suspense fallback={<[ComponentName]Skeleton />}>`.
 - **Optimistic Mutations:** Use `useMutation` with `onMutate` cache snapshots and `onError` rollbacks; call Server Actions with `updateTag(cache.tag)`.
-- **Next.js 16 'use cache' Directives:** For native Next.js 16 caching and Server Action revalidation semantics (`updateTag`, `revalidateTag`), consult [`references/caching-and-revalidation.md`](./references/caching-and-revalidation.md).
 
-### 6. Dual-Layer Testing Division of Labor (Jest vs. Playwright)
+### 7. Dual-Layer Testing Division of Labor (Jest vs. Playwright)
 
 - **Jest + RTL (`[ComponentName].test.tsx`):**
   - Fast feedback loop in `jsdom`.
@@ -72,6 +81,7 @@ Specialized workflow for creating production-ready React Server Components (RSC)
   - Accessible role queries (`screen.getByRole`) and automated a11y checks (`jest-axe`).
 - **Playwright (`[ComponentName].spec.ts` or page-level specs):**
   - Real browser execution (Chromium/WebKit/Firefox).
+  - **Instant Shell Assertions (`@next/playwright`):** Use `instant(page, ...)` helper to assert that static shells and prefetched App Shells render immediately before dynamic server streaming resolves.
   - **Zero-Hydration Mismatches:** Listen to browser console events (`page.on('console')`) to detect and fail tests on React SSR hydration warnings.
   - **Visual & BiDi Regression:** Use `expect(page).toHaveScreenshot()` across themes (light vs. dark OKLCH variables) and text directions (`dir="ltr"` vs. `dir="rtl"`).
   - **Network Resilience:** Use `page.route()` to test slow network responses (verifying Suspense skeletons match geometry to prevent CLS) and 500 error boundaries.
@@ -128,7 +138,7 @@ The implementation plan must cover:
   - Create clean barrel export `index.ts`.
 
 - [ ] **Step 5: Runtime Diagnostics & Verification Gate**
-  - **Next DevTools Runtime Inspection:** Use `next-devtools` MCP server (`nextjs_call`) to check for compilation errors, runtime exceptions, hydration issues, or broken routes. Debug and fix any issues immediately.
+  - **Next DevTools Runtime Inspection & Navigation Inspector:** Use `next-devtools` MCP server (`nextjs_call`) to check for compilation errors, runtime exceptions, hydration issues, or broken routes. Use Navigation Inspector ("Pause on navigations") to verify the static shell and App Shell render instantly with granular fallbacks.
   - **Targeted Unit Test Execution:** Run verification script to check companion files, dictionary compliance, and execute unit tests:
     - **Windows (PowerShell):**
       ```pwsh
@@ -138,11 +148,11 @@ The implementation plan must cover:
       ```bash
       bash .agents/skills/nextjs-component-dev/scripts/verify-dev.sh <target_component_dir>
       ```
-  - **Playwright Integration & Hydration Check:** Run targeted Playwright component/integration spec:
+  - **Playwright Instant Navigation & Hydration Check:** Run targeted Playwright component/integration spec:
     ```bash
     pnpm test:e2e [ComponentName]
     ```
-  - Validate that visual snapshots pass for both light/dark color schemes and that console listeners register 0 hydration mismatch errors.
+  - Validate that `instant()` tests pass for hard page load and client navigation, visual snapshots pass across themes, and console listeners register 0 hydration mismatch errors.
   - Fix any syntax errors, missing dictionary keys, visual discrepancies, or test regressions until all assertions pass.
 
 - [ ] **Step 6: Implementation Plan Checklist Synchronization**

@@ -1,19 +1,18 @@
-# Testing and Storybook Workshop Setup Guide
+# Next.js Testing Architecture Guide (Jest, Playwright & Instant Navigation)
 
-This guide covers the setup, architecture, and verification of Jest unit testing, Playwright E2E testing, and Storybook component development in Next.js App Router projects.
+This guide covers the setup, architecture, and verification of Jest unit testing, Playwright E2E testing, and Playwright Instant Navigation testing in Next.js App Router projects.
 
 ---
 
 ## 1. Zero Dummy Files Constraint (Rule 3)
 
 > [!IMPORTANT]
-> **NO DUMMY / SAMPLE TEST OR STORY GENERATION IN WORKSPACE:**
-> Do NOT create placeholder or dummy test or story files in the user workspace during setup. Only configure framework configuration files (`jest.config.ts`, `jest.setup.ts`, `playwright.config.ts`, `.storybook/main.ts`, `.storybook/preview.tsx`, and `package.json` scripts).
+> **NO DUMMY / SAMPLE TEST GENERATION IN WORKSPACE:**
+> Do NOT create placeholder or dummy test files in the user workspace during setup. Only configure framework configuration files (`jest.config.ts`, `jest.setup.ts`, `playwright.config.ts`, and `package.json` scripts).
 > Sample patterns are provided strictly for documentation:
 >
-> - Storybook CSF3 Example: [`sample-component.stories.tsx`](../examples/sample-component.stories.tsx)
 > - Jest Unit Test Example: [`sample-component.test.tsx`](../examples/sample-component.test.tsx)
-> - Playwright E2E Test Example: [`sample-navigation.spec.ts`](../examples/sample-navigation.spec.ts)
+> - Playwright E2E & Instant Test Example: [`sample-navigation.spec.ts`](../examples/sample-navigation.spec.ts)
 
 ---
 
@@ -114,27 +113,9 @@ test.describe("Instant Navigation Suite", () => {
 
 ---
 
-## 5. Storybook Component Workshop & Themes
+## 5. Unified `package.json` Test Scripts
 
-Storybook provides an isolated UI component development workshop, visual regression testing, interactive sandbox testing, and living styleguide documentation.
-
-- **Configuration Files**:
-  - `.storybook/main.ts`: see [`storybook-main.ts.template`](../resources/templates/storybook-main.ts.template)
-  - `.storybook/preview.tsx`: see [`storybook-preview.tsx.template`](../resources/templates/storybook-preview.tsx.template)
-- **Co-Located Story Architecture**:
-  Story files MUST be co-located directly beside their respective UI component files across `components/` and `app/`:
-  - UI Component: `components/ui/button.tsx` -> Story: `components/ui/button.stories.tsx`
-  - Feature Component: `app/components/header/Header.tsx` -> Story: `app/components/header/Header.stories.tsx`
-- **Mandatory `CssCheck` Story**:
-  Storybook suites must include a `CssCheck` story that asserts a resolved `getComputedStyle(element)` value (e.g., background color or font) to prove that Tailwind CSS and stylesheets successfully load in the preview iframe.
-- **Theme Tokens & i18n Decorators**:
-  All Storybook preview wrappers and story decorators MUST strictly use semantic theme tokens from `globals.css` (`bg-background`, `text-foreground`, `border-border`) with scoped `.light` and `.dark` classes. If components use `next-intl` navigation (`Link`, `useRouter`), wrap stories with `NextIntlClientProvider` and `ProgressBarProvider`.
-
----
-
-## 6. Unified `package.json` Scripts
-
-Configure test and story scripts with exit-code-safe flags so empty project suites do not break CI:
+Configure test scripts with exit-code-safe flags so empty project suites do not break CI:
 
 ```json
 {
@@ -144,10 +125,7 @@ Configure test and story scripts with exit-code-safe flags so empty project suit
     "test:coverage": "jest --coverage --passWithNoTests",
     "test:e2e": "playwright test --pass-with-no-tests",
     "test:e2e:ui": "playwright test --ui",
-    "test:all": "jest --passWithNoTests && playwright test --pass-with-no-tests",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "storybook:smoke": "storybook dev --smoke-test"
+    "test:all": "jest --passWithNoTests && playwright test --pass-with-no-tests"
   }
 }
 ```

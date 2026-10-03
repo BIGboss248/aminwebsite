@@ -46,7 +46,7 @@ A structured, end-to-end orchestration runbook for establishing, configuring, an
 2. **Playwright E2E & Instant Navigation**: Install `@playwright/test` and `@next/playwright` (`pnpm add -D @playwright/test @next/playwright`). Configure [playwright.config.ts.template](./resources/templates/playwright.config.ts.template) and install browsers (`pnpm exec playwright install --with-deps chromium firefox webkit`).
 3. **Next.js Instant Config**: Configure `cacheComponents: true`, `partialPrefetching: true`, and `experimental: { exposeTestingApiInProductionBuild: true, instantInsights: { validationLevel: 'warning' } }` in `next.config.ts`.
 4. **Storybook Workshop**: Configure [.storybook/main.ts](./resources/templates/storybook-main.ts.template) and [.storybook/preview.tsx](./resources/templates/storybook-preview.tsx.template).
-5. Review testing and instant navigation architecture in [testing-and-storybook-guide.md](./references/testing-and-storybook-guide.md).
+5. Review testing architecture in [testing-guide.md](./references/testing-guide.md) and Storybook workshop in [storybook-guide.md](./references/storybook-guide.md).
 
 ### Stage 3: Dual MCP Server Configuration
 

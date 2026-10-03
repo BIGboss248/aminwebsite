@@ -14,6 +14,8 @@ Specialized workflow for creating production-ready React Server Components (RSC)
 > [!TIP]
 > **Modular Assets & Templates:**
 >
+> - Testing Architecture & Verification: [`references/testing-architecture-guide.md`](./references/testing-architecture-guide.md)
+> - Storybook Standards & Separation: [`references/storybook-reference.md`](./references/storybook-reference.md)
 > - Instant Navigation & Prefetching: [`references/instant-navigation-and-prefetching.md`](./references/instant-navigation-and-prefetching.md)
 > - Next DevTools Debugging Guide: [`references/next-devtools-debugging.md`](./references/next-devtools-debugging.md)
 > - Caching & Revalidation: [`references/caching-and-revalidation.md`](./references/caching-and-revalidation.md)
@@ -85,6 +87,7 @@ Specialized workflow for creating production-ready React Server Components (RSC)
   - **Zero-Hydration Mismatches:** Listen to browser console events (`page.on('console')`) to detect and fail tests on React SSR hydration warnings.
   - **Visual & BiDi Regression:** Use `expect(page).toHaveScreenshot()` across themes (light vs. dark OKLCH variables) and text directions (`dir="ltr"` vs. `dir="rtl"`).
   - **Network Resilience:** Use `page.route()` to test slow network responses (verifying Suspense skeletons match geometry to prevent CLS) and 500 error boundaries.
+- **Detailed Testing Standards:** Consult [`references/testing-architecture-guide.md`](./references/testing-architecture-guide.md).
 
 ---
 
@@ -167,4 +170,4 @@ The implementation plan must cover:
 - **Hydration Warning Detection:** Browser-only globals (`window`, `localStorage`) accessed during SSR cause hydration mismatch crashes. Guard them behind `useEffect` or client checks.
 - **Strict Logical Styling (BiDi):** Never use physical directions (`ml-`, `mr-`, `pl-`, `pr-`, `left-`, `right-`). Always use logical alternatives (`ms-`, `me-`, `ps-`, `pe-`, `start`, `end`).
 - **Targeted Test Execution:** Always run tests targeting specific component files to conserve tokens and reduce execution time (do not run full project test suites during component iterations).
-- **Storybook Story Separation:** Do not author `.stories.tsx` or run Storybook builds during standard component development unless the `nextjs-storybook-story` skill is specifically requested.
+- **Storybook Story Separation:** Do not author `.stories.tsx` or run Storybook builds during standard component development unless the `nextjs-storybook-story` skill is specifically requested. Consult [`references/storybook-reference.md`](./references/storybook-reference.md).

@@ -25,7 +25,7 @@ const gitHash = getGitCommitHash();
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  deploymentId: `${pkg.version}-${gitHash}`,
+  deploymentId: `${pkg.version.replace(/[^a-zA-Z0-9_-]/g, "-")}-${gitHash}`,
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
     NEXT_PUBLIC_GIT_COMMIT_HASH: gitHash,

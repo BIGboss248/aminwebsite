@@ -6,8 +6,6 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { ProgressBar, ProgressBarProvider } from "react-transition-progress";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SiteNavbar } from "@/app/components/SiteNavbar";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { WebVitals } from "@/app/components/web-vitals";
 import { routing } from "@/i18n/routing";
 import "@/app/globals.css";
@@ -97,9 +95,7 @@ export default async function LocaleLayout({
             <ProgressBarProvider>
               <ProgressBar className="fixed top-0 left-0 right-0 h-1 bg-primary z-50 shadow-sm shadow-primary/20" />
               <WebVitals />
-              <SiteNavbar />
               <main className="flex flex-col flex-1">{children}</main>
-              <SiteFooter />
             </ProgressBarProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

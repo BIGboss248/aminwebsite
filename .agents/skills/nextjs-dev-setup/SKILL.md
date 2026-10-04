@@ -39,6 +39,7 @@ Conduct the interactive interview in **progressive, adaptive rounds** (waiting f
 2. Configure `.vscode/launch.json` using [vscode-launch.json.template](./resources/templates/vscode-launch.json.template).
 3. Scaffold `app/providers.tsx` with `<ProgressBarProvider>` using [providers.tsx.template](./resources/templates/providers.tsx.template) and composite `<Link>` using [Link.tsx.template](./resources/templates/Link.tsx.template).
 4. Scaffold `.env.example` using [env.example.template](./resources/templates/env.example.template) for production and `.env.local` using [env.local.template](./resources/templates/env.local.template) for local development.
+5. **App Icons, Apple Icon & PWA Manifest**: Deploy [manifest.ts.template](./resources/templates/manifest.ts.template) to `app/manifest.ts`. Configure the user-provided favicon across root `app/favicon.ico`, `app/icon.png`, and `app/apple-icon.png` (or dynamic `ImageResponse` icon). Consult [app-icons-and-pwa-guide.md](./references/app-icons-and-pwa-guide.md).
 
 
 ### Stage 2: Testing Suites (Jest, Playwright & Instant Navigation)
@@ -83,6 +84,12 @@ Conduct the interactive interview in **progressive, adaptive rounds** (waiting f
 3. Deploy [.github/workflows/release-please.yml](./resources/templates/release-please.yml.template) with `.next/cache` build caching and multi-arch matrix publishing.
 4. Review caching in [cicd-and-release-automation-guide.md](./references/cicd-and-release-automation-guide.md).
 
+### Stage 7: Final Execution Report & Verification
+
+1. Execute the configuration verification script and ensure all checks pass.
+2. Stage all created/modified files in git (`git add .`) per Rule 36.
+3. **Mandatory Final Output**: Render the complete, structured **Next.js Dev Setup Execution Report** markdown table summarizing all implemented files, verification check results, and next development steps.
+
 ---
 
 ## Verification & Sanity Check
@@ -103,7 +110,9 @@ Conduct the interactive interview in **progressive, adaptive rounds** (waiting f
 
 ---
 
-## Output Execution Report Template
+## Mandatory Final Output: Execution Report Template
+
+Always output this report upon completing the skill workflow:
 
 ```markdown
 ## 🛠️ Next.js Dev Setup Execution Report
@@ -111,16 +120,23 @@ Conduct the interactive interview in **progressive, adaptive rounds** (waiting f
 | Step / Component                     | Target File(s) / Resource                                                                              | Status                          | Notes / Details                                                                  |
 | :----------------------------------- | :----------------------------------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------------------- |
 | **1. Project Metadata**              | `docs/project.json`                                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured package manager, directories, animation & i18n metadata.              |
-| **2. Core Dependencies**             | `package.json`, Lockfile                                                                               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                          |
-| **3. Next.js Dev Server MCP**        | `~/.gemini/antigravity/mcp_config.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) globally for AG & in workspace.  |
-| **4. Playwright & Instant Testing** | `playwright.config.ts`, `@next/playwright`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified runner, browsers, Playwright MCP & `@next/playwright` instant navigation helper. |
-| **5. Codebase Memory & Stutter Fix** | `.cbmignore`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`, `auto_watch=false`                  | `[IMPLEMENTED]` / `[UNTOUCHED]` | Registered MCP, configured .cbmignore exclusions, and disabled session watcher.  |
-| **6. Jest Unit Testing**             | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
-| **7. Storybook & Storybook MCP**     | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |
-| **8. Agent-First Tailwind Linter**   | `eslint.config.mjs`, `package.json`                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@shadcn/lint` for agent verification of design tokens and contracts. |
-| **9. Docker & Reverse Proxy**        | `Dockerfile`, `docker-compose.prod.yml`, `nginx-site.conf`, `.dockerignore`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Standalone container, Traefik labels / Nginx HTTPS with Certbot SSL.             |
-| **10. Husky Git Hooks**              | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
-| **11. Commitlint Config**            | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
-| **12. Release & CI Build Caching**   | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
-| **13. Environment Verification**     | `scripts/verify-project-config.ps1` / `.sh`                                                            | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
+| **2. App Icons & PWA Manifest**      | `app/manifest.ts`, `app/favicon.ico`, `app/apple-icon.png`, `app/icon.png`                             | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured root favicon, Apple touch icon, and Web App Manifest using user favicon. |
+| **3. Core Dependencies**             | `package.json`, Lockfile                                                                               | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified React, Next.js, styling, and motion libraries.                          |
+| **4. Next.js Dev Server MCP**        | `~/.gemini/antigravity/mcp_config.json`, `mcp.json`, `.agents/plugins/workspace-tools/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Dev Server (`next-devtools`) globally for AG & in workspace.  |
+| **5. Playwright & Instant Testing** | `playwright.config.ts`, `@next/playwright`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json` | `[IMPLEMENTED]` / `[UNTOUCHED]` | Verified runner, browsers, Playwright MCP & `@next/playwright` instant navigation helper. |
+| **6. Codebase Memory & Stutter Fix** | `.cbmignore`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`, `auto_watch=false`                  | `[IMPLEMENTED]` / `[UNTOUCHED]` | Registered MCP, configured .cbmignore exclusions, and disabled session watcher.  |
+| **7. Jest Unit Testing**             | `jest.config.ts`, `jest.setup.ts`                                                                      | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Next.js Jest transformer, jsdom environment & test-dom.               |
+| **8. Storybook & Storybook MCP**     | `.storybook/main.ts`, `.storybook/preview.tsx`, `mcp.json`, `~/.gemini/antigravity/mcp_config.json`    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured Storybook Vite, a11y, themes & Storybook AI MCP globally & workspace. |
+| **9. Agent-First Tailwind Linter**   | `eslint.config.mjs`, `package.json`                                                                    | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@shadcn/lint` for agent verification of design tokens and contracts. |
+| **10. Docker & Reverse Proxy**       | `Dockerfile`, `docker-compose.prod.yml`, `nginx-site.conf`, `.dockerignore`                            | `[IMPLEMENTED]` / `[UNTOUCHED]` | Standalone container, Traefik labels / Nginx HTTPS with Certbot SSL.             |
+| **11. Husky Git Hooks**              | `.husky/commit-msg`, `.husky/pre-push`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Enforces dual pre-push test suite (Jest + Playwright) & commitlint.              |
+| **12. Commitlint Config**            | `commitlint.config.mjs`                                                                                | `[IMPLEMENTED]` / `[UNTOUCHED]` | Configured `@commitlint/config-conventional`.                                    |
+| **13. Release & CI Build Caching**   | `.github/workflows/release-please.yml`                                                                 | `[IMPLEMENTED]` / `[UNTOUCHED]` | Next.js build cache (.next/cache), SemVer release PRs & GHCR multi-arch pkg.     |
+| **14. Environment Verification**     | `scripts/verify-project-config.ps1` / `.sh`                                                            | `[PASSED]`                      | Sanity check passed with zero errors.                                            |
+
+#### Status Definitions:
+- **`[IMPLEMENTED]`**: Freshly created, installed, or modified during this setup run.
+- **`[UNTOUCHED]`**: Already properly configured prior to running the skill; preserved as-is.
+- **`[SKIPPED]`**: Intentionally omitted based on user preference.
 ```
+

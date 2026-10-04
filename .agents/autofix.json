@@ -268,6 +268,12 @@
     "Category": "ARCH",
     "Instruction": "Do not introduce manual override environment variables (such as 'NEXT_PUBLIC_GIT_COMMIT_SHA') or Docker build args for Git commit hash and application version; resolve them automatically and purely at build time in 'next.config.ts' via 'package.json' and 'git rev-parse --short HEAD' (with standard CI environment fallbacks like 'GITHUB_SHA').",
     "Why": "user explicit instruction: do not create or require manual environment variable overrides for git hash and version"
+  },
+  {
+    "Rule_number": 46,
+    "Category": "PROCESS",
+    "Instruction": "In Next.js development setup workflows ('nextjs-dev-setup'), do not prompt or question the user in grilling/setup interview rounds about implementing app icons, Apple icons, or PWA manifests; automatically scaffold and configure them in Stage 1 ('app/manifest.ts', 'app/favicon.ico', 'app/apple-icon.png', 'app/icon.png') using the user-provided favicon asset and deduced project metadata.",
+    "Why": "user explicit instruction: there is no need to ask for implementation of this icon in grilling rounds"
   }
 ]
 

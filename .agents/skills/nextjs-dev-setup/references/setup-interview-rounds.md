@@ -27,6 +27,7 @@ Probe the user to determine which architectural layers should be scaffolded and 
 
 ---
 
+
 ## Round 2: Reverse Proxy & Production Hosting Strategy
 
 Probe the user on the production deployment topology, domain routing, and reverse proxy layer:

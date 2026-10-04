@@ -364,6 +364,29 @@ if ($hasShadcnLintDep -and $hasShadcnLintConfig) {
     $automationChecks.Add(@{ name = "Agent-First Tailwind Linter (@shadcn/lint)"; status = "warning"; details = "Missing @shadcn/lint integration in package.json and ESLint config for agent design system enforcement." })
 }
 
+# 9. App Icons & PWA Web Manifest Check
+$appDir = if (Test-Path (Join-Path $rootDir "src/app")) { "src/app" } elseif (Test-Path (Join-Path $rootDir "app")) { "app" } else { "app" }
+$manifestPaths = @(
+    (Join-Path $appDir "manifest.ts"),
+    (Join-Path $appDir "manifest.js"),
+    (Join-Path $appDir "manifest.json"),
+    (Join-Path $appDir "manifest.webmanifest")
+)
+$foundManifest = $manifestPaths | Where-Object { Test-Path (Join-Path $rootDir $_) } | Select-Object -First 1
+
+$hasFavicon = (Test-Path (Join-Path $rootDir "$appDir/favicon.ico")) -or (Test-Path (Join-Path $rootDir "public/favicon.ico"))
+$hasIcon = (Test-Path (Join-Path $rootDir "$appDir/icon.png")) -or (Test-Path (Join-Path $rootDir "$appDir/icon.ico")) -or (Test-Path (Join-Path $rootDir "$appDir/icon.svg")) -or (Test-Path (Join-Path $rootDir "$appDir/icon.tsx")) -or (Test-Path (Join-Path $rootDir "$appDir/icon.js"))
+$hasAppleIcon = (Test-Path (Join-Path $rootDir "$appDir/apple-icon.png")) -or (Test-Path (Join-Path $rootDir "$appDir/apple-icon.jpg")) -or (Test-Path (Join-Path $rootDir "$appDir/apple-icon.tsx")) -or (Test-Path (Join-Path $rootDir "$appDir/apple-icon.js"))
+
+if ($foundManifest -and ($hasFavicon -or $hasIcon -or $hasAppleIcon)) {
+    $automationChecks.Add(@{ name = "App Icons & PWA Web Manifest"; status = "configured"; details = "Found '$foundManifest' and App Router icon file conventions." })
+} elseif ($foundManifest) {
+    $automationChecks.Add(@{ name = "App Icons & PWA Web Manifest"; status = "configured"; details = "Found Web App Manifest '$foundManifest'." })
+} else {
+    $automationChecks.Add(@{ name = "App Icons & PWA Web Manifest"; status = "warning"; details = "Missing Web App Manifest ($appDir/manifest.ts) and App Router icon file conventions." })
+}
+
+
 $passed = ($errors.Count -eq 0)
 
 # Output rendering

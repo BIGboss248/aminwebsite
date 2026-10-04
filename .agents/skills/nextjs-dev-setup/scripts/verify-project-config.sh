@@ -283,7 +283,36 @@ else
   AUTOMATION_CHECKS+=("WARN:Agent-First Tailwind Linter (@shadcn/lint):Missing @shadcn/lint in package.json and ESLint config.")
 fi
 
+# 9. App Icons & PWA Web Manifest
+APP_DIR="app"
+[ -d "src/app" ] && APP_DIR="src/app"
+
+FOUND_MANIFEST=""
+for m in "$APP_DIR/manifest.ts" "$APP_DIR/manifest.js" "$APP_DIR/manifest.json" "$APP_DIR/manifest.webmanifest"; do
+  if [ -f "$m" ]; then FOUND_MANIFEST="$m"; break; fi
+done
+
+HAS_FAVICON=false
+[ -f "$APP_DIR/favicon.ico" ] || [ -f "public/favicon.ico" ] && HAS_FAVICON=true
+HAS_ICON=false
+for ic in "$APP_DIR/icon.png" "$APP_DIR/icon.ico" "$APP_DIR/icon.svg" "$APP_DIR/icon.tsx" "$APP_DIR/icon.js"; do
+  if [ -f "$ic" ]; then HAS_ICON=true; break; fi
+done
+HAS_APPLE_ICON=false
+for aic in "$APP_DIR/apple-icon.png" "$APP_DIR/apple-icon.jpg" "$APP_DIR/apple-icon.tsx" "$APP_DIR/apple-icon.js"; do
+  if [ -f "$aic" ]; then HAS_APPLE_ICON=true; break; fi
+done
+
+if [ -n "$FOUND_MANIFEST" ] && { [ "$HAS_FAVICON" = true ] || [ "$HAS_ICON" = true ] || [ "$HAS_APPLE_ICON" = true ]; }; then
+  AUTOMATION_CHECKS+=("OK:App Icons & PWA Web Manifest:Found '$FOUND_MANIFEST' and App Router icon file conventions.")
+elif [ -n "$FOUND_MANIFEST" ]; then
+  AUTOMATION_CHECKS+=("OK:App Icons & PWA Web Manifest:Found Web App Manifest '$FOUND_MANIFEST'.")
+else
+  AUTOMATION_CHECKS+=("WARN:App Icons & PWA Web Manifest:Missing Web App Manifest ($APP_DIR/manifest.ts) and App Router icon conventions.")
+fi
+
 # --- Output ---
+
 if [ ${#ERRORS[@]} -eq 0 ]; then
   PASSED=true
 else

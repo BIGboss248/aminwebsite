@@ -90,7 +90,7 @@
   - [x] **Section: Projects Showcase Grid (Resume Case Studies)**
     - [x] `ProjectArchiveGrid` - Comprehensive responsive grid
     - [x] `CaseStudyCard` - High-density project card with metrics, architecture tags, and direct external deliverable links (live deployments, GitHub repositories, and DOI publications)
-    - [x] **Deliverable 1: Setayesh Parts** - Commercial & E-Commerce Web Platform (Deployment: `https://setayesh.aminjamali.site/`, GitHub: `https://github.com/BIGboss248/setayeshparts`)
+    - [x] **Deliverable 1: Setayesh Parts** - Commercial & E-Commerce Web Platform (Deployment: `https://setayesh.meetjamali.com/`, GitHub: `https://github.com/BIGboss248/setayeshparts`)
     - [x] **Deliverable 2: Bahar Trade Co. Web Platform** - Enterprise Corporate Web & CMS Engine (Deployment: `https://bahartradeco.com/en`)
     - [x] **Deliverable 3: Azad Bazar** - Multi-Vendor Marketplace & E-Commerce Platform (Deployment: `https://azadbazar.isfahan.iau.ir/`)
     - [x] **Deliverable 4: ParsBERT-XGBoost Commodity Volatility Model** - Hybrid Persian NLP & Financial Sentiment Forecasting (DOI: `10.61838/jafci.485`)

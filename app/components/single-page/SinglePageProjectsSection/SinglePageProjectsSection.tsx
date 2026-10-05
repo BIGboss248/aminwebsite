@@ -59,9 +59,9 @@ export function SinglePageProjectsSection({
           t("items.setayesh_parts.tech4"),
           t("items.setayesh_parts.tech5"),
         ],
-        liveUrl: "https://setayesh.aminjamali.site/",
+        liveUrl: "https://setayesh.meetjamali.com/",
         githubUrl: "https://github.com/BIGboss248/setayeshparts",
-        href: "https://setayesh.aminjamali.site/",
+        href: "https://setayesh.meetjamali.com/",
       },
       {
         id: "bahar_trade_web",

@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import portraitImage from "@/public/images/about/portrait.jpg";
+import portraitImage from "@/public/images/about/portrait.png";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import type { SinglePageHeroProps } from "./SinglePageHero.types";

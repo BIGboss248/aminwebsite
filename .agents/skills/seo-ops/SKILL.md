@@ -72,9 +72,11 @@ Enforce zero-regression SEO gates in development and deployment pipelines:
 
 - [ ] **1. Verify Node 22+**: Run `node -v` to ensure Node 22+ runtime.
 - [ ] **2. Configure Local Pre-Push Hook**:
-  - In `.husky/pre-push`, ensure discrete execution of build, test, and audit:
+  - Deploy pre-push runner script (`scripts/seo-pre-push.ps1` or `scripts/seo-pre-push.sh`) with dev server auto-probing (reusing active instances or spawning `cmd.exe /c pnpm run dev` with process tree cleanup).
+  - In `.husky/pre-push`, execute discrete steps:
     ```bash
-    npx -y seo report --url http://127.0.0.1:3000 --actions-only --json
+    pnpm run test:all
+    pnpm run seo:pre-push
     ```
   - See [cicd-pipeline-guide.md](references/cicd-pipeline-guide.md).
 - [ ] **3. Install GitHub Actions Workflow**:

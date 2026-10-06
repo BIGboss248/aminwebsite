@@ -100,6 +100,12 @@ if [ "$MODE" = "cicd" ] || [ "$MODE" = "all" ]; then
     else
         echo "  [INFO] Husky pre-push hook not configured"
     fi
+
+    if [ -f "scripts/seo-pre-push.sh" ] || [ -f "scripts/seo-pre-push.ps1" ]; then
+        echo "  [OK] SEO pre-push runner script found in scripts/"
+    else
+        echo "  [INFO] SEO pre-push runner script not found in scripts/ (see resources/templates/)"
+    fi
 fi
 
 echo ""

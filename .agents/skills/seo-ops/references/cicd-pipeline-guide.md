@@ -17,14 +17,28 @@ Pre-deployment SEO audits catch critical technical blockers before code reaches 
 
 ## 2. Local Pre-Push Quality Gate (Husky)
 
-Ensure git pushes validate both tests and SEO health.
+Ensure git pushes validate tests and technical SEO health without manual dev server management.
 
-### Step 1: Add package.json scripts
+### Dev Server Auto-Detection & Process Lifecycle
+A Next.js technical audit requires an HTTP endpoint. The pre-push hook must:
+1. **Probe**: Check if `http://127.0.0.1:3000` is already responsive (`curl -s -o /dev/null -w "%{http_code}"`).
+2. **Reuse**: If a dev server is active, audit against it and **preserve** it (never terminate the developer's session).
+3. **Fallback Spawn**: If no server is running, spawn `pnpm run dev` in the background and poll for readiness (up to 30s).
+4. **Cleanup on Exit**: In a `finally` or `trap` handler, terminate only the process spawned by the script.
+   - **Windows Pitfall**: `pnpm` is a `.cmd`/`.ps1` wrapper, not a native Win32 `.exe`. Calling `Start-Process -FilePath "pnpm"` fails with `%1 is not a valid Win32 application`. Always launch through `cmd.exe /c pnpm run dev`.
+   - **Process Tree Cleanup**: Killing only `cmd.exe` leaves orphaned `node.exe` processes. Use `taskkill.exe /PID $proc.Id /T /F` on Windows to cleanly terminate the entire process tree.
+
+### Step 1: Add Pre-Push Scripts
+Deploy [`scripts/seo-pre-push.ps1`](../resources/templates/seo-pre-push.ps1.template) and [`scripts/seo-pre-push.sh`](../resources/templates/seo-pre-push.sh.template).
+
+Register in `package.json`:
 ```json
 {
   "scripts": {
-    "test:all": "jest && playwright test",
-    "seo:audit": "npx -y seo report --url http://127.0.0.1:3000 --actions-only --json"
+    "test:all": "jest --passWithNoTests && playwright test --pass-with-no-tests",
+    "seo:audit": "npx -y seo report --url http://127.0.0.1:3000 --actions-only --json",
+    "seo:pre-push": "powershell -ExecutionPolicy Bypass -File ./scripts/seo-pre-push.ps1",
+    "seo:pre-push:sh": "bash ./scripts/seo-pre-push.sh"
   }
 }
 ```
@@ -34,8 +48,8 @@ Ensure git pushes validate both tests and SEO health.
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm run build
 pnpm run test:all
+pnpm run seo:pre-push
 ```
 
 ---

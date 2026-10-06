@@ -120,6 +120,13 @@ if ($Mode -eq "cicd" -or $Mode -eq "all") {
     } else {
         Write-Host "  [INFO] Husky pre-push hook not configured" -ForegroundColor Gray
     }
+
+    $prePushScript = (Test-Path (Join-Path (Get-Location) "scripts/seo-pre-push.ps1")) -or (Test-Path (Join-Path (Get-Location) "scripts/seo-pre-push.sh"))
+    if ($prePushScript) {
+        Write-Host "  [OK] SEO pre-push runner script found in scripts/" -ForegroundColor Green
+    } else {
+        Write-Host "  [INFO] SEO pre-push runner script not found in scripts/ (see resources/templates/)" -ForegroundColor Gray
+    }
 }
 
 Write-Host "`n=== Verification Complete ===" -ForegroundColor Cyan

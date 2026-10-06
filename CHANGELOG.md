@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.1](https://github.com/BIGboss248/aminwebsite/compare/v2.1.0...v2.1.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* removed unsued components and pages ([380d5ad](https://github.com/BIGboss248/aminwebsite/commit/380d5adb2fdb6c964e647550861fe664c2b13d38))
+* updated broken link ([f5aacf1](https://github.com/BIGboss248/aminwebsite/commit/f5aacf12857acbaa2279143012bedcce070ea8ff))
+
 ## [2.1.0](https://github.com/BIGboss248/aminwebsite/compare/v2.0.0...v2.1.0) (2026-09-29)
 
 

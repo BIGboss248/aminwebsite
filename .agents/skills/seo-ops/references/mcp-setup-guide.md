@@ -28,7 +28,7 @@ This guide details configuring, testing, auto-installing, and querying the local
   "mcpServers": {
     "seo": {
       "command": "npx",
-      "args": ["-y", "seo", "mcp"],
+      "args": ["-y", "seo", "mcp", "serve"],
       "env": {}
     }
   }
@@ -42,7 +42,7 @@ This guide details configuring, testing, auto-installing, and querying the local
   "mcpServers": {
     "seo": {
       "command": "npx",
-      "args": ["-y", "seo", "mcp"]
+      "args": ["-y", "seo", "mcp", "serve"]
     }
   }
 }

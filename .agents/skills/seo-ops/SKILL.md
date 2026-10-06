@@ -36,7 +36,7 @@ flowchart TD
      "mcpServers": {
        "seo": {
          "command": "npx",
-         "args": ["-y", "seo", "mcp"]
+         "args": ["-y", "seo", "mcp", "serve"]
        }
      }
    }
@@ -127,7 +127,7 @@ Unlock ranking opportunities on live domains with Search Console:
 ## Edge Cases & Known Pitfalls
 
 - **Process Restart Requirement**: When `.agents/mcp_config.json` is modified, the agent cannot access new tools until the session/window is reloaded. Never skip the restart prompt.
-- **Windows Path Resolution**: Always use `"command": "npx"` with `["-y", "seo", "mcp"]` to avoid `%PATH%` binary lookup errors on Windows.
+- **Windows Path Resolution**: Always use `"command": "npx"` with `["-y", "seo", "mcp", "serve"]` to avoid `%PATH%` binary lookup errors on Windows.
 - **No Static Guesswork**: Never inspect code statically for SEO without running the MCP tools or CLI report first.
 - **Evidence Separation**: Keep observed crawl evidence separate from external provider keyword estimates.
 

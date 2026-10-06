@@ -16,7 +16,10 @@
     "test:all": "jest --passWithNoTests && playwright test --pass-with-no-tests",
     "storybook": "storybook dev -p 6006",
     "storybook:smoke": "storybook dev --smoke-test",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "seo:audit": "npx -y seo report --url http://127.0.0.1:3000 --actions-only --json",
+    "seo:pre-push": "powershell -ExecutionPolicy Bypass -File ./scripts/seo-pre-push.ps1",
+    "seo:pre-push:sh": "bash ./scripts/seo-pre-push.sh"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

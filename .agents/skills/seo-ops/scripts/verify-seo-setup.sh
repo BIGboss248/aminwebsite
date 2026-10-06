@@ -73,7 +73,7 @@ if [ "$MODE" = "mcp" ] || [ "$MODE" = "all" ]; then
         echo "  [INSTALL] Adding seo MCP server entry to $MCP_CONFIG_FILE..."
         mkdir -p .agents
         if [ ! -f "$MCP_CONFIG_FILE" ]; then
-            echo '{"mcpServers":{"seo":{"command":"npx","args":["-y","seo","mcp"]}}}' > "$MCP_CONFIG_FILE"
+            echo '{"mcpServers":{"seo":{"command":"npx","args":["-y","seo","mcp","serve"]}}}' > "$MCP_CONFIG_FILE"
         fi
         echo "  [OK] Successfully configured $MCP_CONFIG_FILE"
         RESTART_REQUIRED=true

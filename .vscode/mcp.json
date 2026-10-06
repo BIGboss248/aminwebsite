@@ -15,6 +15,10 @@
     "storybook": {
       "serverUrl": "http://localhost:6006/mcp",
       "url": "http://localhost:6006/mcp"
+    },
+    "seo": {
+      "command": "npx",
+      "args": ["-y", "seo", "mcp", "serve"]
     }
   }
 }

@@ -274,6 +274,12 @@
     "Category": "PROCESS",
     "Instruction": "In Next.js development setup workflows ('nextjs-dev-setup'), do not prompt or question the user in grilling/setup interview rounds about implementing app icons, Apple icons, or PWA manifests; automatically scaffold and configure them in Stage 1 ('app/manifest.ts', 'app/favicon.ico', 'app/apple-icon.png', 'app/icon.png') using the user-provided favicon asset and deduced project metadata.",
     "Why": "user explicit instruction: there is no need to ask for implementation of this icon in grilling rounds"
+  },
+  {
+    "Rule_number": 47,
+    "Category": "ARCH",
+    "Instruction": "In 'seo' CLI MCP server configurations (in both workspace 'mcp.json'/'.agents/mcp_config.json' and global Antigravity 'mcp_config.json'), always specify the arguments as '[\"-y\", \"seo\", \"mcp\", \"serve\"]' (including 'serve') because running 'seo mcp' without 'serve' prints the CLI help text and exits immediately with code 0 instead of starting the persistent stdio JSON-RPC daemon.",
+    "Why": "diagnosed root cause: 'seo mcp' command without 'serve' exits immediately with help text, causing MCP client connection failure"
   }
 ]
 

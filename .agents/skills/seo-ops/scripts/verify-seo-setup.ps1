@@ -85,7 +85,7 @@ if ($Mode -eq "mcp" -or $Mode -eq "all") {
         }
         $mcpObj.mcpServers | Add-Member -MemberType NoteProperty -Name "seo" -Value ([PSCustomObject]@{
             command = "npx"
-            args = @("-y", "seo", "mcp")
+            args = @("-y", "seo", "mcp", "serve")
         }) -Force
 
         $mcpObj | ConvertTo-Json -Depth 10 | Set-Content $mcpConfigFile

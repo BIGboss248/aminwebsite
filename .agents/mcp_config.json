@@ -14,7 +14,7 @@
     },
     "seo": {
       "command": "npx",
-      "args": ["-y", "seo", "mcp"]
+      "args": ["-y", "seo", "mcp", "serve"]
     }
   }
 }

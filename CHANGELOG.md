@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/BIGboss248/aminwebsite/compare/v2.1.1...v2.2.0) (2026-10-06)
+
+
+### Features
+
+* removed background of portrait image and changed the file format from jpg to png ([6fa06e0](https://github.com/BIGboss248/aminwebsite/commit/6fa06e0f9b79481f584bf9e7780e720750d714df))
+
 ## [2.1.1](https://github.com/BIGboss248/aminwebsite/compare/v2.1.0...v2.1.1) (2026-10-06)
 
 

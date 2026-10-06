@@ -12,8 +12,10 @@ function Cleanup {
     if ($spawnedServer -and $serverProcess -and (-not $serverProcess.HasExited)) {
         Write-Host "[SEO Pre-Push] Shutting down spawned background dev server..." -ForegroundColor Yellow
         try {
-            Stop-Process -Id $serverProcess.Id -Force -ErrorAction SilentlyContinue
-        } catch {}
+            taskkill.exe /PID $serverProcess.Id /T /F 2>$null
+        } catch {
+            try { Stop-Process -Id $serverProcess.Id -Force -ErrorAction SilentlyContinue } catch {}
+        }
     }
 }
 
@@ -30,7 +32,7 @@ try {
         Write-Host "[SEO Pre-Push] Detected running dev server with HTTP status $httpCode. Reusing existing instance." -ForegroundColor Green
     } else {
         Write-Host "[SEO Pre-Push] No active dev server detected. Starting dev server..." -ForegroundColor Yellow
-        $serverProcess = Start-Process -FilePath "pnpm" -ArgumentList "run dev" -PassThru -NoNewWindow
+        $serverProcess = Start-Process -FilePath "cmd.exe" -ArgumentList "/c pnpm run dev" -PassThru -NoNewWindow
         $spawnedServer = $true
 
         Write-Host "[SEO Pre-Push] Waiting for dev server to become ready..." -ForegroundColor Cyan
@@ -55,7 +57,7 @@ try {
     }
 
     Write-Host "[SEO Pre-Push] Executing SEO technical audit against $url..." -ForegroundColor Cyan
-    $auditJsonRaw = (npx.cmd -y seo report --url $url --actions-only --json) | Out-String
+    $auditJsonRaw = (cmd.exe /c npx -y seo report --url $url --actions-only --json) | Out-String
     $auditData = $auditJsonRaw | ConvertFrom-Json
 
     $fixesCount = 0

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/BIGboss248/aminwebsite/compare/v2.2.0...v2.2.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* fixed search console problems ([da953eb](https://github.com/BIGboss248/aminwebsite/commit/da953eb1cd283d5453c1cb504ad37223397d388f))
+
 ## [2.2.0](https://github.com/BIGboss248/aminwebsite/compare/v2.1.1...v2.2.0) (2026-10-06)
 
 

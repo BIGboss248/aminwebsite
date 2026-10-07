@@ -42,6 +42,7 @@ export async function generateMetadata({
       languages: {
         en: `${SITE_CONFIG.baseUrl}/en`,
         fa: `${SITE_CONFIG.baseUrl}/fa`,
+        "x-default": `${SITE_CONFIG.baseUrl}/${routing.defaultLocale}`,
       },
     },
     openGraph: {

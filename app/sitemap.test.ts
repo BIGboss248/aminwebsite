@@ -23,6 +23,7 @@ describe("sitemap() metadata route", () => {
       expect(entry?.alternates?.languages).toEqual({
         en: `${SITE_CONFIG.baseUrl}/en`,
         fa: `${SITE_CONFIG.baseUrl}/fa`,
+        "x-default": `${SITE_CONFIG.baseUrl}/en`,
       });
     });
   });

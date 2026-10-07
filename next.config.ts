@@ -40,6 +40,35 @@ const nextConfig: NextConfig = {
       ],
     },
   },
+  async redirects() {
+    return [
+      {
+        source: "/projects",
+        destination: "/en#projects",
+        permanent: true,
+      },
+      {
+        source: "/:locale(en|fa)/projects",
+        destination: "/:locale#projects",
+        permanent: true,
+      },
+      {
+        source: "/lab/:path*",
+        destination: "/en",
+        permanent: true,
+      },
+      {
+        source: "/:locale(en|fa)/lab/:path*",
+        destination: "/:locale",
+        permanent: true,
+      },
+      {
+        source: "/:locale(en|fa)/single-page",
+        destination: "/:locale",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

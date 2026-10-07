@@ -12,9 +12,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: 1.0,
     alternates: {
-      languages: Object.fromEntries(
-        locales.map((loc) => [loc, `${SITE_CONFIG.baseUrl}/${loc}`]),
-      ),
+      languages: {
+        ...Object.fromEntries(
+          locales.map((loc) => [loc, `${SITE_CONFIG.baseUrl}/${loc}`]),
+        ),
+        "x-default": `${SITE_CONFIG.baseUrl}/${routing.defaultLocale}`,
+      },
     },
   }));
 }

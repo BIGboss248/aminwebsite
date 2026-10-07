@@ -56,3 +56,6 @@ storybook-static
 
 # codebase-memory-mcp local artifact
 .codebase-memory/
+
+# Claude CLI / skills junctions
+.claude/

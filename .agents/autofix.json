@@ -280,8 +280,15 @@
     "Category": "ARCH",
     "Instruction": "In 'seo' CLI MCP server configurations (in both workspace 'mcp.json'/'.agents/mcp_config.json' and global Antigravity 'mcp_config.json'), always specify the arguments as '[\"-y\", \"seo\", \"mcp\", \"serve\"]' (including 'serve') because running 'seo mcp' without 'serve' prints the CLI help text and exits immediately with code 0 instead of starting the persistent stdio JSON-RPC daemon.",
     "Why": "diagnosed root cause: 'seo mcp' command without 'serve' exits immediately with help text, causing MCP client connection failure"
+  },
+  {
+    "Rule_number": 48,
+    "Category": "PROCESS",
+    "Instruction": "Always keep '.claude/' in '.gitignore' to prevent external skill CLIs (e.g. 'npx skills') or toolchains from creating untracked directory junctions that cannot be cleanly discarded by standard git discard or IDE recycle bin operations.",
+    "Why": "diagnosed root cause: '.claude/skills' directory junctions were untracked and missing from '.gitignore', causing untracked changes to persist and appear reapplied every time changes were discarded"
   }
 ]
+
 
 
 

@@ -11,6 +11,7 @@ import type {
 
 export function ContactForm({
   className = "",
+  locale,
 }: ContactFormProps): React.JSX.Element {
   const t = useTranslations("contact.form");
 
@@ -61,7 +62,7 @@ export function ContactForm({
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, ...(locale ? { locale } : {}) }),
       });
 
       const data = await response.json();

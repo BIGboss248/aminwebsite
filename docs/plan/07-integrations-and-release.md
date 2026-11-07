@@ -8,6 +8,7 @@
   - [ ] Configure PostHog analytics and session recording gated behind user consent policies in [`docs/operations/privacy-and-gdpr.md`](file:///c:/scripts/aminwebsite/docs/operations/privacy-and-gdpr.md)
   - [ ] Configure Sentry exception tracking and error monitoring
   - [ ] Configure Resend API integration for email delivery
+  - [x] Configure Telegram Bot API notification dispatch for contact form inquiries (`lib/telegram.ts` → `app/api/contact/route.ts`)
 - [ ] **7.2 Production Verification & Release Automation**
   - [ ] Run full test suite validation (`pnpm run test:all`)
   - [ ] Verify standalone production container image build and automated Release Please publication

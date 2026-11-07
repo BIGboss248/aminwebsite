@@ -116,38 +116,21 @@ export function SinglePageHero({
       id="hero"
       aria-labelledby="single-page-hero-heading"
       className={cn(
-        "relative overflow-hidden py-10 sm:py-14 lg:py-20 border-b border-border/40 bg-background text-foreground transition-colors",
+        "relative isolate overflow-hidden py-10 sm:py-14 lg:py-20 border-b border-border/40 bg-background text-foreground transition-colors",
         className,
       )}
     >
-      {/* Subtle Background Grid Pattern */}
+      {/* Hero Background Artwork (theme-aware: light/dark) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 opacity-20 dark:opacity-10"
-      >
-        <svg
-          className="h-full w-full stroke-border"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <pattern
-              id="single-page-hero-grid"
-              width="48"
-              height="48"
-              patternUnits="userSpaceOnUse"
-            >
-              <path d="M 48 0 L 0 0 0 48" fill="none" strokeWidth="0.75" />
-              <circle cx="48" cy="48" r="1" className="fill-border" />
-            </pattern>
-          </defs>
-          <rect
-            width="100%"
-            height="100%"
-            strokeWidth="0"
-            fill="url(#single-page-hero-grid)"
-          />
-        </svg>
-      </div>
+        className="hero-backdrop pointer-events-none absolute inset-0 -z-20 bg-cover bg-center md:bg-right"
+      />
+
+      {/* Readability Veil — keeps the copy column high-contrast */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-background via-background/85 to-background/40 md:bg-gradient-to-r md:from-background md:via-background/60 md:to-transparent"
+      />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-center">

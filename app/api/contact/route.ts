@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isTelegramConfigured, sendTelegramMessage } from "@/lib/telegram";
 
 interface ContactPayload {
   intent?: string;
@@ -6,6 +7,7 @@ interface ContactPayload {
   email: string;
   subject: string;
   message: string;
+  locale?: string;
   _hp?: string;
 }
 
@@ -78,8 +80,41 @@ export async function POST(request: Request) {
     const randomHex = Math.random().toString(36).substring(2, 8).toUpperCase();
     const timestampHex = Date.now().toString(36).toUpperCase().slice(-4);
     const refId = `INQ-${timestampHex}-${randomHex}`;
+    const receivedAt = new Date().toISOString();
 
     console.info(`[Contact Form] Received valid message: refId=${refId}, email=${body.email}`);
+
+    /**
+     * Telegram notification channel (best-effort).
+     *
+     * Dispatch failures are logged but never surfaced to the visitor: the
+     * inquiry has already been accepted and rate-limited, so returning an
+     * error would only invite duplicate submissions.
+     */
+    if (isTelegramConfigured()) {
+      const dispatch = await sendTelegramMessage({
+        refId,
+        name: body.name,
+        email: body.email,
+        subject: body.subject,
+        message: body.message,
+        ip,
+        locale: body.locale,
+        receivedAt,
+      });
+
+      if (dispatch.ok) {
+        console.info(`[Contact Form] Telegram notification delivered: refId=${refId}`);
+      } else {
+        console.error(
+          `[Contact Form] Telegram notification failed: refId=${refId}, reason=${dispatch.error}`,
+        );
+      }
+    } else {
+      console.warn(
+        "[Contact Form] Telegram notification skipped: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not configured.",
+      );
+    }
 
     /**
      * TODO: Implement Email Dispatch to Inbox
@@ -115,7 +150,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       refId,
-      timestamp: new Date().toISOString(),
+      timestamp: receivedAt,
     });
   } catch (error) {
     console.error("[Contact API Error]:", error);

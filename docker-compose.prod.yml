@@ -13,6 +13,8 @@ services:
       - PORT=${PORT:-3000}
       - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-https://meetjamali.com}
       - CONTACT_RECIPIENT_EMAIL=${CONTACT_RECIPIENT_EMAIL:-contact@meetjamali.com}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=${TRAEFIK_NETWORK:-traefik-net}"

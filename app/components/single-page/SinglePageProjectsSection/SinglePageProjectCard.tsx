@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-import { ExternalLink, FileText, FolderGit2 } from "lucide-react";
+import { ExternalLink, FileText, FolderGit2, Award } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SinglePageProjectCardProps } from "./SinglePageProjectsSection.types";
 
@@ -110,6 +110,19 @@ export function SinglePageProjectCard({
           >
             <FileText className="size-3.5" aria-hidden="true" />
             <span>DOI: {project.doi}</span>
+          </a>
+        )}
+
+        {project.contributionUrl && (
+          <a
+            href={project.contributionUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-medium bg-status-warning/10 text-status-warning border border-status-warning/20 hover:bg-status-warning/20 transition-colors"
+            title={t("recognition_label")}
+          >
+            <Award className="size-3.5" aria-hidden="true" />
+            <span>{project.contributionLabel ?? t("recognition_label")}</span>
           </a>
         )}
 

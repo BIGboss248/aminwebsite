@@ -89,6 +89,7 @@ export default async function Home({ params }: HomePageProps) {
             SITE_CONFIG.social.github,
             SITE_CONFIG.social.linkedin,
             SITE_CONFIG.social.orcid,
+            SITE_CONFIG.social.xerj,
             SITE_CONFIG.social.twitter,
           ].filter(Boolean),
         },

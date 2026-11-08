@@ -77,6 +77,33 @@ describe("SinglePageProjectsSection", () => {
     expect(titleElement.closest("a")).toBeNull();
   });
 
+  it("renders the Baguta live storefront card with its production deployment link", () => {
+    render(<SinglePageProjectsSection locale="en" initialCategory="production" />);
+
+    const bagutaTitle = screen.getByText(
+      enMessages.single_page.projects.items.baguta_tailoring.title,
+    );
+    expect(bagutaTitle).toBeInTheDocument();
+    expect(bagutaTitle.closest("a")).toHaveAttribute(
+      "href",
+      "https://baguta.meetjamali.com",
+    );
+  });
+
+  it("renders the XERJ Corpus Hub contribution link on the Tool-box card", () => {
+    render(<SinglePageProjectsSection locale="en" initialCategory="production" />);
+
+    const xerjLink = screen.getByRole("link", {
+      name: new RegExp(enMessages.single_page.projects.xerj_label, "i"),
+    });
+    expect(xerjLink).toHaveAttribute(
+      "href",
+      "https://hub.xerj.org/contributors/BIGboss248",
+    );
+    expect(xerjLink).toHaveAttribute("target", "_blank");
+    expect(xerjLink).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
   it("filters cards when clicking category tabs", () => {
     render(<SinglePageProjectsSection locale="en" />);
 

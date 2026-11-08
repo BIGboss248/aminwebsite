@@ -64,6 +64,39 @@ export function SinglePageProjectsSection({
         href: "https://setayesh.meetjamali.com/",
       },
       {
+        id: "baguta_tailoring",
+        category: "production",
+        tag: t("items.baguta_tailoring.tag"),
+        status: t("items.baguta_tailoring.status"),
+        title: t("items.baguta_tailoring.title"),
+        role: t("items.baguta_tailoring.role"),
+        clientOrVenue: t("items.baguta_tailoring.client"),
+        summary: t("items.baguta_tailoring.summary"),
+        metrics: [
+          {
+            value: t("items.baguta_tailoring.metric1_val"),
+            label: t("items.baguta_tailoring.metric1_lbl"),
+          },
+          {
+            value: t("items.baguta_tailoring.metric2_val"),
+            label: t("items.baguta_tailoring.metric2_lbl"),
+          },
+          {
+            value: t("items.baguta_tailoring.metric3_val"),
+            label: t("items.baguta_tailoring.metric3_lbl"),
+          },
+        ],
+        techStack: [
+          t("items.baguta_tailoring.tech1"),
+          t("items.baguta_tailoring.tech2"),
+          t("items.baguta_tailoring.tech3"),
+          t("items.baguta_tailoring.tech4"),
+          t("items.baguta_tailoring.tech5"),
+        ],
+        liveUrl: "https://baguta.meetjamali.com",
+        href: "https://baguta.meetjamali.com",
+      },
+      {
         id: "bahar_trade_web",
         category: "production",
         tag: t("items.bahar_trade_web.tag"),
@@ -193,6 +226,8 @@ export function SinglePageProjectsSection({
           t("items.toolbox.tech5"),
         ],
         githubUrl: "https://github.com/BIGboss248/Tool-box",
+        contributionUrl: "https://hub.xerj.org/contributors/BIGboss248",
+        contributionLabel: t("xerj_label"),
         href: "https://github.com/BIGboss248/Tool-box",
       },
       {

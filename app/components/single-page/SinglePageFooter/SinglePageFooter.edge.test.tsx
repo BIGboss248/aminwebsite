@@ -94,6 +94,7 @@ describe("SinglePageFooter Edge Cases & Defensive Resilience", () => {
         githubUrl="https://github.com/custom-profile"
         linkedinUrl="https://linkedin.com/in/custom-profile"
         orcidUrl="https://orcid.org/0000-0000-0000-0000"
+        xerjUrl="https://hub.xerj.org/contributors/custom-contributor"
       />,
     );
 
@@ -108,6 +109,9 @@ describe("SinglePageFooter Edge Cases & Defensive Resilience", () => {
     const orcidLink = screen.getByRole("link", {
       name: new RegExp(enMessages.single_page.footer.social_orcid, "i"),
     });
+    const xerjLink = screen.getByRole("link", {
+      name: new RegExp(enMessages.single_page.footer.social_xerj, "i"),
+    });
     const emailLink = screen.getByRole("link", {
       name: new RegExp(enMessages.single_page.footer.social_email, "i"),
     });
@@ -115,6 +119,10 @@ describe("SinglePageFooter Edge Cases & Defensive Resilience", () => {
     expect(githubLink).toHaveAttribute("href", "https://github.com/custom-profile");
     expect(linkedinLink).toHaveAttribute("href", "https://linkedin.com/in/custom-profile");
     expect(orcidLink).toHaveAttribute("href", "https://orcid.org/0000-0000-0000-0000");
+    expect(xerjLink).toHaveAttribute(
+      "href",
+      "https://hub.xerj.org/contributors/custom-contributor",
+    );
     expect(emailLink).toHaveAttribute("href", "mailto:custom@test.internal");
   });
 });

@@ -29,6 +29,7 @@ export const SITE_CONFIG = {
     github: "https://github.com/BIGboss248",
     linkedin: "https://www.linkedin.com/in/amin-jamali2000",
     orcid: "https://orcid.org/0009-0004-9921-7273",
+    xerj: "https://hub.xerj.org/contributors/BIGboss248",
     twitter: "https://x.com/",
   },
   credentials: {

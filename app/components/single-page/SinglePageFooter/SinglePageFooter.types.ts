@@ -53,6 +53,12 @@ export interface SinglePageFooterProps extends HTMLAttributes<HTMLElement> {
    * @defaultValue `SITE_CONFIG.social.orcid`
    */
   orcidUrl?: string;
+
+  /**
+   * Optional XERJ contributor profile URL override.
+   * @defaultValue `SITE_CONFIG.social.xerj`
+   */
+  xerjUrl?: string;
 }
 
 /**

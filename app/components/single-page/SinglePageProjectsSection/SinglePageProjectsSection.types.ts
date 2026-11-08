@@ -19,6 +19,8 @@ export interface SinglePageProjectItem {
   doi?: string;
   liveUrl?: string;
   githubUrl?: string;
+  contributionUrl?: string;
+  contributionLabel?: string;
   href?: string;
 }
 

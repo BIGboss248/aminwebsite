@@ -96,9 +96,11 @@
     - [x] **Deliverable 4: ParsBERT-XGBoost Commodity Volatility Model** - Hybrid Persian NLP & Financial Sentiment Forecasting (DOI: `10.61838/jafci.485`)
     - [x] **Deliverable 5: DQN & LSTM Volatility Analysis Engine** - Reinforcement Learning & Volatility System (DOI: `10.61838/bmfopen.545`)
     - [x] **Deliverable 6: Bahar Trade IT Automation and Infrastructure Management** - Enterprise Linux Server Automation, Active Directory Management & IT Administration
+    - [x] **Deliverable 7: Baguta Tailoring House** - Bilingual Bespoke Tailoring & Ready-to-Wear Digital Storefront (Deployment: `https://baguta.meetjamali.com`)
   - [x] **Section: Open Source & Repositories**
     - [x] `OpenSourceShowcase` - GitHub open-source repositories and utility tools
     - [x] `GithubRepoCard` - Real-time star count, language badge, and repo link
+    - [x] **XERJ Corpus Hub Contribution** - Tool-box corpus selected for the XERJ reference memory hub (Contributor: `https://hub.xerj.org/contributors/BIGboss248`)
 
 - [x] **Page: Interactive Lab Hub (`/[locale]/lab`)**
   - [x] **Page Infrastructure & SEO**

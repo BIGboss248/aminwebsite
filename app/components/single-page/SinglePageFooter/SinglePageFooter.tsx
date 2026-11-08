@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUp, Check, Copy, ExternalLink, Mail } from "lucide-react";
+import { ArrowUp, Check, Copy, ExternalLink, Mail, Award } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import type { SinglePageFooterProps } from "./SinglePageFooter.types";
@@ -29,6 +29,7 @@ export function SinglePageFooter({
   githubUrl = SITE_CONFIG.social.github,
   linkedinUrl = SITE_CONFIG.social.linkedin,
   orcidUrl = SITE_CONFIG.social.orcid,
+  xerjUrl = SITE_CONFIG.social.xerj,
   locale,
   ...props
 }: SinglePageFooterProps): React.JSX.Element {
@@ -224,6 +225,19 @@ export function SinglePageFooter({
               >
                 <span className="font-bold text-emerald-500 text-xs">iD</span>
                 <span>{t("social_orcid")}</span>
+                <ExternalLink className="h-3 w-3 opacity-60" aria-hidden="true" />
+              </a>
+
+              {/* XERJ Contributor */}
+              <a
+                href={xerjUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${t("social_xerj")} (opens in new tab)`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border bg-card text-xs font-medium text-foreground/90 hover:text-primary hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <Award className="h-3.5 w-3.5 text-status-warning" aria-hidden="true" />
+                <span>{t("social_xerj")}</span>
                 <ExternalLink className="h-3 w-3 opacity-60" aria-hidden="true" />
               </a>
 

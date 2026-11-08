@@ -152,6 +152,9 @@ describe("SinglePageFooter Component", () => {
     const orcidLink = screen.getByRole("link", {
       name: new RegExp(enMessages.single_page.footer.social_orcid, "i"),
     });
+    const xerjLink = screen.getByRole("link", {
+      name: new RegExp(enMessages.single_page.footer.social_xerj, "i"),
+    });
     const emailLink = screen.getByRole("link", {
       name: new RegExp(enMessages.single_page.footer.social_email, "i"),
     });
@@ -159,6 +162,7 @@ describe("SinglePageFooter Component", () => {
     expect(githubLink).toHaveAttribute("href", SITE_CONFIG.social.github);
     expect(linkedinLink).toHaveAttribute("href", SITE_CONFIG.social.linkedin);
     expect(orcidLink).toHaveAttribute("href", SITE_CONFIG.social.orcid);
+    expect(xerjLink).toHaveAttribute("href", SITE_CONFIG.social.xerj);
     expect(emailLink).toHaveAttribute("href", `mailto:${SITE_CONFIG.contact.email}`);
 
     expect(githubLink).toHaveAttribute("target", "_blank");
@@ -167,6 +171,8 @@ describe("SinglePageFooter Component", () => {
     expect(linkedinLink).toHaveAttribute("rel", "noopener noreferrer");
     expect(orcidLink).toHaveAttribute("target", "_blank");
     expect(orcidLink).toHaveAttribute("rel", "noopener noreferrer");
+    expect(xerjLink).toHaveAttribute("target", "_blank");
+    expect(xerjLink).toHaveAttribute("rel", "noopener noreferrer");
   });
 
   it("renders custom currentYear in the copyright notice", () => {

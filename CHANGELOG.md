@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.3.0](https://github.com/BIGboss248/aminwebsite/compare/v2.2.0...v2.3.0) (2026-11-08)
+
+
+### Features
+
+* telegram bot integration ([223fa91](https://github.com/BIGboss248/aminwebsite/commit/223fa9175898055b5c1d59e8470d056d5101a408))
+* trigger release pipeline ([3300935](https://github.com/BIGboss248/aminwebsite/commit/3300935c0f3b13a0998ac6330242a6cbb3e3547c))
+
+
+### Bug Fixes
+
+* fixed search console problems ([da953eb](https://github.com/BIGboss248/aminwebsite/commit/da953eb1cd283d5453c1cb504ad37223397d388f))
+
 ## [2.2.0](https://github.com/BIGboss248/aminwebsite/compare/v2.1.1...v2.2.0) (2026-10-06)
 
 

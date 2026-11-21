@@ -16,7 +16,27 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-URL="http://127.0.0.1:${PORT}"
+REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+
+# The dev server renders canonical/hreflang tags from NEXT_PUBLIC_BASE_URL.
+# Read the same value the app uses, otherwise self-referencing checks fail on a host mismatch.
+resolve_url() {
+  if [[ -n "${NEXT_PUBLIC_BASE_URL:-}" ]]; then
+    printf '%s\n' "${NEXT_PUBLIC_BASE_URL%/}"
+    return
+  fi
+  for file in "$REPO_ROOT/.env.local" "$REPO_ROOT/.env.development" "$REPO_ROOT/.env"; do
+    [[ -f "$file" ]] || continue
+    value=$(sed -n 's/^[[:space:]]*NEXT_PUBLIC_BASE_URL[[:space:]]*=[[:space:]]*//p' "$file" | head -n 1 | sed 's/[[:space:]]*$//' | tr -d '"'"'"'')
+    if [[ -n "$value" ]]; then
+      printf '%s\n' "${value%/}"
+      return
+    fi
+  done
+  printf 'http://localhost:%s\n' "$PORT"
+}
+
+URL="$(resolve_url)"
 SPAWNED_SERVER=0
 SERVER_PID=""
 

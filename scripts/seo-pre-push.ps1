@@ -1,13 +1,38 @@
 [CmdletBinding()]
 param (
     [int]$Port = 3000,
+    [string]$SiteUrl = "",
     [string]$Site = "sc-domain:aminjamali.site",
     [switch]$SkipGsc,
     [switch]$StrictGsc
 )
 
 $ErrorActionPreference = "Stop"
-$url = "http://127.0.0.1:$Port"
+
+function Resolve-SiteUrl {
+    param ([string]$Override, [int]$Port)
+
+    if ($Override) { return $Override.TrimEnd("/") }
+    if ($env:NEXT_PUBLIC_BASE_URL) { return $env:NEXT_PUBLIC_BASE_URL.TrimEnd("/") }
+
+    # The dev server renders canonical/hreflang tags from NEXT_PUBLIC_BASE_URL.
+    # Read the same value the app uses, otherwise self-referencing checks fail on a host mismatch.
+    $repoRoot = Split-Path -Parent $PSScriptRoot
+    foreach ($name in @(".env.local", ".env.development", ".env")) {
+        $file = Join-Path $repoRoot $name
+        if (-not (Test-Path $file)) { continue }
+        $match = Select-String -Path $file -Pattern '^\s*NEXT_PUBLIC_BASE_URL\s*=\s*(.+?)\s*$' |
+            Select-Object -First 1
+        if ($match) {
+            $value = $match.Matches[0].Groups[1].Value.Trim().Trim('"').Trim("'")
+            if ($value) { return $value.TrimEnd("/") }
+        }
+    }
+
+    return "http://localhost:$Port"
+}
+
+$url = Resolve-SiteUrl -Override $SiteUrl -Port $Port
 $spawnedServer = $false
 $serverProcess = $null
 

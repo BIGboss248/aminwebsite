@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/BIGboss248/aminwebsite/compare/v2.4.0...v2.5.0) (2026-11-22)
+
+
+### Features
+
+* rebrand copy for small-business clients ([17e986b](https://github.com/BIGboss248/aminwebsite/commit/17e986b65cebb030f8605171b10ee92f42dc65dd))
+
 ## [2.4.0](https://github.com/BIGboss248/aminwebsite/compare/v2.3.0...v2.4.0) (2026-11-08)
 
 

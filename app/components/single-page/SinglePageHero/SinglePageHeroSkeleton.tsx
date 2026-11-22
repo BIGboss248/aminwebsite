@@ -54,7 +54,7 @@ export function SinglePageHeroSkeleton({
 
           {/* Right Column Skeleton */}
           <div className="md:col-span-5 flex items-center justify-center relative w-full">
-            <div className="relative w-full aspect-[4/5] max-w-sm sm:max-w-md md:max-w-none rounded-2xl sm:rounded-3xl bg-muted/60 border border-border/40" />
+            <div className="relative w-full aspect-[4/5] max-w-sm sm:max-w-md md:max-w-none" />
           </div>
         </div>
       </div>

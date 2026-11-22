@@ -25,10 +25,10 @@ describe("ContactForm Component", () => {
   it("renders all form fields and submit button properly", () => {
     render(<ContactForm />);
 
-    expect(screen.getByLabelText(/full name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/your name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/subject/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/what you need/i)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /send message/i }),
     ).toBeInTheDocument();
@@ -49,16 +49,16 @@ describe("ContactForm Component", () => {
   it("validates invalid email address format", async () => {
     render(<ContactForm />);
 
-    fireEvent.change(screen.getByLabelText(/full name/i), {
+    fireEvent.change(screen.getByLabelText(/your name/i), {
       target: { value: "John Doe" },
     });
-    fireEvent.change(screen.getByLabelText(/email address/i), {
+    fireEvent.change(screen.getByLabelText(/^email/i), {
       target: { value: "invalid-email" },
     });
     fireEvent.change(screen.getByLabelText(/subject/i), {
       target: { value: "Project Consultation" },
     });
-    fireEvent.change(screen.getByLabelText(/message/i), {
+    fireEvent.change(screen.getByLabelText(/what you need/i), {
       target: { value: "Hello, this is a test message that is long enough." },
     });
 
@@ -77,16 +77,16 @@ describe("ContactForm Component", () => {
 
     render(<ContactForm />);
 
-    fireEvent.change(screen.getByLabelText(/full name/i), {
+    fireEvent.change(screen.getByLabelText(/your name/i), {
       target: { value: "Alice Wonderland" },
     });
-    fireEvent.change(screen.getByLabelText(/email address/i), {
+    fireEvent.change(screen.getByLabelText(/^email/i), {
       target: { value: "alice@example.com" },
     });
     fireEvent.change(screen.getByLabelText(/subject/i), {
       target: { value: "Architecture Review" },
     });
-    fireEvent.change(screen.getByLabelText(/message/i), {
+    fireEvent.change(screen.getByLabelText(/what you need/i), {
       target: {
         value: "We would like to consult on Next.js App Router performance and systems architecture.",
       },
@@ -102,7 +102,7 @@ describe("ContactForm Component", () => {
 
     // Resetting the form
     fireEvent.click(screen.getByRole("button", { name: /send another message/i }));
-    expect(screen.getByLabelText(/full name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/your name/i)).toBeInTheDocument();
   });
 
   it("handles server error properly", async () => {
@@ -114,16 +114,16 @@ describe("ContactForm Component", () => {
 
     render(<ContactForm />);
 
-    fireEvent.change(screen.getByLabelText(/full name/i), {
+    fireEvent.change(screen.getByLabelText(/your name/i), {
       target: { value: "Bob Smith" },
     });
-    fireEvent.change(screen.getByLabelText(/email address/i), {
+    fireEvent.change(screen.getByLabelText(/^email/i), {
       target: { value: "bob@example.com" },
     });
     fireEvent.change(screen.getByLabelText(/subject/i), {
       target: { value: "Systems Query" },
     });
-    fireEvent.change(screen.getByLabelText(/message/i), {
+    fireEvent.change(screen.getByLabelText(/what you need/i), {
       target: {
         value: "Inquiring about distributed backend services and caching layers.",
       },
@@ -146,16 +146,16 @@ describe("ContactForm Component", () => {
 
     render(<ContactForm />);
 
-    fireEvent.change(screen.getByLabelText(/full name/i), {
+    fireEvent.change(screen.getByLabelText(/your name/i), {
       target: { value: "Bob Smith" },
     });
-    fireEvent.change(screen.getByLabelText(/email address/i), {
+    fireEvent.change(screen.getByLabelText(/^email/i), {
       target: { value: "bob@example.com" },
     });
     fireEvent.change(screen.getByLabelText(/subject/i), {
       target: { value: "Systems Query" },
     });
-    fireEvent.change(screen.getByLabelText(/message/i), {
+    fireEvent.change(screen.getByLabelText(/what you need/i), {
       target: {
         value: "Inquiring about distributed backend services and caching layers.",
       },

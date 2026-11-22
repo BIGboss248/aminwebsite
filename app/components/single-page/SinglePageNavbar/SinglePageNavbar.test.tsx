@@ -99,16 +99,16 @@ describe("SinglePageNavbar Component", () => {
   it("renders all 4 single-page section anchor links", () => {
     render(<SinglePageNavbar />);
 
-    expect(screen.getByRole("link", { name: /^overview$/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /^home$/i })).toHaveAttribute(
       "href",
       "#hero",
     );
-    expect(screen.getByRole("link", { name: /^projects$/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /^work$/i })).toHaveAttribute(
       "href",
       "#projects",
     );
     expect(
-      screen.getByRole("link", { name: /^certifications$/i }),
+      screen.getByRole("link", { name: /^credibility$/i }),
     ).toHaveAttribute("href", "#certifications");
     expect(screen.getByRole("link", { name: /^contact$/i })).toHaveAttribute(
       "href",
@@ -119,10 +119,10 @@ describe("SinglePageNavbar Component", () => {
   it("highlights the active section when activeSectionOverride is passed", () => {
     render(<SinglePageNavbar activeSectionOverride="projects" />);
 
-    const projectsLink = screen.getByRole("link", { name: /^projects$/i });
+    const projectsLink = screen.getByRole("link", { name: /^work$/i });
     expect(projectsLink).toHaveAttribute("aria-current", "true");
 
-    const overviewLink = screen.getByRole("link", { name: /^overview$/i });
+    const overviewLink = screen.getByRole("link", { name: /^home$/i });
     expect(overviewLink).not.toHaveAttribute("aria-current");
   });
 
@@ -133,7 +133,7 @@ describe("SinglePageNavbar Component", () => {
 
     render(<SinglePageNavbar />);
 
-    const overviewLink = screen.getByRole("link", { name: /^overview$/i });
+    const overviewLink = screen.getByRole("link", { name: /^home$/i });
     fireEvent.click(overviewLink);
 
     expect(heroElement.scrollIntoView).toHaveBeenCalledWith({
@@ -207,12 +207,12 @@ describe("SinglePageNavbar Component", () => {
     mockLocale = "fa";
     render(<SinglePageNavbar activeLocale="fa" />);
 
-    expect(screen.getByRole("link", { name: /^معرفی$/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^خانه$/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /^پروژه‌ها$/i }),
+      screen.getByRole("link", { name: /^نمونه‌کارها$/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /^گواهینامه‌ها$/i }),
+      screen.getByRole("link", { name: /^اعتبار و مدارک$/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /^تماس$/i })).toBeInTheDocument();
   });

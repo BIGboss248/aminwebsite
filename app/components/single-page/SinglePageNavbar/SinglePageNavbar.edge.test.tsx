@@ -138,7 +138,7 @@ describe("SinglePageNavbar Adversarial & Edge Cases", () => {
       ]);
     });
 
-    const certLink = screen.getByRole("link", { name: /^certifications$/i });
+    const certLink = screen.getByRole("link", { name: /^credibility$/i });
     expect(certLink).toHaveAttribute("aria-current", "true");
   });
 
@@ -150,7 +150,7 @@ describe("SinglePageNavbar Adversarial & Edge Cases", () => {
     });
 
     // Default hero remains active
-    const heroLink = screen.getByRole("link", { name: /^overview$/i });
+    const heroLink = screen.getByRole("link", { name: /^home$/i });
     expect(heroLink).toHaveAttribute("aria-current", "true");
   });
 
@@ -176,7 +176,7 @@ describe("SinglePageNavbar Adversarial & Edge Cases", () => {
       window.dispatchEvent(new Event("scroll"));
     });
 
-    const heroLink = screen.getByRole("link", { name: /^overview$/i });
+    const heroLink = screen.getByRole("link", { name: /^home$/i });
     expect(heroLink).toHaveAttribute("aria-current", "true");
   });
 

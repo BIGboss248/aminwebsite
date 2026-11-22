@@ -52,11 +52,11 @@ describe("NotFound ([locale]/not-found component)", () => {
     render(<NotFound />);
 
     expect(screen.getByText("404")).toBeInTheDocument();
-    expect(screen.getByText("// 404 UNRESOLVED ROUTE")).toBeInTheDocument();
-    expect(screen.getByText("Page Not Found")).toBeInTheDocument();
+    expect(screen.getByText("Wrong address")).toBeInTheDocument();
+    expect(screen.getByText("This page was not found")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "The requested resource could not be found or has been relocated.",
+        "The address you opened does not exist or has moved. Continue from the menu above or go back to the home page.",
       ),
     ).toBeInTheDocument();
   });
@@ -68,16 +68,16 @@ describe("NotFound ([locale]/not-found component)", () => {
     expect(returnHomeLink).toBeInTheDocument();
     expect(returnHomeLink).toHaveAttribute("href", "/");
 
-    const heroLink = screen.getByRole("link", { name: /overview & bio/i });
+    const heroLink = screen.getByRole("link", { name: /introduction/i });
     expect(heroLink).toHaveAttribute("href", "/#hero");
 
-    const projectsLink = screen.getByRole("link", { name: /projects & research/i });
+    const projectsLink = screen.getByRole("link", { name: /work and research/i });
     expect(projectsLink).toHaveAttribute("href", "/#projects");
 
-    const certsLink = screen.getByRole("link", { name: /certifications/i });
+    const certsLink = screen.getByRole("link", { name: /credentials/i });
     expect(certsLink).toHaveAttribute("href", "/#certifications");
 
-    const contactLink = screen.getByRole("link", { name: /contact & inquiries/i });
+    const contactLink = screen.getByRole("link", { name: /^contact$/i });
     expect(contactLink).toHaveAttribute("href", "/#contact");
   });
 });

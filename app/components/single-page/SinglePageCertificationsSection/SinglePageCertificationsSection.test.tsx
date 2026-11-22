@@ -117,20 +117,20 @@ describe("SinglePageCertificationsSection", () => {
     render(<SinglePageCertificationsSection locale="en" />);
 
     // Initially collapsed
-    expect(screen.queryByPlaceholderText(/Search certifications/i)).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/Search credentials/i)).not.toBeInTheDocument();
 
     // Click expand button
-    const expandBtn = screen.getByRole("button", { name: /Show All Certifications/i });
+    const expandBtn = screen.getByRole("button", { name: /Show all credentials/i });
     fireEvent.click(expandBtn);
 
     // Collapsible panel is now visible
-    expect(screen.getByPlaceholderText(/Search certifications/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Search credentials/i)).toBeInTheDocument();
     expect(
       screen.getByText("Generative AI Content and Prompt Optimization"),
     ).toBeInTheDocument();
 
     // Filter by query
-    const searchInput = screen.getByPlaceholderText(/Search certifications/i);
+    const searchInput = screen.getByPlaceholderText(/Search credentials/i);
     fireEvent.change(searchInput, { target: { value: "Docker" } });
 
     expect(
@@ -141,10 +141,10 @@ describe("SinglePageCertificationsSection", () => {
     ).not.toBeInTheDocument();
 
     // Click collapse button
-    const collapseBtn = screen.getByRole("button", { name: /Show Less/i });
+    const collapseBtn = screen.getByRole("button", { name: /Close the list/i });
     fireEvent.click(collapseBtn);
 
-    expect(screen.queryByPlaceholderText(/Search certifications/i)).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/Search credentials/i)).not.toBeInTheDocument();
   });
 
   it("renders LinkedInProfileBanner with verified badge, handle, and target link", () => {

@@ -8,22 +8,22 @@
 
 export const SITE_CONFIG = {
   name: "Amin Jamali",
-  title: "Amin Jamali | Full-Stack Engineer & Architect",
+  title: "Amin Jamali | Websites and online shops for small businesses",
   description:
-    "Personal portfolio, interactive engineering lab, and digital credentials platform of Amin Jamali.",
+    "Fast websites and online shops that get found on Google, with a fixed price and a fixed delivery date. Built in Isfahan, working remotely.",
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "https://meetjamali.com",
   version: process.env.NEXT_PUBLIC_APP_VERSION || "2.1.0",
   commitHash: process.env.NEXT_PUBLIC_GIT_COMMIT_HASH || "dev",
   commitUrl: `https://github.com/BIGboss248/aminwebsite/commit/${process.env.NEXT_PUBLIC_GIT_COMMIT_HASH || "main"}`,
   author: {
     name: "Amin Jamali",
-    role: "Full-Stack Engineer & Systems Architect",
+    role: "Web developer for small businesses",
     location: "Tehran, Iran",
     timezone: "Asia/Tehran (UTC+3:30)",
   },
   contact: {
     email: "contact@meetjamali.com",
-    availability: "Open to select consulting and full-time opportunities",
+    availability: "Accepting new website and online shop projects",
   },
   social: {
     github: "https://github.com/BIGboss248",

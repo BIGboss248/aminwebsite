@@ -46,27 +46,27 @@ describe("SinglePageHero Component", () => {
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: /Full-Stack Web Developer & IT Specialist/i,
+        name: /Websites and online shops that bring you customers/i,
       }),
     ).toBeInTheDocument();
 
     // Bio text
     expect(
       screen.getByText(
-        /I am a full-stack web developer and IT specialist specializing in high-performance Next\.js and TypeScript architectures/i,
+        /For six years I have built sites and online shops for small businesses/i,
       ),
     ).toBeInTheDocument();
 
     // Pill-shaped Social Links & Mailto
     const githubLink = screen.getByRole("link", {
-      name: /Visit GitHub profile of Amin Jamali/i,
+      name: /View code samples and projects by Amin Jamali on GitHub/i,
     });
     expect(githubLink).toHaveAttribute("href", "https://github.com/BIGboss248");
     expect(githubLink).toHaveAttribute("target", "_blank");
     expect(githubLink).toHaveAttribute("rel", "noopener noreferrer");
 
     const linkedinLink = screen.getByRole("link", {
-      name: /Visit LinkedIn profile of Amin Jamali/i,
+      name: /View the LinkedIn profile of Amin Jamali/i,
     });
     expect(linkedinLink).toHaveAttribute(
       "href",
@@ -75,7 +75,7 @@ describe("SinglePageHero Component", () => {
     expect(linkedinLink).toHaveAttribute("target", "_blank");
 
     const orcidLink = screen.getByRole("link", {
-      name: /View ORCID researcher record of Amin Jamali/i,
+      name: /View the research paper and researcher record of Amin Jamali/i,
     });
     expect(orcidLink).toHaveAttribute(
       "href",
@@ -84,13 +84,13 @@ describe("SinglePageHero Component", () => {
     expect(orcidLink).toHaveAttribute("target", "_blank");
 
     const mailtoLink = screen.getByRole("link", {
-      name: /Send an email directly to Amin Jamali/i,
+      name: /Email Amin Jamali to start a conversation about your project/i,
     });
     expect(mailtoLink).toHaveAttribute("href", "mailto:contact@meetjamali.com");
 
     // Right Column Full-size Portrait Image
     const portraitImg = screen.getByAltText(
-      /Amin Jamali — Full-Stack Web Developer and IT Specialist/i,
+      /Amin Jamali, web developer in Isfahan/i,
     );
     expect(portraitImg).toBeInTheDocument();
   });
@@ -113,18 +113,18 @@ describe("SinglePageHero Component", () => {
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: /توسعه‌دهنده فول‌استک وب و متخصص فناوری اطلاعات \(IT\)/i,
+        name: /سایت و فروشگاه اینترنتی که برایتان مشتری می‌آورد/i,
       }),
     ).toBeInTheDocument();
 
     expect(
       screen.getByText(
-        /توسعه‌دهنده فول‌استک وب و متخصص فناوری اطلاعات \(IT\) با تمرکز بر معماری‌های مدرن و پرسرعت Next\.js و TypeScript/i,
+        /شش سال است برای کسب‌وکارهای ایرانی سایت و فروشگاه اینترنتی می‌سازم/i,
       ),
     ).toBeInTheDocument();
 
     const mailtoLink = screen.getByRole("link", {
-      name: /ارسال مستقیم ایمیل به امین جمالی/i,
+      name: /ارسال ایمیل به امین جمالی برای شروع گفتگو درباره پروژه/i,
     });
     expect(mailtoLink).toHaveAttribute("href", "mailto:contact@meetjamali.com");
   });

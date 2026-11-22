@@ -49,7 +49,7 @@ describe("SinglePageProjectsSection", () => {
     ).toBeInTheDocument();
 
     expect(screen.getByRole("tab", { name: /all/i })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: /production/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /sites and shops/i })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /research/i })).toBeInTheDocument();
   });
 
@@ -58,11 +58,11 @@ describe("SinglePageProjectsSection", () => {
 
     // Check title and summary
     expect(
-      screen.getByText("Bahar Trade IT Automation and Infrastructure Management"),
+      screen.getByText("Bahar Trade | Automating daily work and servers"),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Enterprise Linux Server Automation, Active Directory Management, Enterprise Security, and IT Administration.",
+        "Weekly manual jobs became scripts: backups, network user management, and reporting. The team got its hours back and spent them on the actual work.",
       ),
     ).toBeInTheDocument();
 
@@ -72,7 +72,7 @@ describe("SinglePageProjectsSection", () => {
 
     // Verify Bahar Trade card title is plain text and not a link
     const titleElement = screen.getByText(
-      "Bahar Trade IT Automation and Infrastructure Management",
+      "Bahar Trade | Automating daily work and servers",
     );
     expect(titleElement.closest("a")).toBeNull();
   });
@@ -109,7 +109,7 @@ describe("SinglePageProjectsSection", () => {
 
     // Initially All projects are shown
     expect(
-      screen.getByText("Bahar Trade IT Automation and Infrastructure Management"),
+      screen.getByText("Bahar Trade | Automating daily work and servers"),
     ).toBeInTheDocument();
     expect(
       screen.getByText(enMessages.single_page.projects.items.parsbert_ime_forecasting.title),
@@ -123,15 +123,15 @@ describe("SinglePageProjectsSection", () => {
       screen.getByText(enMessages.single_page.projects.items.parsbert_ime_forecasting.title),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText("Bahar Trade IT Automation and Infrastructure Management"),
+      screen.queryByText("Bahar Trade | Automating daily work and servers"),
     ).not.toBeInTheDocument();
 
     // Click Production tab
-    const prodTab = screen.getByRole("tab", { name: /production/i });
+    const prodTab = screen.getByRole("tab", { name: /sites and shops/i });
     fireEvent.click(prodTab);
 
     expect(
-      screen.getByText("Bahar Trade IT Automation and Infrastructure Management"),
+      screen.getByText("Bahar Trade | Automating daily work and servers"),
     ).toBeInTheDocument();
     expect(
       screen.queryByText(enMessages.single_page.projects.items.parsbert_ime_forecasting.title),

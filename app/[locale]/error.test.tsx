@@ -63,17 +63,17 @@ describe("ErrorBoundary (Route Error Component)", () => {
     const testError = new Error("Test explosion");
     render(<ErrorBoundary error={testError} reset={mockReset} />);
 
-    expect(screen.getByText("System Node Anomaly")).toBeInTheDocument();
+    expect(screen.getByText("This page did not load")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "An unexpected exception occurred while rendering this route. Telemetry has logged the incident for diagnostic review.",
+        "Something unexpected went wrong. Try once more; if it keeps happening, email me directly and I will fix it quickly.",
       ),
     ).toBeInTheDocument();
 
-    const retryButton = screen.getByRole("button", { name: /retry execution/i });
+    const retryButton = screen.getByRole("button", { name: /try again/i });
     expect(retryButton).toBeInTheDocument();
 
-    const homeLink = screen.getByRole("link", { name: /return to systems cockpit/i });
+    const homeLink = screen.getByRole("link", { name: /back to the home page/i });
     expect(homeLink).toBeInTheDocument();
     expect(homeLink).toHaveAttribute("href", "/");
   });
@@ -82,7 +82,7 @@ describe("ErrorBoundary (Route Error Component)", () => {
     const testError = new Error("Network timeout");
     render(<ErrorBoundary error={testError} reset={mockReset} />);
 
-    const retryButton = screen.getByRole("button", { name: /retry execution/i });
+    const retryButton = screen.getByRole("button", { name: /try again/i });
     fireEvent.click(retryButton);
 
     expect(mockReset).toHaveBeenCalledTimes(1);
@@ -95,7 +95,7 @@ describe("ErrorBoundary (Route Error Component)", () => {
 
     render(<ErrorBoundary error={testError} reset={mockReset} />);
 
-    expect(screen.getByText("INCIDENT_DIGEST:")).toBeInTheDocument();
+    expect(screen.getByText("Error code:")).toBeInTheDocument();
     expect(screen.getByText("CRASH_0x8F92")).toBeInTheDocument();
   });
 

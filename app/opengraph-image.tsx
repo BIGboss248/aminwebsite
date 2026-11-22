@@ -58,7 +58,7 @@ export default function Image(): ImageResponse {
                 fontFamily: "monospace",
               }}
             >
-              SYSTEMS OBSERVATORY // PORTFOLIO
+              WEBSITES & ONLINE SHOPS
             </span>
           </div>
         </div>

@@ -94,10 +94,10 @@ describe("Home Page (Single-Page Website Experience)", () => {
     });
 
     expect(metadata.title).toBe(
-      "Amin Jamali | Systems Architecture & Full-Stack Engineering",
+      "Amin Jamali | Websites and online shops that bring customers",
     );
     expect(metadata.description).toBe(
-      "Single-page developer cockpit, systems architecture, verified credentials, full-stack projects, and direct contact inquiry with Amin Jamali.",
+      "Websites and online shops for small and medium businesses: fast on a phone, visible on Google, a panel you can update yourself, price and delivery date agreed up front. Based in Isfahan, working worldwide.",
     );
     expect(metadata.alternates?.canonical).toBe(
       `${SITE_CONFIG.baseUrl}/en`,

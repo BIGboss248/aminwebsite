@@ -217,7 +217,7 @@ export function SinglePageHero({
             />
 
             {/* Full-size Portrait Container */}
-            <div className="relative w-full aspect-[4/5] max-w-sm sm:max-w-md md:max-w-none rounded-2xl sm:rounded-3xl overflow-hidden border border-border/80 bg-card shadow-xl group">
+            <div className="relative w-full aspect-[4/5] max-w-sm sm:max-w-md md:max-w-none overflow-hidden group">
               <Image
                 src={portraitImage}
                 alt={t("portrait_alt")}
